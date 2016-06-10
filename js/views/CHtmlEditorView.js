@@ -928,7 +928,7 @@ CHtmlEditorView.prototype.onEditorDrop = function (sUid, oData) {
 			oFile = oData.File;
 			if (Settings.ImageUploadSizeLimit > 0 && oFile.size > Settings.ImageUploadSizeLimit)
 			{
-				Popups.showPopup(AlertPopup, [TextUtils.i18n('CORE/ERROR_UPLOAD_SIZE')]);
+				Popups.showPopup(AlertPopup, [TextUtils.i18n('CORECLIENT/ERROR_UPLOAD_SIZE')]);
 			}
 			else
 			{
@@ -1021,8 +1021,8 @@ CHtmlEditorView.prototype.onFileUploadComplete = function (sUid, bResponseReceiv
 		if (oData.Result.Error)
 		{
 			sError = oData.Result.Error === 'size' ?
-				TextUtils.i18n('CORE/ERROR_UPLOAD_SIZE') :
-				TextUtils.i18n('CORE/ERROR_UPLOAD_UNKNOWN');
+				TextUtils.i18n('CORECLIENT/ERROR_UPLOAD_SIZE') :
+				TextUtils.i18n('CORECLIENT/ERROR_UPLOAD_UNKNOWN');
 
 			Popups.showPopup(AlertPopup, [sError]);
 		}
@@ -1034,7 +1034,7 @@ CHtmlEditorView.prototype.onFileUploadComplete = function (sUid, bResponseReceiv
 	}
 	else
 	{
-		Popups.showPopup(AlertPopup, [TextUtils.i18n('CORE/ERROR_UPLOAD_UNKNOWN')]);
+		Popups.showPopup(AlertPopup, [TextUtils.i18n('CORECLIENT/ERROR_UPLOAD_UNKNOWN')]);
 	}
 };
 

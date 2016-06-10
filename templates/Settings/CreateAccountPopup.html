@@ -17,7 +17,7 @@
 						   id="selenium_settings_create_account_name" />
 				</div>
 				<div class="row email">
-					<span class="label required" data-bind="i18n: {'key': 'CORE/LABEL_EMAIL'}"></span>
+					<span class="label required" data-bind="i18n: {'key': 'CORECLIENT/LABEL_EMAIL'}"></span>
 					<input class="value input" spellcheck="false"  type="text" maxlength="65" 
 						   data-bind="value: email, hasfocus: emailFocus, onEnter: onSaveClick, disable: isConnectToMailType"
 						   id="selenium_settings_create_account_email" />
@@ -27,7 +27,7 @@
 					<input class="value input" spellcheck="false"  type="text" maxlength="255" data-bind="value: incomingMailLogin, hasfocus: incomingLoginFocused, onEnter: onSaveClick"/>
 				</div>
 				<div class="row password">
-					<span class="label required" data-bind="i18n: {'key': 'CORE/LABEL_PASSWORD'}"></span>
+					<span class="label required" data-bind="i18n: {'key': 'CORECLIENT/LABEL_PASSWORD'}"></span>
 					<input class="value input" spellcheck="false"  type="password" maxlength="255" 
 						   data-bind="value: incomingMailPassword, hasfocus: incomingPasswordFocus, onEnter: onSaveClick"
 						   id="selenium_settings_create_account_password" />
@@ -54,9 +54,9 @@
 				<span class="button" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ADD'}, click: onFirstSaveClick, visible: !loading() && isFirstStep()"
 					  id="selenium_settings_create_account_add_button"></span>
 				<span class="button" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ADD_IN_PROGRESS'}, visible: loading() && isFirstStep()"></span>
-				<span class="button" data-bind="i18n: {'key': 'CORE/ACTION_SAVE'}, click: onSecondSaveClick, visible: !loading() && !isFirstStep()"></span>
-				<span class="button" data-bind="i18n: {'key': 'CORE/ACTION_SAVE_IN_PROGRESS'}, visible: loading() && !isFirstStep()"></span>
-				<span class="button secondary_button" data-bind="i18n: {'key': 'CORE/ACTION_CANCEL'}, click: cancelPopup"></span>
+				<span class="button" data-bind="i18n: {'key': 'CORECLIENT/ACTION_SAVE'}, click: onSecondSaveClick, visible: !loading() && !isFirstStep()"></span>
+				<span class="button" data-bind="i18n: {'key': 'CORECLIENT/ACTION_SAVE_IN_PROGRESS'}, visible: loading() && !isFirstStep()"></span>
+				<span class="button secondary_button" data-bind="i18n: {'key': 'CORECLIENT/ACTION_CANCEL'}, click: cancelPopup"></span>
 			</div>
 		</div>
 	</div>

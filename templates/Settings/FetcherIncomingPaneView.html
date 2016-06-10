@@ -21,7 +21,7 @@
 			<span class="value text" data-bind="text: incomingMailLogin"></span>
 		</div>
 		<div class="row password">
-			<span class="label required" data-bind="i18n: {'key': 'CORE/LABEL_PASSWORD'}"></span>
+			<span class="label required" data-bind="i18n: {'key': 'CORECLIENT/LABEL_PASSWORD'}"></span>
 			<input class="value input" spellcheck="false" type="password" maxlength="255" data-bind="value: incomingMailPassword, onEnter: save, hasFocus: passwordIsSelected, enable: isEnabled"/>
 		</div>
 
@@ -50,7 +50,7 @@
 		</div>
 	</div>
 	<div class="buttons">
-		<span class="button" data-bind="i18n: {'key': 'CORE/ACTION_SAVE'}, click: save, visible: !isSaving()"></span>
-		<span class="button" data-bind="i18n: {'key': 'CORE/ACTION_SAVE_IN_PROGRESS'}, click: save, visible: isSaving()"></span>
+		<span class="button" data-bind="i18n: {'key': 'CORECLIENT/ACTION_SAVE'}, click: save, visible: !isSaving()"></span>
+		<span class="button" data-bind="i18n: {'key': 'CORECLIENT/ACTION_SAVE_IN_PROGRESS'}, click: save, visible: isSaving()"></span>
 	</div>
 </div>

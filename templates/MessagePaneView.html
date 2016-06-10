@@ -67,7 +67,7 @@
 						<!-- /ko -->
 					</div>
 					<div class="message_info_line" data-bind="visible: aCcAddr().length > 0">
-						<span class="title" data-bind="i18n: {'key': 'CORE/LABEL_CC'}"></span>: 
+						<span class="title" data-bind="i18n: {'key': 'CORECLIENT/LABEL_CC'}"></span>: 
 						<!-- ko foreach: aCcAddr -->
 						<span class="contact address_capsule">
 							<span class="address" data-bind="text: sFull, attr: {'data-email': sEmail, 'data-name': sName}"></span>
@@ -75,7 +75,7 @@
 						<!-- /ko -->
 					</div>
 					<div class="message_info_line" data-bind="visible: aBccAddr().length > 0">
-						<span class="title" data-bind="i18n: {'key': 'CORE/LABEL_BCC'}"></span>: 
+						<span class="title" data-bind="i18n: {'key': 'CORECLIENT/LABEL_BCC'}"></span>: 
 						<!-- ko foreach: aBccAddr -->
 						<span class="contact address_capsule">
 							<span class="address" data-bind="text: sFull, attr: {'data-email': sEmail, 'data-name': sName}"></span>
@@ -143,7 +143,7 @@
 						<div data-bind="i18n: {'key': '%MODULENAME%/INFO_NO_MESSAGE_SELECTED'}"></div>
 						<div class="message_body_secondary_info" data-bind="i18n: {'key': '%MODULENAME%/INFO_SINGLE_DOUBLE_CLICK'}"></div>
 					</div>
-					<div class="message_body_info" data-bind="visible: isLoading, i18n: {'key': 'CORE/INFO_LOADING'}"></div>
+					<div class="message_body_info" data-bind="visible: isLoading, i18n: {'key': 'CORECLIENT/INFO_LOADING'}"></div>
 					<div class="message_body html" data-bind="initDom: domTextBody, attr: {'dir': rtlMessage() ? 'rtl' : 'ltr'}"></div>
 				</div>
 			</div>

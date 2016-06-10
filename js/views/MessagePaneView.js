@@ -224,7 +224,7 @@ function CMessagePaneView()
 	
 	this.detailsVisible = ko.observable(Storage.getData('MessageDetailsVisible') === '1');
 	this.detailsTooltip = ko.computed(function () {
-		return this.detailsVisible() ? TextUtils.i18n('CORE/ACTION_HIDE_DETAILS') : TextUtils.i18n('CORE/ACTION_SHOW_DETAILS');
+		return this.detailsVisible() ? TextUtils.i18n('CORECLIENT/ACTION_HIDE_DETAILS') : TextUtils.i18n('CORECLIENT/ACTION_SHOW_DETAILS');
 	}, this);
 
 	this.hasNotInlineAttachments = ko.computed(function () {
@@ -274,7 +274,7 @@ function CMessagePaneView()
 	this.replyLoadingText = ko.computed(function () {
 		if (this.replySendingStarted())
 		{
-			return TextUtils.i18n('CORE/INFO_SENDING');
+			return TextUtils.i18n('CORECLIENT/INFO_SENDING');
 		}
 		else if (this.replySavingStarted())
 		{

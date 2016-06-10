@@ -33,13 +33,13 @@
 		</div>
 
 		<div class="row email">
-			<span class="label required" data-bind="i18n: {'key': 'CORE/LABEL_EMAIL'}, css: {'disabled': !outgoingMailAuth()}"></span>
+			<span class="label required" data-bind="i18n: {'key': 'CORECLIENT/LABEL_EMAIL'}, css: {'disabled': !outgoingMailAuth()}"></span>
 			<input class="value input" spellcheck="false" type="text" maxlength="65" data-bind="value: email, hasfocus: focusEmail, onEnter: save, enable: outgoingMailAuth, css: {'disabled': !outgoingMailAuth()}"/>
 		</div>
 	</div>
 
 	<div class="buttons">
-		<span class="button" data-bind="i18n: {'key': 'CORE/ACTION_SAVE'}, click: save, visible: !isSaving()"></span>
-		<span class="button" data-bind="i18n: {'key': 'CORE/ACTION_SAVE_IN_PROGRESS'}, click: save, visible: isSaving()"></span>
+		<span class="button" data-bind="i18n: {'key': 'CORECLIENT/ACTION_SAVE'}, click: save, visible: !isSaving()"></span>
+		<span class="button" data-bind="i18n: {'key': 'CORECLIENT/ACTION_SAVE_IN_PROGRESS'}, click: save, visible: isSaving()"></span>
 	</div>
 </div>
