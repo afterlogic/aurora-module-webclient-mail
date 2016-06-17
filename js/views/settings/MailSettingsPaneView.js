@@ -4,11 +4,12 @@ var
 	_ = require('underscore'),
 	ko = require('knockout'),
 	
+	Types = require('modules/CoreClient/js/utils/Types.js'),
+	
 	Browser = require('modules/CoreClient/js/Browser.js'),
 	ModulesManager = require('modules/CoreClient/js/ModulesManager.js'),
 	UserSettings = require('modules/CoreClient/js/Settings.js'),
 	CAbstractSettingsFormView = ModulesManager.run('SettingsClient', 'getAbstractSettingsFormViewClass'),
-	SettingsUtils = ModulesManager.run('SettingsClient', 'getSettingsUtils'),
 	
 	MailUtils = require('modules/%ModuleName%/js/utils/Mail.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js')
@@ -25,7 +26,7 @@ function CMailSettingsPaneView()
 	this.bAllowThreads = Settings.AllowThreads;
 	this.bAllowMailto = Settings.AllowAppRegisterMailto && (Browser.firefox || Browser.chrome);
 	
-	this.messagesPerPageValues = ko.observableArray(SettingsUtils.getAdaptedPerPageList(Settings.MailsPerPage));
+	this.messagesPerPageValues = ko.observableArray(Types.getAdaptedPerPageList(Settings.MailsPerPage));
 	
 	this.messagesPerPage = ko.observable(Settings.MailsPerPage);
 	this.useThreads = ko.observable(Settings.useThreads());
