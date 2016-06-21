@@ -30,7 +30,6 @@ module.exports = function (oAppData, iUserRole, bPublic) {
 			return {
 				start: function (ModulesManager) {
 					var TextUtils = require('modules/CoreClient/js/utils/Text.js');
-					console.log('Settings.HashModuleName', Settings.HashModuleName);
 					ModulesManager.run('AdminPanelClient', 'registerAdminPanelTab', [
 						function () { return require('modules/%ModuleName%/js/views/settings/MailSettingsPaneView.js'); },
 						Settings.HashModuleName,
