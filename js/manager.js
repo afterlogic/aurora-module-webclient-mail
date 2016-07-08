@@ -34,6 +34,9 @@ module.exports = function (oAppData, iUserRole, bPublic) {
 						function () { return require('modules/%ModuleName%/js/views/settings/MailSettingsPaneView.js'); },
 						Settings.HashModuleName,
 						TextUtils.i18n('%MODULENAME%/LABEL_SETTINGS_TAB')]);
+				},
+				getAccountList: function () {
+					return require('modules/MailClient/js/AccountList.js');
 				}
 			};
 		}
@@ -119,6 +122,9 @@ module.exports = function (oAppData, iUserRole, bPublic) {
 				},
 				getCreateAccountPopup: function () {
 					return require('modules/%ModuleName%/js/popups/CreateAccountPopup.js');
+				},
+				getAccountList: function () {
+					return require('modules/MailClient/js/AccountList.js');
 				}
 			};
 		}
