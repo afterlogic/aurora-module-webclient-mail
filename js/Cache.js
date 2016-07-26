@@ -147,8 +147,6 @@ function CMailCache()
 	this.waitForUnseenMessages = ko.observable(true);
 	
 	this.iSetMessagesSeenCount = 0;	
-	
-	this.__name = 'CMailCache';
 }
 
 CMailCache.prototype.requirePrefetcher = function ()

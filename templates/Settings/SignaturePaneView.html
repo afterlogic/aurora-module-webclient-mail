@@ -4,9 +4,9 @@
 			<div>
 				<label class="custom_radio" data-bind="css: {'checked': useSignatureRadio() === '0'}">
 					<span class="icon"></span>
-					<input type="radio" value="0" data-bind="checked: useSignatureRadio, attr: {'id': 'noSignature' + __name}" />
+					<input type="radio" value="0" data-bind="checked: useSignatureRadio, attr: {'id': 'noSignature' + ViewConstructorName}" />
 				</label>
-				<label data-bind="i18n: {'key': 'CORECLIENT/LABEL_NO_SIGNATURE'}, attr: {'for': 'noSignature' + __name}"></label>
+				<label data-bind="i18n: {'key': 'CORECLIENT/LABEL_NO_SIGNATURE'}, attr: {'for': 'noSignature' + ViewConstructorName}"></label>
 			</div>
 		</div>
 			

@@ -412,16 +412,13 @@ function CComposeView()
 	
 	this.registerOwnToolbarControllers();
 	
-//	if (AfterLogicApi.runPluginHook)
-//	{
-//		AfterLogicApi.runPluginHook('view-model-defined', [this.__name, this]);
-//	}
+	App.broadcastEvent('%ModuleName%::ConstructView::after', {'Name': this.ViewConstructorName, 'View': this});
 }
 
 _.extendOwn(CComposeView.prototype, CAbstractScreenView.prototype);
 
 CComposeView.prototype.ViewTemplate = App.isNewTab() ? '%ModuleName%_ComposeScreenView' : '%ModuleName%_ComposeView';
-CComposeView.prototype.__name = 'CComposeView';
+CComposeView.prototype.ViewConstructorName = 'CComposeView';
 
 /**
  * Determines if sending a message is allowed.

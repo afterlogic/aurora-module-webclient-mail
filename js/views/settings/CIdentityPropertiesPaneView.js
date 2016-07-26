@@ -49,8 +49,7 @@ function CIdentityPropertiesPaneView(oParent, bCreate)
 _.extendOwn(CIdentityPropertiesPaneView.prototype, CAbstractSettingsFormView.prototype);
 
 CIdentityPropertiesPaneView.prototype.ViewTemplate = '%ModuleName%_Settings_IdentityPropertiesPaneView';
-
-CIdentityPropertiesPaneView.prototype.__name = 'CIdentityPropertiesPaneView';
+CIdentityPropertiesPaneView.prototype.ViewConstructorName = 'CIdentityPropertiesPaneView';
 
 /**
  * @param {Object} oIdentity

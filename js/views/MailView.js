@@ -19,7 +19,6 @@ var
 	
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	MailCache = require('modules/%ModuleName%/js/Cache.js'),
-	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	
 	CFolderListView = require('modules/%ModuleName%/js/views/CFolderListView.js'),
 	CMessageListView = require('modules/%ModuleName%/js/views/CMessageListView.js'),
@@ -110,11 +109,14 @@ function CMailView()
 	MailCache.currentMessage.subscribe(function () {
 		this.gotoMessagePane();
 	}, this);
+	
+	App.broadcastEvent('%ModuleName%::ConstructView::after', {'Name': this.ViewConstructorName, 'View': this});
 }
 
 _.extendOwn(CMailView.prototype, CAbstractScreenView.prototype);
 
 CMailView.prototype.ViewTemplate = '%ModuleName%_MailView';
+CMailView.prototype.ViewConstructorName = 'CMailView';
 
 CMailView.prototype.executeCompose = function ()
 {

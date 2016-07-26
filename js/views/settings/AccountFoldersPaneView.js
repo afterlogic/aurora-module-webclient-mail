@@ -50,10 +50,7 @@ function CAccountFoldersPaneView()
 		return oAccount ? !App.isMobile() && !oAccount.extensionExists('DisableFoldersManualSort') : false;
 	}, this);
 	
-//	if (AfterLogicApi.runPluginHook)
-//	{
-//		AfterLogicApi.runPluginHook('view-model-defined', [this.__name, this]);
-//	}
+	App.broadcastEvent('%ModuleName%::ConstructView::after', {'Name': 'CAccountFoldersPaneView', 'View': this});
 }
 
 CAccountFoldersPaneView.prototype.ViewTemplate = '%ModuleName%_Settings_AccountFoldersPaneView';

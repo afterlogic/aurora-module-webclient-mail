@@ -325,16 +325,13 @@ function CMessagePaneView()
 	
 	Pulse.registerDayOfMonthFunction(_.bind(this.updateMomentDate, this));
 	
-//	if (AfterLogicApi.runPluginHook)
-//	{
-//		AfterLogicApi.runPluginHook('view-model-defined', [this.__name, this]);
-//	}
+	App.broadcastEvent('%ModuleName%::ConstructView::after', {'Name': 'CMessagePaneView', 'View': this});
 }
 
 _.extendOwn(CMessagePaneView.prototype, CAbstractScreenView.prototype);
 
 CMessagePaneView.prototype.ViewTemplate = App.isNewTab() ? '%ModuleName%_MessagePaneScreenView' : '%ModuleName%_MessagePaneView';
-CMessagePaneView.prototype.__name = 'CMessagePaneView';
+CMessagePaneView.prototype.ViewConstructorName = 'CMessagePaneView';
 
 /**
  * @param {object} oData
