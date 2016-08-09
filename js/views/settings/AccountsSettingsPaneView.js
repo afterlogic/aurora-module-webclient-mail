@@ -5,12 +5,12 @@ var
 	$ = require('jquery'),
 	ko = require('knockout'),
 	
-	TextUtils = require('modules/CoreClient/js/utils/Text.js'),
+	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	
-	Api = require('modules/CoreClient/js/Api.js'),
-	ModulesManager = require('modules/CoreClient/js/ModulesManager.js'),
+	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
+	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 	
-	Popups = require('modules/CoreClient/js/Popups.js'),
+	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
 	CreateAccountPopup = require('modules/%ModuleName%/js/popups/CreateAccountPopup.js'),
 	CreateIdentityPopup = require('modules/%ModuleName%/js/popups/CreateIdentityPopup.js'),
 	CreateFetcherPopup = require('modules/%ModuleName%/js/popups/CreateFetcherPopup.js'),

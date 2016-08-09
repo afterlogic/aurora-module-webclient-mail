@@ -1,7 +1,7 @@
 'use strict';
 
 var
-	Ajax = require('modules/CoreClient/js/Ajax.js'),
+	Ajax = require('%PathToCoreWebclientModule%/js/Ajax.js'),
 	
 	Settings = require('modules/%ModuleName%/js/Settings.js')
 ;

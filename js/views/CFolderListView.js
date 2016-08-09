@@ -3,10 +3,10 @@
 var
 	ko = require('knockout'),
 	
-	TextUtils = require('modules/CoreClient/js/utils/Text.js'),
+	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	
-	App = require('modules/CoreClient/js/App.js'),
-	UserSettings = require('modules/CoreClient/js/Settings.js'),
+	App = require('%PathToCoreWebclientModule%/js/App.js'),
+	UserSettings = require('%PathToCoreWebclientModule%/js/Settings.js'),
 	
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	MailCache = require('modules/%ModuleName%/js/Cache.js')

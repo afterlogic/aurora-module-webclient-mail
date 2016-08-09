@@ -5,13 +5,13 @@ var
 	$ = require('jquery'),
 	ko = require('knockout'),
 	
-	TextUtils = require('modules/CoreClient/js/utils/Text.js'),
-	Utils = require('modules/CoreClient/js/utils/Common.js'),
+	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
+	Utils = require('%PathToCoreWebclientModule%/js/utils/Common.js'),
 	
-	App = require('modules/CoreClient/js/App.js'),
+	App = require('%PathToCoreWebclientModule%/js/App.js'),
 	
-	Popups = require('modules/CoreClient/js/Popups.js'),
-	ConfirmPopup = require('modules/CoreClient/js/popups/ConfirmPopup.js'),
+	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
+	ConfirmPopup = require('%PathToCoreWebclientModule%/js/popups/ConfirmPopup.js'),
 	CreateFolderPopup = require('modules/%ModuleName%/js/popups/CreateFolderPopup.js'),
 	SetSystemFoldersPopup = require('modules/%ModuleName%/js/popups/SetSystemFoldersPopup.js'),
 	

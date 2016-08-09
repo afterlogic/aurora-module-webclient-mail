@@ -5,7 +5,7 @@ var
 	$ = require('jquery'),
 	ko = require('knockout'),
 	
-	ModulesManager = require('modules/CoreClient/js/ModulesManager.js'),
+	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 	ComposeMessageToAddressesFunc = ModulesManager.run('MailWebclient', 'getComposeMessageToAddresses')
 ;
 

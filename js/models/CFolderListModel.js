@@ -4,9 +4,9 @@ var
 	_ = require('underscore'),
 	ko = require('knockout'),
 	
-	Types = require('modules/CoreClient/js/utils/Types.js'),
+	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	
-	Storage = require('modules/CoreClient/js/Storage.js'),
+	Storage = require('%PathToCoreWebclientModule%/js/Storage.js'),
 	
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),

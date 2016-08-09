@@ -4,17 +4,17 @@ var
 	_ = require('underscore'),
 	ko = require('knockout'),
 	
-	TextUtils = require('modules/CoreClient/js/utils/Text.js'),
-	Types = require('modules/CoreClient/js/utils/Types.js'),
+	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
+	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	
-	App = require('modules/CoreClient/js/App.js'),
+	App = require('%PathToCoreWebclientModule%/js/App.js'),
 	MainTab = App.isNewTab() && window.opener ? window.opener.MainTabMailMethods : null,
-	Routing = require('modules/CoreClient/js/Routing.js'),
-	Storage = require('modules/CoreClient/js/Storage.js'),
-	UserSettings = require('modules/CoreClient/js/Settings.js'),
+	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
+	Storage = require('%PathToCoreWebclientModule%/js/Storage.js'),
+	UserSettings = require('%PathToCoreWebclientModule%/js/Settings.js'),
 	
-	Popups = require('modules/CoreClient/js/Popups.js'),
-	ConfirmPopup = require('modules/CoreClient/js/popups/ConfirmPopup.js'),
+	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
+	ConfirmPopup = require('%PathToCoreWebclientModule%/js/popups/ConfirmPopup.js'),
 	CreateAccountPopup = require('modules/%ModuleName%/js/popups/CreateAccountPopup.js'),
 	
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),

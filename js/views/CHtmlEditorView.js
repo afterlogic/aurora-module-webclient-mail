@@ -5,18 +5,18 @@ var
 	$ = require('jquery'),
 	ko = require('knockout'),
 	
-	AddressUtils = require('modules/CoreClient/js/utils/Address.js'),
-	FilesUtils = require('modules/CoreClient/js/utils/Files.js'),
-	TextUtils = require('modules/CoreClient/js/utils/Text.js'),
-	Types = require('modules/CoreClient/js/utils/Types.js'),
+	AddressUtils = require('%PathToCoreWebclientModule%/js/utils/Address.js'),
+	FilesUtils = require('%PathToCoreWebclientModule%/js/utils/Files.js'),
+	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
+	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	
-	App = require('modules/CoreClient/js/App.js'),
-	Browser = require('modules/CoreClient/js/Browser.js'),
-	CJua = require('modules/CoreClient/js/CJua.js'),
-	UserSettings = require('modules/CoreClient/js/Settings.js'),
+	App = require('%PathToCoreWebclientModule%/js/App.js'),
+	Browser = require('%PathToCoreWebclientModule%/js/Browser.js'),
+	CJua = require('%PathToCoreWebclientModule%/js/CJua.js'),
+	UserSettings = require('%PathToCoreWebclientModule%/js/Settings.js'),
 	
-	Popups = require('modules/CoreClient/js/Popups.js'),
-	AlertPopup = require('modules/CoreClient/js/popups/AlertPopup.js'),
+	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
+	AlertPopup = require('%PathToCoreWebclientModule%/js/popups/AlertPopup.js'),
 			
 	CCrea = require('modules/%ModuleName%/js/CCrea.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js'),

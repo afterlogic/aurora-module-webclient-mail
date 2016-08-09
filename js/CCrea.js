@@ -4,9 +4,9 @@ var
 	_ = require('underscore'),
 	$ = require('jquery'),
 	
-	Types = require('modules/CoreClient/js/utils/Types.js'),
+	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	
-	Browser = require('modules/CoreClient/js/Browser.js')
+	Browser = require('%PathToCoreWebclientModule%/js/Browser.js')
 ;
 
 /**

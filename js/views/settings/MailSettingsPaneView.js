@@ -4,11 +4,11 @@ var
 	_ = require('underscore'),
 	ko = require('knockout'),
 	
-	Types = require('modules/CoreClient/js/utils/Types.js'),
+	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	
-	Browser = require('modules/CoreClient/js/Browser.js'),
-	ModulesManager = require('modules/CoreClient/js/ModulesManager.js'),
-	UserSettings = require('modules/CoreClient/js/Settings.js'),
+	Browser = require('%PathToCoreWebclientModule%/js/Browser.js'),
+	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
+	UserSettings = require('%PathToCoreWebclientModule%/js/Settings.js'),
 	CAbstractSettingsFormView = ModulesManager.run('SettingsWebclient', 'getAbstractSettingsFormViewClass'),
 	
 	MailUtils = require('modules/%ModuleName%/js/utils/Mail.js'),

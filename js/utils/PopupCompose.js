@@ -1,7 +1,7 @@
 'use strict';
 
 var
-	Popups = require('modules/CoreClient/js/Popups.js'),
+	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
 	
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
 	

@@ -11,8 +11,8 @@ $('body').ready(function () {
 			'MailSensitivityWebclientPlugin': require('modules/MailSensitivityWebclientPlugin/js/manager.js'),
 			'OpenPgpWebclient': require('modules/OpenPgpWebclient/js/manager.js')
 		},
-		ModulesManager = require('modules/CoreClient/js/ModulesManager.js'),
-		App = require('modules/CoreClient/js/App.js')
+		ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
+		App = require('%PathToCoreWebclientModule%/js/App.js')
 	;
 	
 	App.setNewTab();

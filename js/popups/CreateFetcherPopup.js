@@ -4,14 +4,14 @@ var
 	_ = require('underscore'),
 	ko = require('knockout'),
 	
-	TextUtils = require('modules/CoreClient/js/utils/Text.js'),
-	Utils = require('modules/CoreClient/js/utils/Common.js'),
+	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
+	Utils = require('%PathToCoreWebclientModule%/js/utils/Common.js'),
 	
-	Api = require('modules/CoreClient/js/Api.js'),
-	Screens = require('modules/CoreClient/js/Screens.js'),
+	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
+	Screens = require('%PathToCoreWebclientModule%/js/Screens.js'),
 	
-	Popups = require('modules/CoreClient/js/Popups.js'),
-	CAbstractPopup = require('modules/CoreClient/js/popups/CAbstractPopup.js'),
+	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
+	CAbstractPopup = require('%PathToCoreWebclientModule%/js/popups/CAbstractPopup.js'),
 	CreateFolderPopup = require('modules/%ModuleName%/js/popups/CreateFolderPopup.js'),
 	
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),

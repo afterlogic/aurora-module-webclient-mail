@@ -4,21 +4,21 @@ var
 	_ = require('underscore'),
 	ko = require('knockout'),
 	
-	AddressUtils = require('modules/CoreClient/js/utils/Address.js'),
-	TextUtils = require('modules/CoreClient/js/utils/Text.js'),
-	Types = require('modules/CoreClient/js/utils/Types.js'),
-	Utils = require('modules/CoreClient/js/utils/Common.js'),
+	AddressUtils = require('%PathToCoreWebclientModule%/js/utils/Address.js'),
+	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
+	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
+	Utils = require('%PathToCoreWebclientModule%/js/utils/Common.js'),
 	
 	Ajax = null,
-	Api = require('modules/CoreClient/js/Api.js'),
+	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
 	App = null,
-	Browser = require('modules/CoreClient/js/Browser.js'),
-	ModulesManager = require('modules/CoreClient/js/ModulesManager.js'),
-	UserSettings = require('modules/CoreClient/js/Settings.js'),
+	Browser = require('%PathToCoreWebclientModule%/js/Browser.js'),
+	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
+	UserSettings = require('%PathToCoreWebclientModule%/js/Settings.js'),
 	
-	Popups = require('modules/CoreClient/js/Popups.js'),
-	AlertPopup = require('modules/CoreClient/js/popups/AlertPopup.js'),
-	ConfirmPopup = require('modules/CoreClient/js/popups/ConfirmPopup.js'),
+	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
+	AlertPopup = require('%PathToCoreWebclientModule%/js/popups/AlertPopup.js'),
+	ConfirmPopup = require('%PathToCoreWebclientModule%/js/popups/ConfirmPopup.js'),
 	
 	СFiltersModel = require('modules/%ModuleName%/js/models/СFiltersModel.js'),
 	
@@ -139,7 +139,7 @@ CAccountModel.prototype.requireApp = function ()
 {
 	if (App === null)
 	{
-		App = require('modules/CoreClient/js/App.js');
+		App = require('%PathToCoreWebclientModule%/js/App.js');
 	}
 };
 

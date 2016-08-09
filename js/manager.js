@@ -13,7 +13,7 @@ module.exports = function (oAppData, iUserRole, bPublic) {
 		var
 			_ = require('underscore'),
 
-			App = require('modules/CoreClient/js/App.js'),
+			App = require('%PathToCoreWebclientModule%/js/App.js'),
 
 			Settings = require('modules/%ModuleName%/js/Settings.js'),
 			oSettings = _.extend({}, oAppData[Settings.ServerModuleName] || {}, oAppData['%ModuleName%'] || {}),
@@ -29,7 +29,7 @@ module.exports = function (oAppData, iUserRole, bPublic) {
 		{
 			return {
 				start: function (ModulesManager) {
-					var TextUtils = require('modules/CoreClient/js/utils/Text.js');
+					var TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js');
 					ModulesManager.run('AdminPanelWebclient', 'registerAdminPanelTab', [
 						function () { return require('modules/%ModuleName%/js/views/settings/MailSettingsPaneView.js'); },
 						Settings.HashModuleName,
@@ -60,8 +60,8 @@ module.exports = function (oAppData, iUserRole, bPublic) {
 				enableModule: Settings.enableModule,
 				start: function (ModulesManager) {
 					var
-						TextUtils = require('modules/CoreClient/js/utils/Text.js'),
-						Browser = require('modules/CoreClient/js/Browser.js'),
+						TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
+						Browser = require('%PathToCoreWebclientModule%/js/Browser.js'),
 						MailUtils = require('modules/%ModuleName%/js/utils/Mail.js')
 					;
 

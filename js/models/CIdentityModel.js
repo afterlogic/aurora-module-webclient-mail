@@ -3,9 +3,9 @@
 var
 	ko = require('knockout'),
 	
-	AddressUtils = require('modules/CoreClient/js/utils/Address.js'),
-	Types = require('modules/CoreClient/js/utils/Types.js'),
-	Utils = require('modules/CoreClient/js/utils/Common.js')
+	AddressUtils = require('%PathToCoreWebclientModule%/js/utils/Address.js'),
+	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
+	Utils = require('%PathToCoreWebclientModule%/js/utils/Common.js')
 ;
 
 /**
