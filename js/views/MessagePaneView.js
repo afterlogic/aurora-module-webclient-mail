@@ -214,7 +214,7 @@ function CMessagePaneView()
 	this.visibleDownloadAllAttachments = ko.computed(function () {
 		return Settings.AllowZipAttachments && this.notInlineAttachments().length > 1;
 	}, this);
-	this.visibleSaveAttachmentsToFiles = ModulesManager.isModuleIncluded('FilesClient');
+	this.visibleSaveAttachmentsToFiles = ModulesManager.isModuleIncluded('FilesWebclient');
 	this.visibleDownloadAllAttachmentsSeparately = ko.computed(function () {
 		return this.notInlineAttachments().length > 1;
 	}, this);
@@ -955,7 +955,7 @@ CMessagePaneView.prototype.saveAttachmentsToFiles = function ()
 {
 	if (this.currentMessage())
 	{
-		ModulesManager.run('FilesClient', 'saveFilesByHashes', [this.currentMessage().getAttachmentsHashes()]);
+		ModulesManager.run('FilesWebclient', 'saveFilesByHashes', [this.currentMessage().getAttachmentsHashes()]);
 	}
 };
 
@@ -982,7 +982,7 @@ CMessagePaneView.prototype.onHide = function ()
  */
 CMessagePaneView.prototype.onBind = function ($MailViewDom)
 {
-	ModulesManager.run('SessionTimeoutClient', 'registerFunction', [_.bind(function () {
+	ModulesManager.run('SessionTimeoutWeblient', 'registerFunction', [_.bind(function () {
 		if (this.replyText() !== '')
 		{
 			this.saveReplyMessage(false);
@@ -1109,7 +1109,7 @@ CMessagePaneView.prototype.doAfterPopulatingMessage = function ()
 		}
 	}, this));
 	
-	ModulesManager.run('ContactsClient', 'applyContactsCards', [this.$MailViewDom.find('span.address')]);
+	ModulesManager.run('ContactsWebclient', 'applyContactsCards', [this.$MailViewDom.find('span.address')]);
 };
 
 module.exports = new CMessagePaneView();

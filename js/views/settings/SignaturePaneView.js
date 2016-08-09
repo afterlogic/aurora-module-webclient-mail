@@ -12,7 +12,7 @@ var
 	ModulesManager = require('modules/CoreClient/js/ModulesManager.js'),
 	Screens = require('modules/CoreClient/js/Screens.js'),
 	
-	CAbstractSettingsFormView = ModulesManager.run('SettingsClient', 'getAbstractSettingsFormViewClass'),
+	CAbstractSettingsFormView = ModulesManager.run('SettingsWebclient', 'getAbstractSettingsFormViewClass'),
 	
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),

@@ -9,7 +9,7 @@ var
 	Browser = require('modules/CoreClient/js/Browser.js'),
 	ModulesManager = require('modules/CoreClient/js/ModulesManager.js'),
 	UserSettings = require('modules/CoreClient/js/Settings.js'),
-	CAbstractSettingsFormView = ModulesManager.run('SettingsClient', 'getAbstractSettingsFormViewClass'),
+	CAbstractSettingsFormView = ModulesManager.run('SettingsWebclient', 'getAbstractSettingsFormViewClass'),
 	
 	MailUtils = require('modules/%ModuleName%/js/utils/Mail.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js')

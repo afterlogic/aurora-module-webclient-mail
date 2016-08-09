@@ -5,11 +5,11 @@ var $ = require('jquery');
 $('body').ready(function () {
 	var
 		oAvaliableModules = {
-			'MailClient': require('modules/MailClient/js/manager-newtab.js'),
-			'ContactsClient': require('modules/ContactsClient/js/manager-components.js'),
-			'CalendarClient': require('modules/CalendarClient/js/manager-newtab.js'),
-			'MailSensitivityClientPlugin': require('modules/MailSensitivityClientPlugin/js/manager.js'),
-			'OpenPgpClient': require('modules/OpenPgpClient/js/manager.js')
+			'MailWebclient': require('modules/MailWebclient/js/manager-newtab.js'),
+			'ContactsWebclient': require('modules/ContactsWebclient/js/manager-components.js'),
+			'CalendarWebclient': require('modules/CalendarWebclient/js/manager-newtab.js'),
+			'MailSensitivityWebclientPlugin': require('modules/MailSensitivityWebclientPlugin/js/manager.js'),
+			'OpenPgpWebclient': require('modules/OpenPgpWebclient/js/manager.js')
 		},
 		ModulesManager = require('modules/CoreClient/js/ModulesManager.js'),
 		App = require('modules/CoreClient/js/App.js')

@@ -30,13 +30,13 @@ module.exports = function (oAppData, iUserRole, bPublic) {
 			return {
 				start: function (ModulesManager) {
 					var TextUtils = require('modules/CoreClient/js/utils/Text.js');
-					ModulesManager.run('AdminPanelClient', 'registerAdminPanelTab', [
+					ModulesManager.run('AdminPanelWebclient', 'registerAdminPanelTab', [
 						function () { return require('modules/%ModuleName%/js/views/settings/MailSettingsPaneView.js'); },
 						Settings.HashModuleName,
 						TextUtils.i18n('%MODULENAME%/LABEL_SETTINGS_TAB')]);
 				},
 				getAccountList: function () {
-					return require('modules/MailClient/js/AccountList.js');
+					return require('modules/MailWebclient/js/AccountList.js');
 				}
 			};
 		}
@@ -78,8 +78,8 @@ module.exports = function (oAppData, iUserRole, bPublic) {
 
 					if (Settings.enableModule())
 					{
-						ModulesManager.run('SettingsClient', 'registerSettingsTab', [function () { return require('modules/%ModuleName%/js/views/settings/MailSettingsPaneView.js'); }, Settings.HashModuleName, TextUtils.i18n('%MODULENAME%/LABEL_SETTINGS_TAB')]);
-						ModulesManager.run('SettingsClient', 'registerSettingsTab', [function () { return require('modules/%ModuleName%/js/views/settings/AccountsSettingsPaneView.js'); }, Settings.HashModuleName + '-accounts', TextUtils.i18n('%MODULENAME%/LABEL_ACCOUNTS_SETTINGS_TAB')]);
+						ModulesManager.run('SettingsWebclient', 'registerSettingsTab', [function () { return require('modules/%ModuleName%/js/views/settings/MailSettingsPaneView.js'); }, Settings.HashModuleName, TextUtils.i18n('%MODULENAME%/LABEL_SETTINGS_TAB')]);
+						ModulesManager.run('SettingsWebclient', 'registerSettingsTab', [function () { return require('modules/%ModuleName%/js/views/settings/AccountsSettingsPaneView.js'); }, Settings.HashModuleName + '-accounts', TextUtils.i18n('%MODULENAME%/LABEL_ACCOUNTS_SETTINGS_TAB')]);
 					}
 				},
 				getScreens: function () {
@@ -124,7 +124,7 @@ module.exports = function (oAppData, iUserRole, bPublic) {
 					return require('modules/%ModuleName%/js/popups/CreateAccountPopup.js');
 				},
 				getAccountList: function () {
-					return require('modules/MailClient/js/AccountList.js');
+					return require('modules/MailWebclient/js/AccountList.js');
 				}
 			};
 		}

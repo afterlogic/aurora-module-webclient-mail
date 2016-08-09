@@ -236,7 +236,7 @@ CAccountsSettingsPaneView.prototype.addAccount = function ()
  */
 CAccountsSettingsPaneView.prototype.editAccount = function (sHash)
 {
-	ModulesManager.run('SettingsClient', 'setAddHash', [['account', sHash]]);
+	ModulesManager.run('SettingsWebclient', 'setAddHash', [['account', sHash]]);
 };
 
 /**
@@ -254,7 +254,7 @@ CAccountsSettingsPaneView.prototype.addIdentity = function (iAccountId, oEv)
  */
 CAccountsSettingsPaneView.prototype.editIdentity = function (sHash)
 {
-	ModulesManager.run('SettingsClient', 'setAddHash', [['identity', sHash]]);
+	ModulesManager.run('SettingsWebclient', 'setAddHash', [['identity', sHash]]);
 };
 
 /**
@@ -272,7 +272,7 @@ CAccountsSettingsPaneView.prototype.addFetcher = function (iAccountId, oEv)
  */
 CAccountsSettingsPaneView.prototype.editFetcher = function (sHash)
 {
-	ModulesManager.run('SettingsClient', 'setAddHash', [['fetcher', sHash]]);
+	ModulesManager.run('SettingsWebclient', 'setAddHash', [['fetcher', sHash]]);
 };
 
 /**
@@ -310,7 +310,7 @@ CAccountsSettingsPaneView.prototype.changeRoute = function (sTabName)
 	{
 		aAddHash = ['fetcher', this.editedFetcher().hash(), sTabName];
 	}
-	ModulesManager.run('SettingsClient', 'setAddHash', [aAddHash]);
+	ModulesManager.run('SettingsWebclient', 'setAddHash', [aAddHash]);
 };
 
 /**

@@ -25,7 +25,7 @@ var
 	Popups = require('modules/CoreClient/js/Popups.js'),
 	AlertPopup = require('modules/CoreClient/js/popups/AlertPopup.js'),
 	ConfirmPopup = require('modules/CoreClient/js/popups/ConfirmPopup.js'),
-	SelectFilesPopup = ModulesManager.run('FilesClient', 'getSelectFilesPopup'),
+	SelectFilesPopup = ModulesManager.run('FilesWebclient', 'getSelectFilesPopup'),
 	
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
 	SendingUtils = require('modules/%ModuleName%/js/utils/Sending.js'),
@@ -456,8 +456,8 @@ CComposeView.prototype.initInputosaurus = function (koAddrDom, koAddr, koLockAdd
 		$(koAddrDom()).inputosaurus({
 			width: 'auto',
 			parseOnBlur: true,
-			autoCompleteSource: ModulesManager.run('ContactsClient', 'getSuggestionsAutocompleteComposeCallback') || function () {},
-			autoCompleteDeleteItem: ModulesManager.run('ContactsClient', 'getSuggestionsAutocompleteDeleteHandler') || function () {},
+			autoCompleteSource: ModulesManager.run('ContactsWebclient', 'getSuggestionsAutocompleteComposeCallback') || function () {},
+			autoCompleteDeleteItem: ModulesManager.run('ContactsWebclient', 'getSuggestionsAutocompleteDeleteHandler') || function () {},
 			autoCompleteAppendTo: $(koAddrDom()).closest('td'),
 			change : _.bind(function (ev) {
 				koLockAddr(true);
@@ -514,7 +514,7 @@ CComposeView.prototype.onBind = function ()
 		this.minHeightAdjustTrigger(true);
 	}, this);
 	
-	ModulesManager.run('SessionTimeoutClient', 'registerFunction', [_.bind(this.executeSave, this, false)]);
+	ModulesManager.run('SessionTimeoutWeblient', 'registerFunction', [_.bind(this.executeSave, this, false)]);
 
 	this.hotKeysBind();
 };

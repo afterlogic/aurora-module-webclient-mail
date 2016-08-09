@@ -10,6 +10,6 @@
 		"php":">=5.4.0"
 	},
 	"extra": {
-		"installer-name": "MailClient"
+		"installer-name": "MailWebclient"
 	}
 }

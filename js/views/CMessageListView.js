@@ -343,7 +343,7 @@ CMessageListView.prototype.createDatePickerObject = function (oElement)
 		dayNamesMin: TextUtils.i18n('CORECLIENT/LIST_DAY_NAMES_MIN').split(' '),
 		nextText: '',
 		prevText: '',
-		firstDay: Types.pInt(ModulesManager.run('CalendarClient', 'getWeekStartsOn')),
+		firstDay: Types.pInt(ModulesManager.run('CalendarWebclient', 'getWeekStartsOn')),
 		showOn: 'focus',
 		dateFormat: this.dateFormatDatePicker
 	});
