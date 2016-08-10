@@ -123,7 +123,7 @@ CAccountForwardPaneView.prototype.onResponse = function (oResponse, oRequest)
 
 	if (oResponse.Result === false)
 	{
-		Api.showErrorByCode(oResponse, TextUtils.i18n('CORECLIENT/ERROR_SAVING_SETTINGS_FAILED'));
+		Api.showErrorByCode(oResponse, TextUtils.i18n('COREWEBCLIENT/ERROR_SAVING_SETTINGS_FAILED'));
 	}
 	else
 	{

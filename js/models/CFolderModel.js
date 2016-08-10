@@ -912,7 +912,7 @@ CFolderModel.prototype.onGetMessageResponse = function (oResponse, oRequest)
 	{
 		if (bSelected)
 		{
-			Api.showErrorByCode(oResponse, TextUtils.i18n('CORECLIENT/ERROR_UNKNOWN'));
+			Api.showErrorByCode(oResponse, TextUtils.i18n('COREWEBCLIENT/ERROR_UNKNOWN'));
 			Routing.replaceHashWithoutMessageUid(sUid);
 		}
 		

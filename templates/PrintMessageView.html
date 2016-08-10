@@ -60,13 +60,13 @@
 				</tr>
 				<tr data-bind="visible: cc() !== ''">
 					<td class="wm_print_title">
-						<span data-bind="i18n: {'key': 'CORECLIENT/LABEL_CC'}"></span>: 
+						<span data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_CC'}"></span>: 
 					</td>
 					<td class="wm_print_value" data-bind="text: cc" colspan="2"></td>
 				</tr>
 				<tr data-bind="visible: bcc() !== ''">
 					<td class="wm_print_title">
-						<span data-bind="i18n: {'key': 'CORECLIENT/LABEL_BCC'}"></span>: 
+						<span data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_BCC'}"></span>: 
 					</td>
 					<td class="wm_print_value" data-bind="text: bcc" colspan="2"></td>
 				</tr>
@@ -98,7 +98,7 @@
 							<a href="javascript: void(0);" data-bind="text: fileName, 
 							   attr: {'data-hash': 'download-' + hash()}"></a>
 							<span data-bind="visible: visibleViewLink">
-								(<a href="javascript: void(0);" data-bind="i18n: {'key': 'CORECLIENT/ACTION_VIEW_FILE'}, attr: {'data-hash': 'view-' + hash()}"></a>)
+								(<a href="javascript: void(0);" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_VIEW_FILE'}, attr: {'data-hash': 'view-' + hash()}"></a>)
 							</span>
 							<!-- ko if: isMessageType() && messagePart() -->
 								<!-- ko template: {name: '%ModuleName%_PrintMessageView', data: messagePart} --><!-- /ko -->

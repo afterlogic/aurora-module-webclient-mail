@@ -340,7 +340,7 @@ CMessageListView.prototype.createDatePickerObject = function (oElement)
 		showOtherMonths: true,
 		selectOtherMonths: true,
 		monthNames: DateUtils.getMonthNamesArray(),
-		dayNamesMin: TextUtils.i18n('CORECLIENT/LIST_DAY_NAMES_MIN').split(' '),
+		dayNamesMin: TextUtils.i18n('COREWEBCLIENT/LIST_DAY_NAMES_MIN').split(' '),
 		nextText: '',
 		prevText: '',
 		firstDay: Types.pInt(ModulesManager.run('CalendarWebclient', 'getWeekStartsOn')),
@@ -892,7 +892,7 @@ CMessageListView.prototype.onFileUploadComplete = function (sFileUid, bResponseR
 		}
 		else
 		{
-			Screens.showError(TextUtils.i18n('CORECLIENT/ERROR_UPLOAD_FILE'));
+			Screens.showError(TextUtils.i18n('COREWEBCLIENT/ERROR_UPLOAD_FILE'));
 		}
 	}
 };

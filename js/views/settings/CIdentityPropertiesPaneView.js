@@ -151,7 +151,7 @@ CIdentityPropertiesPaneView.prototype.onResponse = function (oResponse, oRequest
 
 		this.disableCheckbox(this.isDefault());
 		
-		Screens.showReport(TextUtils.i18n('CORECLIENT/REPORT_SETTINGS_UPDATE_SUCCESS'));
+		Screens.showReport(TextUtils.i18n('COREWEBCLIENT/REPORT_SETTINGS_UPDATE_SUCCESS'));
 	}
 };
 

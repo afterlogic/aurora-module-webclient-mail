@@ -72,7 +72,7 @@ SendingUtils.send = function (sMethod, oParameters, bShowLoading, fSendMessageRe
 	switch (sMethod)
 	{
 		case 'SendMessage':
-			sLoadingMessage = TextUtils.i18n('CORECLIENT/INFO_SENDING');
+			sLoadingMessage = TextUtils.i18n('COREWEBCLIENT/INFO_SENDING');
 			oParameters.SentFolder = sSentFolder;
 			if (oParameters.DraftUid !== '')
 			{

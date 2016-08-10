@@ -603,7 +603,7 @@ CAccountListModel.prototype.displaySocialWelcome = function ()
 			},
 			'',
 			TextUtils.i18n('%MODULENAME%/ACTION_CONNECT_MAIL'),
-			TextUtils.i18n('CORECLIENT/ACTION_CLOSE')
+			TextUtils.i18n('COREWEBCLIENT/ACTION_CLOSE')
 		]);
 		
 		Storage.setData('SocialWelcomeShowed' + oDefaultAccount.id(), '1');

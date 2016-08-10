@@ -169,7 +169,7 @@ CAccountPropertiesPaneView.prototype.onResponse = function (oResponse, oRequest)
 
 	if (!oResponse.Result)
 	{
-		Api.showErrorByCode(oResponse, TextUtils.i18n('CORECLIENT/ERROR_SAVING_SETTINGS_FAILED'));
+		Api.showErrorByCode(oResponse, TextUtils.i18n('COREWEBCLIENT/ERROR_SAVING_SETTINGS_FAILED'));
 	}
 	else
 	{
@@ -182,7 +182,7 @@ CAccountPropertiesPaneView.prototype.onResponse = function (oResponse, oRequest)
 		if (oAccount)
 		{
 			oAccount.updateExtended(oParameters);
-			Screens.showReport(TextUtils.i18n('CORECLIENT/REPORT_SETTINGS_UPDATE_SUCCESS'));
+			Screens.showReport(TextUtils.i18n('COREWEBCLIENT/REPORT_SETTINGS_UPDATE_SUCCESS'));
 		}
 	}
 };

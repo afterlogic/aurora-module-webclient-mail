@@ -26,7 +26,7 @@
 			</span>
 			<span class="separator"></span>
 			<span class="thread-pin" data-bind="text: threadCount(), visible: threadCountVisible(), click: openThread, css: {'unread': threadUnreadCount() > 0}, customTooltip: threadCountHint"></span>
-			<span class="thread-pin loading" data-bind="i18n: {'key': 'CORECLIENT/INFO_LOADING'}, visible: threadLoadingVisible()"></span>
+			<span class="thread-pin loading" data-bind="i18n: {'key': 'COREWEBCLIENT/INFO_LOADING'}, visible: threadLoadingVisible()"></span>
 			<span class="subject fadeout">
 				<span class="importance" data-bind="visible: importance() === Enums.Importance.High"></span>
 				<span data-bind="text: subjectForDisplay()"></span>
@@ -39,7 +39,7 @@
 <div class="item threaded thread_more_messages" data-bind="css:{'show': threadShowAnimation(), 'deleted': threadHideAnimation()}">
 	<div class="item_content">
 		<span class="link" data-bind="i18n: {'key': '%MODULENAME%/ACTION_LOAD_MORE_MESSAGES'}, click: loadNextMessages, visible: threadNextLoadingLinkVisible()"></span>
-		<span style="color: #999999; font-size: 15px;" data-bind="i18n: {'key': 'CORECLIENT/INFO_LOADING'}, visible: !threadNextLoadingLinkVisible()"></span>
+		<span style="color: #999999; font-size: 15px;" data-bind="i18n: {'key': 'COREWEBCLIENT/INFO_LOADING'}, visible: !threadNextLoadingLinkVisible()"></span>
 	</div>
 </div>
 <!-- /ko -->

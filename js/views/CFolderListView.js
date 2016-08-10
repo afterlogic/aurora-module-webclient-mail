@@ -47,7 +47,7 @@ function CFolderListView()
 
 			this.quotaProc(iProc);
 			this.quotaDesc(-1 < iProc ?
-				TextUtils.i18n('CORECLIENT/INFO_QUOTA', {
+				TextUtils.i18n('COREWEBCLIENT/INFO_QUOTA', {
 					'PROC': iProc,
 					'QUOTA': TextUtils.getFriendlySize(iQuota * 1024)
 				}) : '');

@@ -310,7 +310,7 @@ CAccountFiltersPaneView.prototype.onGetFiltersResponse = function (oResponse, oR
 	}
 	else
 	{
-		Screens.showError(TextUtils.i18n('CORECLIENT/ERROR_UNKNOWN'));
+		Screens.showError(TextUtils.i18n('COREWEBCLIENT/ERROR_UNKNOWN'));
 	}
 };
 
@@ -330,12 +330,12 @@ CAccountFiltersPaneView.prototype.onAccountSieveFiltersUpdateResponse = function
 		}
 		else
 		{
-			Screens.showError(TextUtils.i18n('CORECLIENT/ERROR_SAVING_SETTINGS_FAILED'));
+			Screens.showError(TextUtils.i18n('COREWEBCLIENT/ERROR_SAVING_SETTINGS_FAILED'));
 		}
 	}
 	else
 	{
-		Screens.showError(TextUtils.i18n('CORECLIENT/ERROR_UNKNOWN'));
+		Screens.showError(TextUtils.i18n('COREWEBCLIENT/ERROR_UNKNOWN'));
 	}
 };
 
