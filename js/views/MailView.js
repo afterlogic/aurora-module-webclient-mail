@@ -30,7 +30,7 @@ var
  */
 function CMailView()
 {
-	CAbstractScreenView.call(this);
+	CAbstractScreenView.call(this, '%ModuleName%');
 	
 	this.browserTitle = ko.computed(function () {
 		return AccountList.getEmail() + ' - ' + TextUtils.i18n('%MODULENAME%/HEADING_BROWSER_TAB');

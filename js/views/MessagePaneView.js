@@ -43,7 +43,7 @@ var
  */
 function CMessagePaneView()
 {
-	CAbstractScreenView.call(this);
+	CAbstractScreenView.call(this, '%ModuleName%');
 	
 	this.bNewTab = App.isNewTab();
 	this.isLoading = ko.observable(false);

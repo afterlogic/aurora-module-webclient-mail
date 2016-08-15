@@ -53,7 +53,7 @@ var
  */
 function CComposeView()
 {
-	CAbstractScreenView.call(this);
+	CAbstractScreenView.call(this, '%ModuleName%');
 	
 	this.browserTitle = ko.computed(function () {
 		return AccountList.getEmail() + ' - ' + TextUtils.i18n('%MODULENAME%/HEADING_COMPOSE_BROWSER_TAB');
