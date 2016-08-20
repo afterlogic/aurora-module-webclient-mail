@@ -7,6 +7,7 @@ var
 	AddressUtils = require('%PathToCoreWebclientModule%/js/utils/Address.js'),
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
+	UrlUtils = require('%PathToCoreWebclientModule%/js/utils/Url.js'),
 	Utils = require('%PathToCoreWebclientModule%/js/utils/Common.js'),
 	
 	Ajax = null,
@@ -414,7 +415,7 @@ CAccountModel.prototype.onAccountDeleteResponse = function (oResponse, oRequest)
 		
 		if (this.isDefault())
 		{
-			Utils.Common.clearAndReloadLocation(Browser.ie8AndBelow, true);
+			UrlUtils.clearAndReloadLocation(Browser.ie8AndBelow, true);
 		}
 		else if (typeof this.fAfterRemoveHandler === 'function')
 		{
