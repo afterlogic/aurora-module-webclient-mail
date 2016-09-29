@@ -799,7 +799,7 @@ CHtmlEditorView.prototype.initUploader = function ()
 	if (this.imageUploaderButton() && !this.oJua)
 	{
 		this.oJua = new CJua({
-			'action': '?/Upload/',
+			'action': '?/Api/',
 			'name': 'jua-uploader',
 			'queueSize': 2,
 			'clickElement': this.imageUploaderButton(),
@@ -860,7 +860,7 @@ CHtmlEditorView.prototype.initEditorUploader = function ()
 			}, this);
 
 			this.editorUploader = new CJua({
-				'action': '?/Upload/',
+				'action': '?/Api/',
 				'name': 'jua-uploader',
 				'queueSize': 1,
 				'dragAndDropElement': this.bAllowImageDragAndDrop ? this.uploaderAreaDom() : null,

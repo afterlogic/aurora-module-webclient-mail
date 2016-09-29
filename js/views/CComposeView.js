@@ -1427,7 +1427,7 @@ CComposeView.prototype.initUploader = function ()
 	if (this.composeShown() && this.composeUploaderButton() && this.oJua === null)
 	{
 		this.oJua = new CJua({
-			'action': '?/Upload/',
+			'action': '?/Api/',
 			'name': 'jua-uploader',
 			'queueSize': 2,
 			'clickElement': this.composeUploaderButton(),
