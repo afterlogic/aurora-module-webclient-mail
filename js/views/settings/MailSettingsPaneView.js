@@ -9,7 +9,7 @@ var
 	Browser = require('%PathToCoreWebclientModule%/js/Browser.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 	UserSettings = require('%PathToCoreWebclientModule%/js/Settings.js'),
-	CAbstractSettingsFormView = ModulesManager.run('SettingsWebclient', 'getAbstractSettingsFormViewClass'),
+	CAbstractSettingsFormView = ModulesManager.run('AdminPanelWebclient', 'getAbstractSettingsFormViewClass'),
 	
 	MailUtils = require('modules/%ModuleName%/js/utils/Mail.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js')
