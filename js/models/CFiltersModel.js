@@ -4,13 +4,13 @@ var
 	_ = require('underscore'),
 	ko = require('knockout'),
 	
-	СFilterModel = require('modules/%ModuleName%/js/models/СFilterModel.js')
+	CFilterModel = require('modules/%ModuleName%/js/models/CFilterModel.js')
 ;
 
 /**
  * @constructor
  */
-function СFiltersModel()
+function CFiltersModel()
 {
 	this.iAccountId = 0;
 	this.collection = ko.observableArray([]);
@@ -20,7 +20,7 @@ function СFiltersModel()
  * @param {number} iAccountId
  * @param {Object} oData
  */
-СFiltersModel.prototype.parse = function (iAccountId, oData)
+CFiltersModel.prototype.parse = function (iAccountId, oData)
 {
 	var 
 		iIndex = 0,
@@ -34,11 +34,11 @@ function СFiltersModel()
 	{
 		for (iLen = oData.length; iIndex < iLen; iIndex++)
 		{	
-			oSieveFilter =  new СFilterModel(iAccountId);
+			oSieveFilter =  new CFilterModel(iAccountId);
 			oSieveFilter.parse(oData[iIndex]);
 			this.collection.push(oSieveFilter);
 		}
 	}
 };
 
-module.exports = СFiltersModel;
+module.exports = CFiltersModel;

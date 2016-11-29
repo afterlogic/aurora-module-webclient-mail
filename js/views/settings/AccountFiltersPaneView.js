@@ -17,8 +17,8 @@ var
 	MailCache = require('modules/%ModuleName%/js/Cache.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	
-	СFilterModel = require('modules/%ModuleName%/js/models/СFilterModel.js'),
-	СFiltersModel = require('modules/%ModuleName%/js/models/СFiltersModel.js')
+	CFilterModel = require('modules/%ModuleName%/js/models/CFilterModel.js'),
+	CFiltersModel = require('modules/%ModuleName%/js/models/CFiltersModel.js')
 ;
 
 /**
@@ -206,7 +206,7 @@ CAccountFiltersPaneView.prototype.deleteFilter = function (oFilterToDelete)
 
 CAccountFiltersPaneView.prototype.addFilter = function ()
 {
-	var oSieveFilter =  new СFilterModel(AccountList.editedId());
+	var oSieveFilter =  new CFilterModel(AccountList.editedId());
 	this.collection.push(oSieveFilter);
 };
 
@@ -293,7 +293,7 @@ CAccountFiltersPaneView.prototype.onGetFiltersResponse = function (oResponse, oR
 		oParameters = oRequest.Parameters,
 		iAccountId = Types.pInt(oParameters.AccountID),
 		oAccount = AccountList.getAccount(iAccountId),
-		oSieveFilters = new СFiltersModel()
+		oSieveFilters = new CFiltersModel()
 	;
 	
 	this.loading(false);

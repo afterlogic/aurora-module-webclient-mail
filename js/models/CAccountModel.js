@@ -21,7 +21,7 @@ var
 	AlertPopup = require('%PathToCoreWebclientModule%/js/popups/AlertPopup.js'),
 	ConfirmPopup = require('%PathToCoreWebclientModule%/js/popups/ConfirmPopup.js'),
 	
-	СFiltersModel = require('modules/%ModuleName%/js/models/СFiltersModel.js'),
+	CFiltersModel = require('modules/%ModuleName%/js/models/CFiltersModel.js'),
 	
 	AccountList = null,
 	Cache = null,
@@ -436,7 +436,7 @@ CAccountModel.prototype.requestFilters = function ()
  */
 CAccountModel.prototype.onGetFiltersResponse = function (oResponse, oRequest)
 {
-	var oFilters = new СFiltersModel();
+	var oFilters = new CFiltersModel();
 	if (oResponse.Result)
 	{
 		oFilters.parse(this.id(), oResponse.Result);
