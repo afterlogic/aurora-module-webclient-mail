@@ -50,14 +50,6 @@ _.extendOwn(CAttachmentModel.prototype, CAbstractFileModel.prototype);
 
 CAttachmentModel.prototype.dataObjectName = 'Object/CApiMailAttachment';
 
-/**
- * @returns {CAttachmentModel}
- */
-CAttachmentModel.prototype.getInstance = function ()
-{
-	return new CAttachmentModel();
-};
-
 CAttachmentModel.prototype.getCopy = function ()
 {
 	var oCopy = new CAttachmentModel();
@@ -197,7 +189,7 @@ CAttachmentModel.prototype.viewCommonFile = function ()
 		sUrl = UrlUtils.getAppPath() + this.viewLink()
 	;
 	
-	if (this.visibleViewLink() && this.viewLink().length > 0 && this.viewLink() !== '#')
+	if (this.isVisibleViewLink() && this.viewLink().length > 0 && this.viewLink() !== '#')
 	{
 		sUrl = UrlUtils.getAppPath() + this.viewLink();
 
