@@ -598,7 +598,7 @@ CMessageModel.prototype.showInlinePictures = function (sAppPath)
 		return {
 			CID: oAttachment.cid(),
 			ContentLocation: oAttachment.contentLocation(),
-			ViewLink: oAttachment.viewLink()
+			ViewLink: oAttachment.getViewLink()
 		};
 	});
 	

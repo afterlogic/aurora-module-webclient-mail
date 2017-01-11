@@ -1394,7 +1394,7 @@ CComposeView.prototype.onFileUploadComplete = function (sFileUid, bResponseRecei
 	if (oAttach)
 	{
 		oAttach.onUploadComplete(sFileUid, bResponseReceived, oResult);
-		if (oAttach.type().substr(0, 5) === 'image')
+		if (oAttach.mimeType().substr(0, 5) === 'image')
 		{
 			oAttach.thumb(true);
 			oAttach.getInThumbQueue(sThumbSessionUid);
@@ -1703,7 +1703,7 @@ CComposeView.prototype.getMessageDataForNewTab = function ()
 				'@Object': 'Object/CApiMailAttachment',
 				'FileName': oAttach.fileName(),
 				'TempName': oAttach.tempName(),
-				'MimeType': oAttach.type(),
+				'MimeType': oAttach.mimeType(),
 				'MimePartIndex': oAttach.mimePartIndex(),
 				'EstimatedSize': oAttach.size(),
 				'CID': oAttach.cid(),

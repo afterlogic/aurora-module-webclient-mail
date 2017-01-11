@@ -38,9 +38,9 @@ function CAttachmentModel(iAccountId)
 	CAbstractFileModel.call(this, Settings.ServerModuleName);
 	
 	this.isMessageType = ko.computed(function () {
-		this.type();
+		this.mimeType();
 		this.mimePartIndex();
-		return (this.type() === 'message/rfc822' && this.mimePartIndex() !== '');
+		return (this.mimeType() === 'message/rfc822' && this.mimePartIndex() !== '');
 	}, this);
 	
 	this.accountId(iAccountId);
@@ -65,7 +65,7 @@ CAttachmentModel.prototype.copyProperties = function (oSource)
 	this.tempName(oSource.tempName());
 	this.size(oSource.size());
 	this.hash(oSource.hash());
-	this.type(oSource.type());
+	this.mimeType(oSource.mimeType());
 	this.cid(oSource.cid());
 	this.contentLocation(oSource.contentLocation());
 	this.inline(oSource.inline());
@@ -186,12 +186,13 @@ CAttachmentModel.prototype.viewCommonFile = function ()
 {
 	var
 		oWin = null,
-		sUrl = UrlUtils.getAppPath() + this.viewLink()
+		sViewLink = this.getViewLink(),
+		sUrl = UrlUtils.getAppPath() + sViewLink
 	;
 	
-	if (this.isVisibleViewLink() && this.viewLink().length > 0 && this.viewLink() !== '#')
+	if (this.isVisibleViewLink() && sViewLink.length > 0 && sViewLink !== '#')
 	{
-		sUrl = UrlUtils.getAppPath() + this.viewLink();
+		sUrl = UrlUtils.getAppPath() + sViewLink;
 
 		if (this.iframedView())
 		{
@@ -217,7 +218,7 @@ CAttachmentModel.prototype.fillDataAfterUploadComplete = function (oResult, sFil
 {
 	this.cid(sFileUid);
 	this.tempName(oResult.Result.Attachment.TempName);
-	this.type(oResult.Result.Attachment.MimeType);
+	this.mimeType(oResult.Result.Attachment.MimeType);
 	this.size(oResult.Result.Attachment.Size);
 	this.hash(oResult.Result.Attachment.Hash);
 	this.iframedView(oResult.Result.Attachment.Iframed);
@@ -232,7 +233,7 @@ CAttachmentModel.prototype.parseFromUpload = function (oData)
 {
 	this.fileName(oData.Name.toString());
 	this.tempName(oData.TempName ? oData.TempName.toString() : this.fileName());
-	this.type(oData.MimeType.toString());
+	this.mimeType(oData.MimeType.toString());
 	this.size(Types.pInt(oData.Size));
 
 	this.hash(oData.Hash);
