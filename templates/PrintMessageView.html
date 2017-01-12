@@ -97,7 +97,7 @@
 							<span class="comma">, </span>
 							<a href="javascript: void(0);" data-bind="text: fileName, 
 							   attr: {'data-hash': 'download-' + hash()}"></a>
-							<span data-bind="visible: isVisibleViewLink">
+							<span data-bind="visible: hasAction('view')">
 								(<a href="javascript: void(0);" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_VIEW_FILE'}, attr: {'data-hash': 'view-' + hash()}"></a>)
 							</span>
 							<!-- ko if: isMessageType() && messagePart() -->

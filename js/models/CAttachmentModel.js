@@ -78,11 +78,6 @@ CAttachmentModel.prototype.copyProperties = function (oSource)
 	this.iframedView(oSource.iframedView());
 };
 
-CAttachmentModel.prototype.isVisibleViewLink = function ()
-{
-	return this.uploaded() && !this.uploadError() && (this.isViewMimeType() || this.isMessageType());
-};
-
 /**
  * Parses attachment data from server.
  *
@@ -96,6 +91,11 @@ CAttachmentModel.prototype.additionalParse = function (oData)
 	this.contentLocation(Types.pString(oData.ContentLocation));
 	this.inline(!!oData.IsInline);
 	this.linked(!!oData.IsLinked);
+	
+	if (this.isMessageType())
+	{
+		this.actions.unshift('view');
+	}
 };
 
 /**
@@ -190,7 +190,7 @@ CAttachmentModel.prototype.viewCommonFile = function ()
 		sUrl = UrlUtils.getAppPath() + sViewLink
 	;
 	
-	if (this.isVisibleViewLink() && sViewLink.length > 0 && sViewLink !== '#')
+	if (sViewLink.length > 0 && sViewLink !== '#')
 	{
 		sUrl = UrlUtils.getAppPath() + sViewLink;
 
