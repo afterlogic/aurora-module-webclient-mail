@@ -99,6 +99,25 @@
 		<!-- ko template: {name: sAttachmentsSwitcherViewTemplate} --><!-- /ko -->
 	</div>
 	<div class="panels" data-bind="css: {'has_attachments': hasNotInlineAttachments, 'view_attachments': visibleAttachments}">
+		<div class="panel message_panel">
+			<div class="message" data-bind="customScrollbar: {x: true, y: true, 'reset': displayedMessageUid()}, css: {'has_bodytext': hasBodyText, 'has_attachments': hasNotInlineAttachments}">
+				<div class="message_content scroll-inner" data-bind="hasfocus: contentHasFocus">
+
+					<!-- ko foreach: bodyControllers -->
+						<!-- ko if: $data.ViewTemplate -->
+							<!-- ko template: { name: $data.ViewTemplate, data: $data} --><!-- /ko -->
+						<!-- /ko -->
+					<!-- /ko -->
+
+					<div class="message_body_info" data-bind="visible: visibleNoMessageSelectedText">
+						<div data-bind="i18n: {'key': '%MODULENAME%/INFO_NO_MESSAGE_SELECTED'}"></div>
+						<div class="message_body_secondary_info" data-bind="i18n: {'key': '%MODULENAME%/INFO_SINGLE_DOUBLE_CLICK'}"></div>
+					</div>
+					<div class="message_body_info" data-bind="visible: isLoading, i18n: {'key': 'COREWEBCLIENT/INFO_LOADING'}"></div>
+					<div class="message_body html" data-bind="initDom: domTextBody, attr: {'dir': rtlMessage() ? 'rtl' : 'ltr'}"></div>
+				</div>
+			</div>
+		</div>
 	
 		<div class="panel attachments_panel" data-bind="visible: hasNotInlineAttachments, customScrollbar: {x: false, 'reset': currentMessage()}">
 			<div class="scroll-inner">
@@ -126,25 +145,6 @@
 						</div>
 					</div>
 					<div data-bind="template: {name: 'CoreWebclient_FileView', foreach: notInlineAttachments}"></div>
-				</div>
-			</div>
-		</div>
-		<div class="panel message_panel">
-			<div class="message" data-bind="customScrollbar: {x: true, y: true, 'reset': displayedMessageUid()}, css: {'has_bodytext': hasBodyText, 'has_attachments': hasNotInlineAttachments}">
-				<div class="message_content scroll-inner" data-bind="hasfocus: contentHasFocus">
-
-					<!-- ko foreach: bodyControllers -->
-						<!-- ko if: $data.ViewTemplate -->
-							<!-- ko template: { name: $data.ViewTemplate, data: $data} --><!-- /ko -->
-						<!-- /ko -->
-					<!-- /ko -->
-
-					<div class="message_body_info" data-bind="visible: visibleNoMessageSelectedText">
-						<div data-bind="i18n: {'key': '%MODULENAME%/INFO_NO_MESSAGE_SELECTED'}"></div>
-						<div class="message_body_secondary_info" data-bind="i18n: {'key': '%MODULENAME%/INFO_SINGLE_DOUBLE_CLICK'}"></div>
-					</div>
-					<div class="message_body_info" data-bind="visible: isLoading, i18n: {'key': 'COREWEBCLIENT/INFO_LOADING'}"></div>
-					<div class="message_body html" data-bind="initDom: domTextBody, attr: {'dir': rtlMessage() ? 'rtl' : 'ltr'}"></div>
 				</div>
 			</div>
 		</div>
