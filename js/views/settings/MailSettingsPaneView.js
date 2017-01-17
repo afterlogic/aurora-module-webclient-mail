@@ -26,9 +26,9 @@ function CMailSettingsPaneView()
 	this.bAllowThreads = Settings.AllowThreads;
 	this.bAllowMailto = Settings.AllowAppRegisterMailto && (Browser.firefox || Browser.chrome);
 	
-	this.messagesPerPageValues = ko.observableArray(Types.getAdaptedPerPageList(Settings.MailsPerPage));
+	this.mailsPerPageValues = ko.observableArray(Types.getAdaptedPerPageList(Settings.MailsPerPage));
 	
-	this.messagesPerPage = ko.observable(Settings.MailsPerPage);
+	this.mailsPerPage = ko.observable(Settings.MailsPerPage);
 	this.useThreads = ko.observable(Settings.useThreads());
 	this.saveRepliesToCurrFolder = ko.observable(Settings.SaveRepliesToCurrFolder);
 	this.allowChangeInputDirection = ko.observable(Settings.AllowChangeInputDirection);
@@ -46,7 +46,7 @@ CMailSettingsPaneView.prototype.registerMailto = function ()
 CMailSettingsPaneView.prototype.getCurrentValues = function ()
 {
 	return [
-		this.messagesPerPage(),
+		this.mailsPerPage(),
 		this.useThreads(),
 		this.saveRepliesToCurrFolder(),
 		this.allowChangeInputDirection()
@@ -55,7 +55,7 @@ CMailSettingsPaneView.prototype.getCurrentValues = function ()
 
 CMailSettingsPaneView.prototype.revertGlobalValues = function ()
 {
-	this.messagesPerPage(Settings.MailsPerPage);
+	this.mailsPerPage(Settings.MailsPerPage);
 	this.useThreads(Settings.useThreads());
 	this.saveRepliesToCurrFolder(Settings.SaveRepliesToCurrFolder);
 	this.allowChangeInputDirection(Settings.AllowChangeInputDirection);
@@ -64,7 +64,7 @@ CMailSettingsPaneView.prototype.revertGlobalValues = function ()
 CMailSettingsPaneView.prototype.getParametersForSave = function ()
 {
 	return {
-		'MessagesPerPage': this.messagesPerPage(),
+		'MailsPerPage': this.mailsPerPage(),
 		'UseThreads': this.useThreads(),
 		'SaveRepliesToCurrFolder': this.saveRepliesToCurrFolder(),
 		'AllowChangeInputDirection': this.allowChangeInputDirection()
@@ -73,7 +73,7 @@ CMailSettingsPaneView.prototype.getParametersForSave = function ()
 
 CMailSettingsPaneView.prototype.applySavedValues = function (oParameters)
 {
-	Settings.update(oParameters.MessagesPerPage, oParameters.UseThreads, oParameters.SaveRepliesToCurrFolder, oParameters.AllowChangeInputDirection);
+	Settings.update(oParameters.MailsPerPage, oParameters.UseThreads, oParameters.SaveRepliesToCurrFolder, oParameters.AllowChangeInputDirection);
 };
 
 module.exports = new CMailSettingsPaneView();

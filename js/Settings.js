@@ -13,7 +13,7 @@ module.exports = {
 	
 	AllowAddNewAccounts: false,
 	AllowAppRegisterMailto: false,
-	AllowAutosaveInDrafts: true, // ??? changes in OpenPgp
+	AllowAutosaveInDrafts: true,
 	AllowChangeEmailSettings: true,
 	AllowChangeInputDirection: true,
 	AllowExpandFolders: false,
@@ -23,7 +23,7 @@ module.exports = {
 	AllowSaveMessageAsPdf: false,
 	AllowThreads: true,
 	AllowZipAttachments: false,
-	AutoSave: true, // ??? uses in OpenPgp
+	AutoSave: true,
 	AutoSaveIntervalSeconds: 60,
 	AutosignOutgoingEmails: false,
 	ComposeToolbarOrder: ['back', 'send', 'save', 'importance', 'MailSensitivity', 'confirmation', 'OpenPgp'],
@@ -40,20 +40,20 @@ module.exports = {
 		if (oAppDataSection)
 		{
 			this.enableModule(Types.isNonEmptyArray(oAppDataSection.Accounts));
-			this.AllowAddNewAccounts = !!oAppDataSection.AllowUsersAddNewAccounts;
+			this.AllowAddNewAccounts = !!oAppDataSection.AllowAddNewAccounts;
 			this.AllowAppRegisterMailto = !!oAppDataSection.AllowAppRegisterMailto;
-			this.AllowAutosaveInDrafts = !!oAppDataSection.AllowAutosaveInDrafts; // ??? changes in OpenPgp
-			this.AllowChangeEmailSettings = !!oAppDataSection.AllowUsersChangeEmailSettings;
+			this.AllowAutosaveInDrafts = !!oAppDataSection.AllowAutosaveInDrafts;
+			this.AllowChangeEmailSettings = !!oAppDataSection.AllowChangeEmailSettings;
 			this.AllowChangeInputDirection = !!oAppDataSection.AllowChangeInputDirection;
-			this.AllowExpandFolders = !!oAppDataSection.MailExpandFolders;
-			this.AllowFetchers = !!oAppDataSection.AllowFetcher;
+			this.AllowExpandFolders = !!oAppDataSection.AllowExpandFolders;
+			this.AllowFetchers = !!oAppDataSection.AllowFetchers;
 			this.AllowIdentities = !!oAppDataSection.AllowIdentities;
 			this.AllowInsertImage = !!oAppDataSection.AllowInsertImage;
-			this.AllowSaveMessageAsPdf = !!oAppDataSection.AllowSaveAsPdf;
-			this.AllowThreads = !!oAppDataSection.ThreadsEnabled;
-			this.AllowZipAttachments = !!oAppDataSection.ZipAttachments;
-			this.AutoSave = !!oAppDataSection.AutoSave; // ??? uses in OpenPgp
-			this.AutoSaveIntervalSeconds = oAppDataSection.AutoSaveIntervalSeconds;
+			this.AllowSaveMessageAsPdf = !!oAppDataSection.AllowSaveMessageAsPdf;
+			this.AllowThreads = !!oAppDataSection.AllowThreads;
+			this.AllowZipAttachments = !!oAppDataSection.AllowZipAttachments;
+			this.AutoSave = !!oAppDataSection.AutoSave;
+			this.AutoSaveIntervalSeconds = Types.pInt(oAppDataSection.AutoSaveIntervalSeconds);
 			this.AutosignOutgoingEmails = !!oAppDataSection.AutosignOutgoingEmails;
 			this.ComposeToolbarOrder = Types.isNonEmptyArray(oAppDataSection.ComposeToolbarOrder) ? oAppDataSection.ComposeToolbarOrder : [];
 			this.DefaultFontName = Types.pString(oAppDataSection.DefaultFontName) || this.DefaultFontName;
@@ -61,7 +61,7 @@ module.exports = {
 			this.ImageUploadSizeLimit = Types.pInt(oAppDataSection.ImageUploadSizeLimit);
 			this.JoinReplyPrefixes = !!oAppDataSection.JoinReplyPrefixes;
 			this.MailsPerPage = Types.pInt(oAppDataSection.MailsPerPage);
-			this.MaxMessagesBodiesSizeToPrefetch = oAppDataSection.AutoSaveIntervalSeconds;
+			this.MaxMessagesBodiesSizeToPrefetch = Types.pInt(oAppDataSection.MaxMessagesBodiesSizeToPrefetch);
 			this.SaveRepliesToCurrFolder = !!oAppDataSection.SaveRepliesToCurrFolder;
 			this.useThreads(!!oAppDataSection.UseThreads);
 		}
