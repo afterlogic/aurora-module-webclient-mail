@@ -332,20 +332,24 @@ function CComposeView()
 		
 		this.oHtmlEditor.disabled(bDisableBodyEdit);
 	}, this);
-	this.iAutosaveInterval = -1;
-	ko.computed(function () {
-		var bAllowAutosave = Settings.AllowAutosaveInDrafts && this.composeShown() && !this.sending() && !this.saving();
-		_.each(this.toolbarControllers(), function (oController) {
-			bAllowAutosave = bAllowAutosave && !(!!oController.disableAutosave && oController.disableAutosave());
-		});
-		
-		window.clearInterval(this.iAutosaveInterval);
-		
-		if (bAllowAutosave)
-		{
-			this.iAutosaveInterval = window.setInterval(_.bind(this.executeSave, this, true), Settings.AutoSaveIntervalSeconds * 1000);
-		}
-	}, this);
+	
+	if (Settings.AllowAutosaveInDrafts && Settings.AutoSaveIntervalSeconds > 0)
+	{
+		this.iAutosaveInterval = -1;
+		ko.computed(function () {
+			var bAllowAutosave = this.composeShown() && !this.sending() && !this.saving();
+			_.each(this.toolbarControllers(), function (oController) {
+				bAllowAutosave = bAllowAutosave && !(!!oController.disableAutosave && oController.disableAutosave());
+			});
+
+			window.clearInterval(this.iAutosaveInterval);
+
+			if (bAllowAutosave)
+			{
+				this.iAutosaveInterval = window.setInterval(_.bind(this.executeSave, this, true), Settings.AutoSaveIntervalSeconds * 1000);
+			}
+		}, this);
+	}
 
 	this.backToListCommand = Utils.createCommand(this, this.executeBackToList);
 	this.sendCommand = Utils.createCommand(this, this.executeSend, this.isEnableSending);
