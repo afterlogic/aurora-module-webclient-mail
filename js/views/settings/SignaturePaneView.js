@@ -61,7 +61,6 @@ CSignaturePaneView.prototype.show = function (oFetcherOrIdentity)
 
 CSignaturePaneView.prototype.init = function ()
 {
-	this.oHtmlEditor.removeCrea();
 	this.oHtmlEditor.initCrea(this.signature(), false, '');
 	this.oHtmlEditor.setActivitySource(this.useSignatureRadio);
 	this.oHtmlEditor.resize();
