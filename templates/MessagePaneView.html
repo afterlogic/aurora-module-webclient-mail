@@ -1,6 +1,6 @@
 <!-- ko template: {name: sToolbarMobileViewTemplate} --><!-- /ko -->
 
-<div class="panel_center" data-bind="heightAdjust: {'elements': [domMessageHeader, domQuickReply], 'triggers': [detailsVisible(), currentMessage(), replyPaneVisible(), replyTextFocusThrottled()]}">
+<div class="panel_top">
 	<div class="message_header" data-bind="initDom: domMessageHeader, visible: isCurrentMessage, event: {'dblclick': resizeDblClick}">
 		<span data-bind="click: switchDetailsVisibility, css: { 'compressed': !detailsVisible() }" class="table-compressor">
 			<span class="arrow" data-bind="customTooltip: detailsTooltip"></span>
@@ -98,6 +98,9 @@
 		
 		<!-- ko template: {name: sAttachmentsSwitcherViewTemplate} --><!-- /ko -->
 	</div>
+</div>
+<div class="panel_center">
+	
 	<div class="panels" data-bind="css: {'has_attachments': hasNotInlineAttachments, 'view_attachments': visibleAttachments}">
 		<div class="panel message_panel">
 			<div class="message" data-bind="customScrollbar: {x: true, y: true, 'reset': displayedMessageUid()}, css: {'has_bodytext': hasBodyText, 'has_attachments': hasNotInlineAttachments}">
@@ -149,7 +152,8 @@
 			</div>
 		</div>
 	</div>
-	
+</div>
+<div class="panel_bottom">
 	<!-- ko template: {name: sQuickReplyViewTemplate} --><!-- /ko -->
 </div>
 

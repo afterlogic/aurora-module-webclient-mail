@@ -5,14 +5,6 @@
 .panel.folders_panel  {
 	width: 15%;
 	
-	.middle_bar {
-		.resize-compensation-bottom(30px);
-		
-		&.quota_visible {
-			.resize-compensation-bottom(47px);
-		}
-	}
-	
 	.panel_bottom {
 		background: none;
 		border: 0px;
@@ -33,10 +25,6 @@
 }
 
 .messages_panel {
-	//.middle_bar {
-	//	.resize-compensation-top(39px);
-	//	.resize-compensation-bottom(47px);
-	//}
 
 	.items_list {
 		@import "../common/flag.less";
@@ -198,12 +186,14 @@
 }
 
 .message_viewer {
+	.panel_top,
+	.panel_bottom {
+		padding: 0px;
+	}
 	.panel_center {
-		.box-sizing;
-		//.resize-compensation-top(165px);/* header + quick reply */
-
-		background: none;
-		width: 100%;
+		//.box-sizing;
+		//background: none;
+		overflow: auto;
 	}
 	
 	.newtab & {
@@ -239,7 +229,6 @@
 	
 	.message_header {
 		background: #ffffff;
-		border-bottom: 1px solid #e2e2e2;
 		color: #4d4d4d;
 		padding-bottom: 6px;
 		position: relative;
