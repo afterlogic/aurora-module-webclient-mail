@@ -807,7 +807,7 @@ CHtmlEditorView.prototype.initUploader = function ()
 				'Method': 'UploadAttachment',
 				'Parameters':  function () {
 					return JSON.stringify({
-						'AccountID': App.currentAccountId()
+						'AccountID': MailCache.currentAccountId()
 					});
 				}
 			}, App.getCommonRequestParameters())
@@ -867,7 +867,7 @@ CHtmlEditorView.prototype.initEditorUploader = function ()
 					'Method': 'UploadAttachment',
 					'Parameters':  function () {
 						return JSON.stringify({
-							'AccountID': App.currentAccountId()
+							'AccountID': MailCache.currentAccountId()
 						});
 					}
 				}, App.getCommonRequestParameters())

@@ -272,11 +272,10 @@ function CMessageListView(fOpenMessageInNewWindowBinded)
 			this.firstCompleteCollection(false);
 		}
 	}, this);
-	this.currentAccountId = AccountList.currentId;
 	this.listChanged = ko.computed(function () {
 		return [
 			this.firstCompleteCollection(),
-			this.currentAccountId(),
+			MailCache.currentAccountId(),
 			this.folderFullName(),
 			this.filters(),
 			this.search(),
@@ -852,7 +851,7 @@ CMessageListView.prototype.initUploader = function ()
 				'Method': 'UploadMessage',
 				'Parameters':  function () {
 					return JSON.stringify({
-						'AccountID': App.currentAccountId(),
+						'AccountID': MailCache.currentAccountId(),
 						'Folder': self.folderFullName()
 					});
 				}
