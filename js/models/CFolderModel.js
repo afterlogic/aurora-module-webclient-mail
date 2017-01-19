@@ -11,6 +11,7 @@ var
 	
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
 	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
+	App = require('%PathToCoreWebclientModule%/js/App.js'),
 	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
 	Storage = require('%PathToCoreWebclientModule%/js/Storage.js'),
 	
@@ -1124,6 +1125,83 @@ CFolderModel.prototype.executeUnseenFilter = function ()
 	}
 	
 	return true;
+};
+
+CFolderModel.prototype.onDeleteClick = function ()
+{
+	var
+		sWarning = TextUtils.i18n('%MODULENAME%/CONFIRM_DELETE_FOLDER'),
+		fCallBack = _.bind(this.deleteAfterConfirm, this)
+	;
+	
+	if (this.canDelete())
+	{
+		Popups.showPopup(ConfirmPopup, [sWarning, fCallBack]);
+	}
+	else
+	{
+		App.broadcastEvent('%ModuleName%::AttemptDeleteNonemptyFolder');
+	}
+};
+
+/**
+ * @param {boolean} bOkAnswer
+ */
+CFolderModel.prototype.deleteAfterConfirm = function (bOkAnswer)
+{
+	if (bOkAnswer)
+	{
+		var
+			oFolderList = MailCache.editedFolderList(),
+			sFolderFullName = this.fullName(),
+			fRemoveFolder = function (oFolder) {
+				if (sFolderFullName === oFolder.fullName())
+				{
+					return true;
+				}
+				oFolder.subfolders.remove(fRemoveFolder);
+				return false;
+			}
+		;
+
+		oFolderList.collection.remove(fRemoveFolder);
+
+		Ajax.send('DeleteFolder', {
+			'AccountID': AccountList.editedId(),
+			'Folder': this.fullName()
+		}, this.onResponseFolderChanges, this);
+	}
+};
+
+CFolderModel.prototype.onSubscribeClick = function ()
+{
+	if (this.canSubscribe())
+	{
+		var
+			oParameters = {
+				'AccountID': AccountList.editedId(),
+				'Folder': this.fullName(),
+				'SetAction': !this.subscribed()
+			}
+		;
+
+		this.subscribed(!this.subscribed());
+		
+		Ajax.send('SubscribeFolder', oParameters, this.onResponseChanges, this);
+	}
+};
+
+/**
+ * @param {Object} oResponse
+ * @param {Object} oRequest
+ */
+CFolderModel.prototype.onResponseChanges = function (oResponse, oRequest)
+{
+	if (!oResponse.Result)
+	{
+		Api.showErrorByCode(oResponse, TextUtils.i18n('SETTINGS/ERROR_SETTINGS_SAVING_FAILED'));
+		MailCache.getFolderList(AccountList.editedId());
+	}
 };
 
 module.exports = CFolderModel;

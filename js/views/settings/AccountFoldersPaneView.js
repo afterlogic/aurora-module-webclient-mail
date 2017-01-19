@@ -50,6 +50,10 @@ function CAccountFoldersPaneView()
 		return oAccount ? !App.isMobile() && !oAccount.extensionExists('DisableFoldersManualSort') : false;
 	}, this);
 	
+	App.subscribeEvent('%ModuleName%::AttemptDeleteNonemptyFolder', _.bind(function () {
+		this.highlighted(true);
+	}, this));
+	
 	App.broadcastEvent('%ModuleName%::ConstructView::after', {'Name': 'CAccountFoldersPaneView', 'View': this});
 }
 
@@ -110,52 +114,6 @@ CAccountFoldersPaneView.prototype.addNewFolder = function ()
 CAccountFoldersPaneView.prototype.setSystemFolders = function ()
 {
 	Popups.showPopup(SetSystemFoldersPopup);
-};
-
-/**
- * @param {Object} oFolder
- */
-CAccountFoldersPaneView.prototype.onSubscribeFolderClick = function (oFolder)
-{
-	var
-		oParameters = {
-			'AccountID': AccountList.editedId(),
-			'Folder': oFolder.fullName(),
-			'SetAction': oFolder.subscribed() ? 0 : 1
-		}
-	;
-
-	if (oFolder && oFolder.canSubscribe())
-	{
-		oFolder.subscribed(!oFolder.subscribed());
-		Ajax.send('SubscribeFolder', oParameters, this.onResponseFolderChanges, this);
-	}
-};
-
-/**
- * @param {Object} oFolder
- */
-CAccountFoldersPaneView.prototype.onDeleteFolderClick = function (oFolder)
-{
-	var
-		sWarning = TextUtils.i18n('%MODULENAME%/CONFIRM_DELETE_FOLDER'),
-		oFolderList = MailCache.editedFolderList(),
-		fCallBack = _.bind(oFolderList.deleteFolder, oFolderList, oFolder)
-	;
-	
-	if (oFolder && oFolder.canDelete())
-	{
-		Popups.showPopup(ConfirmPopup, [sWarning, fCallBack]);
-	}
-	else
-	{
-		this.highlighted(true);
-	}
-};
-
-CAccountFoldersPaneView.prototype.onResponseFolderChanges = function ()
-{
-	//todo
 };
 
 module.exports = new CAccountFoldersPaneView();

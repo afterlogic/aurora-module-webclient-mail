@@ -146,7 +146,7 @@ function CMailCache()
 	
 	this.waitForUnseenMessages = ko.observable(true);
 	
-	this.iSetMessagesSeenCount = 0;	
+	this.iSetMessagesSeenCount = 0;
 }
 
 CMailCache.prototype.requirePrefetcher = function ()
@@ -191,6 +191,10 @@ CMailCache.prototype.init = function ()
 		}
 		
 		this.initPrevNextSubscribes();
+	}
+	else
+	{
+		this.currentAccountId.valueHasMutated();
 	}
 };
 

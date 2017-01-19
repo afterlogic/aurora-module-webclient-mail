@@ -431,23 +431,4 @@ CFolderListModel.prototype.getOptions = function (sFirstItem, bEnableSystem, bHi
 	return aCollection;
 };
 
-/**
- * @param {Object} oFolderToDelete
- */
-CFolderListModel.prototype.deleteFolder = function (oFolderToDelete)
-{
-	var
-		fRemoveFolder = function (oFolder) {
-			if (oFolderToDelete && oFolderToDelete.fullName() === oFolder.fullName())
-			{
-				return true;
-			}
-			oFolder.subfolders.remove(fRemoveFolder);
-			return false;
-		}
-	;
-
-	this.collection.remove(fRemoveFolder);
-};
-
 module.exports = CFolderListModel;
