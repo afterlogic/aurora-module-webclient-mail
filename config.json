@@ -1,1 +1,6 @@
-[]
+{
+    "Disabled": [
+		false,
+		"bool"
+	]
+}
