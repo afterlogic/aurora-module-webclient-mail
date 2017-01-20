@@ -11,9 +11,8 @@
 				</span>
 			</div>
 
-			<div class="panels" data-bind="splitter: {name: 'compose_attachments', sizeRight: 250, minLeft: 645, minRight: 250, resizeToWidth: true}, initDom: splitterDom">
+			<div class="panels" data-bind="splitterFlex: {name: 'compose_attachments', sizes: [80, 20]}, initDom: splitterDom">
 				<div class="panel message_panel">
-					<div class="resize_handler"></div>
 					<div class="panel_content">
 						<div class="middle_bar" data-bind="heightAdjust: {'location': 'bottom', 'delay': '0', 'elements': [messageFields, bottomPanel], 'triggers': [visibleBcc(), visibleCc(), toAddr(), bccAddr(), notInlineAttachments(), senderList(), headersCompressed()]}">
 							<div class="panel_top" data-bind="initDom: messageFields, minHeightAdjust: {'adjustElement': jqContainers, 'minHeight': 450, 'trigger': minHeightAdjustTrigger(), 'removeTrigger': minHeightRemoveTrigger()}">
