@@ -8,13 +8,13 @@ var
 	Utils = require('%PathToCoreWebclientModule%/js/utils/Common.js'),
 	
 	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
-	UserSettings = require('%PathToCoreWebclientModule%/js/Settings.js'),
 	
 	CAbstractPopup = require('%PathToCoreWebclientModule%/js/popups/CAbstractPopup.js'),
 	
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
-	MailCache = require('modules/%ModuleName%/js/Cache.js')
+	MailCache = require('modules/%ModuleName%/js/Cache.js'),
+	Settings = require('modules/%ModuleName%/js/Settings.js')
 ;
 
 /**
@@ -40,7 +40,7 @@ function CSetSystemFoldersPopup()
 			oAccount = AccountList.getEdited(),
 			bAllowSpamFolderExtension = oAccount.extensionExists('AllowSpamFolderExtension')
 		;
-		return bAllowSpamFolderExtension && !UserSettings.IsMailsuite;
+		return bAllowSpamFolderExtension && !Settings.IsMailsuite;
 	}, this);
 }
 

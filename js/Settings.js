@@ -30,6 +30,7 @@ module.exports = {
 	DefaultFontName: 'Tahoma',
 	DefaultFontSize: 3,
 	ImageUploadSizeLimit: 0,
+	IsMailsuite: false,
 	JoinReplyPrefixes: true,
 	MailsPerPage: 20,
 	MaxMessagesBodiesSizeToPrefetch: 50000,
