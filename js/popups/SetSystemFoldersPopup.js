@@ -38,7 +38,7 @@ function CSetSystemFoldersPopup()
 	this.allowSpamFolderEditing = ko.computed(function () {
 		var
 			oAccount = AccountList.getEdited(),
-			bAllowSpamFolderExtension = oAccount.extensionExists('AllowSpamFolderExtension')
+			bAllowSpamFolderExtension = !!oAccount && oAccount.extensionExists('AllowSpamFolderExtension')
 		;
 		return bAllowSpamFolderExtension && !Settings.IsMailsuite;
 	}, this);

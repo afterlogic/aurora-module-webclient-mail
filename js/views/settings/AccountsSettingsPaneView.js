@@ -67,7 +67,7 @@ function CAccountsSettingsPaneView()
 	this.allowForward = ko.observable(false);
 	this.allowAutoresponder = ko.observable(false);
 	this.allowFilters = ko.observable(false);
-	this.allowSignature = ko.observable(!Settings.AllowIdentities);
+	this.allowSignature = ko.observable(!Settings.AllowIdentities && AccountList.hasAccount());
 	
 	this.aAccountTabs = [
 		{

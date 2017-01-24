@@ -12,6 +12,7 @@ var
 	
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
+	CAccountModel = require('modules/%ModuleName%/js/models/CAccountModel.js'),
 	
 	CServerPropertiesView = require('modules/%ModuleName%/js/views/CServerPropertiesView.js')
 ;
@@ -145,7 +146,7 @@ CCreateAccountPopup.prototype.onSecondSaveClick = function ()
 	{
 		var
 			oDefaultAccount = AccountList.getDefault(),
-			bConfigureMail = this.isConnectToMailType() || !oDefaultAccount.allowMail() && oDefaultAccount.email() === this.email(),
+			bConfigureMail = this.isConnectToMailType() || oDefaultAccount && !oDefaultAccount.allowMail() && oDefaultAccount.email() === this.email(),
 			oParameters = {
 				'AccountID': this.defaultAccountId(),
 				'FriendlyName': this.friendlyName(),
@@ -232,14 +233,15 @@ CCreateAccountPopup.prototype.onAccountCreateResponse = function (oResponse, oRe
 	{
 		var
 			iAccountId = Types.pInt(oResponse.Result.IdAccount),
-			oAccount = AccountList.getAccount(iAccountId) || new CAccountModel(false)
+			oAccount = AccountList.getAccount(iAccountId) || new CAccountModel(false),
+			oParameters = oRequest.Parameters
 		;
 		
-		oAccount.init(iAccountId, oRequest.Email, oRequest.FriendlyName);
-		oAccount.updateExtended(oRequest);
+		oAccount.init(iAccountId, oParameters.Email, oParameters.FriendlyName);
+		oAccount.updateExtended(oParameters);
 		oAccount.setExtensions(oResponse.Result.Extensions);
 		
-		if (oRequest.Action === 'AccountConfigureMail')
+		if (oRequest.Method === 'AccountConfigureMail')
 		{
 			oAccount.allowMailAfterConfiguring();
 			AccountList.collection.valueHasMutated();

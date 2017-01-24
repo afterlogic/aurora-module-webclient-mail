@@ -2,9 +2,10 @@
 
 module.exports = function (oAppData) {
 	require('modules/%ModuleName%/js/enums.js');
-
+	
 	var
 		_ = require('underscore'),
+		ko = require('knockout'),
 
 		App = require('%PathToCoreWebclientModule%/js/App.js'),
 
@@ -14,14 +15,15 @@ module.exports = function (oAppData) {
 		bAdminUser = App.getUserRole() === Enums.UserRole.SuperAdmin,
 		bNormalUser = App.getUserRole() === Enums.UserRole.NormalUser,
 
+		AccountList = null,
 		Cache = null,
 		ComposeView = null,
 
 		oScreens = {}
 	;
-
+	
 	Settings.init(oSettings);
-
+	
 	if (App.isNewTab() && bNormalUser)
 	{
 		var GetComposeView = function() {
@@ -35,6 +37,8 @@ module.exports = function (oAppData) {
 		
 		Cache = require('modules/%ModuleName%/js/Cache.js');
 		Cache.init();
+		AccountList = require('modules/MailWebclient/js/AccountList.js');
+		AccountList.displaySocialWelcome();
 		
 		return {
 			start: function () {
@@ -99,6 +103,8 @@ module.exports = function (oAppData) {
 	{
 		Cache = require('modules/%ModuleName%/js/Cache.js');
 		Cache.init();
+		AccountList = require('modules/MailWebclient/js/AccountList.js');
+		AccountList.displaySocialWelcome();
 
 		oScreens[Settings.HashModuleName] = function () {
 			return require('modules/%ModuleName%/js/views/MailView.js');
@@ -112,7 +118,7 @@ module.exports = function (oAppData) {
 		}
 
 		return {
-			enableModule: Settings.enableModule,
+			enableModule: ko.observable(Settings.AllowAddNewAccounts || AccountList.hasAccount()),
 			start: function (ModulesManager) {
 				var
 					TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
@@ -131,7 +137,7 @@ module.exports = function (oAppData) {
 					MailUtils.registerMailto(Browser.firefox);
 				}
 
-				if (Settings.enableModule())
+				if (Settings.AllowAddNewAccounts || AccountList.hasAccount())
 				{
 					ModulesManager.run('SettingsWebclient', 'registerSettingsTab', [function () { return require('modules/%ModuleName%/js/views/settings/MailSettingsPaneView.js'); }, Settings.HashModuleName, TextUtils.i18n('%MODULENAME%/LABEL_SETTINGS_TAB')]);
 					ModulesManager.run('SettingsWebclient', 'registerSettingsTab', [function () { return require('modules/%ModuleName%/js/views/settings/AccountsSettingsPaneView.js'); }, Settings.HashModuleName + '-accounts', TextUtils.i18n('%MODULENAME%/LABEL_ACCOUNTS_SETTINGS_TAB')]);
@@ -172,14 +178,13 @@ module.exports = function (oAppData) {
 				return _.bind(Cache.searchMessagesInCurrentFolder, Cache);
 			},
 			getAllAccountsFullEmails: function () {
-				var AccountList = require('modules/%ModuleName%/js/AccountList.js');
 				return AccountList.getAllFullEmails();
 			},
 			getCreateAccountPopup: function () {
 				return require('modules/%ModuleName%/js/popups/CreateAccountPopup.js');
 			},
 			getAccountList: function () {
-				return require('modules/MailWebclient/js/AccountList.js');
+				return AccountList;
 			}
 		};
 	}

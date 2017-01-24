@@ -27,7 +27,8 @@ function CHeaderItemView()
 	this.accounts = AccountList.collection;
 	
 	this.linkText = ko.computed(function () {
-		return AccountList.getEmail();
+		var sEmail = AccountList.getEmail();
+		return sEmail.length > 0 ? sEmail : 'Mail';
 	});
 }
 

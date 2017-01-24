@@ -9,7 +9,6 @@ var
 module.exports = {
 	ServerModuleName: 'Mail',
 	HashModuleName: 'mail',
-	enableModule: ko.observable(true),
 	
 	AllowAddNewAccounts: false,
 	AllowAppRegisterMailto: false,
@@ -40,7 +39,6 @@ module.exports = {
 	init: function (oAppDataSection) {
 		if (oAppDataSection)
 		{
-			this.enableModule(Types.isNonEmptyArray(oAppDataSection.Accounts));
 			this.AllowAddNewAccounts = !!oAppDataSection.AllowAddNewAccounts;
 			this.AllowAppRegisterMailto = !!oAppDataSection.AllowAppRegisterMailto;
 			this.AllowAutosaveInDrafts = !!oAppDataSection.AllowAutosaveInDrafts;

@@ -136,7 +136,7 @@ CSignaturePaneView.prototype.populate = function ()
 		this.signature(oSignature.signature());
 		this.oHtmlEditor.setText(this.signature());
 	}
-	else
+	else if (oAccount)
 	{
 		Ajax.send('GetSignature', {'AccountID': oAccount.id()}, this.onGetSignatureResponse, this);
 	}

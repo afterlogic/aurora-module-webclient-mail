@@ -15,7 +15,6 @@ var
 	
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
 	ConfirmPopup = require('%PathToCoreWebclientModule%/js/popups/ConfirmPopup.js'),
-	CreateAccountPopup = require('modules/%ModuleName%/js/popups/CreateAccountPopup.js'),
 	
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
@@ -241,6 +240,14 @@ CAccountListModel.prototype.initObservables = function (iDefaultId, iCurrentId)
 /**
  * @return {boolean}
  */
+CAccountListModel.prototype.hasAccount = function ()
+{
+	return this.collection().length > 0;
+};
+
+/**
+ * @return {boolean}
+ */
 CAccountListModel.prototype.hasMailAccount = function ()
 {
 	var oAccount = _.find(this.collection(), function (oAcct) {
@@ -319,7 +326,7 @@ CAccountListModel.prototype.addAccount = function (oAccount)
 	
 	this.collection.push(oAccount);
 	
-	if (!oCurrAccount.allowMail())
+	if (oCurrAccount && !oCurrAccount.allowMail())
 	{
 		this.changeCurrentAccount(oAccount.id(), false);
 	}
@@ -583,6 +590,8 @@ CAccountListModel.prototype.getAttendee = function (aEmails)
 CAccountListModel.prototype.displaySocialWelcome = function ()
 {
 	var
+		CreateAccountPopup = require('modules/%ModuleName%/js/popups/CreateAccountPopup.js'),
+
 		oDefaultAccount = this.getDefault(),
 		bHasMailAccount = this.hasMailAccount()
 	;
@@ -618,7 +627,5 @@ if (MainTab)
 {
 	AccountList.populateIdentitiesFromSourceAccount(MainTab.getAccountList());
 }
-
-AccountList.displaySocialWelcome();
 
 module.exports = AccountList;
