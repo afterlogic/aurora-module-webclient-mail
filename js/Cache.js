@@ -760,6 +760,45 @@ CMailCache.prototype.onClearFolder = function (oFolder)
 	}
 };
 
+CMailCache.prototype.getOpenedDraftUids = function ()
+{
+	var
+//		aOpenedWins = WindowOpener.getOpenedWindows(),
+		aDraftUids = []
+//		aDraftUids = _.map(aOpenedWins, function (oWin) {
+//			return (oWin.App && (window.location.origin === oWin.location.origin)) ? oWin.App.MailCache.editedDraftUid() : '';
+//		})
+	;
+
+	if (Popups.hasOpenedMinimizedPopups())
+	{
+		aDraftUids.push(this.editedDraftUid());
+	}
+
+	return _.uniq(_.compact(aDraftUids));
+};
+
+CMailCache.prototype.closeComposesWithDraftUids = function (aUids)
+{
+//	var aOpenedWins = WindowOpener.getOpenedWindows();
+	
+//	_.each(aOpenedWins, function (oWin) {
+//		if (oWin.App && -1 !== $.inArray(oWin.App.MailCache.editedDraftUid(), aUids))
+//		{
+//			oWin.close();
+//		}
+//	});
+
+	if (-1 !== $.inArray(this.editedDraftUid(), aUids))
+	{
+		if (!App.isMobile() && !App.isNewTab())
+		{
+			var PopupComposeUtils = require('modules/%ModuleName%/js/utils/PopupCompose.js');
+			PopupComposeUtils.closeComposePopup();
+		}
+	}
+};
+
 /**
  * @param {string} sToFolderFullName
  * @param {Array} aUids
@@ -771,7 +810,7 @@ CMailCache.prototype.moveMessagesToFolder = function (sToFolderFullName, aUids)
 		var
 			oCurrFolder = this.folderList().currentFolder(),
 			bDraftsFolder = oCurrFolder && oCurrFolder.type() === Enums.FolderTypes.Drafts,
-			aOpenedDraftUids = bDraftsFolder && WindowOpener.getOpenedDraftUids(),
+			aOpenedDraftUids = bDraftsFolder && this.getOpenedDraftUids(),
 			bTryToDeleteEditedDraft = bDraftsFolder && _.find(aUids, _.bind(function (sUid) {
 				return -1 !== $.inArray(sUid, aOpenedDraftUids);
 			}, this)),
@@ -798,18 +837,6 @@ CMailCache.prototype.moveMessagesToFolder = function (sToFolderFullName, aUids)
 				oToFolder.markHasChanges();
 				
 				Ajax.send('MoveMessages', oParameters, this.onMoveMessagesResponse, this);
-
-//				if (oToFolder && oToFolder.type() === Enums.FolderTypes.Trash)
-//				{
-//					AfterLogicApi.runPluginHook('move-messages-to-trash', 
-//						[AccountList.currentId(), oParameters.Folder, aUids]);
-//				}
-//
-//				if (oToFolder && oToFolder.type() === Enums.FolderTypes.Spam)
-//				{
-//					AfterLogicApi.runPluginHook('move-messages-to-spam', 
-//						[AccountList.currentId(), oParameters.Folder, aUids]);
-//				}
 			}, this)
 		;
 
@@ -822,7 +849,7 @@ CMailCache.prototype.moveMessagesToFolder = function (sToFolderFullName, aUids)
 					_.bind(function (bOk) {
 						if (bOk)
 						{
-							WindowOpener.closeComposesWithDraftUids(aUids);
+							this.closeComposesWithDraftUids(aUids);
 							fMoveMessages();
 						}
 						this.disableComposeAutosave(false);
