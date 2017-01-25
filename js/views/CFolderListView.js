@@ -6,6 +6,8 @@ var
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	
 	App = require('%PathToCoreWebclientModule%/js/App.js'),
+	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
+	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
 	UserSettings = require('%PathToCoreWebclientModule%/js/Settings.js'),
 	
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
@@ -21,12 +23,20 @@ function CFolderListView()
 	
 	this.folderList = MailCache.folderList;
 	
-	this.manageFoldersHash = '#'; // todo: manage folders
+	this.manageFoldersHash = ko.computed(function () {
+		if (ModulesManager.isModuleEnabled('SettingsWebclient'))
+		{
+			var
+				oCurrentAccount = AccountList.getCurrent()
+			;
+			if (oCurrentAccount && oCurrentAccount.allowMail())
+			{
+				return Routing.buildHashFromArray(['settings', 'mail-accounts', 'account', oCurrentAccount.hash(), 'folders']);
+			}
+		}
+		return '#';
+	}, this);
 	
-//	this.manageFoldersHash = App.Routing.buildHashFromArray([Enums.Screens.Settings, 
-//		Enums.SettingsTab.EmailAccounts, 
-//		Enums.AccountSettingsTab.Folders]);
-
 	this.quotaProc = ko.observable(-1);
 	this.quotaDesc = ko.observable('');
 
@@ -56,8 +66,6 @@ function CFolderListView()
 
 		}, this);
 	}
-	
-	this.isCurrentAllowsMail = AccountList.isCurrentAllowsMail; // todo: manage folders
 }
 
 CFolderListView.prototype.ViewTemplate = App.isMobile() ? '%ModuleName%_FoldersMobileView' : '%ModuleName%_FoldersView';

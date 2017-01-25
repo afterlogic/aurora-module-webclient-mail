@@ -15,7 +15,7 @@
 		</div>
 	</div>
 	<div class="panel_bottom">
-		<div class="manage_folders" data-bind="visible: isCurrentAllowsMail">
+		<div class="manage_folders" data-bind="visible: manageFoldersHash() !== '#'">
 			<a href="javascript: void(0)" data-bind="i18n: {'key': '%MODULENAME%/ACTION_MANAGE_FOLDERS'}, attr: {href: manageFoldersHash}"></a>
 		</div>
 		<span class="volumer" data-bind="visible: -1 < quotaProc()">
