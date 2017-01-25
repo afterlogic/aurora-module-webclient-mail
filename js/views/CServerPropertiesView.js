@@ -14,11 +14,12 @@ var
  * @param {number} iDefaultSslPort
  * @param {string} sId
  * @param {string} sLabel
- * @param {function} fGetDefaultServerValue
+ * @param {function} koDefaultServerValue
  */
-function CServerPropertiesView(iDefaultPort, iDefaultSslPort, sId, sLabel, fGetDefaultServerValue)
+function CServerPropertiesView(iDefaultPort, iDefaultSslPort, sId, sLabel, koDefaultServerValue)
 {
 	this.server = ko.observable('');
+	this.server.focused = ko.observable(false);
 	this.label = sLabel;
 	this.focused = ko.observable(false);
 	this.defaultPort = ko.observable(iDefaultPort);
@@ -28,12 +29,12 @@ function CServerPropertiesView(iDefaultPort, iDefaultSslPort, sId, sLabel, fGetD
 	this.isEnabled = ko.observable(true);
 	this.id = sId;
 
-	if ($.isFunction(fGetDefaultServerValue))
+	if ($.isFunction(koDefaultServerValue))
 	{
-		this.focused.subscribe(function () {
-			if (this.focused() && this.server() === '')
+		koDefaultServerValue.focused.subscribe(function () {
+			if (!koDefaultServerValue.focused() && this.server() === '')
 			{
-				this.server(fGetDefaultServerValue());
+				this.server(koDefaultServerValue());
 			}
 		}, this);
 	}

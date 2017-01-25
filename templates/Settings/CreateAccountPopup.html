@@ -19,17 +19,17 @@
 				<div class="row email">
 					<span class="label required" data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_EMAIL'}"></span>
 					<input class="value input" spellcheck="false"  type="text" maxlength="65" 
-						   data-bind="value: email, hasfocus: emailFocus, onEnter: onSaveClick, disable: isConnectToMailType"
+						   data-bind="value: email, hasfocus: emailFocus, valueUpdate: 'afterkeydown', onEnter: onSaveClick, disable: isConnectToMailType"
 						   id="selenium_settings_create_account_email" />
 				</div>
 				<div class="row login" data-bind="visible: !isFirstStep()">
 					<span class="label required" data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_LOGIN'}"></span>
-					<input class="value input" spellcheck="false"  type="text" maxlength="255" data-bind="value: incomingMailLogin, hasfocus: incomingLoginFocused, onEnter: onSaveClick"/>
+					<input class="value input" spellcheck="false"  type="text" maxlength="255" data-bind="value: incomingMailLogin, hasfocus: incomingLoginFocused, valueUpdate: 'afterkeydown', onEnter: onSaveClick"/>
 				</div>
 				<div class="row password">
 					<span class="label required" data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_PASSWORD'}"></span>
 					<input class="value input" spellcheck="false"  type="password" maxlength="255" 
-						   data-bind="value: incomingMailPassword, hasfocus: incomingPasswordFocus, onEnter: onSaveClick"
+						   data-bind="value: incomingMailPassword, hasfocus: incomingPasswordFocus, valueUpdate: 'afterkeydown', onEnter: onSaveClick"
 						   id="selenium_settings_create_account_password" />
 				</div>
 				<div class="row incoming" data-bind="visible: !isFirstStep()">
