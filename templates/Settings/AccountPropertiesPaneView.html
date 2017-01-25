@@ -40,8 +40,7 @@
 
 		<div data-bind="visible: canBeRemoved() && !isDefault()">
             <div class="row remove_account">
-				<span class="link" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_REMOVE_ACCOUNT'}, click: function () { $parent.removeEditedAccount(); }, attr: {'id': 'selenium_settings_delete_account_' + email()}">
-				</span>
+				<span class="link" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_REMOVE_ACCOUNT'}, click: remove, attr: {'id': 'selenium_settings_delete_account_' + email()}"></span>
             </div>
             <div class="hint">
                 <span data-bind="text: removeHint"></span>

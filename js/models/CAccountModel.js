@@ -123,7 +123,7 @@ function CAccountModel(bSingle)
 		}
 		else
 		{
-			return TextUtils.i18n('%MODULENAME%/ACCOUNTS_REMOVE_CONFIRMATION');
+			return TextUtils.i18n('%MODULENAME%/CONFIRM_REMOVE_ACCOUNT');
 		}
 	}, this);
 }
@@ -408,7 +408,11 @@ CAccountModel.prototype.onAccountDeleteResponse = function (oResponse, oRequest)
 	}
 	else
 	{
-		App.Api.closeComposePopup(); // todo
+		if (!App.isMobile() && !App.isNewTab())
+		{
+			var PopupComposeUtils = require('modules/%ModuleName%/js/utils/PopupCompose.js')
+			PopupComposeUtils.closeComposePopup();
+		}
 		
 		this.requireAccounts();
 		AccountList.deleteAccount(this.id());

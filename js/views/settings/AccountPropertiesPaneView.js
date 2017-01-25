@@ -150,6 +150,16 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 	this.updateSavedState();
 };
 
+CAccountPropertiesPaneView.prototype.remove = function ()
+{
+	var oAccount = AccountList.getEdited();
+	
+	if (oAccount)
+	{
+		oAccount.remove();
+	}
+};
+
 CAccountPropertiesPaneView.prototype.save = function ()
 {
 	this.isSaving(true);

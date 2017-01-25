@@ -1,7 +1,7 @@
 <span class="item emails first-child" data-bind="dropdown: {control: !isCurrent()}, 
 		css: {'current': isCurrent(), 'disabled': accounts().length <= 1, 'has_control': accounts().length > 1}">
 	<span class="helper" data-bind="text: linkText, css: {'has_control': accounts().length > 1}"></span>
-	<a class="link" href="javascript: void(0);" data-bind="attr: {href: isCurrent() ? 'javascript: void(0);' : hash()}">
+	<a class="link" href="javascript: void(0);" data-bind="attr: { href: mainHref }">
 		<span class="text" data-bind="text: linkText"></span>
 		<!-- ko template: {name: 'CoreWebclient_HeaderItemUnseenCountPart', data: $data} --><!-- /ko -->
 	</a>

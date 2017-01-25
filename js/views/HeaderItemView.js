@@ -30,6 +30,18 @@ function CHeaderItemView()
 		var sEmail = AccountList.getEmail();
 		return sEmail.length > 0 ? sEmail : 'Mail';
 	});
+	
+	this.mainHref = ko.computed(function () {
+		if (this.isCurrent())
+		{
+			return 'javascript: void(0);';
+		}
+		if (this.accounts().length === 0)
+		{
+			return '#settings/mail-accounts';
+		}
+		return this.hash();
+	}, this);
 }
 
 _.extendOwn(CHeaderItemView.prototype, CAbstractHeaderItemView.prototype);

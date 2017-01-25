@@ -81,7 +81,10 @@ CAccountListModel.prototype.changeCurrentAccount = function (iNewCurrentId, bPas
 
 	if (oNewCurrentAccount && this.currentId() !== iNewCurrentId)
 	{
-		oCurrentAccount.isCurrent(false);
+		if (oCurrentAccount)
+		{
+			oCurrentAccount.isCurrent(false);
+		}
 		this.currentId(iNewCurrentId);
 		oNewCurrentAccount.isCurrent(true);
 	}
@@ -119,7 +122,10 @@ CAccountListModel.prototype.changeEditedAccount = function (iNewEditedId)
 	
 	if (oNewEditedAccount && this.editedId() !== iNewEditedId)
 	{
-		oEditedAccount.isEdited(false);
+		if (oEditedAccount)
+		{
+			oEditedAccount.isEdited(false);
+		}
 		this.editedId(iNewEditedId);
 		oNewEditedAccount.isEdited(true);
 	}

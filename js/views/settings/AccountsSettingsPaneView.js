@@ -11,6 +11,7 @@ var
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 	
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
+	AlertPopup = require('%PathToCoreWebclientModule%/js/popups/AlertPopup.js'),
 	CreateAccountPopup = require('modules/%ModuleName%/js/popups/CreateAccountPopup.js'),
 	CreateIdentityPopup = require('modules/%ModuleName%/js/popups/CreateIdentityPopup.js'),
 	CreateFetcherPopup = require('modules/%ModuleName%/js/popups/CreateFetcherPopup.js'),
@@ -207,6 +208,11 @@ CAccountsSettingsPaneView.prototype.onRoute = function (aParams)
 	if (this.currentTab() && $.isFunction(this.currentTab().view.show))
 	{
 		this.currentTab().view.show();
+	}
+	
+	if (!AccountList.hasAccount())
+	{
+		Popups.showPopup(AlertPopup, [TextUtils.i18n('%MODULENAME%/INFO_SPECIFY_CREDENTIALS')]);
 	}
 };
 
@@ -406,6 +412,7 @@ CAccountsSettingsPaneView.prototype.onGetAccountSettingsResponse = function (oRe
 		if (oAccount)
 		{
 			oAccount.updateExtended(oResponse.Result);
+			
 			if (oAccount.id() === this.editedAccountId())
 			{
 				this.populate();
