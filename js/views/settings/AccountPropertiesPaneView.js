@@ -127,6 +127,17 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 		this.isDefault(oAccount.isDefault());
 		this.removeHint(oAccount.removeHint());
 		this.canBeRemoved(oAccount.canBeRemoved());
+		
+		if (!oAccount.isExtended())
+		{
+			var oSubscribtion = oAccount.isExtended.subscribe(function () {
+				if (oAccount.isExtended() && oAccount.id() === AccountList.editedId())
+				{
+					_.defer(_.bind(this.populate, this));
+				}
+				oSubscribtion.dispose();
+			}, this);
+		}
 	}
 	else
 	{
