@@ -15,7 +15,6 @@ var
 	Pulse = require('%PathToCoreWebclientModule%/js/Pulse.js'),
 	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
 	UserSettings = require('%PathToCoreWebclientModule%/js/Settings.js'),
-	WindowOpener = require('%PathToCoreWebclientModule%/js/WindowOpener.js'),
 	
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
 	ConfirmPopup = require('%PathToCoreWebclientModule%/js/popups/ConfirmPopup.js'),
@@ -189,7 +188,7 @@ CMailCache.prototype.init = function ()
 				this.currentAccountId(iAccountId);
 			}
 		}
-		
+		this.currentAccountId.valueHasMutated();
 		this.initPrevNextSubscribes();
 	}
 	else
@@ -1043,13 +1042,18 @@ CMailCache.prototype.setCurrentMessage = function (sUid, sFolder)
 {
 	var
 		oCurrFolder = this.folderList().currentFolder(),
-		oMessage = oCurrFolder && sUid ? oCurrFolder.oMessages[sUid] : null
+		oMessage = null
 	;
 	
 	if (App.isNewTab() && (!oCurrFolder || oCurrFolder.fullName() !== sFolder))
 	{
 		this.folderList().setCurrentFolder(sFolder, '');
 		oCurrFolder = this.folderList().currentFolder();
+	}
+	
+	if (oCurrFolder && sUid)
+	{
+		oMessage = oCurrFolder.oMessages[sUid];
 	}
 	
 	if (oMessage && !oMessage.deleted())

@@ -663,7 +663,7 @@ CMessagePaneView.prototype.doHidingBlockquotes = function (aCollapsedStatuses)
 CMessagePaneView.prototype.onRoute = function (aParams)
 {
 	var oParams = LinksUtils.parseMailbox(aParams);
-
+	
 	if (this.replyText() !== '' && this.uid() !== oParams.Uid)
 	{
 		this.saveReplyMessage(false);

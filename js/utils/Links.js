@@ -170,7 +170,12 @@ LinksUtils.parseMailbox = function (aParams)
  */
 LinksUtils.getViewMessage = function (sFolder, sUid)
 {
-	return [Settings.HashModuleName + '-view', sFolder, 'msg' + sUid];
+	var
+		AccountList = require('modules/%ModuleName%/js/AccountList.js'),
+		oCurrAccount = AccountList.getCurrent(),
+		sAccountHash = oCurrAccount ? oCurrAccount.hash() : ''
+	;
+	return [Settings.HashModuleName + '-view', sAccountHash, sFolder, 'msg' + sUid];
 };
 
 /**
