@@ -205,11 +205,6 @@ CAccountsSettingsPaneView.prototype.onRoute = function (aParams)
 	
 	this.changeTab(sTab || this.getAutoselectedTab().name);
 	
-	if (this.currentTab() && $.isFunction(this.currentTab().view.show))
-	{
-		this.currentTab().view.show();
-	}
-	
 	if (!AccountList.hasAccount())
 	{
 		Popups.showPopup(AlertPopup, [TextUtils.i18n('%MODULENAME%/INFO_SPECIFY_CREDENTIALS')]);

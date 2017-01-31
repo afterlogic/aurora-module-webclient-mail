@@ -106,6 +106,11 @@ CAccountPropertiesPaneView.prototype.getParametersForSave = function ()
 	};
 };
 
+CAccountPropertiesPaneView.prototype.revert = function ()
+{
+	this.populate();
+};
+
 CAccountPropertiesPaneView.prototype.populate = function ()
 {
 	var oAccount = AccountList.getEdited();

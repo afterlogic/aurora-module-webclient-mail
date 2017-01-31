@@ -373,7 +373,15 @@ CHtmlEditorView.prototype.commit = function ()
  */
 CHtmlEditorView.prototype.initCrea = function (sText, bPlain, sTabIndex)
 {
-	if (!this.oCrea)
+	if (this.oCrea)
+	{
+		this.oCrea.$container = $('#' + this.oCrea.oOptions.creaId);
+		if (this.oCrea.$container.children().length === 0)
+		{
+			this.oCrea.start(this.isEnable());
+		}
+	}
+	else
 	{
 		this.init();
 		this.oCrea = new CCrea({

@@ -209,21 +209,12 @@ CAccountModel.prototype.parse = function (oData)
 	this.allowMail(!!oData.AllowMail);
 
 	this.passwordSpecified(!!oData.IsPasswordSpecified);
-
-	this.parseSignature(oData.Signature);
+	this.useSignature(!!oData.UseSignature);
+	this.signature(Types.pString(oData.Signature));
 
 	this.isDefault(!!oData.IsDefault);
 	this.isCurrent(!!oData.IsDefault);
 	this.isEdited(!!oData.IsDefault);
-};
-
-/**
- * @param {Object} oData
- */
-CAccountModel.prototype.parseSignature = function (oData)
-{
-	this.useSignature(!!oData.Options);
-	this.signature(Types.pString(oData.Signature));
 };
 
 CAccountModel.prototype.requestExtensions = function ()

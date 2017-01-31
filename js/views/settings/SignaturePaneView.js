@@ -37,11 +37,6 @@ function CSignaturePaneView()
 	this.enableImageDragNDrop = ko.observable(false);
 
 	this.enabled = ko.observable(true);
-
-	AccountList.editedId.subscribe(function () {
-		this.populate();
-	}, this);
-	this.populate();
 }
 
 _.extendOwn(CSignaturePaneView.prototype, CAbstractSettingsFormView.prototype);
@@ -69,7 +64,10 @@ CSignaturePaneView.prototype.init = function ()
 
 CSignaturePaneView.prototype.getCurrentValues = function ()
 {
-	this.signature(this.oHtmlEditor.getNotDefaultText());
+	if (this.oHtmlEditor.oCrea)
+	{
+		this.signature(this.oHtmlEditor.getNotDefaultText());
+	}
 	return [
 		this.useSignatureRadio(),
 		this.signature()
@@ -89,7 +87,7 @@ CSignaturePaneView.prototype.getParametersForSave = function ()
 		oAccount = AccountList.getEdited(),
 		oParameters = {
 			'AccountID': oAccount ? oAccount.id() : 0,
-			'UseSignature': !!this.useSignatureRadio() ? 1 : 0,
+			'UseSignature': !!this.useSignatureRadio(),
 			'Signature': this.signature()
 		}
 	;
@@ -192,6 +190,7 @@ CSignaturePaneView.prototype.onResponse = function (oResponse, oRequest)
 	
 	if (oResponse.Result)
 	{
+		this.applySavedValues(oRequest.Parameters);
 		Screens.showReport(TextUtils.i18n('COREWEBCLIENT/REPORT_SETTINGS_UPDATE_SUCCESS'));
 	}
 	else
