@@ -9,9 +9,10 @@ var
 	
 	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
+	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
+	Screens = require('%PathToCoreWebclientModule%/js/Screens.js'),
 	
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
-	AlertPopup = require('%PathToCoreWebclientModule%/js/popups/AlertPopup.js'),
 	CreateAccountPopup = require('modules/%ModuleName%/js/popups/CreateAccountPopup.js'),
 	CreateIdentityPopup = require('modules/%ModuleName%/js/popups/CreateIdentityPopup.js'),
 	CreateFetcherPopup = require('modules/%ModuleName%/js/popups/CreateFetcherPopup.js'),
@@ -200,15 +201,26 @@ CAccountsSettingsPaneView.prototype.onRoute = function (aParams)
 	
 	if (sType === 'account')
 	{
-		AccountList.changeEditedAccountByHash(sHash);
+		if (aParams[1] === 'create' && !AccountList.hasAccount())
+		{
+			this.addAccount();
+			Screens.showError(TextUtils.i18n('%MODULENAME%/INFO_SPECIFY_CREDENTIALS'));
+			Routing.replaceHashDirectly(['settings', 'mail-accounts']);
+		}
+		else
+		{
+			AccountList.changeEditedAccountByHash(sHash);
+		}
 	}
 	
 	this.changeTab(sTab || this.getAutoselectedTab().name);
 	
-	if (!AccountList.hasAccount())
-	{
-		Popups.showPopup(AlertPopup, [TextUtils.i18n('%MODULENAME%/INFO_SPECIFY_CREDENTIALS')]);
-	}
+//	if (this.bFirstRoute && !AccountList.hasAccount())
+//	{
+//		this.addAccount();
+//		Screens.showError(TextUtils.i18n('%MODULENAME%/INFO_SPECIFY_CREDENTIALS'));
+//		this.bFirstRoute = false;
+//	}
 };
 
 CAccountsSettingsPaneView.prototype.getAutoselectedTab = function ()

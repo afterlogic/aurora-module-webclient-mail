@@ -28,17 +28,13 @@ function CHeaderItemView()
 	
 	this.linkText = ko.computed(function () {
 		var sEmail = AccountList.getEmail();
-		return sEmail.length > 0 ? sEmail : 'Mail';
+		return sEmail.length > 0 ? sEmail : TextUtils.i18n('%MODULENAME%/HEADING_BROWSER_TAB');
 	});
 	
 	this.mainHref = ko.computed(function () {
 		if (this.isCurrent())
 		{
 			return 'javascript: void(0);';
-		}
-		if (this.accounts().length === 0)
-		{
-			return '#settings/mail-accounts';
 		}
 		return this.hash();
 	}, this);

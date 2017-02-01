@@ -254,6 +254,10 @@ CCreateAccountPopup.prototype.onAccountCreateResponse = function (oResponse, oRe
 			AccountList.addAccount(oAccount);
 			AccountList.populateIdentities();
 			AccountList.changeEditedAccount(iAccountId);
+			if (AccountList.collection().length === 1)
+			{
+				AccountList.changeCurrentAccount(iAccountId);
+			}
 		}
 		
 		if (this.fCallback)

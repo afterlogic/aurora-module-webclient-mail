@@ -224,6 +224,12 @@ CMailView.prototype.resizeDblClick = function (oData, oEvent)
  */
 CMailView.prototype.onRoute = function (aParams)
 {
+	if (!AccountList.hasAccount())
+	{
+		Routing.replaceHash(['settings', 'mail-accounts', 'account', 'create']);
+		return;
+	}
+	
 	var oParams = LinksUtils.parseMailbox(aParams);
 	
 	AccountList.changeCurrentAccountByHash(oParams.AccountHash);
