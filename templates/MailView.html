@@ -1,5 +1,5 @@
 <div class="screen MailLayout" style="display: none;">
-	<div class="panels" data-bind="splitterFlex: {name: 'message_list', sizes: [20, 30, 50]},
+	<div class="panels" data-bind="splitterFlex: allowSplitter() ? {name: 'message_list', sizes: [20, 30, 50]} : null,
 		 css: {'folder_active': selectedPanel() === Enums.MobilePanel.Groups, 
 				'list_active': selectedPanel() === Enums.MobilePanel.Items,
 				'viewer_active': selectedPanel() === Enums.MobilePanel.View}">
