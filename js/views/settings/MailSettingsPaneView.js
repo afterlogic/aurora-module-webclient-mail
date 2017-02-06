@@ -76,4 +76,9 @@ CMailSettingsPaneView.prototype.applySavedValues = function (oParameters)
 	Settings.update(oParameters.MailsPerPage, oParameters.UseThreads, oParameters.SaveRepliesToCurrFolder, oParameters.AllowChangeInputDirection);
 };
 
+CMailSettingsPaneView.prototype.setAccessLevel = function (sEntityType, iEntityId)
+{
+	this.visible(sEntityType === '');
+};
+
 module.exports = new CMailSettingsPaneView();
