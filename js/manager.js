@@ -92,7 +92,21 @@ module.exports = function (oAppData) {
 						);
 					},
 					Settings.HashModuleName,
-					TextUtils.i18n('%MODULENAME%/LABEL_SETTINGS_TAB')]);
+					TextUtils.i18n('%MODULENAME%/LABEL_SETTINGS_TAB')
+				]);
+				ModulesManager.run('AdminPanelWebclient', 'registerAdminPanelTab', [
+					function(resolve) {
+						require.ensure(
+							['modules/%ModuleName%/js/views/settings/ServersAdminSettingsPaneView.js'],
+							function() {
+								resolve(require('modules/%ModuleName%/js/views/settings/ServersAdminSettingsPaneView.js'));
+							},
+							"admin-bundle"
+						);
+					},
+					Settings.HashModuleName + '-servers',
+					TextUtils.i18n('%MODULENAME%/LABEL_SERVERS_SETTINGS_TAB')
+				]);
 			},
 			getAccountList: function () {
 				return require('modules/MailWebclient/js/AccountList.js');
