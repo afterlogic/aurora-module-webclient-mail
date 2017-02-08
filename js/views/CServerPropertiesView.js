@@ -21,10 +21,10 @@ function CServerPropertiesView(iDefaultPort, iDefaultSslPort, sId, sLabel, koDef
 	this.server = ko.observable('');
 	this.server.focused = ko.observable(false);
 	this.label = sLabel;
-	this.focused = ko.observable(false);
 	this.defaultPort = ko.observable(iDefaultPort);
 	this.defaultSslPort = ko.observable(iDefaultSslPort);
 	this.port = ko.observable(iDefaultPort);
+	this.port.focused = ko.observable(false);
 	this.ssl = ko.observable(false);
 	this.isEnabled = ko.observable(true);
 	this.id = sId;
@@ -40,16 +40,17 @@ function CServerPropertiesView(iDefaultPort, iDefaultSslPort, sId, sLabel, koDef
 	}
 	
 	this.ssl.subscribe(function () {
+		var iPort = Types.pInt(this.port());
 		if (this.ssl())
 		{
-			if (this.port() === this.defaultPort())
+			if (iPort === this.defaultPort())
 			{
 				this.port(this.defaultSslPort());
 			}
 		}
 		else
 		{
-			if (this.port() === this.defaultSslPort())
+			if (iPort === this.defaultSslPort())
 			{
 				this.port(this.defaultPort());
 			}

@@ -6,8 +6,8 @@
 <span class="label required" style="width: auto; margin-left: 10px;" 
 		data-bind="i18n: {'key': '%MODULENAME%/LABEL_PORT'}, css: {'disabled': !isEnabled()}"></span>
 <input class="value input port" spellcheck="false" type="text" maxlength="5" 
-		data-bind="enable: isEnabled, value: port, valueUpdate: 'afterkeydown', 
-			onEnter: function () { if ($parent.save) { $parent.save(); } }, css: {'disabled': !isEnabled()}"/>
+		data-bind="enable: isEnabled, value: port, hasfocus: port.focused, valueUpdate: 'afterkeydown', 
+			onEnter: function () { port.focused(false); if ($parent.save) { $parent.save(); } }, css: {'disabled': !isEnabled()}"/>
 
 <span>
 	<label class="custom_checkbox" data-bind="css: {'checked': ssl, 'disabled': !isEnabled()}">

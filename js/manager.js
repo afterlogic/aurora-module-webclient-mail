@@ -153,8 +153,20 @@ module.exports = function (oAppData) {
 
 				if (Settings.AllowAddNewAccounts || AccountList.hasAccount())
 				{
-					ModulesManager.run('SettingsWebclient', 'registerSettingsTab', [function () { return require('modules/%ModuleName%/js/views/settings/MailSettingsPaneView.js'); }, Settings.HashModuleName, TextUtils.i18n('%MODULENAME%/LABEL_SETTINGS_TAB')]);
-					ModulesManager.run('SettingsWebclient', 'registerSettingsTab', [function () { return require('modules/%ModuleName%/js/views/settings/AccountsSettingsPaneView.js'); }, Settings.HashModuleName + '-accounts', TextUtils.i18n('%MODULENAME%/LABEL_ACCOUNTS_SETTINGS_TAB')]);
+					ModulesManager.run('SettingsWebclient', 'registerSettingsTab', [
+						function () {
+							return require('modules/%ModuleName%/js/views/settings/MailSettingsPaneView.js');
+						},
+						Settings.HashModuleName,
+						TextUtils.i18n('%MODULENAME%/LABEL_SETTINGS_TAB')
+					]);
+					ModulesManager.run('SettingsWebclient', 'registerSettingsTab', [
+						function () {
+							return require('modules/%ModuleName%/js/views/settings/AccountsSettingsPaneView.js');
+						},
+						Settings.HashModuleName + '-accounts',
+						TextUtils.i18n('%MODULENAME%/LABEL_ACCOUNTS_SETTINGS_TAB')
+					]);
 				}
 			},
 			getScreens: function () {

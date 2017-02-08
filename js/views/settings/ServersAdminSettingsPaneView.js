@@ -8,6 +8,7 @@ var
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
+	Screens = require('%PathToCoreWebclientModule%/js/Screens.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 	CAbstractSettingsFormView = ModulesManager.run('AdminPanelWebclient', 'getAbstractSettingsFormViewClass'),
 	
@@ -43,21 +44,35 @@ _.extendOwn(CServersAdminSettingsPaneView.prototype, CAbstractSettingsFormView.p
 
 CServersAdminSettingsPaneView.prototype.ViewTemplate = '%ModuleName%_Settings_ServersAdminSettingsPaneView';
 
-CServersAdminSettingsPaneView.prototype.addServer = function ()
+/**
+ * Sets routing to create server mode.
+ */
+CServersAdminSettingsPaneView.prototype.routeCreateServer = function ()
 {
 	ModulesManager.run('AdminPanelWebclient', 'setAddHash', [['create']]);
 };
 
-CServersAdminSettingsPaneView.prototype.editServer = function (iId)
+/**
+ * Sets routing to edit server mode.
+ * @param {number} iId Server identifier.
+ */
+CServersAdminSettingsPaneView.prototype.routeEditServer = function (iId)
 {
 	ModulesManager.run('AdminPanelWebclient', 'setAddHash', [[iId]]);
 };
 
-CServersAdminSettingsPaneView.prototype.cancel = function ()
+/**
+ * Sets routing to only server list mode.
+ */
+CServersAdminSettingsPaneView.prototype.routeServerList = function ()
 {
 	ModulesManager.run('AdminPanelWebclient', 'setAddHash', [[]]);
 };
 
+/**
+ * Executes when routing was changed.
+ * @param {array} aParams Routing parameters.
+ */
 CServersAdminSettingsPaneView.prototype.onRouteChild = function (aParams)
 {
 	var
@@ -76,6 +91,9 @@ CServersAdminSettingsPaneView.prototype.onRouteChild = function (aParams)
 	this.revertGlobalValues();
 };
 
+/**
+ * Requests server list from server.
+ */
 CServersAdminSettingsPaneView.prototype.requestServers = function ()
 {
 	Ajax.send('GetServers', {}, function (oResponse) {
@@ -87,7 +105,7 @@ CServersAdminSettingsPaneView.prototype.requestServers = function ()
 			}, this));
 			if (!oEditedServer)
 			{
-				this.cancel();
+				this.routeServerList();
 			}
 			if (!this.received())
 			{
@@ -98,6 +116,10 @@ CServersAdminSettingsPaneView.prototype.requestServers = function ()
 	}, this);
 };
 
+/**
+ * Shows popup to confirm server deletion and sends request to delete on server.
+ * @param {number} iId
+ */
 CServersAdminSettingsPaneView.prototype.deleteServer = function (iId)
 {
 	var
@@ -119,22 +141,55 @@ CServersAdminSettingsPaneView.prototype.deleteServer = function (iId)
 	}
 };
 
-CServersAdminSettingsPaneView.prototype.save = function ()
+/**
+ * Validates if required fields are empty or not.
+ * @returns {Boolean}
+ */
+CServersAdminSettingsPaneView.prototype.validateBeforeSave = function ()
 {
 	var
-		sMethod = this.createMode() ? 'CreateServer' : 'UpdateServer'
+		aRequiredFields = [this.name, this.oIncoming.server, this.oIncoming.port, this.oOutgoing.server, this.oOutgoing.port],
+		koFirstEmptyField = _.find(aRequiredFields, function (koField) {
+			return koField() === '';
+		})
 	;
-	this.isSaving(true);
-	Ajax.send(sMethod, this.getParametersForSave(), function (oResponse) {
-		this.isSaving(false);
-		this.requestServers();
-		if (this.createMode())
-		{
-			this.cancel();
-		}
-	}, this);
+	
+	if (koFirstEmptyField)
+	{
+		Screens.showError(TextUtils.i18n('%MODULENAME%/ERROR_REQUIRED_FIELDS_EMPTY'));
+		koFirstEmptyField.focused(true);
+		return false;
+	}
+	
+	return true;
 };
 
+/**
+ * Sends request to server for server creating or updating.
+ */
+CServersAdminSettingsPaneView.prototype.save = function ()
+{
+	if (this.validateBeforeSave())
+	{
+		var
+			sMethod = this.createMode() ? 'CreateServer' : 'UpdateServer'
+		;
+		this.isSaving(true);
+		Ajax.send(sMethod, this.getParametersForSave(), function (oResponse) {
+			this.isSaving(false);
+			this.requestServers();
+			if (this.createMode())
+			{
+				this.routeServerList();
+			}
+		}, this);
+	}
+};
+
+/**
+ * Returns list of current values to further comparing of states.
+ * @returns {Array}
+ */
 CServersAdminSettingsPaneView.prototype.getCurrentValues = function ()
 {
 	return [
@@ -150,6 +205,9 @@ CServersAdminSettingsPaneView.prototype.getCurrentValues = function ()
 	];
 };
 
+/**
+ * Reverts fields values to empty or edited server.
+ */
 CServersAdminSettingsPaneView.prototype.revertGlobalValues = function ()
 {
 	var oEditedServer = _.find(this.servers(), _.bind(function (oServer) {
@@ -180,6 +238,10 @@ CServersAdminSettingsPaneView.prototype.revertGlobalValues = function ()
 	}
 };
 
+/**
+ * Returns parameters for creating or updating on server.
+ * @returns {Object}
+ */
 CServersAdminSettingsPaneView.prototype.getParametersForSave = function ()
 {
 	return {
@@ -195,6 +257,11 @@ CServersAdminSettingsPaneView.prototype.getParametersForSave = function ()
 	};
 };
 
+/**
+ * Detemines if pane could be visible for specified entity type.
+ * @param {string} sEntityType
+ * @param {number} iEntityId
+ */
 CServersAdminSettingsPaneView.prototype.setAccessLevel = function (sEntityType, iEntityId)
 {
 	this.visible(sEntityType === '');
