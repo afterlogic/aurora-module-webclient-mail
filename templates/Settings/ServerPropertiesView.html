@@ -1,13 +1,13 @@
 <span class="label required" data-bind="text: label, css: {'disabled': !isEnabled()}"></span>
 <input class="value input server" spellcheck="false" type="text" maxlength="255"
 		data-bind="enable: isEnabled, value: server, hasfocus: server.focused, valueUpdate: 'afterkeydown', 
-			onEnter: function () { server.focused(false); $parent.onSaveClick(); }, css: {'disabled': !isEnabled()}"/>
+			onEnter: function () { server.focused(false); if ($parent.save) { $parent.save(); } }, css: {'disabled': !isEnabled()}"/>
 
 <span class="label required" style="width: auto; margin-left: 10px;" 
 		data-bind="i18n: {'key': '%MODULENAME%/LABEL_PORT'}, css: {'disabled': !isEnabled()}"></span>
 <input class="value input port" spellcheck="false" type="text" maxlength="5" 
 		data-bind="enable: isEnabled, value: port, valueUpdate: 'afterkeydown', 
-			onEnter: function () { $parent.onSaveClick(); }, css: {'disabled': !isEnabled()}"/>
+			onEnter: function () { if ($parent.save) { $parent.save(); } }, css: {'disabled': !isEnabled()}"/>
 
 <span>
 	<label class="custom_checkbox" data-bind="css: {'checked': ssl, 'disabled': !isEnabled()}">

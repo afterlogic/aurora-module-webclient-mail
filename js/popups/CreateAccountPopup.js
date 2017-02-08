@@ -175,7 +175,7 @@ CCreateAccountPopup.prototype.onSecondSaveClick = function ()
 	}
 };
 
-CCreateAccountPopup.prototype.onSaveClick = function ()
+CCreateAccountPopup.prototype.save = function ()
 {
 	if (!this.loading())
 	{

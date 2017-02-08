@@ -6,7 +6,7 @@
 </div>
 
 <div class="panel_center">
-	<div class="fields" data-bind="visible: servers().length === 0 && !createMode()">
+	<div class="fields" data-bind="visible: servers().length === 0 && !createMode() && received()">
 		<div class="fieldset">
 			<div class="hint" style="margin: 0;" data-bind="i18n: {'key': '%MODULENAME%/INFO_NO_SERVERS'}"></div>
 		</div>
@@ -14,8 +14,9 @@
 	<div data-bind="visible: createMode() || servers().length > 0">
 		<div class="items_list account_list" data-bind="visible: !createMode()">
 			<div data-bind="foreach: servers">
-				<div class="item account" data-bind="css: {'selected': id() === $parent.editedServerId()},  click: function () {$parent.editServer(id());}">
-					<span class="title" data-bind="text: name()"></span>
+				<div class="item account" data-bind="css: {'selected': iObjectId === $parent.editedServerId()},  click: function () { $parent.editServer(iObjectId); }">
+					<span class="title" data-bind="text: Name"></span>
+					<span class="link fetcher" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_DELETE'}, click: function (oModel, oEv) { oEv.stopPropagation(); $parent.deleteServer(iObjectId); }"></span>
 				</div>
 			</div>
 		</div>
@@ -24,6 +25,12 @@
 				<div class="tab">
 					<div class="fields">
 						<div class="fieldset">
+							<div class="row">
+								<span class="label required" data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_NAME'}"></span>
+								<input class="value input" spellcheck="false" type="text" maxlength="255"
+									   data-bind="value: name, hasfocus: name.focused, onEnter: save, valueUpdate: 'afterkeydown'"/>
+							</div>
+							
 							<div class="row">
 								<!-- ko template: {name: '%ModuleName%_Settings_ServerPropertiesView', data: oIncoming} --><!-- /ko -->
 							</div>
@@ -46,8 +53,9 @@
 						<div class="buttons">
 							<span class="button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_SAVE'}, click: save, visible: !createMode() && !isSaving()"></span>
 							<span class="button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_SAVE_IN_PROGRESS'}, visible: !createMode() && isSaving()"></span>
-							<span class="button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_CREATE'}, click: create, visible: createMode() && !isSaving()"></span>
-							<span class="button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_CREATING_IN_PROGRESS'}, visible: createMode() && isSaving()"></span>
+							<span class="button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_CREATE'}, click: save, visible: createMode() && !isSaving()"></span>
+							<span class="button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_CREATE_IN_PROGRESS'}, visible: createMode() && isSaving()"></span>
+							<span class="button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_CANCEL'}, click: cancel, visible: createMode()"></span>
 						</div>
 					</div>
 				</div>
