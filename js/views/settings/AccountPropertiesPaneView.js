@@ -40,22 +40,21 @@ function CAccountPropertiesPaneView()
 	this.canBeRemoved = ko.observable('');
 	this.friendlyName = ko.observable('');
 	this.email = ko.observable('');
-	this.incomingMailLogin = ko.observable('');
-	this.incomingMailPassword = ko.observable('');
+	this.incomingLogin = ko.observable('');
+	this.incomingPassword = ko.observable('');
 	this.oIncoming = new CServerPropertiesView(143, 993, 'acc_edit_incoming', TextUtils.i18n('%MODULENAME%/LABEL_IMAP_SERVER'));
-	this.outgoingMailLogin = ko.observable('');
-	this.outgoingMailPassword = ko.observable('');
+	this.outgoingLogin = ko.observable('');
 	this.oOutgoing = new CServerPropertiesView(25, 465, 'acc_edit_outgoing', TextUtils.i18n('%MODULENAME%/LABEL_SMTP_SERVER'), this.oIncoming.server);
 
 	this.isAllowMail = ko.observable(true);
 	this.allowChangePassword = ko.observable(false);
-	this.useSmtpAuthentication = ko.observable(false);
+	this.outgoingUseAuth = ko.observable(false);
 	
 	this.incLoginFocused = ko.observable(false);
 	this.incLoginFocused.subscribe(function () {
-		if (this.incLoginFocused() && this.incomingMailLogin() === '')
+		if (this.incLoginFocused() && this.incomingLogin() === '')
 		{
-			this.incomingMailLogin(this.email());
+			this.incomingLogin(this.email());
 		}
 	}, this);
 
@@ -74,15 +73,15 @@ CAccountPropertiesPaneView.prototype.getCurrentValues = function ()
 	return [
 		this.friendlyName(),
 		this.email(),
-		this.incomingMailLogin(),
+		this.incomingLogin(),
 		this.oIncoming.port(),
 		this.oIncoming.server(),
 		this.oIncoming.ssl(),
-		this.outgoingMailLogin(),
+		this.outgoingLogin(),
 		this.oOutgoing.port(),
 		this.oOutgoing.server(),
 		this.oOutgoing.ssl(),
-		this.useSmtpAuthentication()
+		this.outgoingUseAuth()
 	];
 };
 
@@ -93,16 +92,16 @@ CAccountPropertiesPaneView.prototype.getParametersForSave = function ()
 		'AccountID': oAccount.id(),
 		'FriendlyName': this.friendlyName(),
 		'Email': this.email(),
-		'IncomingMailLogin': this.incomingMailLogin(),
-		'IncomingMailServer': this.oIncoming.server(),
-		'IncomingMailPort': this.oIncoming.getIntPort(),
-		'IncomingMailSsl': this.oIncoming.getIntSsl(),
-		'OutgoingMailLogin': this.outgoingMailLogin(),
-		'OutgoingMailServer': this.oOutgoing.server(),
-		'OutgoingMailPort': this.oOutgoing.getIntPort(),
-		'OutgoingMailSsl': this.oOutgoing.getIntSsl(),
-		'OutgoingMailAuth': this.useSmtpAuthentication() ? 2 : 0,
-		'IncomingMailPassword': this.incomingMailPassword()
+		'IncomingLogin': this.incomingLogin(),
+		'IncomingServer': this.oIncoming.server(),
+		'IncomingPort': this.oIncoming.getIntPort(),
+		'IncomingUseSsl': this.oIncoming.getIntSsl(),
+		'OutgoingLogin': this.outgoingLogin(),
+		'OutgoingServer': this.oOutgoing.server(),
+		'OutgoingPort': this.oOutgoing.getIntPort(),
+		'OutgoingUseSsl': this.oOutgoing.getIntSsl(),
+		'OutgoingUseAuth': this.outgoingUseAuth(),
+		'IncomingPassword': this.incomingPassword()
 	};
 };
 
@@ -121,11 +120,11 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 
 		this.friendlyName(oAccount.friendlyName());
 		this.email(oAccount.email());
-		this.incomingMailLogin(oAccount.incomingMailLogin());
-		this.oIncoming.set(oAccount.incomingMailServer(), oAccount.incomingMailPort(), oAccount.incomingMailSsl());
-		this.outgoingMailLogin(oAccount.outgoingMailLogin());
-		this.oOutgoing.set(oAccount.outgoingMailServer(), oAccount.outgoingMailPort(), oAccount.outgoingMailSsl());
-		this.useSmtpAuthentication(Types.pInt(oAccount.outgoingMailAuth()) === 2 ? true : false);
+		this.incomingLogin(oAccount.incomingLogin());
+		this.oIncoming.set(oAccount.incomingServer(), oAccount.incomingPort(), oAccount.incomingUseSsl());
+		this.outgoingLogin(oAccount.outgoingLogin());
+		this.oOutgoing.set(oAccount.outgoingServer(), oAccount.outgoingPort(), oAccount.outgoingUseSsl());
+		this.outgoingUseAuth(oAccount.outgoingUseAuth());
 		
 		this.isInternal(oAccount.isInternal());
 		this.isLinked(oAccount.isLinked());
@@ -150,11 +149,11 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 
 		this.friendlyName('');
 		this.email('');
-		this.incomingMailLogin('');
+		this.incomingLogin('');
 		this.oIncoming.clear();
-		this.outgoingMailLogin('');
+		this.outgoingLogin('');
 		this.oOutgoing.clear();
-		this.useSmtpAuthentication(true);
+		this.outgoingUseAuth(true);
 		
 		this.isInternal(true);
 		this.isLinked(true);

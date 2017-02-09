@@ -15,9 +15,9 @@
 
 		<div class="row smtp_authentication">
 			<div>
-				<label class="custom_checkbox" data-bind="css: {'checked': outgoingMailAuth}">
+				<label class="custom_checkbox" data-bind="css: {'checked': outgoingUseAuth}">
 					<span class="icon"></span>
-					<input type="checkbox" id="use_smtp_authentication" data-bind="checked: outgoingMailAuth, enable: isEnabled" />
+					<input type="checkbox" id="use_smtp_authentication" data-bind="checked: outgoingUseAuth, enable: isEnabled" />
 				</label>
 				<label for="use_smtp_authentication" data-bind="i18n: {'key': '%MODULENAME%/LABEL_USE_SMTP_AUTHENTICATION'}"></label>
 			</div>
@@ -28,13 +28,13 @@
 		</div>
 
 		<div class="row name">
-			<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_YOUR_NAME'}, css: {'disabled': !outgoingMailAuth()}"></span>
-			<input class="value input" spellcheck="false" type="text" maxlength="65" data-bind="value: userName, onEnter: save, enable: outgoingMailAuth, css: {'disabled': !outgoingMailAuth()}"/>
+			<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_YOUR_NAME'}, css: {'disabled': !outgoingUseAuth()}"></span>
+			<input class="value input" spellcheck="false" type="text" maxlength="65" data-bind="value: userName, onEnter: save, enable: outgoingUseAuth, css: {'disabled': !outgoingUseAuth()}"/>
 		</div>
 
 		<div class="row email">
-			<span class="label required" data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_EMAIL'}, css: {'disabled': !outgoingMailAuth()}"></span>
-			<input class="value input" spellcheck="false" type="text" maxlength="65" data-bind="value: email, hasfocus: focusEmail, onEnter: save, enable: outgoingMailAuth, css: {'disabled': !outgoingMailAuth()}"/>
+			<span class="label required" data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_EMAIL'}, css: {'disabled': !outgoingUseAuth()}"></span>
+			<input class="value input" spellcheck="false" type="text" maxlength="65" data-bind="value: email, hasfocus: focusEmail, onEnter: save, enable: outgoingUseAuth, css: {'disabled': !outgoingUseAuth()}"/>
 		</div>
 	</div>
 

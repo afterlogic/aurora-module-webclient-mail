@@ -24,13 +24,17 @@
 				</div>
 				<div class="row login" data-bind="visible: !isFirstStep()">
 					<span class="label required" data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_LOGIN'}"></span>
-					<input class="value input" spellcheck="false"  type="text" maxlength="255" data-bind="value: incomingMailLogin, hasfocus: incomingLoginFocused, valueUpdate: 'afterkeydown', onEnter: save"/>
+					<input class="value input" spellcheck="false"  type="text" maxlength="255" data-bind="value: incomingLogin, hasfocus: incomingLoginFocused, valueUpdate: 'afterkeydown', onEnter: save"/>
 				</div>
 				<div class="row password">
 					<span class="label required" data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_PASSWORD'}"></span>
 					<input class="value input" spellcheck="false"  type="password" maxlength="255" 
-						   data-bind="value: incomingMailPassword, hasfocus: incomingPasswordFocus, valueUpdate: 'afterkeydown', onEnter: save"
+						   data-bind="value: incomingPassword, hasfocus: incomingPasswordFocus, valueUpdate: 'afterkeydown', onEnter: save"
 						   id="selenium_settings_create_account_password" />
+				</div>
+				<div class="row server">
+					<span class="label required" data-bind="i18n: {'key': '%MODULENAME%/LABEL_SERVER'}"></span>
+					<select class="input" data-bind="value: selectedServerId, options: serverOptions, optionsText: 'Name', optionsValue: 'Id'"></select>
 				</div>
 				<div class="row incoming" data-bind="visible: !isFirstStep()">
 					<!-- ko template: {name: '%ModuleName%_Settings_ServerPropertiesView', data: oIncoming} --><!-- /ko -->
@@ -41,9 +45,9 @@
 
 				<div class="row smtp_authentication" data-bind="visible: !isFirstStep()">
 					<div>
-						<label class="custom_checkbox" data-bind="css: {'checked': useSmtpAuthentication}">
+						<label class="custom_checkbox" data-bind="css: {'checked': outgoingUseAuth}">
 							<span class="icon"></span>
-							<input type="checkbox" id="add_new_account_mail_out_auth" data-bind="checked: useSmtpAuthentication" />
+							<input type="checkbox" id="add_new_account_mail_out_auth" data-bind="checked: outgoingUseAuth" />
 						</label>
 						<label for="add_new_account_mail_out_auth" data-bind="i18n: {'key': '%MODULENAME%/LABEL_USE_SMTP_AUTHENTICATION'}"></label>
 					</div>	

@@ -27,16 +27,16 @@ function CFetcherModel()
 	this.folder = ko.observable('');
 	this.useSignature = ko.observable(false);
 	this.signature = ko.observable('');
-	this.incomingMailServer = ko.observable('');
-	this.incomingMailPort = ko.observable(0);
-	this.incomingMailSsl = ko.observable(false);
-	this.incomingMailLogin = ko.observable('');
+	this.incomingServer = ko.observable('');
+	this.incomingPort = ko.observable(0);
+	this.incomingUseSsl = ko.observable(false);
+	this.incomingLogin = ko.observable('');
 	this.leaveMessagesOnServer = ko.observable('');
 	this.isOutgoingEnabled = ko.observable(false);
-	this.outgoingMailServer = ko.observable('');
-	this.outgoingMailPort = ko.observable(0);
-	this.outgoingMailSsl = ko.observable(false);
-	this.outgoingMailAuth = ko.observable(false);
+	this.outgoingServer = ko.observable('');
+	this.outgoingPort = ko.observable(0);
+	this.outgoingUseSsl = ko.observable(false);
+	this.outgoingUseAuth = ko.observable(false);
 	
 	this.fullEmail = ko.computed(function () {
 		return AddressUtils.getFullEmail(this.userName(), this.email());
@@ -57,16 +57,16 @@ CFetcherModel.prototype.parse = function (oData)
 	this.folder(Types.pString(oData.Folder));
 	this.useSignature(!!oData.SignatureOptions);
 	this.signature(Types.pString(oData.Signature));
-	this.incomingMailServer(Types.pString(oData.IncomingMailServer));
-	this.incomingMailPort(Types.pInt(oData.IncomingMailPort));
-	this.incomingMailSsl(!!oData.IncomingMailSsl);
-	this.incomingMailLogin(Types.pString(oData.IncomingMailLogin));
+	this.incomingServer(Types.pString(oData.IncomingServer));
+	this.incomingPort(Types.pInt(oData.IncomingPort));
+	this.incomingUseSsl(!!oData.IncomingUseSsl);
+	this.incomingLogin(Types.pString(oData.IncomingLogin));
 	this.leaveMessagesOnServer(!!oData.LeaveMessagesOnServer);
 	this.isOutgoingEnabled(!!oData.IsOutgoingEnabled);
-	this.outgoingMailServer(Types.pString(oData.OutgoingMailServer));
-	this.outgoingMailPort(Types.pInt(oData.OutgoingMailPort));
-	this.outgoingMailSsl(!!oData.OutgoingMailSsl);
-	this.outgoingMailAuth(!!oData.OutgoingMailAuth);
+	this.outgoingServer(Types.pString(oData.OutgoingServer));
+	this.outgoingPort(Types.pInt(oData.OutgoingPort));
+	this.outgoingUseSsl(!!oData.OutgoingUseSsl);
+	this.outgoingUseAuth(!!oData.OutgoingUseAuth);
 };
 
 module.exports = CFetcherModel;

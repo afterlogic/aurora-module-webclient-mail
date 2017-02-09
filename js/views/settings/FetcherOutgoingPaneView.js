@@ -44,7 +44,7 @@ function CFetcherOutgoingPaneView()
 	this.focusEmail = ko.observable(false);
 
 	this.oOutgoing = new CServerPropertiesView(25, 465, 'fetcher_edit_outgoing', TextUtils.i18n('%MODULENAME%/LABEL_SMTP_SERVER'));
-	this.outgoingMailAuth = ko.observable(false);
+	this.outgoingUseAuth = ko.observable(false);
 
 	this.firstState = null;
 }
@@ -69,7 +69,7 @@ CFetcherOutgoingPaneView.prototype.getCurrentValues = function ()
 		this.oOutgoing.server(),
 		this.oOutgoing.port(),
 		this.oOutgoing.ssl(),
-		this.outgoingMailAuth(),
+		this.outgoingUseAuth(),
 		this.userName(),
 		this.email()
 	];
@@ -85,10 +85,10 @@ CFetcherOutgoingPaneView.prototype.getParametersForSave = function ()
 			'Email': this.email(),
 			'Name': this.userName(),
 			'IsOutgoingEnabled': this.isOutgoingEnabled() ? 1 : 0,
-			'OutgoingMailServer': this.oOutgoing.server(),
-			'OutgoingMailPort': this.oOutgoing.getIntPort(),
-			'OutgoingMailSsl': this.oOutgoing.getIntSsl(),
-			'OutgoingMailAuth': this.outgoingMailAuth() ? 1 : 0
+			'OutgoingServer': this.oOutgoing.server(),
+			'OutgoingPort': this.oOutgoing.getIntPort(),
+			'OutgoingUseSsl': this.oOutgoing.getIntSsl(),
+			'OutgoingUseAuth': this.outgoingUseAuth()
 		};
 	}
 	
@@ -147,21 +147,21 @@ CFetcherOutgoingPaneView.prototype.populate = function ()
 		this.userName(oFetcher.userName());
 		this.isOutgoingEnabled(oFetcher.isOutgoingEnabled());
 
-		this.oOutgoing.set(oFetcher.outgoingMailServer(), oFetcher.outgoingMailPort(), oFetcher.outgoingMailSsl());
-		this.outgoingMailAuth(oFetcher.outgoingMailAuth());
+		this.oOutgoing.set(oFetcher.outgoingServer(), oFetcher.outgoingPort(), oFetcher.outgoingUseSsl());
+		this.outgoingUseAuth(oFetcher.outgoingUseAuth());
 
 		this.updateSavedState();
 	}
 };
 CFetcherOutgoingPaneView.prototype.isEmptyRequiredFields = function ()
 {
-	if (this.outgoingMailAuth() && this.isOutgoingEnabled() && '' === this.oOutgoing.server())
+	if (this.outgoingUseAuth() && this.isOutgoingEnabled() && '' === this.oOutgoing.server())
 	{
-		this.oOutgoing.focused(true);
+		this.oOutgoing.server.focused(true);
 		return true;
 	}
 	
-	if (this.outgoingMailAuth() && '' === this.email())
+	if (this.outgoingUseAuth() && '' === this.email())
 	{
 		this.focusEmail(true);
 		return true;

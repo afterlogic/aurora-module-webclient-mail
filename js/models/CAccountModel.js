@@ -41,23 +41,24 @@ function CAccountModel(bSingle)
 	}, this);
 	this.allowMail = ko.observable(true);
 	this.passwordSpecified = ko.observable(true);
+	this.serverId = ko.observable(0);
 	
 	this.extensions = ko.observableArray([]);
 	this.fetchers = ko.observable(null);
 	this.identities = ko.observable(null);
 	this.friendlyName = ko.observable('');
-	this.incomingMailLogin = ko.observable('');
-	this.incomingMailServer = ko.observable('');
-	this.incomingMailPort = ko.observable(143); 
-	this.incomingMailSsl = ko.observable(false); 
+	this.incomingLogin = ko.observable('');
+	this.incomingServer = ko.observable('');
+	this.incomingPort = ko.observable(143); 
+	this.incomingUseSsl = ko.observable(false); 
 	this.isInternal = ko.observable(false); // If **true**, the account is hosted by bundled mailserver.
 	this.isLinked = ko.observable(false); // If **true**, the account is belonged to some domain.
 	this.isDefault = ko.observable(false);
-	this.outgoingMailAuth = ko.observable(0);
-	this.outgoingMailLogin = ko.observable('');
-	this.outgoingMailServer = ko.observable('');
-	this.outgoingMailPort = ko.observable(25);
-	this.outgoingMailSsl = ko.observable(false);
+	this.outgoingUseAuth = ko.observable(false);
+	this.outgoingLogin = ko.observable('');
+	this.outgoingServer = ko.observable('');
+	this.outgoingPort = ko.observable(25);
+	this.outgoingUseSsl = ko.observable(false);
 	this.isExtended = ko.observable(false);
 	this.signature = ko.observable('');
 	this.useSignature = ko.observable(false);
@@ -299,18 +300,19 @@ CAccountModel.prototype.updateExtended = function (ExtendedData)
 		this.isExtended(true);
 		
 		this.friendlyName(Types.pString(ExtendedData.FriendlyName));
-		this.incomingMailLogin(Types.pString(ExtendedData.IncomingMailLogin));
-		this.incomingMailServer(Types.pString(ExtendedData.IncomingMailServer));
-		this.incomingMailPort(Types.pInt(ExtendedData.IncomingMailPort));
-		this.incomingMailSsl(!!ExtendedData.IncomingMailSsl);
+		this.incomingLogin(Types.pString(ExtendedData.IncomingLogin));
+		this.incomingServer(Types.pString(ExtendedData.Server.IncomingServer));
+		this.incomingPort(Types.pInt(ExtendedData.Server.IncomingPort));
+		this.incomingUseSsl(!!ExtendedData.Server.IncomingUseSsl);
 		this.isInternal(!!ExtendedData.IsInternal);
 		this.isLinked(!!ExtendedData.IsLinked);
 		this.isDefault(!!ExtendedData.IsDefault);
-		this.outgoingMailAuth(!!ExtendedData.OutgoingMailAuth);
-		this.outgoingMailLogin(Types.pString(ExtendedData.OutgoingMailLogin));
-		this.outgoingMailServer(Types.pString(ExtendedData.OutgoingMailServer));
-		this.outgoingMailPort(Types.pInt(ExtendedData.OutgoingMailPort));
-		this.outgoingMailSsl(!!ExtendedData.OutgoingMailSsl);
+		this.outgoingUseAuth(!!ExtendedData.Server.OutgoingUseAuth);
+		this.outgoingLogin(Types.pString(ExtendedData.OutgoingLogin));
+		this.outgoingServer(Types.pString(ExtendedData.Server.OutgoingServer));
+		this.outgoingPort(Types.pInt(ExtendedData.Server.OutgoingPort));
+		this.outgoingUseSsl(!!ExtendedData.Server.OutgoingUseSsl);
+		this.serverId(Types.pInt(ExtendedData.ServerId));
 		
 		this.setExtensions(ExtendedData.Extensions || []);
 	}

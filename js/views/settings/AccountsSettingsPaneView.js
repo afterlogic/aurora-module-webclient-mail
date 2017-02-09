@@ -239,7 +239,7 @@ CAccountsSettingsPaneView.prototype.getAutoselectedTab = function ()
 
 CAccountsSettingsPaneView.prototype.addAccount = function ()
 {
-	Popups.showPopup(CreateAccountPopup, [Enums.AccountCreationPopupType.TwoSteps, '', _.bind(function (iAccountId) {
+	Popups.showPopup(CreateAccountPopup, [Enums.AccountCreationPopupType.OneStep, '', _.bind(function (iAccountId) {
 		this.editAccount(iAccountId);
 	}, this)]);
 };
@@ -394,6 +394,7 @@ CAccountsSettingsPaneView.prototype.populate = function ()
 		
 		if (!oAccount.isExtended())
 		{
+			console.log('GetAccountSettings');
 			Ajax.send('GetAccountSettings', {AccountID: oAccount.id()}, this.onGetAccountSettingsResponse, this);
 		}
 	}
@@ -405,6 +406,7 @@ CAccountsSettingsPaneView.prototype.populate = function ()
  */
 CAccountsSettingsPaneView.prototype.onGetAccountSettingsResponse = function (oResponse, oRequest)
 {
+	console.log('onGetAccountSettingsResponse', oResponse);
 	if (!oResponse.Result)
 	{
 		Api.showErrorByCode(oResponse, TextUtils.i18n('COREWEBCLIENT/ERROR_UNKNOWN'));

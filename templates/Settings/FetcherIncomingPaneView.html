@@ -18,11 +18,11 @@
 
 		<div class="row login">
 			<span class="label" data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_LOGIN'}"></span>
-			<span class="value text" data-bind="text: incomingMailLogin"></span>
+			<span class="value text" data-bind="text: incomingLogin"></span>
 		</div>
 		<div class="row password">
 			<span class="label required" data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_PASSWORD'}"></span>
-			<input class="value input" spellcheck="false" type="password" maxlength="255" data-bind="value: incomingMailPassword, onEnter: save, hasFocus: passwordIsSelected, enable: isEnabled"/>
+			<input class="value input" spellcheck="false" type="password" maxlength="255" data-bind="value: incomingPassword, onEnter: save, hasFocus: passwordIsSelected, enable: isEnabled"/>
 		</div>
 
 		<div class="row hint">

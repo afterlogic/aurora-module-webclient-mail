@@ -31,8 +31,8 @@ function CCreateFetcherPopup()
 	this.loading = ko.observable(false);
 	this.newFolderCreating = ko.observable(false);
 
-	this.incomingMailLogin = ko.observable('');
-	this.incomingMailPassword = ko.observable('');
+	this.incomingLogin = ko.observable('');
+	this.incomingPassword = ko.observable('');
 	this.oIncoming = new CServerPropertiesView(110, 995, 'fectcher_add_incoming', TextUtils.i18n('%MODULENAME%/LABEL_POP3_SERVER'));
 
 	this.folder = ko.observable('');
@@ -60,8 +60,8 @@ CCreateFetcherPopup.prototype.onShow = function ()
 	this.bShown = true;
 	this.populateOptions();
 	
-	this.incomingMailLogin('');
-	this.incomingMailPassword('');
+	this.incomingLogin('');
+	this.incomingPassword('');
 	this.oIncoming.clear();
 
 	this.folder('');
@@ -93,11 +93,11 @@ CCreateFetcherPopup.prototype.save = function ()
 		var oParameters = {
 			'AccountID': AccountList.defaultId(),
 			'Folder': this.folder(),
-			'IncomingMailLogin': this.incomingMailLogin(),
-			'IncomingMailPassword': (this.incomingMailPassword() === '') ? '******' : this.incomingMailPassword(),
-			'IncomingMailServer': this.oIncoming.server(),
-			'IncomingMailPort': this.oIncoming.getIntPort(),
-			'IncomingMailSsl': this.oIncoming.getIntSsl(),
+			'IncomingLogin': this.incomingLogin(),
+			'IncomingPassword': (this.incomingPassword() === '') ? '******' : this.incomingPassword(),
+			'IncomingServer': this.oIncoming.server(),
+			'IncomingPort': this.oIncoming.getIntPort(),
+			'IncomingUseSsl': this.oIncoming.getIntSsl(),
 			'LeaveMessagesOnServer': this.leaveMessagesOnServer() ? 1 : 0
 		};
 
@@ -140,12 +140,12 @@ CCreateFetcherPopup.prototype.isEmptyRequiredFields = function ()
 	switch ('')
 	{
 		case this.oIncoming.server():
-			this.oIncoming.focused(true);
+			this.oIncoming.server.focused(true);
 			return true;
-		case this.incomingMailLogin():
+		case this.incomingLogin():
 			this.loginIsSelected(true);
 			return true;
-		case this.incomingMailPassword():
+		case this.incomingPassword():
 			this.passwordIsSelected(true);
 			return true;
 		default: return false;

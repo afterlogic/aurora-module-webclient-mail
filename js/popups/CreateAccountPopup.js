@@ -27,19 +27,46 @@ function CCreateAccountPopup()
 	this.defaultAccountId = AccountList.defaultId;
 
 	this.loading = ko.observable(false);
+	
+	this.servers = ko.observableArray([]);
+	this.serversRetrieved = ko.observable(false);
+	this.serverOptions = ko.observableArray([{ 'Name': TextUtils.i18n('%MODULENAME%/LABEL_CONFIGURE_SERVER_MANUALLY'), 'Id': 0 }]);
+	this.selectedServerId = ko.observable(0);
+	this.selectedServerId.subscribe(function () {
+		var
+			iSelectedServerId = Types.pInt(this.selectedServerId()),
+			oSelectedServer = _.find(this.servers(), function (oServer) {
+				return oServer.iObjectId === iSelectedServerId;
+			})
+		;
+		if (oSelectedServer)
+		{
+			this.oIncoming.set(oSelectedServer.IncomingServer, oSelectedServer.IncomingPort, !!oSelectedServer.IncomingUseSsl);
+			this.oIncoming.isEnabled(false);
+			this.oOutgoing.set(oSelectedServer.OutgoingServer, oSelectedServer.OutgoingPort, !!oSelectedServer.OutgoingUseSsl);
+			this.oOutgoing.isEnabled(false);
+			this.outgoingUseAuth(oSelectedServer.OutgoingUseAuth);
+		}
+		else
+		{
+			this.clearServers();
+			this.oIncoming.isEnabled(true);
+			this.oOutgoing.isEnabled(true);
+		}
+	}, this);
 
 	this.friendlyName = ko.observable('');
 	this.email = ko.observable('');
-	this.incomingMailLogin = ko.observable('');
+	this.incomingLogin = ko.observable('');
 	this.incomingLoginFocused = ko.observable(false);
-	this.incomingMailPassword = ko.observable('');
+	this.incomingPassword = ko.observable('');
 	this.oIncoming = new CServerPropertiesView(143, 993, 'acc_create_incoming', TextUtils.i18n('%MODULENAME%/LABEL_IMAP_SERVER'));
 	
-	this.outgoingMailLogin = ko.observable('');
-	this.outgoingMailPassword = ko.observable('');
+	this.outgoingLogin = ko.observable('');
+	this.outgoingPassword = ko.observable('');
 	this.oOutgoing = new CServerPropertiesView(25, 465, 'acc_create_outgoing', TextUtils.i18n('%MODULENAME%/LABEL_SMTP_SERVER'), this.oIncoming.server);
 	
-	this.useSmtpAuthentication = ko.observable(true);
+	this.outgoingUseAuth = ko.observable(true);
 	this.friendlyNameFocus = ko.observable(false);
 	this.emailFocus = ko.observable(false);
 	this.incomingPasswordFocus = ko.observable(false);
@@ -57,9 +84,9 @@ function CCreateAccountPopup()
 	}, this);
 
 	this.incomingLoginFocused.subscribe(function () {
-		if (this.incomingLoginFocused() && this.incomingMailLogin() === '')
+		if (this.incomingLoginFocused() && this.incomingLogin() === '')
 		{
-			this.incomingMailLogin(this.email());
+			this.incomingLogin(this.email());
 		}
 	}, this);
 }
@@ -75,21 +102,39 @@ CCreateAccountPopup.prototype.init = function ()
 	
 	this.friendlyName('');
 	this.email('');
-	this.incomingMailLogin('');
+	this.incomingLogin('');
 	this.incomingLoginFocused(false);
-	this.incomingMailPassword('');
-	this.outgoingMailLogin('');
-	this.outgoingMailPassword('');
-	this.oOutgoing.focused(false);
+	this.incomingPassword('');
+	this.outgoingLogin('');
+	this.outgoingPassword('');
+	this.oOutgoing.server.focused(false);
 
 	this.clearServers();
+	
+	if (!this.serversRetrieved())
+	{
+		Ajax.send('GetServers', {}, function (oResponse) {
+			if (_.isArray(oResponse.Result))
+			{
+				var aServerOptions = [{ 'Name': TextUtils.i18n('%MODULENAME%/LABEL_CONFIGURE_SERVER_MANUALLY'), 'Id': 0 }];
+				
+				_.each(oResponse.Result, function (oServer) {
+					aServerOptions.push({ 'Name': oServer.Name, 'Id': oServer.iObjectId });
+				});
+				
+				this.servers(oResponse.Result);
+				this.serverOptions(aServerOptions);
+				this.serversRetrieved(true);
+			}
+		}, this);
+	}
 };
 
 CCreateAccountPopup.prototype.clearServers = function ()
 {
 	this.oIncoming.clear();
 	this.oOutgoing.clear();
-	this.useSmtpAuthentication(true);
+	this.outgoingUseAuth(true);
 };
 
 /**
@@ -113,7 +158,7 @@ CCreateAccountPopup.prototype.onShow = function (iType, sEmail, fCallback)
 		case Enums.AccountCreationPopupType.ConnectToMail:
 			this.isFirstStep(false);
 			this.email(sEmail);
-			this.incomingMailLogin(sEmail);
+			this.incomingLogin(sEmail);
 			this.incomingPasswordFocus(true);
 			break;
 	}
@@ -151,17 +196,20 @@ CCreateAccountPopup.prototype.onSecondSaveClick = function ()
 				'AccountID': this.defaultAccountId(),
 				'FriendlyName': this.friendlyName(),
 				'Email': this.email(),
-				'IncomingMailLogin': this.incomingMailLogin(),
-				'IncomingMailPassword': this.incomingMailPassword(),
-				'IncomingMailServer': this.oIncoming.server(),
-				'IncomingMailPort': this.oIncoming.getIntPort(),
-				'IncomingMailSsl': this.oIncoming.getIntSsl(),
-				'OutgoingMailLogin': this.outgoingMailLogin(),
-				'OutgoingMailPassword': this.outgoingMailPassword(),
-				'OutgoingMailServer': this.oOutgoing.server(),
-				'OutgoingMailPort': this.oOutgoing.getIntPort(),
-				'OutgoingMailSsl': this.oOutgoing.getIntSsl(),
-				'OutgoingMailAuth': this.useSmtpAuthentication() ? 2 : 0
+				'IncomingLogin': this.incomingLogin(),
+				'IncomingPassword': this.incomingPassword(),
+				'OutgoingLogin': this.outgoingLogin(),
+				'OutgoingPassword': this.outgoingPassword(),
+				'ServerId': Types.pInt(this.selectedServerId()),
+				'Server': {
+					'IncomingServer': this.oIncoming.server(),
+					'IncomingPort': this.oIncoming.getIntPort(),
+					'IncomingUseSsl': this.oIncoming.getIntSsl(),
+					'OutgoingServer': this.oOutgoing.server(),
+					'OutgoingPort': this.oOutgoing.getIntPort(),
+					'OutgoingUseSsl': this.oOutgoing.getIntSsl(),
+					'OutgoingUseAuth': this.outgoingUseAuth()
+				}
 			}
 		;
 
@@ -198,12 +246,12 @@ CCreateAccountPopup.prototype.onDomainGetDataByEmailResponse = function (oRespon
 {
 	var oResult = oResponse.Result;
 	
-	this.incomingMailLogin(this.email());
+	this.incomingLogin(this.email());
 
 	if (oResult)
 	{
-		this.oIncoming.set(oResult.IncomingMailServer, oResult.IncomingMailPort, !!oResult.IncomingMailSsl);
-		this.oOutgoing.set(oResult.OutgoingMailServer, oResult.OutgoingMailPort, !!oResult.OutgoingMailSsl);
+		this.oIncoming.set(oResult.IncomingServer, oResult.IncomingPort, !!oResult.IncomingUseSsl);
+		this.oOutgoing.set(oResult.OutgoingServer, oResult.OutgoingPort, !!oResult.OutgoingUseSsl);
 
 		this.onSecondSaveClick();
 	}
@@ -276,7 +324,7 @@ CCreateAccountPopup.prototype.isEmptyFirstFields = function ()
 		case this.email():
 			this.emailFocus(true);
 			return true;
-		case this.incomingMailPassword():
+		case this.incomingPassword():
 			this.incomingMailFocus(true);
 			return true;
 		default: return false;
@@ -290,14 +338,14 @@ CCreateAccountPopup.prototype.isEmptySecondFields = function ()
 		case this.email():
 			this.emailFocus(true);
 			return true;
-		case this.incomingMailLogin():
+		case this.incomingLogin():
 			this.incomingLoginFocused(true);
 			return true;
 		case this.oIncoming.server():
-			this.oIncoming.focused(true);
+			this.oIncoming.server.focused(true);
 			return true;
 		case this.oOutgoing.server():
-			this.oOutgoing.focused(true);
+			this.oOutgoing.server.focused(true);
 			return true;
 		default: return false;
 	}

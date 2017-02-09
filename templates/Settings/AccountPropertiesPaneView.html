@@ -12,11 +12,11 @@
 
             <div class="row">
                 <span class="label required" data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_LOGIN'}"></span>
-                <input class="value input" spellcheck="false" type="text" maxlength="255" data-bind="value: incomingMailLogin, hasfocus: incLoginFocused, onEnter: save"/>
+                <input class="value input" spellcheck="false" type="text" maxlength="255" data-bind="value: incomingLogin, hasfocus: incLoginFocused, onEnter: save"/>
             </div>
             <div class="row">
                 <span class="label required" data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_PASSWORD'}"></span>
-                <input class="value input" spellcheck="false" type="password" maxlength="255" data-bind="value: incomingMailPassword, onEnter: save"/>
+                <input class="value input" spellcheck="false" type="password" maxlength="255" data-bind="value: incomingPassword, onEnter: save"/>
             </div>
             <div class="row">
 				<!-- ko template: {name: '%ModuleName%_Settings_ServerPropertiesView', data: oOutgoing} --><!-- /ko -->
@@ -24,9 +24,9 @@
 
             <div class="row">
                 <div>
-                    <label class="custom_checkbox" data-bind="css: {'checked': useSmtpAuthentication}">
+                    <label class="custom_checkbox" data-bind="css: {'checked': outgoingUseAuth}">
                         <span class="icon"></span>
-                        <input type="checkbox" id="mail_out_auth" data-bind="checked: useSmtpAuthentication" />
+                        <input type="checkbox" id="mail_out_auth" data-bind="checked: outgoingUseAuth" />
                     </label>
                     <label for="mail_out_auth" data-bind="i18n: {'key': '%MODULENAME%/LABEL_USE_SMTP_AUTHENTICATION'}"></label>
                 </div>

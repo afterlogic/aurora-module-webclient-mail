@@ -35,8 +35,8 @@ function CFetcherIncomingPaneView()
 
 	this.isEnabled = ko.observable(true);
 
-	this.incomingMailLogin = ko.observable('');
-	this.incomingMailPassword = ko.observable('');
+	this.incomingLogin = ko.observable('');
+	this.incomingPassword = ko.observable('');
 	this.oIncoming = new CServerPropertiesView(110, 995, 'fetcher_edit_incoming', TextUtils.i18n('%MODULENAME%/LABEL_POP3_SERVER'));
 
 	this.sFetcherFolder = '';
@@ -97,7 +97,7 @@ CFetcherIncomingPaneView.prototype.getCurrentValues = function ()
 		this.oIncoming.server(),
 		this.oIncoming.port(),
 		this.oIncoming.ssl(),
-		this.incomingMailPassword(),
+		this.incomingPassword(),
 		this.folder(),
 		this.leaveMessagesOnServer()
 	];
@@ -112,10 +112,10 @@ CFetcherIncomingPaneView.prototype.getParametersForSave = function ()
 			'FetcherID': this.idFetcher(),
 			'IsEnabled': this.isEnabled() ? 1 : 0,
 			'Folder': this.folder(),
-			'IncomingMailServer': this.oIncoming.server(),
-			'IncomingMailPort': this.oIncoming.getIntPort(),
-			'IncomingMailSsl': this.oIncoming.getIntSsl(),
-			'IncomingMailPassword': (this.incomingMailPassword() === '') ? '******' : this.incomingMailPassword(),
+			'IncomingServer': this.oIncoming.server(),
+			'IncomingPort': this.oIncoming.getIntPort(),
+			'IncomingUseSsl': this.oIncoming.getIntSsl(),
+			'IncomingPassword': (this.incomingPassword() === '') ? '******' : this.incomingPassword(),
 			'LeaveMessagesOnServer': this.leaveMessagesOnServer() ? 1 : 0
 		};
 	}
@@ -172,9 +172,9 @@ CFetcherIncomingPaneView.prototype.populate = function ()
 		this.isEnabled(oFetcher.isEnabled());
 
 		this.folder(oFetcher.folder());
-		this.oIncoming.set(oFetcher.incomingMailServer(), oFetcher.incomingMailPort(), oFetcher.incomingMailSsl());
-		this.incomingMailLogin(oFetcher.incomingMailLogin());
-		this.incomingMailPassword('******');
+		this.oIncoming.set(oFetcher.incomingServer(), oFetcher.incomingPort(), oFetcher.incomingUseSsl());
+		this.incomingLogin(oFetcher.incomingLogin());
+		this.incomingPassword('******');
 		this.leaveMessagesOnServer(oFetcher.leaveMessagesOnServer());
 
 		this.updateSavedState();
@@ -184,11 +184,11 @@ CFetcherIncomingPaneView.prototype.isEmptyRequiredFields = function ()
 {
 	if (this.oIncoming.server() === '')
 	{
-		this.oIncoming.focused(true);
+		this.oIncoming.server.focused(true);
 		return true;
 	}
 	
-	if (this.incomingMailPassword() === '')
+	if (this.incomingPassword() === '')
 	{
 		this.passwordIsSelected(true);
 		return true;

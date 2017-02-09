@@ -37,7 +37,7 @@ function CServersAdminSettingsPaneView()
 	this.name.focused = ko.observable(false);
 	this.oIncoming = new CServerPropertiesView(143, 993, 'server_edit_incoming', TextUtils.i18n('%MODULENAME%/LABEL_IMAP_SERVER'), this.name);
 	this.oOutgoing = new CServerPropertiesView(25, 465, 'server_edit_outgoing', TextUtils.i18n('%MODULENAME%/LABEL_SMTP_SERVER'), this.oIncoming.server);
-	this.useSmtpAuthentication = ko.observable(false);
+	this.outgoingUseAuth = ko.observable(false);
 }
 
 _.extendOwn(CServersAdminSettingsPaneView.prototype, CAbstractSettingsFormView.prototype);
@@ -201,7 +201,7 @@ CServersAdminSettingsPaneView.prototype.getCurrentValues = function ()
 		this.oOutgoing.port(),
 		this.oOutgoing.server(),
 		this.oOutgoing.ssl(),
-		this.useSmtpAuthentication()
+		this.outgoingUseAuth()
 	];
 };
 
@@ -217,13 +217,13 @@ CServersAdminSettingsPaneView.prototype.revertGlobalValues = function ()
 	if (oEditedServer)
 	{
 		this.name(oEditedServer.Name);
-		this.oIncoming.port(oEditedServer.IncomingMailPort);
-		this.oIncoming.server(oEditedServer.IncomingMailServer);
-		this.oIncoming.ssl(!!oEditedServer.IncomingMailUseSSL);
-		this.oOutgoing.port(oEditedServer.OutgoingMailPort);
-		this.oOutgoing.server(oEditedServer.OutgoingMailServer);
-		this.oOutgoing.ssl(!!oEditedServer.OutgoingMailUseSSL);
-		this.useSmtpAuthentication(!!oEditedServer.OutgoingMailAuth);
+		this.oIncoming.port(oEditedServer.IncomingPort);
+		this.oIncoming.server(oEditedServer.IncomingServer);
+		this.oIncoming.ssl(!!oEditedServer.IncomingUseSsl);
+		this.oOutgoing.port(oEditedServer.OutgoingPort);
+		this.oOutgoing.server(oEditedServer.OutgoingServer);
+		this.oOutgoing.ssl(!!oEditedServer.OutgoingUseSsl);
+		this.outgoingUseAuth(!!oEditedServer.OutgoingUseAuth);
 	}
 	else
 	{
@@ -234,7 +234,7 @@ CServersAdminSettingsPaneView.prototype.revertGlobalValues = function ()
 		this.oOutgoing.port(25);
 		this.oOutgoing.server('');
 		this.oOutgoing.ssl(false);
-		this.useSmtpAuthentication(false);
+		this.outgoingUseAuth(false);
 	}
 };
 
@@ -247,13 +247,13 @@ CServersAdminSettingsPaneView.prototype.getParametersForSave = function ()
 	return {
 		'ServerId': this.editedServerId(),
 		'Name': this.name(),
-		'IncomingMailServer': this.oIncoming.server(),
-		'IncomingMailPort': this.oIncoming.port(),
-		'IncomingMailUseSSL': this.oIncoming.ssl(),
-		'OutgoingMailServer': this.oOutgoing.server(),
-		'OutgoingMailPort': this.oOutgoing.port(),
-		'OutgoingMailUseSSL': this.oOutgoing.ssl(),
-		'OutgoingMailAuth': this.useSmtpAuthentication()
+		'IncomingServer': this.oIncoming.server(),
+		'IncomingPort': this.oIncoming.port(),
+		'IncomingUseSsl': this.oIncoming.ssl(),
+		'OutgoingServer': this.oOutgoing.server(),
+		'OutgoingPort': this.oOutgoing.port(),
+		'OutgoingUseSsl': this.oOutgoing.ssl(),
+		'OutgoingUseAuth': this.outgoingUseAuth()
 	};
 };
 
