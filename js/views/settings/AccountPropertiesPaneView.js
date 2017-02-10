@@ -34,7 +34,6 @@ function CAccountPropertiesPaneView()
 	this.bAllowIdentities = Settings.AllowIdentities;
 	
 	this.isInternal = ko.observable(true);
-	this.isLinked = ko.observable(true);
 	this.isDefault = ko.observable(false);
 	this.removeHint = ko.observable('');
 	this.canBeRemoved = ko.observable('');
@@ -93,15 +92,17 @@ CAccountPropertiesPaneView.prototype.getParametersForSave = function ()
 		'FriendlyName': this.friendlyName(),
 		'Email': this.email(),
 		'IncomingLogin': this.incomingLogin(),
-		'IncomingServer': this.oIncoming.server(),
-		'IncomingPort': this.oIncoming.getIntPort(),
-		'IncomingUseSsl': this.oIncoming.getIntSsl(),
 		'OutgoingLogin': this.outgoingLogin(),
-		'OutgoingServer': this.oOutgoing.server(),
-		'OutgoingPort': this.oOutgoing.getIntPort(),
-		'OutgoingUseSsl': this.oOutgoing.getIntSsl(),
-		'OutgoingUseAuth': this.outgoingUseAuth(),
-		'IncomingPassword': this.incomingPassword()
+		'IncomingPassword': this.incomingPassword(),
+		'Server': {
+			'IncomingServer': this.oIncoming.server(),
+			'IncomingPort': this.oIncoming.getIntPort(),
+			'IncomingUseSsl': this.oIncoming.getIntSsl(),
+			'OutgoingServer': this.oOutgoing.server(),
+			'OutgoingPort': this.oOutgoing.getIntPort(),
+			'OutgoingUseSsl': this.oOutgoing.getIntSsl(),
+			'OutgoingUseAuth': this.outgoingUseAuth()
+		}
 	};
 };
 
@@ -121,13 +122,12 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 		this.friendlyName(oAccount.friendlyName());
 		this.email(oAccount.email());
 		this.incomingLogin(oAccount.incomingLogin());
-		this.oIncoming.set(oAccount.incomingServer(), oAccount.incomingPort(), oAccount.incomingUseSsl());
+		this.oIncoming.set(oAccount.oServer.sIncomingServer, oAccount.oServer.iIncomingPort, oAccount.oServer.bIncomingUseSsl);
 		this.outgoingLogin(oAccount.outgoingLogin());
-		this.oOutgoing.set(oAccount.outgoingServer(), oAccount.outgoingPort(), oAccount.outgoingUseSsl());
-		this.outgoingUseAuth(oAccount.outgoingUseAuth());
+		this.oOutgoing.set(oAccount.oServer.sOutgoingServer, oAccount.oServer.iOutgoingPort, oAccount.oServer.bOutgoingUseSsl);
+		this.outgoingUseAuth(oAccount.oServer.bOutgoingUseAuth);
 		
-		this.isInternal(oAccount.isInternal());
-		this.isLinked(oAccount.isLinked());
+		this.isInternal(oAccount.bInternal);
 		this.isDefault(oAccount.isDefault());
 		this.removeHint(oAccount.removeHint());
 		this.canBeRemoved(oAccount.canBeRemoved());
@@ -156,7 +156,6 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 		this.outgoingUseAuth(true);
 		
 		this.isInternal(true);
-		this.isLinked(true);
 		this.isDefault(true);
 		this.removeHint('');
 		this.canBeRemoved(false);

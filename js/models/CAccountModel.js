@@ -22,6 +22,7 @@ var
 	ConfirmPopup = require('%PathToCoreWebclientModule%/js/popups/ConfirmPopup.js'),
 	
 	CFiltersModel = require('modules/%ModuleName%/js/models/CFiltersModel.js'),
+	CServerModel = require('modules/%ModuleName%/js/models/CServerModel.js'),
 	
 	AccountList = null,
 	Cache = null,
@@ -41,24 +42,18 @@ function CAccountModel(bSingle)
 	}, this);
 	this.allowMail = ko.observable(true);
 	this.passwordSpecified = ko.observable(true);
+	
 	this.serverId = ko.observable(0);
+	this.oServer = new CServerModel();
 	
 	this.extensions = ko.observableArray([]);
 	this.fetchers = ko.observable(null);
 	this.identities = ko.observable(null);
 	this.friendlyName = ko.observable('');
 	this.incomingLogin = ko.observable('');
-	this.incomingServer = ko.observable('');
-	this.incomingPort = ko.observable(143); 
-	this.incomingUseSsl = ko.observable(false); 
-	this.isInternal = ko.observable(false); // If **true**, the account is hosted by bundled mailserver.
-	this.isLinked = ko.observable(false); // If **true**, the account is belonged to some domain.
+	this.bInternal = false; // If **true**, the account is hosted by bundled mailserver.
 	this.isDefault = ko.observable(false);
-	this.outgoingUseAuth = ko.observable(false);
 	this.outgoingLogin = ko.observable('');
-	this.outgoingServer = ko.observable('');
-	this.outgoingPort = ko.observable(25);
-	this.outgoingUseSsl = ko.observable(false);
 	this.isExtended = ko.observable(false);
 	this.signature = ko.observable('');
 	this.useSignature = ko.observable(false);
@@ -80,7 +75,7 @@ function CAccountModel(bSingle)
 	this.extensionsRequested = ko.observable(false);
 	
 	this.canBeRemoved = ko.computed(function () {
-		return !this.isInternal() && (!this.isDefault() || this.isDefault() && Settings.AllowChangeEmailSettings);
+		return !this.bInternal && (!this.isDefault() || this.isDefault() && Settings.AllowChangeEmailSettings);
 	}, this);
 	
 	this.removeHint = ko.computed(function () {
@@ -299,20 +294,15 @@ CAccountModel.prototype.updateExtended = function (ExtendedData)
 	{
 		this.isExtended(true);
 		
+		this.bInternal = !!ExtendedData.IsInternal;
+		this.isDefault(!!ExtendedData.IsDefault);
+		
 		this.friendlyName(Types.pString(ExtendedData.FriendlyName));
 		this.incomingLogin(Types.pString(ExtendedData.IncomingLogin));
-		this.incomingServer(Types.pString(ExtendedData.Server.IncomingServer));
-		this.incomingPort(Types.pInt(ExtendedData.Server.IncomingPort));
-		this.incomingUseSsl(!!ExtendedData.Server.IncomingUseSsl);
-		this.isInternal(!!ExtendedData.IsInternal);
-		this.isLinked(!!ExtendedData.IsLinked);
-		this.isDefault(!!ExtendedData.IsDefault);
-		this.outgoingUseAuth(!!ExtendedData.Server.OutgoingUseAuth);
 		this.outgoingLogin(Types.pString(ExtendedData.OutgoingLogin));
-		this.outgoingServer(Types.pString(ExtendedData.Server.OutgoingServer));
-		this.outgoingPort(Types.pInt(ExtendedData.Server.OutgoingPort));
-		this.outgoingUseSsl(!!ExtendedData.Server.OutgoingUseSsl);
+		
 		this.serverId(Types.pInt(ExtendedData.ServerId));
+		this.oServer = new CServerModel(ExtendedData.Server);
 		
 		this.setExtensions(ExtendedData.Extensions || []);
 	}

@@ -63,7 +63,6 @@ function CCreateAccountPopup()
 	this.oIncoming = new CServerPropertiesView(143, 993, 'acc_create_incoming', TextUtils.i18n('%MODULENAME%/LABEL_IMAP_SERVER'));
 	
 	this.outgoingLogin = ko.observable('');
-	this.outgoingPassword = ko.observable('');
 	this.oOutgoing = new CServerPropertiesView(25, 465, 'acc_create_outgoing', TextUtils.i18n('%MODULENAME%/LABEL_SMTP_SERVER'), this.oIncoming.server);
 	
 	this.outgoingUseAuth = ko.observable(true);
@@ -106,7 +105,6 @@ CCreateAccountPopup.prototype.init = function ()
 	this.incomingLoginFocused(false);
 	this.incomingPassword('');
 	this.outgoingLogin('');
-	this.outgoingPassword('');
 	this.oOutgoing.server.focused(false);
 
 	this.clearServers();
@@ -199,9 +197,8 @@ CCreateAccountPopup.prototype.onSecondSaveClick = function ()
 				'IncomingLogin': this.incomingLogin(),
 				'IncomingPassword': this.incomingPassword(),
 				'OutgoingLogin': this.outgoingLogin(),
-				'OutgoingPassword': this.outgoingPassword(),
-				'ServerId': Types.pInt(this.selectedServerId()),
 				'Server': {
+					'Id': Types.pInt(this.selectedServerId()),
 					'IncomingServer': this.oIncoming.server(),
 					'IncomingPort': this.oIncoming.getIntPort(),
 					'IncomingUseSsl': this.oIncoming.getIntSsl(),

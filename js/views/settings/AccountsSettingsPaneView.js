@@ -374,14 +374,13 @@ CAccountsSettingsPaneView.prototype.populate = function ()
 		oAccount = AccountList.getEdited(),
 		bAllowMail = !!oAccount && oAccount.allowMail(),
 		bDefault = !!oAccount && oAccount.isDefault(),
-		bLinked = !!oAccount && oAccount.isLinked(),
 		bChangePass = !!oAccount && oAccount.extensionExists('AllowChangePasswordExtension'),
 		bCanBeRemoved = !!oAccount && oAccount.canBeRemoved() && !oAccount.isDefault()
 	;
 	
 	if (oAccount)
 	{
-		this.allowProperties((!bDefault || bDefault && !bLinked && Settings.AllowUsersChangeEmailSettings) && bAllowMail || !Settings.AllowIdentities || bChangePass || bCanBeRemoved);
+		this.allowProperties((!bDefault || bDefault && Settings.AllowUsersChangeEmailSettings) && bAllowMail || !Settings.AllowIdentities || bChangePass || bCanBeRemoved);
 		this.allowFolders(bAllowMail);
 		this.allowForward(bAllowMail && oAccount.extensionExists('AllowForwardExtension') && oAccount.forward());
 		this.allowAutoresponder(bAllowMail && oAccount.extensionExists('AllowAutoresponderExtension') && oAccount.autoresponder());
@@ -394,7 +393,6 @@ CAccountsSettingsPaneView.prototype.populate = function ()
 		
 		if (!oAccount.isExtended())
 		{
-			console.log('GetAccountSettings');
 			Ajax.send('GetAccountSettings', {AccountID: oAccount.id()}, this.onGetAccountSettingsResponse, this);
 		}
 	}
@@ -406,7 +404,6 @@ CAccountsSettingsPaneView.prototype.populate = function ()
  */
 CAccountsSettingsPaneView.prototype.onGetAccountSettingsResponse = function (oResponse, oRequest)
 {
-	console.log('onGetAccountSettingsResponse', oResponse);
 	if (!oResponse.Result)
 	{
 		Api.showErrorByCode(oResponse, TextUtils.i18n('COREWEBCLIENT/ERROR_UNKNOWN'));
