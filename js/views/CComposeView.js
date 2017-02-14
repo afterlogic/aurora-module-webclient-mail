@@ -1491,9 +1491,9 @@ CComposeView.prototype.getSendSaveParameters = function (bRemoveSignatureAnchor)
 		'Bcc': this.bccAddr(),
 		'Subject': this.subject(),
 		'Text': this.plainText() ? this.oHtmlEditor.getPlainText() : this.oHtmlEditor.getText(bRemoveSignatureAnchor),
-		'IsHtml': this.plainText() ? '0' : '1',
+		'IsHtml': this.plainText(),
 		'Importance': this.selectedImportance(),
-		'ReadingConfirmation': this.readingConfirmation() ? '1' : '0',
+		'ReadingConfirmation': this.readingConfirmation(),
 		'Attachments': oAttachments,
 		'InReplyTo': this.inReplyTo(),
 		'References': this.references()
