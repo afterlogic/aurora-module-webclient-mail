@@ -13,6 +13,7 @@ var
 	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
 	App = require('%PathToCoreWebclientModule%/js/App.js'),
 	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
+	Screens = require('%PathToCoreWebclientModule%/js/Screens.js'),
 	Storage = require('%PathToCoreWebclientModule%/js/Storage.js'),
 	
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
@@ -1169,7 +1170,13 @@ CFolderModel.prototype.deleteAfterConfirm = function (bOkAnswer)
 		Ajax.send('DeleteFolder', {
 			'AccountID': AccountList.editedId(),
 			'Folder': this.fullName()
-		}, this.onResponseFolderChanges, this);
+		}, function (oResponse) {
+			if (!oResponse.Result)
+			{
+				Api.showErrorByCode(oResponse, TextUtils.i18n('%MODULENAME%/ERROR_DELETE_FOLDER'));
+				MailCache.getFolderList(AccountList.editedId());
+			}
+		}, this);
 	}
 };
 
@@ -1187,20 +1194,20 @@ CFolderModel.prototype.onSubscribeClick = function ()
 
 		this.subscribed(!this.subscribed());
 		
-		Ajax.send('SubscribeFolder', oParameters, this.onResponseChanges, this);
-	}
-};
-
-/**
- * @param {Object} oResponse
- * @param {Object} oRequest
- */
-CFolderModel.prototype.onResponseChanges = function (oResponse, oRequest)
-{
-	if (!oResponse.Result)
-	{
-		Api.showErrorByCode(oResponse, TextUtils.i18n('SETTINGS/ERROR_SETTINGS_SAVING_FAILED'));
-		MailCache.getFolderList(AccountList.editedId());
+		Ajax.send('SubscribeFolder', oParameters, function (oResponse) {
+			if (!oResponse.Result)
+			{
+				if (this.subscribed())
+				{
+					Api.showErrorByCode(oResponse, TextUtils.i18n('%MODULENAME%/ERROR_SUBSCRIBE_FOLDER'));
+				}
+				else
+				{
+					Api.showErrorByCode(oResponse, TextUtils.i18n('%MODULENAME%/ERROR_UNSUBSCRIBE_FOLDER'));
+				}
+				MailCache.getFolderList(AccountList.editedId());
+			}
+		}, this);
 	}
 };
 

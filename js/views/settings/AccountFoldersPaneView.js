@@ -30,16 +30,22 @@ function CAccountFoldersPaneView()
 	this.highlighted = ko.observable(false).extend({'autoResetToFalse': 500});
 
 	this.collection = ko.observableArray(MailCache.editedFolderList().collection());
-
+	this.oCollSubscription = MailCache.editedFolderList().collection.subscribe(function (koCollection) {
+		this.collection(koCollection);
+	}, this);
 	this.totalMessageCount = ko.observable(0);
 	
-	this.enableButtons = ko.computed(function (){
+	this.enableButtons = ko.computed(function () {
 		return MailCache.editedFolderList().initialized();
 	}, this);
 	
 	MailCache.editedFolderList.subscribe(function(oFolderList) {
 		this.collection(oFolderList.collection());
 		this.setTotalMessageCount();
+		this.oCollSubscription.dispose();
+		this.oCollSubscription = oFolderList.collection.subscribe(function (koCollection) {
+			this.collection(koCollection);
+		}, this);
 	}, this);
 	
 	this.addNewFolderCommand = Utils.createCommand(this, this.addNewFolder, this.enableButtons);
