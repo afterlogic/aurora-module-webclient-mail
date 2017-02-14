@@ -865,9 +865,9 @@ CFolderModel.prototype.initComputedFields = function (bDisableManageSubscribe)
 			case Enums.FolderTypes.Drafts:
 				return TextUtils.i18n('%MODULENAME%/LABEL_USED_AS_DRAFTS');
 			case Enums.FolderTypes.Trash:
-				return TextUtils.i18n('%MODULENAME%/LABEL_USED_AS_SPAM');
-			case Enums.FolderTypes.Spam:
 				return TextUtils.i18n('%MODULENAME%/LABEL_USED_AS_TRASH');
+			case Enums.FolderTypes.Spam:
+				return TextUtils.i18n('%MODULENAME%/LABEL_USED_AS_SPAM');
 		}
 		return '';
 	}, this);
