@@ -82,9 +82,4 @@ CServerPropertiesView.prototype.getIntPort = function ()
 	return Types.pInt(this.port());
 };
 
-CServerPropertiesView.prototype.getIntSsl = function ()
-{
-	return this.ssl() ? 1 : 0;
-};
-
 module.exports = CServerPropertiesView;

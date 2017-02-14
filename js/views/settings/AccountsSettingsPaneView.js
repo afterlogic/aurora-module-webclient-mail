@@ -214,13 +214,6 @@ CAccountsSettingsPaneView.prototype.onRoute = function (aParams)
 	}
 	
 	this.changeTab(sTab || this.getAutoselectedTab().name);
-	
-//	if (this.bFirstRoute && !AccountList.hasAccount())
-//	{
-//		this.addAccount();
-//		Screens.showError(TextUtils.i18n('%MODULENAME%/INFO_SPECIFY_CREDENTIALS'));
-//		this.bFirstRoute = false;
-//	}
 };
 
 CAccountsSettingsPaneView.prototype.getAutoselectedTab = function ()

@@ -87,7 +87,7 @@ CFetcherOutgoingPaneView.prototype.getParametersForSave = function ()
 			'IsOutgoingEnabled': this.isOutgoingEnabled() ? 1 : 0,
 			'OutgoingServer': this.oOutgoing.server(),
 			'OutgoingPort': this.oOutgoing.getIntPort(),
-			'OutgoingUseSsl': this.oOutgoing.getIntSsl(),
+			'OutgoingUseSsl': this.oOutgoing.ssl(),
 			'OutgoingUseAuth': this.outgoingUseAuth()
 		};
 	}

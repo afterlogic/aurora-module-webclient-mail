@@ -14,7 +14,7 @@ var
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
 	CAccountModel = require('modules/%ModuleName%/js/models/CAccountModel.js'),
 	
-	CServerPropertiesView = require('modules/%ModuleName%/js/views/CServerPropertiesView.js')
+	CServerPairPropertiesView = require('modules/%ModuleName%/js/views/settings/CServerPairPropertiesView.js')
 ;
 
 /**
@@ -28,44 +28,17 @@ function CCreateAccountPopup()
 
 	this.loading = ko.observable(false);
 	
-	this.servers = ko.observableArray([]);
-	this.serversRetrieved = ko.observable(false);
-	this.serverOptions = ko.observableArray([{ 'Name': TextUtils.i18n('%MODULENAME%/LABEL_CONFIGURE_SERVER_MANUALLY'), 'Id': 0 }]);
-	this.selectedServerId = ko.observable(0);
-	this.selectedServerId.subscribe(function () {
-		var
-			iSelectedServerId = Types.pInt(this.selectedServerId()),
-			oSelectedServer = _.find(this.servers(), function (oServer) {
-				return oServer.iObjectId === iSelectedServerId;
-			})
-		;
-		if (oSelectedServer)
-		{
-			this.oIncoming.set(oSelectedServer.IncomingServer, oSelectedServer.IncomingPort, !!oSelectedServer.IncomingUseSsl);
-			this.oIncoming.isEnabled(false);
-			this.oOutgoing.set(oSelectedServer.OutgoingServer, oSelectedServer.OutgoingPort, !!oSelectedServer.OutgoingUseSsl);
-			this.oOutgoing.isEnabled(false);
-			this.outgoingUseAuth(oSelectedServer.OutgoingUseAuth);
-		}
-		else
-		{
-			this.clearServers();
-			this.oIncoming.isEnabled(true);
-			this.oOutgoing.isEnabled(true);
-		}
-	}, this);
 
 	this.friendlyName = ko.observable('');
 	this.email = ko.observable('');
 	this.incomingLogin = ko.observable('');
 	this.incomingLoginFocused = ko.observable(false);
 	this.incomingPassword = ko.observable('');
-	this.oIncoming = new CServerPropertiesView(143, 993, 'acc_create_incoming', TextUtils.i18n('%MODULENAME%/LABEL_IMAP_SERVER'));
+	
+	this.oServerPairPropertiesView = new CServerPairPropertiesView('acc_create');
 	
 	this.outgoingLogin = ko.observable('');
-	this.oOutgoing = new CServerPropertiesView(25, 465, 'acc_create_outgoing', TextUtils.i18n('%MODULENAME%/LABEL_SMTP_SERVER'), this.oIncoming.server);
 	
-	this.outgoingUseAuth = ko.observable(true);
 	this.friendlyNameFocus = ko.observable(false);
 	this.emailFocus = ko.observable(false);
 	this.incomingPasswordFocus = ko.observable(false);
@@ -78,7 +51,7 @@ function CCreateAccountPopup()
 	this.isFirstStep.subscribe(function (bValue) {
 		if (!bValue)
 		{
-			this.clearServers();
+			this.oServerPairPropertiesView.clear();
 		}
 	}, this);
 
@@ -105,34 +78,8 @@ CCreateAccountPopup.prototype.init = function ()
 	this.incomingLoginFocused(false);
 	this.incomingPassword('');
 	this.outgoingLogin('');
-	this.oOutgoing.server.focused(false);
 
-	this.clearServers();
-	
-	if (!this.serversRetrieved())
-	{
-		Ajax.send('GetServers', {}, function (oResponse) {
-			if (_.isArray(oResponse.Result))
-			{
-				var aServerOptions = [{ 'Name': TextUtils.i18n('%MODULENAME%/LABEL_CONFIGURE_SERVER_MANUALLY'), 'Id': 0 }];
-				
-				_.each(oResponse.Result, function (oServer) {
-					aServerOptions.push({ 'Name': oServer.Name, 'Id': oServer.iObjectId });
-				});
-				
-				this.servers(oResponse.Result);
-				this.serverOptions(aServerOptions);
-				this.serversRetrieved(true);
-			}
-		}, this);
-	}
-};
-
-CCreateAccountPopup.prototype.clearServers = function ()
-{
-	this.oIncoming.clear();
-	this.oOutgoing.clear();
-	this.outgoingUseAuth(true);
+	this.oServerPairPropertiesView.init();
 };
 
 /**
@@ -197,16 +144,7 @@ CCreateAccountPopup.prototype.onSecondSaveClick = function ()
 				'IncomingLogin': this.incomingLogin(),
 				'IncomingPassword': this.incomingPassword(),
 				'OutgoingLogin': this.outgoingLogin(),
-				'Server': {
-					'Id': Types.pInt(this.selectedServerId()),
-					'IncomingServer': this.oIncoming.server(),
-					'IncomingPort': this.oIncoming.getIntPort(),
-					'IncomingUseSsl': this.oIncoming.getIntSsl(),
-					'OutgoingServer': this.oOutgoing.server(),
-					'OutgoingPort': this.oOutgoing.getIntPort(),
-					'OutgoingUseSsl': this.oOutgoing.getIntSsl(),
-					'OutgoingUseAuth': this.outgoingUseAuth()
-				}
+				'Server': this.oServerPairPropertiesView.getParametersForSave()
 			}
 		;
 
@@ -247,8 +185,8 @@ CCreateAccountPopup.prototype.onDomainGetDataByEmailResponse = function (oRespon
 
 	if (oResult)
 	{
-		this.oIncoming.set(oResult.IncomingServer, oResult.IncomingPort, !!oResult.IncomingUseSsl);
-		this.oOutgoing.set(oResult.OutgoingServer, oResult.OutgoingPort, !!oResult.OutgoingUseSsl);
+//		this.oIncoming.set(oResult.IncomingServer, oResult.IncomingPort, !!oResult.IncomingUseSsl);
+//		this.oOutgoing.set(oResult.OutgoingServer, oResult.OutgoingPort, !!oResult.OutgoingUseSsl);
 
 		this.onSecondSaveClick();
 	}
@@ -338,12 +276,12 @@ CCreateAccountPopup.prototype.isEmptySecondFields = function ()
 		case this.incomingLogin():
 			this.incomingLoginFocused(true);
 			return true;
-		case this.oIncoming.server():
-			this.oIncoming.server.focused(true);
-			return true;
-		case this.oOutgoing.server():
-			this.oOutgoing.server.focused(true);
-			return true;
+//		case this.oIncoming.server():
+//			this.oIncoming.server.focused(true);
+//			return true;
+//		case this.oOutgoing.server():
+//			this.oOutgoing.server.focused(true);
+//			return true;
 		default: return false;
 	}
 };

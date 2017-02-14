@@ -1,0 +1,26 @@
+<div class="row" data-bind="visible: bEditMode">
+	<span class="label required" data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_NAME'}"></span>
+	<input class="value input" spellcheck="false" type="text" maxlength="255"
+		   data-bind="value: name, hasfocus: name.focused, onEnter: save, valueUpdate: 'afterkeydown'"/>
+</div>
+
+<div class="row server" data-bind="visible: !bEditMode">
+	<span class="label required" data-bind="i18n: {'key': '%MODULENAME%/LABEL_SERVER'}"></span>
+	<select class="input" data-bind="value: selectedServerId, options: serverOptions, optionsText: 'Name', optionsValue: 'Id'"></select>
+</div>
+<div class="row incoming">
+	<!-- ko template: {name: '%ModuleName%_Settings_ServerPropertiesView', data: oIncoming} --><!-- /ko -->
+</div>
+<div class="row outgoing">
+	<!-- ko template: {name: '%ModuleName%_Settings_ServerPropertiesView', data: oOutgoing} --><!-- /ko -->
+</div>
+
+<div class="row smtp_authentication">
+	<div>
+		<label class="custom_checkbox" data-bind="css: {'checked': outgoingUseAuth}">
+			<span class="icon"></span>
+			<input type="checkbox" id="add_new_account_mail_out_auth" data-bind="checked: outgoingUseAuth" />
+		</label>
+		<label for="add_new_account_mail_out_auth" data-bind="i18n: {'key': '%MODULENAME%/LABEL_USE_SMTP_AUTHENTICATION'}"></label>
+	</div>	
+</div>

@@ -6,7 +6,7 @@
 </div>
 
 <div class="panel_center">
-	<div class="fields" data-bind="visible: servers().length === 0 && !createMode() && received()">
+	<div class="fields" data-bind="visible: servers().length === 0 && !createMode() && serversRetrieved()">
 		<div class="fieldset">
 			<div class="hint" style="margin: 0;" data-bind="i18n: {'key': '%MODULENAME%/INFO_NO_SERVERS'}"></div>
 		</div>
@@ -14,9 +14,9 @@
 	<div data-bind="visible: createMode() || servers().length > 0">
 		<div class="items_list account_list" data-bind="visible: !createMode()">
 			<div data-bind="foreach: servers">
-				<div class="item account" data-bind="css: {'selected': iObjectId === $parent.editedServerId()},  click: function () { $parent.routeEditServer(iObjectId); }">
-					<span class="title" data-bind="text: Name"></span>
-					<span class="link fetcher" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_DELETE'}, click: function (oModel, oEv) { oEv.stopPropagation(); $parent.deleteServer(iObjectId); }"></span>
+				<div class="item account" data-bind="css: {'selected': iId === $parent.editedServerId()},  click: function () { $parent.routeEditServer(iId); }">
+					<span class="title" data-bind="text: sName"></span>
+					<span class="link fetcher" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_DELETE'}, click: function (oModel, oEv) { oEv.stopPropagation(); $parent.deleteServer(iId); }"></span>
 				</div>
 			</div>
 		</div>
@@ -25,29 +25,7 @@
 				<div class="tab">
 					<div class="fields">
 						<div class="fieldset">
-							<div class="row">
-								<span class="label required" data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_NAME'}"></span>
-								<input class="value input" spellcheck="false" type="text" maxlength="255"
-									   data-bind="value: name, hasfocus: name.focused, onEnter: save, valueUpdate: 'afterkeydown'"/>
-							</div>
-							
-							<div class="row">
-								<!-- ko template: {name: '%ModuleName%_Settings_ServerPropertiesView', data: oIncoming} --><!-- /ko -->
-							</div>
-							
-							<div class="row">
-								<!-- ko template: {name: '%ModuleName%_Settings_ServerPropertiesView', data: oOutgoing} --><!-- /ko -->
-							</div>
-
-							<div class="row">
-								<div>
-									<label class="custom_checkbox" data-bind="css: {'checked': outgoingUseAuth}">
-										<span class="icon"></span>
-										<input type="checkbox" id="mail_out_auth" data-bind="checked: outgoingUseAuth" />
-									</label>
-									<label for="mail_out_auth" data-bind="i18n: {'key': '%MODULENAME%/LABEL_USE_SMTP_AUTHENTICATION'}"></label>
-								</div>
-							</div>
+							<!-- ko template: {name: oServerPairPropertiesView.ViewTemplate, data: oServerPairPropertiesView} --><!-- /ko -->
 						</div>
 
 						<div class="buttons">

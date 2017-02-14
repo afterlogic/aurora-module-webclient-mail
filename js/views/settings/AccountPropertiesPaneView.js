@@ -20,7 +20,7 @@ var
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	
-	CServerPropertiesView = require('modules/%ModuleName%/js/views/CServerPropertiesView.js')
+	CServerPairPropertiesView = require('modules/%ModuleName%/js/views/settings/CServerPairPropertiesView.js')
 ;
 
 /**
@@ -41,13 +41,12 @@ function CAccountPropertiesPaneView()
 	this.email = ko.observable('');
 	this.incomingLogin = ko.observable('');
 	this.incomingPassword = ko.observable('');
-	this.oIncoming = new CServerPropertiesView(143, 993, 'acc_edit_incoming', TextUtils.i18n('%MODULENAME%/LABEL_IMAP_SERVER'));
 	this.outgoingLogin = ko.observable('');
-	this.oOutgoing = new CServerPropertiesView(25, 465, 'acc_edit_outgoing', TextUtils.i18n('%MODULENAME%/LABEL_SMTP_SERVER'), this.oIncoming.server);
+
+	this.oServerPairPropertiesView = new CServerPairPropertiesView('acc_edit');
 
 	this.isAllowMail = ko.observable(true);
 	this.allowChangePassword = ko.observable(false);
-	this.outgoingUseAuth = ko.observable(false);
 	
 	this.incLoginFocused = ko.observable(false);
 	this.incLoginFocused.subscribe(function () {
@@ -67,21 +66,24 @@ _.extendOwn(CAccountPropertiesPaneView.prototype, CAbstractSettingsFormView.prot
 
 CAccountPropertiesPaneView.prototype.ViewTemplate = '%ModuleName%_Settings_AccountPropertiesPaneView';
 
+CAccountPropertiesPaneView.prototype.onShow = function ()
+{
+	this.oServerPairPropertiesView.init();
+};
+
 CAccountPropertiesPaneView.prototype.getCurrentValues = function ()
 {
-	return [
-		this.friendlyName(),
-		this.email(),
-		this.incomingLogin(),
-		this.oIncoming.port(),
-		this.oIncoming.server(),
-		this.oIncoming.ssl(),
-		this.outgoingLogin(),
-		this.oOutgoing.port(),
-		this.oOutgoing.server(),
-		this.oOutgoing.ssl(),
-		this.outgoingUseAuth()
-	];
+	var
+		aMain = [
+			this.friendlyName(),
+			this.email(),
+			this.incomingLogin(),
+			this.outgoingLogin()
+		],
+		aServers = this.oServerPairPropertiesView.getCurrentValues()
+	;
+	
+	return _.union(aMain, aServers);
 };
 
 CAccountPropertiesPaneView.prototype.getParametersForSave = function ()
@@ -94,15 +96,7 @@ CAccountPropertiesPaneView.prototype.getParametersForSave = function ()
 		'IncomingLogin': this.incomingLogin(),
 		'OutgoingLogin': this.outgoingLogin(),
 		'IncomingPassword': this.incomingPassword(),
-		'Server': {
-			'IncomingServer': this.oIncoming.server(),
-			'IncomingPort': this.oIncoming.getIntPort(),
-			'IncomingUseSsl': this.oIncoming.getIntSsl(),
-			'OutgoingServer': this.oOutgoing.server(),
-			'OutgoingPort': this.oOutgoing.getIntPort(),
-			'OutgoingUseSsl': this.oOutgoing.getIntSsl(),
-			'OutgoingUseAuth': this.outgoingUseAuth()
-		}
+		'Server': this.oServerPairPropertiesView.getParametersForSave()
 	};
 };
 
@@ -114,7 +108,6 @@ CAccountPropertiesPaneView.prototype.revert = function ()
 CAccountPropertiesPaneView.prototype.populate = function ()
 {
 	var oAccount = AccountList.getEdited();
-	
 	if (oAccount)
 	{	
 		this.allowChangePassword(!!ChangePasswordPopup);// && oAccount.extensionExists('AllowChangePasswordExtension'));
@@ -122,10 +115,9 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 		this.friendlyName(oAccount.friendlyName());
 		this.email(oAccount.email());
 		this.incomingLogin(oAccount.incomingLogin());
-		this.oIncoming.set(oAccount.oServer.sIncomingServer, oAccount.oServer.iIncomingPort, oAccount.oServer.bIncomingUseSsl);
 		this.outgoingLogin(oAccount.outgoingLogin());
-		this.oOutgoing.set(oAccount.oServer.sOutgoingServer, oAccount.oServer.iOutgoingPort, oAccount.oServer.bOutgoingUseSsl);
-		this.outgoingUseAuth(oAccount.oServer.bOutgoingUseAuth);
+		
+		this.oServerPairPropertiesView.setServerId(oAccount.oServer.iId);
 		
 		this.isInternal(oAccount.bInternal);
 		this.isDefault(oAccount.isDefault());
@@ -150,10 +142,9 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 		this.friendlyName('');
 		this.email('');
 		this.incomingLogin('');
-		this.oIncoming.clear();
 		this.outgoingLogin('');
-		this.oOutgoing.clear();
-		this.outgoingUseAuth(true);
+		
+		this.oServerPairPropertiesView.clear();
 		
 		this.isInternal(true);
 		this.isDefault(true);

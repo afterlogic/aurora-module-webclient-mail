@@ -97,7 +97,7 @@ CCreateFetcherPopup.prototype.save = function ()
 			'IncomingPassword': (this.incomingPassword() === '') ? '******' : this.incomingPassword(),
 			'IncomingServer': this.oIncoming.server(),
 			'IncomingPort': this.oIncoming.getIntPort(),
-			'IncomingUseSsl': this.oIncoming.getIntSsl(),
+			'IncomingUseSsl': this.oIncoming.ssl(),
 			'LeaveMessagesOnServer': this.leaveMessagesOnServer() ? 1 : 0
 		};
 

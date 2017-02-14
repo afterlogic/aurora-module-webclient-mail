@@ -114,7 +114,7 @@ CFetcherIncomingPaneView.prototype.getParametersForSave = function ()
 			'Folder': this.folder(),
 			'IncomingServer': this.oIncoming.server(),
 			'IncomingPort': this.oIncoming.getIntPort(),
-			'IncomingUseSsl': this.oIncoming.getIntSsl(),
+			'IncomingUseSsl': this.oIncoming.ssl(),
 			'IncomingPassword': (this.incomingPassword() === '') ? '******' : this.incomingPassword(),
 			'LeaveMessagesOnServer': this.leaveMessagesOnServer() ? 1 : 0
 		};
