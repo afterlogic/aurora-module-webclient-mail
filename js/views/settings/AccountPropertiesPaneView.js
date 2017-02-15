@@ -57,9 +57,15 @@ function CAccountPropertiesPaneView()
 	}, this);
 
 	AccountList.editedId.subscribe(function () {
-		this.populate();
+		if (this.bShown)
+		{
+			this.populate();
+		}
 	}, this);
-	this.populate();
+	this.updateSavedState();
+	this.oServerPairPropertiesView.currentValues.subscribe(function () {
+		this.updateSavedState();
+	}, this);
 }
 
 _.extendOwn(CAccountPropertiesPaneView.prototype, CAbstractSettingsFormView.prototype);
@@ -68,7 +74,8 @@ CAccountPropertiesPaneView.prototype.ViewTemplate = '%ModuleName%_Settings_Accou
 
 CAccountPropertiesPaneView.prototype.onShow = function ()
 {
-	this.oServerPairPropertiesView.init();
+	this.oServerPairPropertiesView.init(false);
+	this.populate();
 };
 
 CAccountPropertiesPaneView.prototype.getCurrentValues = function ()
@@ -80,10 +87,10 @@ CAccountPropertiesPaneView.prototype.getCurrentValues = function ()
 			this.incomingLogin(),
 			this.outgoingLogin()
 		],
-		aServers = this.oServerPairPropertiesView.getCurrentValues()
+		aServers = this.oServerPairPropertiesView.currentValues()
 	;
 	
-	return _.union(aMain, aServers);
+	return aMain.concat(aServers);
 };
 
 CAccountPropertiesPaneView.prototype.getParametersForSave = function ()
@@ -117,7 +124,7 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 		this.incomingLogin(oAccount.incomingLogin());
 		this.outgoingLogin(oAccount.outgoingLogin());
 		
-		this.oServerPairPropertiesView.setServerId(oAccount.oServer.iId);
+		this.oServerPairPropertiesView.setServer(oAccount.oServer);
 		
 		this.isInternal(oAccount.bInternal);
 		this.isDefault(oAccount.isDefault());
@@ -151,7 +158,7 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 		this.removeHint('');
 		this.canBeRemoved(false);
 	}
-
+	
 	this.updateSavedState();
 };
 

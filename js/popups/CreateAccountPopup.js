@@ -79,7 +79,7 @@ CCreateAccountPopup.prototype.init = function ()
 	this.incomingPassword('');
 	this.outgoingLogin('');
 
-	this.oServerPairPropertiesView.init();
+	this.oServerPairPropertiesView.init(false);
 };
 
 /**

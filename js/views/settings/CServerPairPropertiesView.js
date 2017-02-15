@@ -33,7 +33,7 @@ function CServerPairPropertiesView(sPairId, bEditMode)
 				return oServer.iId === iSelectedServerId;
 			})
 		;
-
+		
 		if (oSelectedServer)
 		{
 			if (this.oIncoming.isEnabled())
@@ -46,16 +46,20 @@ function CServerPairPropertiesView(sPairId, bEditMode)
 			this.oOutgoing.set(oSelectedServer.sOutgoingServer, oSelectedServer.iOutgoingPort, oSelectedServer.bOutgoingUseSsl);
 			this.oOutgoing.isEnabled(this.bEditMode);
 			this.outgoingUseAuth(oSelectedServer.bOutgoingUseAuth);
+			this.outgoingUseAuth.enable(this.bEditMode);
 		}
 		else
 		{
-			this.name('');
+			this.name(this.oLastEditableServer.sName);
 			this.oIncoming.set(this.oLastEditableServer.sIncomingServer, this.oLastEditableServer.iIncomingPort, this.oLastEditableServer.bIncomingUseSsl);
 			this.oIncoming.isEnabled(true);
 			this.oOutgoing.set(this.oLastEditableServer.sOutgoingServer, this.oLastEditableServer.iOutgoingPort, this.oLastEditableServer.bOutgoingUseSsl);
 			this.oOutgoing.isEnabled(true);
 			this.outgoingUseAuth(this.oLastEditableServer.bOutgoingUseAuth);
+			this.outgoingUseAuth.enable(true);
 		}
+		
+		this.setCurrentValues();
 	}, this);
 
 	this.name = ko.observable('');
@@ -64,29 +68,43 @@ function CServerPairPropertiesView(sPairId, bEditMode)
 	this.oIncoming = new CServerPropertiesView(143, 993, sPairId + '_incoming', TextUtils.i18n('%MODULENAME%/LABEL_IMAP_SERVER'), bEditMode ? this.name : null);
 	this.oOutgoing = new CServerPropertiesView(25, 465, sPairId + '_outgoing', TextUtils.i18n('%MODULENAME%/LABEL_SMTP_SERVER'), this.oIncoming.server);
 	this.outgoingUseAuth = ko.observable(true);
+	this.outgoingUseAuth.enable = ko.observable(true);
+	
+	this.currentValues = ko.observable([]);
 }
 
 CServerPairPropertiesView.prototype.ViewTemplate = '%ModuleName%_Settings_ServerPairPropertiesView';
 
-CServerPairPropertiesView.prototype.setServerId = function (iServerId)
-{
-	if (this.serversRetrieved())
-	{
-		this.selectedServerId(iServerId);
-	}
-	else
-	{
-		this.iEditedServerId = iServerId;
-	}
-};
-
-CServerPairPropertiesView.prototype.init = function ()
+CServerPairPropertiesView.prototype.init = function (bEmptyServerToEdit)
 {
 	if (!this.serversRetrieved())
 	{
 		this.requestServers();
 	}
-	this.setServerId(0);
+	this.setServer(bEmptyServerToEdit ? new CServerModel() : this.oLastEditableServer);
+};
+
+CServerPairPropertiesView.prototype.setServer = function (oServer)
+{
+	this.oLastEditableServer = oServer;
+	this.setServerId(oServer.iId);
+};
+
+CServerPairPropertiesView.prototype.setServerId = function (iServerId)
+{
+	if (this.serversRetrieved())
+	{
+		var bEmptyServerNow = this.selectedServerId() === 0;
+		this.selectedServerId(iServerId);
+		if (bEmptyServerNow && iServerId === 0)
+		{
+			this.selectedServerId.valueHasMutated();
+		}
+	}
+	else
+	{
+		this.iEditedServerId = iServerId;
+	}
 };
 
 CServerPairPropertiesView.prototype.requestServers = function ()
@@ -108,7 +126,7 @@ CServerPairPropertiesView.prototype.requestServers = function ()
 			this.serversRetrieved(true);
 			if (this.iEditedServerId)
 			{
-				this.selectedServerId(this.iEditedServerId);
+				this.setServerId(this.iEditedServerId);
 				this.iEditedServerId = 0;
 			}
 		}
@@ -122,7 +140,7 @@ CServerPairPropertiesView.prototype.clear = function ()
 	this.outgoingUseAuth(true);
 };
 
-CServerPairPropertiesView.prototype.getCurrentValues = function ()
+CServerPairPropertiesView.prototype.setCurrentValues = function ()
 {
 	var
 		aNamePart = this.bEditMode ? [ this.selectedServerId(), this.name() ] : [],
@@ -138,13 +156,20 @@ CServerPairPropertiesView.prototype.getCurrentValues = function ()
 			this.outgoingUseAuth()
 		]
 	;
-	return _.union(aNamePart, aServerPart);
+	
+	this.currentValues(aNamePart.concat(aServerPart));
+};
+
+CServerPairPropertiesView.prototype.getCurrentValues = function ()
+{
+	this.setCurrentValues();
+	return this.currentValues();
 };
 
 CServerPairPropertiesView.prototype.getParametersForSave = function ()
 {
 	return {
-		'ServerId': this.selectedServerId(),
+		'ServerId': this.selectedServerId() === 0 ? this.oLastEditableServer.iId : this.selectedServerId(),
 		'Name': this.bEditMode ? this.name() : this.oIncoming.server(),
 		'IncomingServer': this.oIncoming.server(),
 		'IncomingPort': this.oIncoming.getIntPort(),

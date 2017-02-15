@@ -92,7 +92,7 @@ CServersAdminSettingsPaneView.prototype.onRouteChild = function (aParams)
 	this.createMode(bCreate);
 	this.editedServerId(iEditServerId);
 	
-	this.oServerPairPropertiesView.init();
+	this.oServerPairPropertiesView.init(bCreate);
 	
 	this.revertGlobalValues();
 };
@@ -145,7 +145,7 @@ CServersAdminSettingsPaneView.prototype.deleteServer = function (iId)
 	;
 	if (oServerToDelete)
 	{
-		Popups.showPopup(ConfirmPopup, [TextUtils.i18n('%MODULENAME%/CONFIRM_REMOVE_SERVER'), fCallBack, oServerToDelete.Name]);
+		Popups.showPopup(ConfirmPopup, [TextUtils.i18n('%MODULENAME%/CONFIRM_REMOVE_SERVER'), fCallBack, oServerToDelete.sName]);
 	}
 };
 

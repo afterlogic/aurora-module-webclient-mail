@@ -159,11 +159,9 @@ function CAccountsSettingsPaneView()
 		return this.aAccountTabs;
 	}, this);
 	
-	
 	AccountList.editedId.subscribe(function () {
 		this.populate();
 	}, this);
-	this.populate();
 }
 
 CAccountsSettingsPaneView.prototype.ViewTemplate = '%ModuleName%_Settings_AccountsSettingsPaneView';
@@ -209,7 +207,14 @@ CAccountsSettingsPaneView.prototype.onRoute = function (aParams)
 		}
 		else
 		{
-			AccountList.changeEditedAccountByHash(sHash);
+			if (oEditedAccount.hash() === sHash)
+			{
+				this.populate();
+			}
+			else
+			{
+				AccountList.changeEditedAccountByHash(sHash);
+			}
 		}
 	}
 	
@@ -386,6 +391,7 @@ CAccountsSettingsPaneView.prototype.populate = function ()
 		
 		if (!oAccount.isExtended())
 		{
+			Screens.showLoading(TextUtils.i18n('%MODULENAME%/INFO_ACCOUNT_SETTINGS_ARE_LOADING'));
 			Ajax.send('GetAccountSettings', {AccountID: oAccount.id()}, this.onGetAccountSettingsResponse, this);
 		}
 	}
@@ -397,6 +403,7 @@ CAccountsSettingsPaneView.prototype.populate = function ()
  */
 CAccountsSettingsPaneView.prototype.onGetAccountSettingsResponse = function (oResponse, oRequest)
 {
+	Screens.hideLoading();
 	if (!oResponse.Result)
 	{
 		Api.showErrorByCode(oResponse, TextUtils.i18n('COREWEBCLIENT/ERROR_UNKNOWN'));

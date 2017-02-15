@@ -34,9 +34,11 @@ function CAccountForwardPaneView()
 	this.emailFocus = ko.observable(false);
 
 	AccountList.editedId.subscribe(function () {
-		this.populate();
+		if (this.bShown)
+		{
+			this.populate();
+		}
 	}, this);
-	this.populate();
 }
 
 _.extendOwn(CAccountForwardPaneView.prototype, CAbstractSettingsFormView.prototype);

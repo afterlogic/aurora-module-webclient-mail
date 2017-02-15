@@ -240,7 +240,6 @@ CAccountListModel.prototype.initObservables = function (iDefaultId, iCurrentId)
 	this.currentId.subscribe(function() {
 		this.initCurrentAccount();
 	}, this);
-	this.initCurrentAccount();
 };
 
 /**

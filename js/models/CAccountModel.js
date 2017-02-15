@@ -215,15 +215,14 @@ CAccountModel.prototype.parse = function (oData)
 
 CAccountModel.prototype.requestExtensions = function ()
 {
-	if (!this.extensionsRequested())
-	{
-		var oTz = window.jstz ? window.jstz.determine() : null;
-		this.requireAjax();
-		Ajax.send('GetExtensions', {
-			'AccountID': this.id(),
-			'ClientTimeZone': oTz ? oTz.name() : ''
-		}, this.onGetExtensionsResponse, this);
-	}
+	//Should be executed lately - slows execution of more necessary requests
+//	if (!this.extensionsRequested())
+//	{
+//		this.requireAjax();
+//		Ajax.send('GetExtensions', {
+//			'AccountID': this.id()
+//		}, this.onGetExtensionsResponse, this);
+//	}
 };
 
 /**
@@ -369,7 +368,7 @@ CAccountModel.prototype.confirmedRemove = function(bOkAnswer)
 	if (bOkAnswer)
 	{
 		this.requireAjax();
-		Ajax.send('DeleteAccount', { 'AccountIDToDelete': this.id() }, this.onAccountDeleteResponse, this);
+		Ajax.send('DeleteAccount', { 'AccountID': this.id() }, this.onAccountDeleteResponse, this);
 	}
 	else
 	{
@@ -391,6 +390,7 @@ CAccountModel.prototype.onAccountDeleteResponse = function (oResponse, oRequest)
 	}
 	else
 	{
+		this.requireApp();
 		if (!App.isMobile() && !App.isNewTab())
 		{
 			var PopupComposeUtils = require('modules/%ModuleName%/js/utils/PopupCompose.js');

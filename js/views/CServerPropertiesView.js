@@ -66,15 +66,15 @@ function CServerPropertiesView(iDefaultPort, iDefaultSslPort, sId, sLabel, koDef
 CServerPropertiesView.prototype.set = function (sServer, iPort, bSsl)
 {
 	this.server(sServer);
-	this.port(iPort);
 	this.ssl(bSsl);
+	this.port(iPort);
 };
 
 CServerPropertiesView.prototype.clear = function ()
 {
 	this.server('');
-	this.port(this.defaultPort());
 	this.ssl(false);
+	this.port(this.defaultPort());
 };
 
 CServerPropertiesView.prototype.getIntPort = function ()

@@ -30,9 +30,11 @@ function CAccountAutoresponderPaneView()
 	this.message = ko.observable('');
 
 	AccountList.editedId.subscribe(function () {
-		this.populate();
+		if (this.bShown)
+		{
+			this.populate();
+		}
 	}, this);
-	this.populate();
 }
 
 _.extendOwn(CAccountAutoresponderPaneView.prototype, CAbstractSettingsFormView.prototype);
@@ -46,6 +48,11 @@ CAccountAutoresponderPaneView.prototype.getCurrentValues = function ()
 		this.subject(),
 		this.message()	
 	];
+};
+
+CAccountAutoresponderPaneView.prototype.onShow = function ()
+{
+	this.populate();
 };
 
 CAccountAutoresponderPaneView.prototype.revert = function ()
