@@ -215,14 +215,13 @@ CCreateAccountPopup.prototype.onAccountCreateResponse = function (oResponse, oRe
 	else
 	{
 		var
-			iAccountId = Types.pInt(oResponse.Result.IdAccount),
-			oAccount = AccountList.getAccount(iAccountId) || new CAccountModel(false),
-			oParameters = oRequest.Parameters
+			iAccountId = Types.pInt(oResponse.Result.AccountID),
+			oParameters = oRequest.Parameters,
+			oRawAccount = _.extend(oParameters, oResponse.Result),
+			oAccount = null
 		;
-		
-		oAccount.init(iAccountId, oParameters.Email, oParameters.FriendlyName);
-		oAccount.updateExtended(oParameters);
-		oAccount.setExtensions(oResponse.Result.Extensions);
+		oRawAccount.Server.ServerId = oRawAccount.ServerId;
+		oAccount = new CAccountModel(oRawAccount, false);
 		
 		if (oRequest.Method === 'AccountConfigureMail')
 		{

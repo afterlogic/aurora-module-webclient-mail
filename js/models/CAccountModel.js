@@ -31,32 +31,35 @@ var
 
 /**
  * @constructor
+ * @param {object} oData
  * @param {boolean} bSingle
  */
-function CAccountModel(bSingle)
+function CAccountModel(oData, bSingle)
 {
-	this.id = ko.observable(0);
-	this.email = ko.observable('');
+	this.id = ko.observable(Types.pInt(oData.AccountID));
+	this.email = ko.observable(Types.pString(oData.Email));
+	this.friendlyName = ko.observable(Types.pString(oData.FriendlyName));
+	this.incomingLogin = ko.observable(Types.pString(oData.IncomingLogin));
+	this.outgoingLogin = ko.observable(Types.pString(oData.OutgoingLogin));
+	this.signature = ko.observable(Types.pString(oData.Signature));
+	this.useSignature = ko.observable(!!oData.UseSignature);
+	this.serverId = ko.observable(Types.pInt(oData.ServerId));
+	this.oServer = new CServerModel(oData.Server);
+	this.bInternal = !!oData.IsInternal; // If **true**, the account is hosted by bundled mailserver.
+	this.canAuthorize = ko.observable(!!oData.CanAuthorize);
+	
+	this.isCurrent = ko.observable(!!oData.CanAuthorize);
+	this.isEdited = ko.observable(!!oData.CanAuthorize);
+	
 	this.hash = ko.computed(function () {
 		return Utils.getHash(this.id() + this.email());
 	}, this);
 	this.allowMail = ko.observable(true);
 	this.passwordSpecified = ko.observable(true);
 	
-	this.serverId = ko.observable(0);
-	this.oServer = new CServerModel();
-	
 	this.extensions = ko.observableArray([]);
 	this.fetchers = ko.observable(null);
 	this.identities = ko.observable(null);
-	this.friendlyName = ko.observable('');
-	this.incomingLogin = ko.observable('');
-	this.bInternal = false; // If **true**, the account is hosted by bundled mailserver.
-	this.canAuthorize = ko.observable(false);
-	this.outgoingLogin = ko.observable('');
-	this.isExtended = ko.observable(false);
-	this.signature = ko.observable('');
-	this.useSignature = ko.observable(false);
 	this.autoresponder = ko.observable(null);
 	this.forward = ko.observable(null);
 	this.filters = ko.observable(null);
@@ -68,9 +71,6 @@ function CAccountModel(bSingle)
 	this.fullEmail = ko.computed(function () {
 		return AddressUtils.getFullEmail(this.friendlyName(), this.email());
 	}, this);
-	
-	this.isCurrent = ko.observable(false);
-	this.isEdited = ko.observable(false);
 	
 	this.extensionsRequested = ko.observable(false);
 	
@@ -157,18 +157,6 @@ CAccountModel.prototype.requireCache = function ()
 };
 
 /**
- * @param {number} iId
- * @param {string} sEmail
- * @param {string} sFriendlyName
- */
-CAccountModel.prototype.init = function (iId, sEmail, sFriendlyName)
-{
-	this.id(iId);
-	this.email(sEmail);
-	this.friendlyName(sFriendlyName);
-};
-
-/**
  * @param {Object} oResult
  * @param {Object} oRequest
  */
@@ -198,18 +186,6 @@ CAccountModel.prototype.updateQuotaParams = function ()
 /**
  * @param {Object} oData
  */
-CAccountModel.prototype.parse = function (oData)
-{
-	this.init(Types.pInt(oData.AccountID), Types.pString(oData.Email), Types.pString(oData.FriendlyName));
-		
-	this.useSignature(!!oData.UseSignature);
-	this.signature(Types.pString(oData.Signature));
-
-	this.canAuthorize(!!oData.CanAuthorize);
-	this.isCurrent(!!oData.CanAuthorize);
-	this.isEdited(!!oData.CanAuthorize);
-};
-
 CAccountModel.prototype.requestExtensions = function ()
 {
 	//Should be executed lately - slows execution of more necessary requests
@@ -282,26 +258,11 @@ CAccountModel.prototype.allowMailAfterConfiguring = function ()
 };
 
 /**
- * @param {?} ExtendedData
+ * @param {string} sFriendlyName
  */
-CAccountModel.prototype.updateExtended = function (ExtendedData)
+CAccountModel.prototype.updateFriendlyName = function (sFriendlyName)
 {
-	if (ExtendedData)
-	{
-		this.isExtended(true);
-		
-		this.bInternal = !!ExtendedData.IsInternal;
-		this.canAuthorize(!!ExtendedData.CanAuthorize);
-		
-		this.friendlyName(Types.pString(ExtendedData.FriendlyName));
-		this.incomingLogin(Types.pString(ExtendedData.IncomingLogin));
-		this.outgoingLogin(Types.pString(ExtendedData.OutgoingLogin));
-		
-		this.serverId(Types.pInt(ExtendedData.ServerId));
-		this.oServer = new CServerModel(ExtendedData.Server);
-		
-		this.setExtensions(ExtendedData.Extensions || []);
-	}
+	this.friendlyName(sFriendlyName);
 };
 
 CAccountModel.prototype.changeAccount = function()

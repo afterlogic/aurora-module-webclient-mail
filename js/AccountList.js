@@ -192,8 +192,7 @@ CAccountListModel.prototype.parse = function (aAccounts)
 	{
 		this.collection(_.map(aAccounts, function (oRawAccount)
 		{
-			var oTempAccount = new CAccountModel(aAccounts.length === 1);
-			oTempAccount.parse(oRawAccount);
+			var oTempAccount = new CAccountModel(oRawAccount, aAccounts.length === 1);
 			if (oTempAccount.canAuthorize())
 			{
 				iDefaultId = oTempAccount.id();

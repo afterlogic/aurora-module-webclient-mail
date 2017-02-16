@@ -145,8 +145,7 @@ CIdentityPropertiesPaneView.prototype.onResponse = function (oResponse, oRequest
 
 		if (oParameters.Loyal === 1 && oAccount)
 		{
-			oAccount.updateExtended(oParameters);
-			oAccount.isExtended(false);
+			oAccount.updateFriendlyName(oParameters.FriendlyName);
 		}
 
 		this.disableCheckbox(this.isDefault());

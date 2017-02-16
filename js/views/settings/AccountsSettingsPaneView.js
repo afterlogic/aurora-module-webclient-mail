@@ -7,7 +7,6 @@ var
 	
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	
-	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
 	Screens = require('%PathToCoreWebclientModule%/js/Screens.js'),
@@ -18,7 +17,6 @@ var
 	CreateFetcherPopup = require('modules/%ModuleName%/js/popups/CreateFetcherPopup.js'),
 	
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
-	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	
 	AccountAutoresponderPaneView = require('modules/%ModuleName%/js/views/settings/AccountAutoresponderPaneView.js'),
@@ -205,9 +203,9 @@ CAccountsSettingsPaneView.prototype.onRoute = function (aParams)
 			Screens.showError(TextUtils.i18n('%MODULENAME%/INFO_SPECIFY_CREDENTIALS'));
 			Routing.replaceHashDirectly(['settings', 'mail-accounts']);
 		}
-		else
+		else if (sHash !== '')
 		{
-			if (oEditedAccount.hash() === sHash)
+			if (oEditedAccount && oEditedAccount.hash() === sHash)
 			{
 				this.populate();
 			}
@@ -388,42 +386,6 @@ CAccountsSettingsPaneView.prototype.populate = function ()
 		{
 			this.currentTab(this.getAutoselectedTab());
 		}
-		
-		if (!oAccount.isExtended())
-		{
-			Screens.showLoading(TextUtils.i18n('%MODULENAME%/INFO_ACCOUNT_SETTINGS_ARE_LOADING'));
-			Ajax.send('GetAccountSettings', {AccountID: oAccount.id()}, this.onGetAccountSettingsResponse, this);
-		}
-	}
-};
-
-/**
- * @param {Object} oResponse
- * @param {Object} oRequest
- */
-CAccountsSettingsPaneView.prototype.onGetAccountSettingsResponse = function (oResponse, oRequest)
-{
-	Screens.hideLoading();
-	if (!oResponse.Result)
-	{
-		Api.showErrorByCode(oResponse, TextUtils.i18n('COREWEBCLIENT/ERROR_UNKNOWN'));
-	}
-	else
-	{
-		var
-			oParameters = oRequest.Parameters,
-			oAccount = AccountList.getAccount(oParameters.AccountID)
-		;
-		
-		if (oAccount)
-		{
-			oAccount.updateExtended(oResponse.Result);
-			
-			if (oAccount.id() === this.editedAccountId())
-			{
-				this.populate();
-			}
-		}	
 	}
 };
 

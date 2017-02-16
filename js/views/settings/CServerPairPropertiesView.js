@@ -95,6 +95,7 @@ CServerPairPropertiesView.prototype.setServerId = function (iServerId)
 	if (this.serversRetrieved())
 	{
 		var bEmptyServerNow = this.selectedServerId() === 0;
+		this.selectedServerId(0); // If server with identifier iServerId doesn't exist in the list selectedServerId will be reset to previous value that will be 0
 		this.selectedServerId(iServerId);
 		if (bEmptyServerNow && iServerId === 0)
 		{
