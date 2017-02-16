@@ -201,14 +201,14 @@ CAccountListModel.prototype.parse = function (aAccounts)
 			return oTempAccount;
 		}));
 	}
-
-	if (!bHasDefault && this.collection.length > 0)
+	
+	if (!bHasDefault && this.collection().length > 0)
 	{
 		oAccount = this.collection()[0];
 		iDefaultId = oAccount.id();
 		bHasDefault = true;
 	}
-
+	
 	if (bHasDefault)
 	{
 		oDefaultAccount = this.getAccount(iDefaultId);
@@ -224,6 +224,11 @@ CAccountListModel.prototype.parse = function (aAccounts)
 		
 		iCurrentId = oFirstMailAccount ? oFirstMailAccount.id() : iDefaultId;
 	}
+	
+//	if (iDefaultId === 0 && this.collection().length > 0)
+//	{
+//		iDefaultId = this.collection()[0]
+//	}
 	
 	this.initObservables(iDefaultId, iCurrentId);
 };
