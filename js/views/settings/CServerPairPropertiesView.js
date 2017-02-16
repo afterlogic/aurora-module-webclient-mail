@@ -116,7 +116,7 @@ CServerPairPropertiesView.prototype.requestServers = function ()
 			var aServerOptions = [{ 'Name': TextUtils.i18n('%MODULENAME%/LABEL_CONFIGURE_SERVER_MANUALLY'), 'Id': 0 }];
 
 			_.each(oResponse.Result, function (oServer) {
-				aServerOptions.push({ 'Name': oServer.Name, 'Id': oServer.iObjectId });
+				aServerOptions.push({ 'Name': oServer.Name, 'Id': oServer.EntityId });
 			});
 
 			this.servers(_.map(oResponse.Result, function (oServerData) {
