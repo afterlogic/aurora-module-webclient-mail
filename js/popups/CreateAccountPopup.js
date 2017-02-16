@@ -216,12 +216,8 @@ CCreateAccountPopup.prototype.onAccountCreateResponse = function (oResponse, oRe
 	{
 		var
 			iAccountId = Types.pInt(oResponse.Result.AccountID),
-			oParameters = oRequest.Parameters,
-			oRawAccount = _.extend(oParameters, oResponse.Result),
-			oAccount = null
+			oAccount = new CAccountModel(oResponse.Result, false)
 		;
-		oRawAccount.Server.ServerId = oRawAccount.ServerId;
-		oAccount = new CAccountModel(oRawAccount, false);
 		
 		if (oRequest.Method === 'AccountConfigureMail')
 		{
