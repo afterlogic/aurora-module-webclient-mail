@@ -52,7 +52,7 @@ function CAccountModel(bSingle)
 	this.friendlyName = ko.observable('');
 	this.incomingLogin = ko.observable('');
 	this.bInternal = false; // If **true**, the account is hosted by bundled mailserver.
-	this.isDefault = ko.observable(false);
+	this.canAuthorize = ko.observable(false);
 	this.outgoingLogin = ko.observable('');
 	this.isExtended = ko.observable(false);
 	this.signature = ko.observable('');
@@ -75,7 +75,7 @@ function CAccountModel(bSingle)
 	this.extensionsRequested = ko.observable(false);
 	
 	this.canBeRemoved = ko.computed(function () {
-		return !this.bInternal && (!this.isDefault() || this.isDefault() && Settings.AllowChangeEmailSettings);
+		return !this.bInternal && (!this.canAuthorize() || this.canAuthorize() && Settings.AllowChangeEmailSettings);
 	}, this);
 	
 	this.removeHint = ko.computed(function () {
@@ -84,7 +84,7 @@ function CAccountModel(bSingle)
 			sHint = ''
 		;
 		
-		if (this.isDefault())
+		if (this.canAuthorize())
 		{
 			if (ModulesManager.isModuleIncluded('CalendarWebclient') && ModulesManager.isModuleIncluded('ContactsWebclient'))
 			{
@@ -113,7 +113,7 @@ function CAccountModel(bSingle)
 	}, this);
 	
 	this.removeConfirmation = ko.computed(function () {
-		if (this.isDefault())
+		if (this.canAuthorize())
 		{
 			return this.removeHint() + TextUtils.i18n('%MODULENAME%/CONFIRM_REMOVE_ACCOUNTED');
 		}
@@ -202,15 +202,12 @@ CAccountModel.prototype.parse = function (oData)
 {
 	this.init(Types.pInt(oData.AccountID), Types.pString(oData.Email), Types.pString(oData.FriendlyName));
 		
-	this.allowMail(!!oData.AllowMail);
-
-	this.passwordSpecified(!!oData.IsPasswordSpecified);
 	this.useSignature(!!oData.UseSignature);
 	this.signature(Types.pString(oData.Signature));
 
-	this.isDefault(!!oData.IsDefault);
-	this.isCurrent(!!oData.IsDefault);
-	this.isEdited(!!oData.IsDefault);
+	this.canAuthorize(!!oData.CanAuthorize);
+	this.isCurrent(!!oData.CanAuthorize);
+	this.isEdited(!!oData.CanAuthorize);
 };
 
 CAccountModel.prototype.requestExtensions = function ()
@@ -294,7 +291,7 @@ CAccountModel.prototype.updateExtended = function (ExtendedData)
 		this.isExtended(true);
 		
 		this.bInternal = !!ExtendedData.IsInternal;
-		this.isDefault(!!ExtendedData.IsDefault);
+		this.canAuthorize(!!ExtendedData.CanAuthorize);
 		
 		this.friendlyName(Types.pString(ExtendedData.FriendlyName));
 		this.incomingLogin(Types.pString(ExtendedData.IncomingLogin));
@@ -400,7 +397,7 @@ CAccountModel.prototype.onAccountDeleteResponse = function (oResponse, oRequest)
 		this.requireAccounts();
 		AccountList.deleteAccount(this.id());
 		
-		if (this.isDefault())
+		if (this.canAuthorize())
 		{
 			UrlUtils.clearAndReloadLocation(Browser.ie8AndBelow, true);
 		}

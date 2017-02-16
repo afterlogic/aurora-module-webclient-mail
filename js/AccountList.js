@@ -194,7 +194,7 @@ CAccountListModel.prototype.parse = function (aAccounts)
 		{
 			var oTempAccount = new CAccountModel(aAccounts.length === 1);
 			oTempAccount.parse(oRawAccount);
-			if (oTempAccount.isDefault())
+			if (oTempAccount.canAuthorize())
 			{
 				iDefaultId = oTempAccount.id();
 				bHasDefault = true;
@@ -221,7 +221,7 @@ CAccountListModel.prototype.parse = function (aAccounts)
 			});
 		}
 		
-		oDefaultAccount.isDefault(true);
+		oDefaultAccount.canAuthorize(true);
 		
 		iCurrentId = oFirstMailAccount ? oFirstMailAccount.id() : iDefaultId;
 	}

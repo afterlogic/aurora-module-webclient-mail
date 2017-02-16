@@ -34,7 +34,7 @@ function CAccountPropertiesPaneView()
 	this.bAllowIdentities = Settings.AllowIdentities;
 	
 	this.isInternal = ko.observable(true);
-	this.isDefault = ko.observable(false);
+	this.canAuthorize = ko.observable(false);
 	this.removeHint = ko.observable('');
 	this.canBeRemoved = ko.observable('');
 	this.friendlyName = ko.observable('');
@@ -127,7 +127,7 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 		this.oServerPairPropertiesView.setServer(oAccount.oServer);
 		
 		this.isInternal(oAccount.bInternal);
-		this.isDefault(oAccount.isDefault());
+		this.canAuthorize(oAccount.canAuthorize());
 		this.removeHint(oAccount.removeHint());
 		this.canBeRemoved(oAccount.canBeRemoved());
 		
@@ -154,7 +154,7 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 		this.oServerPairPropertiesView.clear();
 		
 		this.isInternal(true);
-		this.isDefault(true);
+		this.canAuthorize(true);
 		this.removeHint('');
 		this.canBeRemoved(false);
 	}
