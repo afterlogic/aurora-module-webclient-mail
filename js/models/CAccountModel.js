@@ -46,10 +46,10 @@ function CAccountModel(oData, bSingle)
 	this.serverId = ko.observable(Types.pInt(oData.ServerId));
 	this.oServer = new CServerModel(oData.Server);
 	this.bInternal = !!oData.IsInternal; // If **true**, the account is hosted by bundled mailserver.
-	this.canAuthorize = ko.observable(!!oData.CanAuthorize);
+	this.useToAuthorize = ko.observable(!!oData.UseToAuthorize);
 	
-	this.isCurrent = ko.observable(!!oData.CanAuthorize);
-	this.isEdited = ko.observable(!!oData.CanAuthorize);
+	this.isCurrent = ko.observable(!!oData.UseToAuthorize);
+	this.isEdited = ko.observable(!!oData.UseToAuthorize);
 	
 	this.hash = ko.computed(function () {
 		return Utils.getHash(this.id() + this.email());
@@ -75,7 +75,7 @@ function CAccountModel(oData, bSingle)
 	this.extensionsRequested = ko.observable(false);
 	
 	this.canBeRemoved = ko.computed(function () {
-		return !this.bInternal && (!this.canAuthorize() || this.canAuthorize() && Settings.AllowChangeEmailSettings);
+		return !this.bInternal && (!this.useToAuthorize() || this.useToAuthorize() && Settings.AllowChangeEmailSettings);
 	}, this);
 	
 	this.removeHint = ko.computed(function () {
@@ -84,7 +84,7 @@ function CAccountModel(oData, bSingle)
 			sHint = ''
 		;
 		
-		if (this.canAuthorize())
+		if (this.useToAuthorize())
 		{
 			if (ModulesManager.isModuleIncluded('CalendarWebclient') && ModulesManager.isModuleIncluded('ContactsWebclient'))
 			{
@@ -113,7 +113,7 @@ function CAccountModel(oData, bSingle)
 	}, this);
 	
 	this.removeConfirmation = ko.computed(function () {
-		if (this.canAuthorize())
+		if (this.useToAuthorize())
 		{
 			return this.removeHint() + TextUtils.i18n('%MODULENAME%/CONFIRM_REMOVE_ACCOUNTED');
 		}
@@ -358,7 +358,7 @@ CAccountModel.prototype.onAccountDeleteResponse = function (oResponse, oRequest)
 		this.requireAccounts();
 		AccountList.deleteAccount(this.id());
 		
-		if (this.canAuthorize())
+		if (this.useToAuthorize())
 		{
 			UrlUtils.clearAndReloadLocation(Browser.ie8AndBelow, true);
 		}

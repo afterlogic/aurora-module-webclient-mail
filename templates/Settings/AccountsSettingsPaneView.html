@@ -17,7 +17,7 @@
 				<div class="item account" data-bind="css: {'selected': id() === $parent.editedAccountId() && !$parent.editedFetcherId() && !$parent.editedIdentityId()},  click: function () {$parent.editAccount(hash());}">
 					<!-- ko if: allowMail() -->
 						<span class="link fetcher" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ADD_IDENTITY'}, visible: $parent.bAllowIdentities, click: function (oModel, oEv) {$parent.addIdentity(id(), oEv);}"></span>
-						<span class="link fetcher" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ADD_FETCHER'}, visible: (canAuthorize() && $parent.bAllowFetchers), click: $parent.addFetcher"></span>
+						<span class="link fetcher" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ADD_FETCHER'}, visible: (useToAuthorize() && $parent.bAllowFetchers), click: $parent.addFetcher"></span>
 					<!-- /ko -->
 					<!-- ko if: !allowMail() -->
 						<span class="link fetcher" data-bind="i18n: {'key': '%MODULENAME%/ACTION_CONNECT_MAIL'}, click: function (oModel, oEv) {$parent.connectToMail(id(), oEv);}"></span>
@@ -31,7 +31,7 @@
 						<span class="icon fetcher"></span>
 						<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_IDENTITY'}"></span>
 						<span class="title" data-bind="text: fullEmail"></span>
-						<span class="icon loyal" data-bind="visible: canAuthorize() && $parent.identities().length > 1">√</span>
+						<span class="icon loyal" data-bind="visible: useToAuthorize() && $parent.identities().length > 1">√</span>
 					</div>
 					<!-- /ko -->
 

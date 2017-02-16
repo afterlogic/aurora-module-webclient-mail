@@ -193,7 +193,7 @@ CAccountListModel.prototype.parse = function (aAccounts)
 		this.collection(_.map(aAccounts, function (oRawAccount)
 		{
 			var oTempAccount = new CAccountModel(oRawAccount, aAccounts.length === 1);
-			if (oTempAccount.canAuthorize())
+			if (oTempAccount.useToAuthorize())
 			{
 				iDefaultId = oTempAccount.id();
 				bHasDefault = true;
@@ -220,7 +220,7 @@ CAccountListModel.prototype.parse = function (aAccounts)
 			});
 		}
 		
-		oDefaultAccount.canAuthorize(true);
+		oDefaultAccount.useToAuthorize(true);
 		
 		iCurrentId = oFirstMailAccount ? oFirstMailAccount.id() : iDefaultId;
 	}

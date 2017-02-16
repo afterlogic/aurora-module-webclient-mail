@@ -369,9 +369,9 @@ CAccountsSettingsPaneView.prototype.populate = function ()
 	var
 		oAccount = AccountList.getEdited(),
 		bAllowMail = !!oAccount && oAccount.allowMail(),
-		bDefault = !!oAccount && oAccount.canAuthorize(),
+		bDefault = !!oAccount && oAccount.useToAuthorize(),
 		bChangePass = !!oAccount && oAccount.extensionExists('AllowChangePasswordExtension'),
-		bCanBeRemoved = !!oAccount && oAccount.canBeRemoved() && !oAccount.canAuthorize()
+		bCanBeRemoved = !!oAccount && oAccount.canBeRemoved() && !oAccount.useToAuthorize()
 	;
 	
 	if (oAccount)
