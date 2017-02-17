@@ -554,7 +554,7 @@ CMessageModel.prototype.parseAttachments = function (oData, iAccountId)
 		var sThumbSessionUid = Date.now().toString();
 
 		this.attachments(_.map(aCollection, function (oRawAttach) {
-			var oAttachment = new CAttachmentModel(iAccountId);
+			var oAttachment = new CAttachmentModel();
 			oAttachment.parse(oRawAttach);
 			oAttachment.getInThumbQueue(sThumbSessionUid);
 			oAttachment.setMessageData(this.folder(), this.uid());

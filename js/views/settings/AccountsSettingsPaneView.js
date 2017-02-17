@@ -67,7 +67,7 @@ function CAccountsSettingsPaneView()
 	this.allowForward = ko.observable(false);
 	this.allowAutoresponder = ko.observable(false);
 	this.allowFilters = ko.observable(false);
-	this.allowSignature = ko.observable(!Settings.AllowIdentities && AccountList.hasAccount());
+	this.allowSignature = ko.observable(false);
 	
 	this.aAccountTabs = [
 		{
@@ -211,7 +211,16 @@ CAccountsSettingsPaneView.prototype.onRoute = function (aParams)
 			}
 			else
 			{
-				AccountList.changeEditedAccountByHash(sHash);
+				if (_.find(AccountList.collection(), function (oAccount) {
+					return oAccount.hash() === sHash;
+				}))
+				{
+					AccountList.changeEditedAccountByHash(sHash);
+				}
+				else
+				{
+					Routing.replaceHash(['settings', 'mail-accounts']);
+				}
 			}
 		}
 	}
@@ -236,7 +245,11 @@ CAccountsSettingsPaneView.prototype.getAutoselectedTab = function ()
 CAccountsSettingsPaneView.prototype.addAccount = function ()
 {
 	Popups.showPopup(CreateAccountPopup, [Enums.AccountCreationPopupType.OneStep, '', _.bind(function (iAccountId) {
-		this.editAccount(iAccountId);
+		var oAccount = AccountList.getAccount(iAccountId);
+		if (oAccount)
+		{
+			this.editAccount(oAccount.hash());
+		}
 	}, this)]);
 };
 
@@ -282,24 +295,6 @@ CAccountsSettingsPaneView.prototype.addFetcher = function (iAccountId, oEv)
 CAccountsSettingsPaneView.prototype.editFetcher = function (sHash)
 {
 	ModulesManager.run('SettingsWebclient', 'setAddHash', [['fetcher', sHash]]);
-};
-
-/**
- * @param {string} sId
- * @param {Object} oEv
- */
-CAccountsSettingsPaneView.prototype.connectToMail = function (sId, oEv)
-{
-	oEv.stopPropagation();
-	
-	var oDefaultAccount = AccountList.getDefault();
-	
-	if (oDefaultAccount && !oDefaultAccount.allowMail())
-	{
-		Popups.showPopup(CreateAccountPopup, [Enums.AccountCreationPopupType.ConnectToMail, '', _.bind(function (iAccountId) {
-			this.editAccount(iAccountId);
-		}, this)]);
-	}
 };
 
 /**
@@ -368,19 +363,18 @@ CAccountsSettingsPaneView.prototype.populate = function ()
 {
 	var
 		oAccount = AccountList.getEdited(),
-		bAllowMail = !!oAccount && oAccount.allowMail(),
-		bDefault = !!oAccount && oAccount.useToAuthorize(),
 		bChangePass = !!oAccount && oAccount.extensionExists('AllowChangePasswordExtension'),
-		bCanBeRemoved = !!oAccount && oAccount.canBeRemoved() && !oAccount.useToAuthorize()
+		bCanBeRemoved = !!oAccount && oAccount.canBeRemoved()
 	;
 	
 	if (oAccount)
 	{
-		this.allowProperties((!bDefault || bDefault && Settings.AllowUsersChangeEmailSettings) && bAllowMail || !Settings.AllowIdentities || bChangePass || bCanBeRemoved);
-		this.allowFolders(bAllowMail);
-		this.allowForward(bAllowMail && oAccount.extensionExists('AllowForwardExtension') && oAccount.forward());
-		this.allowAutoresponder(bAllowMail && oAccount.extensionExists('AllowAutoresponderExtension') && oAccount.autoresponder());
-		this.allowFilters(bAllowMail && oAccount.extensionExists('AllowSieveFiltersExtension'));
+		this.allowProperties(Settings.AllowUsersChangeEmailSettings || !Settings.AllowIdentities || bChangePass || bCanBeRemoved);
+		this.allowFolders(true);
+		this.allowForward(oAccount.extensionExists('AllowForwardExtension') && oAccount.forward());
+		this.allowAutoresponder(oAccount.extensionExists('AllowAutoresponderExtension') && oAccount.autoresponder());
+		this.allowFilters(oAccount.extensionExists('AllowSieveFiltersExtension'));
+		this.allowSignature(!Settings.AllowIdentities);
 		
 		if (!this.currentTab() || !this.currentTab().visible())
 		{

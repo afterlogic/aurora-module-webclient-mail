@@ -48,13 +48,12 @@ function CAccountModel(oData, bSingle)
 	this.bInternal = !!oData.IsInternal; // If **true**, the account is hosted by bundled mailserver.
 	this.useToAuthorize = ko.observable(!!oData.UseToAuthorize);
 	
-	this.isCurrent = ko.observable(!!oData.UseToAuthorize);
-	this.isEdited = ko.observable(!!oData.UseToAuthorize);
+	this.isCurrent = ko.observable(false);
+	this.isEdited = ko.observable(false);
 	
 	this.hash = ko.computed(function () {
 		return Utils.getHash(this.id() + this.email());
 	}, this);
-	this.allowMail = ko.observable(true);
 	this.passwordSpecified = ko.observable(true);
 	
 	this.extensions = ko.observableArray([]);
@@ -72,55 +71,10 @@ function CAccountModel(oData, bSingle)
 		return AddressUtils.getFullEmail(this.friendlyName(), this.email());
 	}, this);
 	
-	this.extensionsRequested = ko.observable(false);
+	this.extensionsRequested = ko.observable(true);
 	
 	this.canBeRemoved = ko.computed(function () {
-		return !this.bInternal && (!this.useToAuthorize() || this.useToAuthorize() && Settings.AllowChangeEmailSettings);
-	}, this);
-	
-	this.removeHint = ko.computed(function () {
-		var
-			sAndOther = '',
-			sHint = ''
-		;
-		
-		if (this.useToAuthorize())
-		{
-			if (ModulesManager.isModuleIncluded('CalendarWebclient') && ModulesManager.isModuleIncluded('ContactsWebclient'))
-			{
-				sAndOther = TextUtils.i18n('%MODULENAME%/INFO_REMOVE_ACCOUNT_CONTACTS_CALENDARS');
-			}
-			else if (ModulesManager.isModuleIncluded('CalendarWebclient'))
-			{
-				sAndOther = TextUtils.i18n('%MODULENAME%/INFO_REMOVE_ACCOUNT_CALENDARS');
-			}
-			else if (ModulesManager.isModuleIncluded('ContactsWebclient'))
-			{
-				sAndOther = TextUtils.i18n('%MODULENAME%/INFO_REMOVE_ACCOUNT_CONTACTS');
-			}
-			sHint = TextUtils.i18n('%MODULENAME%/INFO_REMOVE_DEFAULT_ACCOUNT', {'AND_OTHER': sAndOther});
-			if (!bSingle)
-			{
-				sHint += TextUtils.i18n('%MODULENAME%/INFO_REMOVE_DEFAULT_ACCOUNT_NOTSINGLE');
-			}
-		}
-		else
-		{
-			sHint = TextUtils.i18n('%MODULENAME%/INFO_REMOVE_ACCOUNT');
-		}
-		
-		return sHint;
-	}, this);
-	
-	this.removeConfirmation = ko.computed(function () {
-		if (this.useToAuthorize())
-		{
-			return this.removeHint() + TextUtils.i18n('%MODULENAME%/CONFIRM_REMOVE_ACCOUNTED');
-		}
-		else
-		{
-			return TextUtils.i18n('%MODULENAME%/CONFIRM_REMOVE_ACCOUNT');
-		}
+		return !this.bInternal && Settings.AllowChangeEmailSettings;
 	}, this);
 }
 
@@ -176,7 +130,7 @@ CAccountModel.prototype.onGetQuotaResponse = function (oResult, oRequest)
 
 CAccountModel.prototype.updateQuotaParams = function ()
 {
-	if (UserSettings.ShowQuotaBar && this.allowMail())
+	if (UserSettings.ShowQuotaBar)
 	{
 		this.requireAjax();
 		Ajax.send('GetQuota', { 'AccountID': this.id() }, this.onGetQuotaResponse, this);
@@ -237,26 +191,6 @@ CAccountModel.prototype.extensionExists = function(sExtension)
 	return (_.indexOf(this.extensions(), sExtension) === -1) ? false : true;
 };
 
-CAccountModel.prototype.allowMailAfterConfiguring = function ()
-{
-	if (!this.allowMail())
-	{
-		if (this.passwordSpecified())
-		{
-			Popups.showPopup(AlertPopup, [
-				TextUtils.i18n('%MODULENAME%/INFO_AFTER_CONNECT_MAIL_HTML', {'EMAIL': this.email()}),
-				null,
-				TextUtils.i18n('%MODULENAME%/HEADING_AFTER_CONNECT_MAIL_HTML', {'EMAIL': this.email()})
-			]);
-		}
-		
-		this.allowMail(true);
-		
-		this.requireCache();
-		Cache.getFolderList(this.id());
-	}
-};
-
 /**
  * @param {string} sFriendlyName
  */
@@ -302,17 +236,14 @@ CAccountModel.prototype.getFetchersIdentitiesEmails = function()
 
 /**
  * Shows popup to confirm removing if it can be removed.
- * 
- * @param {Function} fAfterRemoveHandler This function should be executed after removing the account.
  */
-CAccountModel.prototype.remove = function(fAfterRemoveHandler)
+CAccountModel.prototype.remove = function()
 {
 	var fCallBack = _.bind(this.confirmedRemove, this);
 	
 	if (this.canBeRemoved())
 	{
-		this.fAfterRemoveHandler = fAfterRemoveHandler;
-		Popups.showPopup(ConfirmPopup, [this.removeConfirmation(), fCallBack, this.email()]);
+		Popups.showPopup(ConfirmPopup, [TextUtils.i18n('%MODULENAME%/CONFIRM_REMOVE_ACCOUNT'), fCallBack, this.email()]);
 	}
 };
 
@@ -327,10 +258,6 @@ CAccountModel.prototype.confirmedRemove = function(bOkAnswer)
 	{
 		this.requireAjax();
 		Ajax.send('DeleteAccount', { 'AccountID': this.id() }, this.onAccountDeleteResponse, this);
-	}
-	else
-	{
-		this.fAfterRemoveHandler = undefined;
 	}
 };
 
@@ -357,16 +284,6 @@ CAccountModel.prototype.onAccountDeleteResponse = function (oResponse, oRequest)
 		
 		this.requireAccounts();
 		AccountList.deleteAccount(this.id());
-		
-		if (this.useToAuthorize())
-		{
-			UrlUtils.clearAndReloadLocation(Browser.ie8AndBelow, true);
-		}
-		else if (typeof this.fAfterRemoveHandler === 'function')
-		{
-			this.fAfterRemoveHandler();
-			this.fAfterRemoveHandler = undefined;
-		}
 	}
 };
 

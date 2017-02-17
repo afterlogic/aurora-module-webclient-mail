@@ -39,7 +39,6 @@ CAccountListModel.prototype.initCurrentAccount = function ()
 	if (oCurrentAccount)
 	{
 		oCurrentAccount.requestExtensions();
-		this.isCurrentAllowsMail(oCurrentAccount.allowMail());
 	}
 };
 
@@ -88,6 +87,10 @@ CAccountListModel.prototype.changeCurrentAccount = function (iNewCurrentId, bPas
 		this.currentId(iNewCurrentId);
 		oNewCurrentAccount.isCurrent(true);
 	}
+	else if (!oCurrentAccount)
+	{
+		this.currentId(0);
+	}
 	
 	if (bPassToMail)
 	{
@@ -128,6 +131,10 @@ CAccountListModel.prototype.changeEditedAccount = function (iNewEditedId)
 		}
 		this.editedId(iNewEditedId);
 		oNewEditedAccount.isEdited(true);
+	}
+	else if (!oEditedAccount)
+	{
+		this.editedId(0);
 	}
 };
 
@@ -172,74 +179,35 @@ CAccountListModel.prototype.getFetcherByHash = function(sHash)
 };
 
 /**
- * Fills the collection of accounts. Checks for default account. If it is not listed, 
- * then assigns a credit default the first account from the list.
- *
+ * Fills the collection of accounts.
  * @param {Array} aAccounts
  */
 CAccountListModel.prototype.parse = function (aAccounts)
 {
-	var
-		oAccount = null,
-		iDefaultId = 0,
-		iCurrentId = 0,
-		bHasDefault = false,
-		oDefaultAccount = null,
-		oFirstMailAccount = null
-	;
-
 	if (_.isArray(aAccounts))
 	{
 		this.collection(_.map(aAccounts, function (oRawAccount)
 		{
-			var oTempAccount = new CAccountModel(oRawAccount, aAccounts.length === 1);
-			if (oTempAccount.useToAuthorize())
-			{
-				iDefaultId = oTempAccount.id();
-				bHasDefault = true;
-			}
-			return oTempAccount;
+			return new CAccountModel(oRawAccount, aAccounts.length === 1);
 		}));
+		this.initObservables(this.collection().length > 0 ? this.collection()[0].id() : 0);
 	}
-	
-	if (!bHasDefault && this.collection().length > 0)
-	{
-		oAccount = this.collection()[0];
-		iDefaultId = oAccount.id();
-		bHasDefault = true;
-	}
-	
-	if (bHasDefault)
-	{
-		oDefaultAccount = this.getAccount(iDefaultId);
-		
-		if (!oDefaultAccount.allowMail())
-		{
-			oFirstMailAccount = _.find(this.collection(), function (oTempAccount) {
-				return oTempAccount.allowMail();
-			});
-		}
-		
-		oDefaultAccount.useToAuthorize(true);
-		
-		iCurrentId = oFirstMailAccount ? oFirstMailAccount.id() : iDefaultId;
-	}
-	
-//	if (iDefaultId === 0 && this.collection().length > 0)
-//	{
-//		iDefaultId = this.collection()[0]
-//	}
-	
-	this.initObservables(iDefaultId, iCurrentId);
 };
 
-CAccountListModel.prototype.initObservables = function (iDefaultId, iCurrentId)
+/**
+ * @param {int} iCurrentId
+ */
+CAccountListModel.prototype.initObservables = function (iCurrentId)
 {
-	this.defaultId = ko.observable(iDefaultId);
+	var oCurrAccount = this.getAccount(iCurrentId);
+	if (oCurrAccount)
+	{
+		oCurrAccount.isCurrent(true);
+		oCurrAccount.isEdited(true);
+	}
+
 	this.currentId = ko.observable(iCurrentId);
 	this.editedId = ko.observable(iCurrentId);
-	
-	this.isCurrentAllowsMail = ko.observable(true);
 	
 	this.currentId.subscribe(function() {
 		this.initCurrentAccount();
@@ -252,18 +220,6 @@ CAccountListModel.prototype.initObservables = function (iDefaultId, iCurrentId)
 CAccountListModel.prototype.hasAccount = function ()
 {
 	return this.collection().length > 0;
-};
-
-/**
- * @return {boolean}
- */
-CAccountListModel.prototype.hasMailAccount = function ()
-{
-	var oAccount = _.find(this.collection(), function (oAcct) {
-		return oAcct.allowMail();
-	}, this);
-	
-	return !!oAccount;
 };
 
 /**
@@ -287,14 +243,6 @@ CAccountListModel.prototype.getAccount = function (iId)
 CAccountListModel.prototype.getCurrent = function ()
 {
 	return this.getAccount(this.currentId());
-};
-
-/**
- * @return {Object|undefined}
- */
-CAccountListModel.prototype.getDefault = function ()
-{
-	return this.getAccount(this.defaultId());
 };
 
 /**
@@ -335,7 +283,7 @@ CAccountListModel.prototype.addAccount = function (oAccount)
 	
 	this.collection.push(oAccount);
 	
-	if (oCurrAccount && !oCurrAccount.allowMail())
+	if (oCurrAccount)
 	{
 		this.changeCurrentAccount(oAccount.id(), false);
 	}
@@ -346,17 +294,11 @@ CAccountListModel.prototype.addAccount = function (oAccount)
  */
 CAccountListModel.prototype.deleteAccount = function (iId)
 {
-	if (this.currentId() === iId)
-	{
-		this.changeCurrentAccount(this.defaultId(), false);
-	}
+	this.collection.remove(function (oAcct) { return oAcct.id() === iId; });
 	
-	if (this.editedId() === iId)
-	{
-		this.changeEditedAccount(this.defaultId());
-	}
-	
-	this.collection.remove(function (oAcct){return oAcct.id() === iId;});
+	var iFirstAccId = this.collection().length > 0 ? this.collection()[0].id() : 0;
+	this.changeCurrentAccount(iFirstAccId, false);
+	this.changeEditedAccount(iFirstAccId);
 };
 
 /**
@@ -383,7 +325,7 @@ CAccountListModel.prototype.populateFetchers = function ()
 {
 	if (Settings.AllowFetchers)
 	{
-		Ajax.send('GetFetchers', { 'AccountID': this.defaultId() }, this.onGetFetchersResponse, this);
+		Ajax.send('GetFetchers', { 'AccountID': this.editedId() }, this.onGetFetchersResponse, this);
 	}
 };
 
@@ -395,24 +337,24 @@ CAccountListModel.prototype.onGetFetchersResponse = function (oResponse, oReques
 {
 	var
 		oFetcherList = null,
-		oDefaultAccount = this.getDefault()
+		oEditedAccount = this.getEdited()
 	;
 
 	if (Types.isNonEmptyArray(oResponse.Result))
 	{
 		oFetcherList = new CFetcherListModel();
-		oFetcherList.parse(this.defaultId(), oResponse.Result);
+		oFetcherList.parse(oResponse.Result);
 	}
 	
-	if (oDefaultAccount)
+	if (oEditedAccount)
 	{
-		oDefaultAccount.fetchers(oFetcherList);
+		oEditedAccount.fetchers(oFetcherList);
 	}
 };
 
 CAccountListModel.prototype.populateIdentities = function ()
 {
-	if (Settings.AllowIdentities && (this.isCurrentAllowsMail() || this.collection().length > 1))
+	if (Settings.AllowIdentities && this.collection().length > 1)
 	{
 		Ajax.send('GetIdentities', null, this.onGetIdentitiesResponse, this);
 	}
@@ -594,38 +536,6 @@ CAccountListModel.prototype.getAttendee = function (aEmails)
 	}, this));
 	
 	return sAttendee;
-};
-
-CAccountListModel.prototype.displaySocialWelcome = function ()
-{
-	var
-		CreateAccountPopup = require('modules/%ModuleName%/js/popups/CreateAccountPopup.js'),
-
-		oDefaultAccount = this.getDefault(),
-		bHasMailAccount = this.hasMailAccount()
-	;
-	
-	if (!bHasMailAccount && oDefaultAccount && !Storage.hasData('SocialWelcomeShowed' + oDefaultAccount.id()) && UserSettings.SocialName !== '')
-	{
-		Popups.showPopup(ConfirmPopup, [
-			TextUtils.i18n('%MODULENAME%/CONFIRM_SOCIAL_WELCOME', {
-				'SOCIALNAME': UserSettings.SocialName,
-				'SITENAME': UserSettings.SiteName,
-				'EMAIL': oDefaultAccount.email()
-			}),
-			function (bConfigureMail) {
-				if (bConfigureMail && !oDefaultAccount.allowMail())
-				{
-					Popups.showPopup(CreateAccountPopup, [Enums.AccountCreationPopupType.ConnectToMail, oDefaultAccount.email()]);
-				}
-			},
-			'',
-			TextUtils.i18n('%MODULENAME%/ACTION_CONNECT_MAIL'),
-			TextUtils.i18n('COREWEBCLIENT/ACTION_CLOSE')
-		]);
-		
-		Storage.setData('SocialWelcomeShowed' + oDefaultAccount.id(), '1');
-	}
 };
 
 var AccountList = new CAccountListModel();

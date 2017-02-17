@@ -49,9 +49,9 @@ function CMailView()
 	this.isEnableGroupOperations = this.oMessageList.isEnableGroupOperations;
 
 	this.composeLink = ko.observable(Routing.buildHashFromArray(LinksUtils.getCompose()));
-	this.composeCommand = Utils.createCommand(this, this.executeCompose, AccountList.isCurrentAllowsMail);
+	this.composeCommand = Utils.createCommand(this, this.executeCompose);
 
-	this.checkMailCommand = Utils.createCommand(this, this.executeCheckMail, AccountList.isCurrentAllowsMail);
+	this.checkMailCommand = Utils.createCommand(this, this.executeCheckMail);
 	this.checkMailIndicator = ko.observable(true).extend({ throttle: 50 });
 	ko.computed(function () {
 		this.checkMailIndicator(MailCache.checkMailStarted() || MailCache.messagesLoading());

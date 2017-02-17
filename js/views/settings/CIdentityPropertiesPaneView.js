@@ -32,7 +32,6 @@ function CIdentityPropertiesPaneView(oParent, bCreate)
 	
 	this.identity = ko.observable(null);
 	
-	this.defaultAccountId = AccountList.defaultId;
 	this.oParent = oParent;
 	this.bCreate = bCreate;
 

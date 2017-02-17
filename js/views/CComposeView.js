@@ -972,7 +972,7 @@ CComposeView.prototype.addDataAsAttachment = function (sData, sFileName)
 			'FileName': sFileName,
 			'Hash': sHash
 		},
-		oAttach = new CAttachmentModel(this.senderAccountId())
+		oAttach = new CAttachmentModel()
 	;
 
 	this.subject(sFileName.substr(0, sFileName.length - 4));
@@ -1030,7 +1030,7 @@ CComposeView.prototype.addFilesAsAttachment = function (aFiles)
 	;
 
 	_.each(aFiles, function (oFile) {
-		oAttach = new CAttachmentModel(this.senderAccountId());
+		oAttach = new CAttachmentModel();
 		oAttach.fileName(oFile.fileName());
 		oAttach.hash(oFile.hash());
 		oAttach.thumb(oFile.thumb());
@@ -1104,7 +1104,7 @@ CComposeView.prototype.onFilesUpload = function (oResponse, oRequest)
 CComposeView.prototype.addContactAsAttachment = function (oContact)
 {
 	var
-		oAttach = new CAttachmentModel(this.senderAccountId()),
+		oAttach = new CAttachmentModel(),
 		oParameters = null
 	;
 
@@ -1248,8 +1248,8 @@ CComposeView.prototype.setMessageDataInNewTab = function (oParameters)
 	this.setRecipient(this.bccAddr, oParameters.bccAddr);
 	this.subject(oParameters.subject);
 	this.attachments(_.map(oParameters.attachments, function (oRawAttach) {
-		var oAttach = new CAttachmentModel(this.senderAccountId());
-		oAttach.parse(oRawAttach, this.senderAccountId());
+		var oAttach = new CAttachmentModel();
+		oAttach.parse(oRawAttach);
 		return oAttach;
 	}, this));
 	this.textBody(oParameters.textBody);
@@ -1330,7 +1330,7 @@ CComposeView.prototype.onFileUploadSelect = function (sFileUid, oFileData)
 		return false;
 	}
 	
-	oAttach = new CAttachmentModel(this.senderAccountId());
+	oAttach = new CAttachmentModel();
 	oAttach.onUploadSelect(sFileUid, oFileData);
 	this.attachments.push(oAttach);
 

@@ -56,12 +56,16 @@ function CMailCache()
 			}
 			else
 			{
-				this.messagesLoading(oAccount.allowMail());
+				this.messagesLoading(true);
 				this.folderList(new CFolderListModel());
 				this.messages([]);
 				this.currentMessage(null);
 				this.getFolderList(iCurrAccountId);
 			}
+		}
+		else
+		{
+			this.folderList(new CFolderListModel());
 		}
 	}, this);
 	
@@ -86,8 +90,6 @@ function CMailCache()
 	
 	this.checkMailStarted = ko.observable(false);
 	this.checkMailStartedAccountId = ko.observable(0);
-	
-	this.defaultFolderList = ko.observable(new CFolderListModel());
 	
 	this.folderList = ko.observable(new CFolderListModel());
 	this.folderListLoading = ko.observableArray([]);
@@ -345,7 +347,7 @@ CMailCache.prototype.checkCurrentFolderList = function ()
 		oFolderList = oCurrAccount ? this.oFolderListItems[oCurrAccount.id()] : null
 	;
 	
-	if (oCurrAccount && oCurrAccount.allowMail() && !oFolderList && !this.messagesLoading())
+	if (oCurrAccount && !oFolderList && !this.messagesLoading())
 	{
 		this.messagesLoading(true);
 		this.messagesLoadingError(false);
@@ -360,7 +362,7 @@ CMailCache.prototype.getFolderList = function (iAccountID)
 {
 	var oAccount = AccountList.getAccount(iAccountID);
 	
-	if (oAccount && oAccount.allowMail())
+	if (oAccount)
 	{
 		this.folderListLoading.push(iAccountID);
 
@@ -1252,10 +1254,6 @@ CMailCache.prototype.onGetFoldersResponse = function (oResponse, oRequest)
 		if (this.editedAccountId() === iAccountId)
 		{
 			this.editedFolderList(oFolderList);
-		}
-		if (AccountList.defaultId() === iAccountId)
-		{
-			this.defaultFolderList(oFolderList);
 		}
 	}
 	

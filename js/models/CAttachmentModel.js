@@ -20,9 +20,8 @@ var
 /**
  * @constructor
  * @extends CCommonFileModel
- * @param {number} iAccountId
  */
-function CAttachmentModel(iAccountId)
+function CAttachmentModel()
 {
 	this.folderName = ko.observable('');
 	this.messageUid = ko.observable('');
@@ -42,8 +41,6 @@ function CAttachmentModel(iAccountId)
 		this.mimePartIndex();
 		return (this.mimeType() === 'message/rfc822' && this.mimePartIndex() !== '');
 	}, this);
-	
-	this.accountId(iAccountId);
 }
 
 _.extendOwn(CAttachmentModel.prototype, CAbstractFileModel.prototype);

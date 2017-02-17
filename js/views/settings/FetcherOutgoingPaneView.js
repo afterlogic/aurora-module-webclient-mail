@@ -26,8 +26,6 @@ function CFetcherOutgoingPaneView()
 {
 	CAbstractSettingsFormView.call(this, Settings.ServerModuleName);
 	
-	this.defaultAccountId = AccountList.defaultId;
-
 	this.fetcher = ko.observable(null);
 
 	this.idFetcher = ko.observable(null);
@@ -80,7 +78,7 @@ CFetcherOutgoingPaneView.prototype.getParametersForSave = function ()
 	if (this.fetcher())
 	{
 		return {
-			'AccountID': this.defaultAccountId(),
+			'AccountID': AccountList.editedId(),
 			'FetcherID': this.idFetcher(),
 			'Email': this.email(),
 			'Name': this.userName(),

@@ -819,7 +819,7 @@ CCrea.prototype.getText = function (bRemoveSignatureAnchor)
 		sVal = ''
 	;
 
-	if (this.$editableArea)
+	if (this.$editableArea && this.$editableArea.length > 0)
 	{
 		if (bRemoveSignatureAnchor)
 		{

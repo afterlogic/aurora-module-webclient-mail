@@ -15,35 +15,28 @@
 		<div class="items_list account_list">
 			<div data-bind="foreach: accounts">
 				<div class="item account" data-bind="css: {'selected': id() === $parent.editedAccountId() && !$parent.editedFetcherId() && !$parent.editedIdentityId()},  click: function () {$parent.editAccount(hash());}">
-					<!-- ko if: allowMail() -->
-						<span class="link fetcher" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ADD_IDENTITY'}, visible: $parent.bAllowIdentities, click: function (oModel, oEv) {$parent.addIdentity(id(), oEv);}"></span>
-						<span class="link fetcher" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ADD_FETCHER'}, visible: (useToAuthorize() && $parent.bAllowFetchers), click: $parent.addFetcher"></span>
-					<!-- /ko -->
-					<!-- ko if: !allowMail() -->
-						<span class="link fetcher" data-bind="i18n: {'key': '%MODULENAME%/ACTION_CONNECT_MAIL'}, click: function (oModel, oEv) {$parent.connectToMail(id(), oEv);}"></span>
-					<!-- /ko -->
+					<span class="link fetcher" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ADD_IDENTITY'}, visible: $parent.bAllowIdentities, click: function (oModel, oEv) {$parent.addIdentity(id(), oEv);}"></span>
+					<span class="link fetcher" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ADD_FETCHER'}, visible: (useToAuthorize() && $parent.bAllowFetchers), click: $parent.addFetcher"></span>
 					<span class="title" data-bind="text: email()"></span>
 				</div>
 
-				<!-- ko if: allowMail() -->
-					<!-- ko foreach: identities -->
-					<div class="item fetcher" data-bind="css: {'selected': id() === $parents[1].editedIdentityId()}, click: function () {$parents[1].editIdentity($data.hash());}">
-						<span class="icon fetcher"></span>
-						<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_IDENTITY'}"></span>
-						<span class="title" data-bind="text: fullEmail"></span>
-						<span class="icon loyal" data-bind="visible: useToAuthorize() && $parent.identities().length > 1">√</span>
-					</div>
-					<!-- /ko -->
+				<!-- ko foreach: identities -->
+				<div class="item fetcher" data-bind="css: {'selected': id() === $parents[1].editedIdentityId()}, click: function () {$parents[1].editIdentity($data.hash());}">
+					<span class="icon fetcher"></span>
+					<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_IDENTITY'}"></span>
+					<span class="title" data-bind="text: fullEmail"></span>
+					<span class="icon loyal" data-bind="visible: useToAuthorize() && $parent.identities().length > 1">√</span>
+				</div>
+				<!-- /ko -->
 
-					<!-- ko if: fetchers() -->
-						<!-- ko foreach: fetchers().collection -->
-							<div class="item fetcher" data-bind="css: {'selected': id() === $parents[1].editedFetcherId()}, click: function () {$parents[1].editFetcher($data.hash());}">
-								<span class="icon fetcher"></span>
-								<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_FETCH_FROM'}"></span>
-								<span class="title" data-bind="text: incomingServer() + ' / ' + incomingLogin()"></span>
-								<span class="info" data-bind="i18n: {'key': '%MODULENAME%/INFO_FETCHING'}, visible: isLocked()"></span>
-							</div>
-						<!-- /ko -->
+				<!-- ko if: fetchers() -->
+					<!-- ko foreach: fetchers().collection -->
+						<div class="item fetcher" data-bind="css: {'selected': id() === $parents[1].editedFetcherId()}, click: function () {$parents[1].editFetcher($data.hash());}">
+							<span class="icon fetcher"></span>
+							<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_FETCH_FROM'}"></span>
+							<span class="title" data-bind="text: incomingServer() + ' / ' + incomingLogin()"></span>
+							<span class="info" data-bind="i18n: {'key': '%MODULENAME%/INFO_FETCHING'}, visible: isLocked()"></span>
+						</div>
 					<!-- /ko -->
 				<!-- /ko -->
 			</div>

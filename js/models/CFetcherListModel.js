@@ -12,16 +12,13 @@ var
  */
 function CFetcherListModel()
 {
-	this.accountId = 0;
-
 	this.collection = ko.observableArray([]);
 }
 
 /**
- * @param {number} iAccountId
  * @param {Array} aData
  */
-CFetcherListModel.prototype.parse = function (iAccountId, aData)
+CFetcherListModel.prototype.parse = function (aData)
 {
 	var aParsedCollection = _.map(aData, function (oData) {
 		var oFetcher = new CFetcherModel();
@@ -29,7 +26,6 @@ CFetcherListModel.prototype.parse = function (iAccountId, aData)
 		return oFetcher;
 	});
 
-	this.accountId = iAccountId;
 	this.collection(aParsedCollection);
 };
 

@@ -29,7 +29,7 @@ function CFolderListView()
 			var
 				oCurrentAccount = AccountList.getCurrent()
 			;
-			if (oCurrentAccount && oCurrentAccount.allowMail())
+			if (oCurrentAccount)
 			{
 				return Routing.buildHashFromArray(['settings', 'mail-accounts', 'account', oCurrentAccount.hash(), 'folders']);
 			}

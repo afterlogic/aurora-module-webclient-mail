@@ -108,7 +108,7 @@ CFetcherIncomingPaneView.prototype.getParametersForSave = function ()
 	if (this.fetcher())
 	{
 		return {
-			'AccountID': AccountList.defaultId(),
+			'AccountID': AccountList.editedId(),
 			'FetcherID': this.idFetcher(),
 			'IsEnabled': this.isEnabled() ? 1 : 0,
 			'Folder': this.folder(),

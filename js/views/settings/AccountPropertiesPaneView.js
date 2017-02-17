@@ -35,7 +35,6 @@ function CAccountPropertiesPaneView()
 	
 	this.isInternal = ko.observable(true);
 	this.useToAuthorize = ko.observable(false);
-	this.removeHint = ko.observable('');
 	this.canBeRemoved = ko.observable('');
 	this.friendlyName = ko.observable('');
 	this.email = ko.observable('');
@@ -45,7 +44,6 @@ function CAccountPropertiesPaneView()
 
 	this.oServerPairPropertiesView = new CServerPairPropertiesView('acc_edit');
 
-	this.isAllowMail = ko.observable(true);
 	this.allowChangePassword = ko.observable(false);
 	
 	this.incLoginFocused = ko.observable(false);
@@ -128,7 +126,6 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 		
 		this.isInternal(oAccount.bInternal);
 		this.useToAuthorize(oAccount.useToAuthorize());
-		this.removeHint(oAccount.removeHint());
 		this.canBeRemoved(oAccount.canBeRemoved());
 	}
 	else
@@ -144,7 +141,6 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 		
 		this.isInternal(true);
 		this.useToAuthorize(true);
-		this.removeHint('');
 		this.canBeRemoved(false);
 	}
 	
@@ -192,7 +188,6 @@ CAccountPropertiesPaneView.prototype.onResponse = function (oResponse, oRequest)
 
 		if (oAccount)
 		{
-			oAccount.updateExtended(oParameters);
 			Screens.showReport(TextUtils.i18n('COREWEBCLIENT/REPORT_SETTINGS_UPDATE_SUCCESS'));
 		}
 	}

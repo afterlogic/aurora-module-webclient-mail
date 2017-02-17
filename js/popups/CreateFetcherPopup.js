@@ -91,7 +91,7 @@ CCreateFetcherPopup.prototype.save = function ()
 	else
 	{
 		var oParameters = {
-			'AccountID': AccountList.defaultId(),
+			'AccountID': AccountList.editedId(),
 			'Folder': this.folder(),
 			'IncomingLogin': this.incomingLogin(),
 			'IncomingPassword': (this.incomingPassword() === '') ? '******' : this.incomingPassword(),

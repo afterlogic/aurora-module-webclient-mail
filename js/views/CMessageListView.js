@@ -316,8 +316,6 @@ function CMessageListView(fOpenMessageInNewWindowBinded)
 		this.createDatePickerObject(this.searchDateEndDom());
 	}, this), 1000);
 	
-	this.isCurrentAllowsMail = AccountList.isCurrentAllowsMail;
-	
 	var aAddingInfo = TextUtils.i18n('%MODULENAME%/INFO_ADDING_NEW_ACCOUNT').split(/%STARTLINK%|%ENDLINK%/);
 	this.sAddingInfo1 = aAddingInfo.length > 0 ? aAddingInfo[0] : '';
 	this.sAddingInfo2 = aAddingInfo.length > 1 ? aAddingInfo[1] : '';

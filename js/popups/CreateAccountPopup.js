@@ -24,10 +24,7 @@ function CCreateAccountPopup()
 {
 	CAbstractPopup.call(this);
 	
-	this.defaultAccountId = AccountList.defaultId;
-
 	this.loading = ko.observable(false);
-	
 
 	this.friendlyName = ko.observable('');
 	this.email = ko.observable('');
@@ -135,10 +132,7 @@ CCreateAccountPopup.prototype.onSecondSaveClick = function ()
 	if (!this.isEmptySecondFields())
 	{
 		var
-			oDefaultAccount = AccountList.getDefault(),
-			bConfigureMail = this.isConnectToMailType() || oDefaultAccount && !oDefaultAccount.allowMail() && oDefaultAccount.email() === this.email(),
 			oParameters = {
-				'AccountID': this.defaultAccountId(),
 				'FriendlyName': this.friendlyName(),
 				'Email': this.email(),
 				'IncomingLogin': this.incomingLogin(),
@@ -150,7 +144,7 @@ CCreateAccountPopup.prototype.onSecondSaveClick = function ()
 
 		this.loading(true);
 
-		Ajax.send(bConfigureMail ? 'ConfigureMailAccount' : 'CreateAccount', oParameters, this.onAccountCreateResponse, this);
+		Ajax.send('CreateAccount', oParameters, this.onAccountCreateResponse, this);
 	}
 	else
 	{
@@ -219,23 +213,12 @@ CCreateAccountPopup.prototype.onAccountCreateResponse = function (oResponse, oRe
 			oAccount = new CAccountModel(oResponse.Result, false)
 		;
 		
-		if (oRequest.Method === 'AccountConfigureMail')
+		AccountList.addAccount(oAccount);
+		AccountList.populateIdentities();
+		AccountList.changeEditedAccount(iAccountId);
+		if (AccountList.collection().length === 1)
 		{
-			oAccount.allowMailAfterConfiguring();
-			AccountList.collection.valueHasMutated();
-			AccountList.initCurrentAccount();
-			AccountList.populateIdentities();
-			AccountList.currentId.valueHasMutated();
-		}
-		else
-		{
-			AccountList.addAccount(oAccount);
-			AccountList.populateIdentities();
-			AccountList.changeEditedAccount(iAccountId);
-			if (AccountList.collection().length === 1)
-			{
-				AccountList.changeCurrentAccount(iAccountId);
-			}
+			AccountList.changeCurrentAccount(iAccountId);
 		}
 		
 		if (this.fCallback)

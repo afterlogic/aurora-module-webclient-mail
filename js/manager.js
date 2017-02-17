@@ -38,7 +38,6 @@ module.exports = function (oAppData) {
 		Cache = require('modules/%ModuleName%/js/Cache.js');
 		Cache.init();
 		AccountList = require('modules/MailWebclient/js/AccountList.js');
-		AccountList.displaySocialWelcome();
 		
 		return {
 			start: function () {
@@ -118,7 +117,6 @@ module.exports = function (oAppData) {
 		Cache = require('modules/%ModuleName%/js/Cache.js');
 		Cache.init();
 		AccountList = require('modules/MailWebclient/js/AccountList.js');
-		AccountList.displaySocialWelcome();
 
 		oScreens[Settings.HashModuleName] = function () {
 			return require('modules/%ModuleName%/js/views/MailView.js');
@@ -205,9 +203,6 @@ module.exports = function (oAppData) {
 			},
 			getAllAccountsFullEmails: function () {
 				return AccountList.getAllFullEmails();
-			},
-			getCreateAccountPopup: function () {
-				return require('modules/%ModuleName%/js/popups/CreateAccountPopup.js');
 			},
 			getAccountList: function () {
 				return AccountList;
