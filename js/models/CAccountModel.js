@@ -7,18 +7,14 @@ var
 	AddressUtils = require('%PathToCoreWebclientModule%/js/utils/Address.js'),
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
-	UrlUtils = require('%PathToCoreWebclientModule%/js/utils/Url.js'),
 	Utils = require('%PathToCoreWebclientModule%/js/utils/Common.js'),
 	
 	Ajax = null,
 	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
 	App = null,
-	Browser = require('%PathToCoreWebclientModule%/js/Browser.js'),
-	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 	UserSettings = require('%PathToCoreWebclientModule%/js/Settings.js'),
 	
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
-	AlertPopup = require('%PathToCoreWebclientModule%/js/popups/AlertPopup.js'),
 	ConfirmPopup = require('%PathToCoreWebclientModule%/js/popups/ConfirmPopup.js'),
 	
 	CFiltersModel = require('modules/%ModuleName%/js/models/CFiltersModel.js'),
@@ -32,15 +28,13 @@ var
 /**
  * @constructor
  * @param {object} oData
- * @param {boolean} bSingle
  */
-function CAccountModel(oData, bSingle)
+function CAccountModel(oData)
 {
 	this.id = ko.observable(Types.pInt(oData.AccountID));
 	this.email = ko.observable(Types.pString(oData.Email));
 	this.friendlyName = ko.observable(Types.pString(oData.FriendlyName));
 	this.incomingLogin = ko.observable(Types.pString(oData.IncomingLogin));
-	this.outgoingLogin = ko.observable(Types.pString(oData.OutgoingLogin));
 	this.signature = ko.observable(Types.pString(oData.Signature));
 	this.useSignature = ko.observable(!!oData.UseSignature);
 	this.serverId = ko.observable(Types.pInt(oData.ServerId));

@@ -73,15 +73,6 @@ Enums.HtmlEditorImageSizes = {
 	'Original': 'original'
 };
 
-/**
- * @enum {number}
- */
-Enums.AccountCreationPopupType = {
-	'OneStep': 1,
-	'TwoSteps': 2,
-	'ConnectToMail': 3
-};
-
 if (typeof window.Enums === 'undefined')
 {
 	window.Enums = {};

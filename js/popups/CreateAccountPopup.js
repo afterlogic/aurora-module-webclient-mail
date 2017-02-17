@@ -6,6 +6,7 @@ var
 	
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
+	ValidationUtils = require('%PathToCoreWebclientModule%/js/utils/Validation.js'),
 	
 	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
 	CAbstractPopup = require('%PathToCoreWebclientModule%/js/popups/CAbstractPopup.js'),
@@ -28,38 +29,23 @@ function CCreateAccountPopup()
 
 	this.friendlyName = ko.observable('');
 	this.email = ko.observable('');
+	this.email.focused = ko.observable(false);
 	this.incomingLogin = ko.observable('');
-	this.incomingLoginFocused = ko.observable(false);
+	this.incomingLogin.focused = ko.observable(false);
 	this.incomingPassword = ko.observable('');
+	this.incomingPassword.focused = ko.observable(false);
 	
 	this.oServerPairPropertiesView = new CServerPairPropertiesView('acc_create');
 	
-	this.outgoingLogin = ko.observable('');
-	
-	this.friendlyNameFocus = ko.observable(false);
-	this.emailFocus = ko.observable(false);
-	this.incomingPasswordFocus = ko.observable(false);
-	this.incomingMailFocus = ko.observable(false);
-
-	this.isFirstStep = ko.observable(true);
-	this.isFirstTitle = ko.observable(true);
-	this.isConnectToMailType = ko.observable(false);
-	
-	this.isFirstStep.subscribe(function (bValue) {
-		if (!bValue)
-		{
-			this.oServerPairPropertiesView.clear();
-		}
-	}, this);
-
-	this.incomingLoginFocused.subscribe(function () {
-		if (this.incomingLoginFocused() && this.incomingLogin() === '')
+	this.email.focused.subscribe(function () {
+		if (!this.email.focused() && this.incomingLogin() === '')
 		{
 			this.incomingLogin(this.email());
 		}
 	}, this);
+	
+	this.aRequiredFields = [this.email, this.incomingLogin, this.incomingPassword].concat(this.oServerPairPropertiesView.aRequiredFields);
 }
-
 
 _.extendOwn(CCreateAccountPopup.prototype, CAbstractPopup.prototype);
 
@@ -67,45 +53,41 @@ CCreateAccountPopup.prototype.PopupTemplate = '%ModuleName%_Settings_CreateAccou
 
 CCreateAccountPopup.prototype.init = function ()
 {
-	this.isFirstTitle(true);
-	
 	this.friendlyName('');
 	this.email('');
 	this.incomingLogin('');
-	this.incomingLoginFocused(false);
+	this.incomingLogin.focused(false);
 	this.incomingPassword('');
-	this.outgoingLogin('');
 
 	this.oServerPairPropertiesView.init(false);
 };
 
 /**
- * @param {number} iType
- * @param {string} sEmail
  * @param {Function=} fCallback
  */
-CCreateAccountPopup.prototype.onShow = function (iType, sEmail, fCallback)
+CCreateAccountPopup.prototype.onShow = function (fCallback)
 {
 	this.fCallback = fCallback;
 	
 	this.init();
 	
-	switch (iType)
-	{
-		case Enums.AccountCreationPopupType.TwoSteps:
-			this.isFirstStep(true);
-			this.emailFocus(true);
-			break;
-		case Enums.AccountCreationPopupType.OneStep:
-		case Enums.AccountCreationPopupType.ConnectToMail:
-			this.isFirstStep(false);
-			this.email(sEmail);
-			this.incomingLogin(sEmail);
-			this.incomingPasswordFocus(true);
-			break;
-	}
+	this.focusFieldToEdit();
+};
+
+CCreateAccountPopup.prototype.focusFieldToEdit = function ()
+{
+	var koFirstEmptyField = _.find(this.aRequiredFields, function (koField) {
+		return koField() === '';
+	});
 	
-	this.isConnectToMailType(iType === Enums.AccountCreationPopupType.ConnectToMail);
+	if (koFirstEmptyField)
+	{
+		koFirstEmptyField.focused(true);
+	}
+	else if (this.aRequiredFields.length > 0)
+	{
+		this.aRequiredFields[0].focused(true);
+	}
 };
 
 CCreateAccountPopup.prototype.onHide = function ()
@@ -113,23 +95,9 @@ CCreateAccountPopup.prototype.onHide = function ()
 	this.init();
 };
 
-CCreateAccountPopup.prototype.onFirstSaveClick = function ()
+CCreateAccountPopup.prototype.save = function ()
 {
-	if (!this.isEmptyFirstFields())
-	{
-		this.loading(true);
-		
-		Ajax.send('GetDomainData', { 'Email': this.email() }, this.onDomainGetDataByEmailResponse, this);
-	}
-	else
-	{
-		this.loading(false);
-	}
-};
-
-CCreateAccountPopup.prototype.onSecondSaveClick = function ()
-{
-	if (!this.isEmptySecondFields())
+	if (ValidationUtils.checkIfFieldsEmpty(this.aRequiredFields, TextUtils.i18n('%MODULENAME%/ERROR_REQUIRED_FIELDS_EMPTY')))
 	{
 		var
 			oParameters = {
@@ -137,7 +105,6 @@ CCreateAccountPopup.prototype.onSecondSaveClick = function ()
 				'Email': this.email(),
 				'IncomingLogin': this.incomingLogin(),
 				'IncomingPassword': this.incomingPassword(),
-				'OutgoingLogin': this.outgoingLogin(),
 				'Server': this.oServerPairPropertiesView.getParametersForSave()
 			}
 		;
@@ -149,48 +116,6 @@ CCreateAccountPopup.prototype.onSecondSaveClick = function ()
 	else
 	{
 		this.loading(false);
-	}
-};
-
-CCreateAccountPopup.prototype.save = function ()
-{
-	if (!this.loading())
-	{
-		if (this.isFirstStep())
-		{
-			this.onFirstSaveClick();
-		}
-		else
-		{
-			this.onSecondSaveClick();
-		}
-	}
-};
-
-/**
- * @param {Object} oResponse
- * @param {Object} oRequest
- */
-CCreateAccountPopup.prototype.onDomainGetDataByEmailResponse = function (oResponse, oRequest)
-{
-	var oResult = oResponse.Result;
-	
-	this.incomingLogin(this.email());
-
-	if (oResult)
-	{
-//		this.oIncoming.set(oResult.IncomingServer, oResult.IncomingPort, !!oResult.IncomingUseSsl);
-//		this.oOutgoing.set(oResult.OutgoingServer, oResult.OutgoingPort, !!oResult.OutgoingUseSsl);
-
-		this.onSecondSaveClick();
-	}
-	else
-	{
-		this.loading(false);
-		
-		this.isFirstStep(false);
-		this.isFirstTitle(false);
-		this.incomingLoginFocused(true);
 	}
 };
 
@@ -210,7 +135,7 @@ CCreateAccountPopup.prototype.onAccountCreateResponse = function (oResponse, oRe
 	{
 		var
 			iAccountId = Types.pInt(oResponse.Result.AccountID),
-			oAccount = new CAccountModel(oResponse.Result, false)
+			oAccount = new CAccountModel(oResponse.Result)
 		;
 		
 		AccountList.addAccount(oAccount);
@@ -227,40 +152,6 @@ CCreateAccountPopup.prototype.onAccountCreateResponse = function (oResponse, oRe
 		}
 		
 		this.closePopup();
-	}
-};
-
-CCreateAccountPopup.prototype.isEmptyFirstFields = function ()
-{
-	switch ('')
-	{
-		case this.email():
-			this.emailFocus(true);
-			return true;
-		case this.incomingPassword():
-			this.incomingMailFocus(true);
-			return true;
-		default: return false;
-	}
-};
-
-CCreateAccountPopup.prototype.isEmptySecondFields = function ()
-{
-	switch ('')
-	{
-		case this.email():
-			this.emailFocus(true);
-			return true;
-		case this.incomingLogin():
-			this.incomingLoginFocused(true);
-			return true;
-//		case this.oIncoming.server():
-//			this.oIncoming.server.focused(true);
-//			return true;
-//		case this.oOutgoing.server():
-//			this.oOutgoing.server.focused(true);
-//			return true;
-		default: return false;
 	}
 };
 

@@ -31,7 +31,7 @@ function CAccountForwardPaneView()
 	
 	this.enable = ko.observable(false);
 	this.email = ko.observable('');
-	this.emailFocus = ko.observable(false);
+	this.email.focused = ko.observable(false);
 
 	AccountList.editedId.subscribe(function () {
 		if (this.bShown)
@@ -96,7 +96,7 @@ CAccountForwardPaneView.prototype.save = function ()
 
 	if (this.enable() && this.email() === '')
 	{
-		this.emailFocus(true);
+		this.email.focused(true);
 	}
 	else if (this.enable() && this.email() !== '')
 	{

@@ -244,7 +244,7 @@ CAccountsSettingsPaneView.prototype.getAutoselectedTab = function ()
 
 CAccountsSettingsPaneView.prototype.addAccount = function ()
 {
-	Popups.showPopup(CreateAccountPopup, [Enums.AccountCreationPopupType.OneStep, '', _.bind(function (iAccountId) {
+	Popups.showPopup(CreateAccountPopup, [_.bind(function (iAccountId) {
 		var oAccount = AccountList.getAccount(iAccountId);
 		if (oAccount)
 		{

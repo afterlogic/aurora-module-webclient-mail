@@ -5,9 +5,9 @@ var
 	ko = require('knockout'),
 	
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
+	ValidationUtils = require('%PathToCoreWebclientModule%/js/utils/Validation.js'),
 	
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
-	Screens = require('%PathToCoreWebclientModule%/js/Screens.js'),
 	
 	CServerModel = require('modules/%ModuleName%/js/models/CServerModel.js'),
 	CServerPropertiesView = require('modules/%ModuleName%/js/views/CServerPropertiesView.js')
@@ -71,6 +71,12 @@ function CServerPairPropertiesView(sPairId, bEditMode)
 	this.outgoingUseAuth.enable = ko.observable(true);
 	
 	this.currentValues = ko.observable([]);
+	
+	this.aRequiredFields = [this.oIncoming.server, this.oIncoming.port, this.oOutgoing.server, this.oOutgoing.port];
+	if (bEditMode)
+	{
+		this.aRequiredFields.unshift(this.name);
+	}
 }
 
 CServerPairPropertiesView.prototype.ViewTemplate = '%ModuleName%_Settings_ServerPairPropertiesView';
@@ -188,21 +194,7 @@ CServerPairPropertiesView.prototype.getParametersForSave = function ()
  */
 CServerPairPropertiesView.prototype.validateBeforeSave = function ()
 {
-	var
-		aRequiredFields = [this.name, this.oIncoming.server, this.oIncoming.port, this.oOutgoing.server, this.oOutgoing.port],
-		koFirstEmptyField = _.find(aRequiredFields, function (koField) {
-			return koField() === '';
-		})
-	;
-	
-	if (koFirstEmptyField)
-	{
-		Screens.showError(TextUtils.i18n('%MODULENAME%/ERROR_REQUIRED_FIELDS_EMPTY'));
-		koFirstEmptyField.focused(true);
-		return false;
-	}
-	
-	return true;
+	return ValidationUtils.checkIfFieldsEmpty(this.aRequiredFields, TextUtils.i18n('%MODULENAME%/ERROR_REQUIRED_FIELDS_EMPTY'));
 };
 
 module.exports = CServerPairPropertiesView;

@@ -40,7 +40,6 @@ function CAccountPropertiesPaneView()
 	this.email = ko.observable('');
 	this.incomingLogin = ko.observable('');
 	this.incomingPassword = ko.observable('');
-	this.outgoingLogin = ko.observable('');
 
 	this.oServerPairPropertiesView = new CServerPairPropertiesView('acc_edit');
 
@@ -82,8 +81,7 @@ CAccountPropertiesPaneView.prototype.getCurrentValues = function ()
 		aMain = [
 			this.friendlyName(),
 			this.email(),
-			this.incomingLogin(),
-			this.outgoingLogin()
+			this.incomingLogin()
 		],
 		aServers = this.oServerPairPropertiesView.currentValues()
 	;
@@ -99,7 +97,6 @@ CAccountPropertiesPaneView.prototype.getParametersForSave = function ()
 		'FriendlyName': this.friendlyName(),
 		'Email': this.email(),
 		'IncomingLogin': this.incomingLogin(),
-		'OutgoingLogin': this.outgoingLogin(),
 		'IncomingPassword': this.incomingPassword(),
 		'Server': this.oServerPairPropertiesView.getParametersForSave()
 	};
@@ -120,7 +117,6 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 		this.friendlyName(oAccount.friendlyName());
 		this.email(oAccount.email());
 		this.incomingLogin(oAccount.incomingLogin());
-		this.outgoingLogin(oAccount.outgoingLogin());
 		
 		this.oServerPairPropertiesView.setServer(oAccount.oServer);
 		
@@ -135,7 +131,6 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 		this.friendlyName('');
 		this.email('');
 		this.incomingLogin('');
-		this.outgoingLogin('');
 		
 		this.oServerPairPropertiesView.clear();
 		

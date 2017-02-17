@@ -3,6 +3,7 @@
 var
 	$ = require('jquery'),
 	ko = require('knockout'),
+	_ = require('underscore'),
 	
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js')
 ;
@@ -80,6 +81,23 @@ CServerPropertiesView.prototype.clear = function ()
 CServerPropertiesView.prototype.getIntPort = function ()
 {
 	return Types.pInt(this.port());
+};
+
+CServerPropertiesView.prototype.parentSave = function (koCurrentField, aParents)
+{
+	if (koCurrentField.focused)
+	{
+		koCurrentField.focused(false);
+	}
+	
+	var oParent = _.find(aParents, function (oTmpParent) {
+		return _.isFunction(oTmpParent.save);
+	});
+	
+	if (oParent)
+	{
+		oParent.save();
+	}
 };
 
 module.exports = CServerPropertiesView;

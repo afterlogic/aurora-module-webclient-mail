@@ -4,17 +4,11 @@ var
 	_ = require('underscore'),
 	ko = require('knockout'),
 	
-	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	
 	App = require('%PathToCoreWebclientModule%/js/App.js'),
 	MainTab = App.isNewTab() && window.opener ? window.opener.MainTabMailMethods : null,
 	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
-	Storage = require('%PathToCoreWebclientModule%/js/Storage.js'),
-	UserSettings = require('%PathToCoreWebclientModule%/js/Settings.js'),
-	
-	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
-	ConfirmPopup = require('%PathToCoreWebclientModule%/js/popups/ConfirmPopup.js'),
 	
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
@@ -188,7 +182,7 @@ CAccountListModel.prototype.parse = function (aAccounts)
 	{
 		this.collection(_.map(aAccounts, function (oRawAccount)
 		{
-			return new CAccountModel(oRawAccount, aAccounts.length === 1);
+			return new CAccountModel(oRawAccount);
 		}));
 		this.initObservables(this.collection().length > 0 ? this.collection()[0].id() : 0);
 	}
