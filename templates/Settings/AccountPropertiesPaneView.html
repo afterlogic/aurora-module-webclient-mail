@@ -1,5 +1,16 @@
 <div class="fields">
 	<div class="fieldset">
+		<div class="row" data-bind="visible: canBeUsedToAuthorize">
+			<div>
+				<span class="label"></span>
+				<label class="custom_checkbox" data-bind="css: {'checked': useToAuthorize}">
+					<span class="icon"></span>
+					<input type="checkbox" id="account_use_to_authorize" data-bind="checked: useToAuthorize" />
+				</label>
+				<label class="label" for="account_use_to_authorize" data-bind="i18n: {'key': '%MODULENAME%/LABEL_USE_TO_AUTHORIZE'}"></label>
+			</div>	
+		</div>
+		
 		<div class="row" data-bind="visible: !bAllowIdentities">
 			<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_YOUR_NAME'}"></span>
 			<input class="value input" spellcheck="false" type="text" maxlength="65" data-bind="value: friendlyName, onEnter: save"/>

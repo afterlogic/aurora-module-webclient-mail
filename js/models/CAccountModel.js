@@ -41,6 +41,7 @@ function CAccountModel(oData)
 	this.oServer = new CServerModel(oData.Server);
 	this.bInternal = !!oData.IsInternal; // If **true**, the account is hosted by bundled mailserver.
 	this.useToAuthorize = ko.observable(!!oData.UseToAuthorize);
+	this.canBeUsedToAuthorize = ko.observable(!!oData.CanBeUsedToAuthorize);
 	
 	this.isCurrent = ko.observable(false);
 	this.isEdited = ko.observable(false);
@@ -71,6 +72,16 @@ function CAccountModel(oData)
 		return !this.bInternal && Settings.AllowChangeEmailSettings;
 	}, this);
 }
+
+CAccountModel.prototype.updateFromServer = function (oData)
+{
+	this.email(Types.pString(oData.Email));
+	this.friendlyName(Types.pString(oData.FriendlyName));
+	this.incomingLogin(Types.pString(oData.IncomingLogin));
+	this.serverId(Types.pInt(oData.ServerId));
+	this.oServer = new CServerModel(oData.Server);
+	this.useToAuthorize(!!oData.UseToAuthorize);
+};
 
 CAccountModel.prototype.requireAccounts = function ()
 {
@@ -131,9 +142,6 @@ CAccountModel.prototype.updateQuotaParams = function ()
 	}
 };
 
-/**
- * @param {Object} oData
- */
 CAccountModel.prototype.requestExtensions = function ()
 {
 	//Should be executed lately - slows execution of more necessary requests

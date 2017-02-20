@@ -18,6 +18,7 @@ var
 	
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
+	CAccountModel = require('modules/%ModuleName%/js/models/CAccountModel.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	
 	CServerPairPropertiesView = require('modules/%ModuleName%/js/views/settings/CServerPairPropertiesView.js')
@@ -35,6 +36,7 @@ function CAccountPropertiesPaneView()
 	
 	this.isInternal = ko.observable(true);
 	this.useToAuthorize = ko.observable(false);
+	this.canBeUsedToAuthorize = ko.observable(false);
 	this.canBeRemoved = ko.observable('');
 	this.friendlyName = ko.observable('');
 	this.email = ko.observable('');
@@ -79,6 +81,7 @@ CAccountPropertiesPaneView.prototype.getCurrentValues = function ()
 {
 	var
 		aMain = [
+			this.useToAuthorize(),
 			this.friendlyName(),
 			this.email(),
 			this.incomingLogin()
@@ -94,6 +97,7 @@ CAccountPropertiesPaneView.prototype.getParametersForSave = function ()
 	var oAccount = AccountList.getEdited();
 	return {
 		'AccountID': oAccount.id(),
+		'UseToAuthorize': this.useToAuthorize(),
 		'FriendlyName': this.friendlyName(),
 		'Email': this.email(),
 		'IncomingLogin': this.incomingLogin(),
@@ -117,11 +121,12 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 		this.friendlyName(oAccount.friendlyName());
 		this.email(oAccount.email());
 		this.incomingLogin(oAccount.incomingLogin());
-		
+		console.log('oAccount.oServer', oAccount.oServer);
 		this.oServerPairPropertiesView.setServer(oAccount.oServer);
 		
 		this.isInternal(oAccount.bInternal);
 		this.useToAuthorize(oAccount.useToAuthorize());
+		this.canBeUsedToAuthorize(oAccount.canBeUsedToAuthorize());
 		this.canBeRemoved(oAccount.canBeRemoved());
 	}
 	else
@@ -136,6 +141,7 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 		
 		this.isInternal(true);
 		this.useToAuthorize(true);
+		this.canBeUsedToAuthorize(false);
 		this.canBeRemoved(false);
 	}
 	
@@ -183,6 +189,8 @@ CAccountPropertiesPaneView.prototype.onResponse = function (oResponse, oRequest)
 
 		if (oAccount)
 		{
+			oAccount.updateFromServer(oResponse.Result);
+			this.populate();
 			Screens.showReport(TextUtils.i18n('COREWEBCLIENT/REPORT_SETTINGS_UPDATE_SUCCESS'));
 		}
 	}

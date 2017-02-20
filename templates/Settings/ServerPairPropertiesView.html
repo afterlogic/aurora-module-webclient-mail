@@ -17,10 +17,11 @@
 
 <div class="row smtp_authentication" data-bind="css: {'disabled': !outgoingUseAuth.enable()}">
 	<div>
+		<span class="label"></span>
 		<label class="custom_checkbox" data-bind="css: {'checked': outgoingUseAuth}">
 			<span class="icon"></span>
 			<input type="checkbox" id="add_new_account_mail_out_auth" data-bind="checked: outgoingUseAuth, enable: outgoingUseAuth.enable" />
 		</label>
-		<label for="add_new_account_mail_out_auth" data-bind="i18n: {'key': '%MODULENAME%/LABEL_USE_SMTP_AUTHENTICATION'}"></label>
+		<label class="label" for="add_new_account_mail_out_auth" data-bind="i18n: {'key': '%MODULENAME%/LABEL_USE_SMTP_AUTHENTICATION'}"></label>
 	</div>	
 </div>
