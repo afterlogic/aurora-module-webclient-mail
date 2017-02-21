@@ -93,7 +93,9 @@ function CMessagePaneView()
 	this.isEnableResend = this.isCurrentMessageLoaded;
 	this.isEnableForward = this.isCurrentMessageLoaded;
 	this.isEnablePrint = this.isCurrentMessageLoaded;
-	this.isEnableSave = this.isCurrentMessage;
+	this.isEnableSave = function () {
+		return this.isCurrentMessage() && this.currentMessage().sDownloadAsEmlUrl !== '';
+	};
 	
 	this.bAllowSaveMessageAsPdf = Settings.AllowSaveMessageAsPdf;
 	this.isEnableSaveAsPdf = ko.computed(function () {
@@ -794,9 +796,9 @@ CMessagePaneView.prototype.executePrint = function ()
 
 CMessagePaneView.prototype.executeSave = function ()
 {
-	if (this.currentMessage())
+	if (this.isEnableSave())
 	{
-		UrlUtils.downloadByUrl(this.currentMessage().downloadLink());
+		UrlUtils.downloadByUrl(this.currentMessage().sDownloadAsEmlUrl);
 	}
 };
 
@@ -806,7 +808,6 @@ CMessagePaneView.prototype.executeSaveAsPdf = function ()
 	{
 		var
 			oBody = this.currentMessage().getDomText(),
-			iAccountId = this.currentMessage().accountId(),
 			fReplaceWithBase64 = function (oImg) {
 
 				try

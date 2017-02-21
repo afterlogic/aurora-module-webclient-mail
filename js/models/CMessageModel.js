@@ -178,9 +178,7 @@ function CMessageModel()
 	this.importance = ko.observable(Enums.Importance.Normal);
 	this.draftInfo = ko.observableArray([]);
 	this.hash = ko.observable('');
-	this.downloadLink = ko.computed(function () {
-		return FilesUtils.getDownloadLink(Settings.ServerModuleName, this.hash());
-	}, this);
+	this.sDownloadAsEmlUrl = '';
 
 	this.completelyFilled = ko.observable(false);
 
@@ -439,6 +437,7 @@ CMessageModel.prototype.parse = function (oData, iAccountId, bThreadPart, bTrust
 			this.draftInfo(oData.DraftInfo);
 		}
 		this.hash(Types.pString(oData.Hash));
+		this.sDownloadAsEmlUrl = Types.pString(oData.DownloadAsEmlUrl);
 		
 		if (oData['@Object'] === 'Object/Message')
 		{
