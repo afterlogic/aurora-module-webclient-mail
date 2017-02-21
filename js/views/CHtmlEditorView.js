@@ -759,7 +759,7 @@ CHtmlEditorView.prototype.insertWebImageFromPopup = function (oCurrentViewModel,
 CHtmlEditorView.prototype.insertComputerImageFromPopup = function (sUid, oAttachment)
 {
 	var
-		sViewLink = FilesUtils.getViewLink(Settings.ServerModuleName, oAttachment.Hash),
+		sViewLink = oAttachment.sViewUrl,
 		bResult = false
 	;
 

@@ -1033,7 +1033,7 @@ CComposeView.prototype.addFilesAsAttachment = function (aFiles)
 		oAttach = new CAttachmentModel();
 		oAttach.fileName(oFile.fileName());
 		oAttach.hash(oFile.hash());
-		oAttach.thumb(oFile.thumb());
+		oAttach.sThumbUrl = oFile.sThumbUrl;
 		oAttach.uploadStarted(true);
 
 		this.attachments.push(oAttach);
@@ -1400,7 +1400,6 @@ CComposeView.prototype.onFileUploadComplete = function (sFileUid, bResponseRecei
 		oAttach.onUploadComplete(sFileUid, bResponseReceived, oResult);
 		if (oAttach.mimeType().substr(0, 5) === 'image')
 		{
-			oAttach.thumb(true);
 			oAttach.getInThumbQueue(sThumbSessionUid);
 		}
 	}

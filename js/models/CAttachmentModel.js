@@ -67,7 +67,7 @@ CAttachmentModel.prototype.copyProperties = function (oSource)
 	this.contentLocation(oSource.contentLocation());
 	this.inline(oSource.inline());
 	this.linked(oSource.linked());
-	this.thumb(oSource.thumb());
+	this.sThumbUrl = oSource.sThumbUrl;
 	this.thumbnailSrc(oSource.thumbnailSrc());
 	this.thumbnailLoaded(oSource.thumbnailLoaded());
 	this.statusText(oSource.statusText());
@@ -183,7 +183,7 @@ CAttachmentModel.prototype.viewCommonFile = function ()
 {
 	var
 		oWin = null,
-		sViewLink = this.getViewLink(),
+		sViewLink = this.sViewUrl,
 		sUrl = UrlUtils.getAppPath() + sViewLink
 	;
 	
