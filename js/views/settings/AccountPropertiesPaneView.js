@@ -121,7 +121,6 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 		this.friendlyName(oAccount.friendlyName());
 		this.email(oAccount.email());
 		this.incomingLogin(oAccount.incomingLogin());
-		console.log('oAccount.oServer', oAccount.oServer);
 		this.oServerPairPropertiesView.setServer(oAccount.oServer);
 		
 		this.isInternal(oAccount.bInternal);
