@@ -34,7 +34,7 @@ function CAttachmentModel()
 
 	this.messagePart = ko.observable(null);
 	
-	CAbstractFileModel.call(this, Settings.ServerModuleName);
+	CAbstractFileModel.call(this);
 	
 	this.isMessageType = ko.computed(function () {
 		this.mimeType();
