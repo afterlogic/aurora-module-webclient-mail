@@ -175,8 +175,16 @@ CServerPairPropertiesView.prototype.getCurrentValues = function ()
 
 CServerPairPropertiesView.prototype.getParametersForSave = function ()
 {
+	var
+		iServerId = this.selectedServerId(),
+		iLastEditableServerId = this.oLastEditableServer.iId
+	;
+	if (iServerId === 0 && !_.find(this.servers(), function (oServer) { return iLastEditableServerId === oServer.iId; }))
+	{
+		iServerId = iLastEditableServerId;
+	}
 	return {
-		'ServerId': this.selectedServerId() === 0 ? this.oLastEditableServer.iId : this.selectedServerId(),
+		'ServerId': iServerId,
 		'Name': this.bEditMode ? this.name() : this.oIncoming.server(),
 		'IncomingServer': this.oIncoming.server(),
 		'IncomingPort': this.oIncoming.getIntPort(),
