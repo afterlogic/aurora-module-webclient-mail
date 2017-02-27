@@ -13,7 +13,6 @@ var
 	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
 	App = require('%PathToCoreWebclientModule%/js/App.js'),
 	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
-	Screens = require('%PathToCoreWebclientModule%/js/Screens.js'),
 	Storage = require('%PathToCoreWebclientModule%/js/Storage.js'),
 	
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
@@ -1209,6 +1208,16 @@ CFolderModel.prototype.onSubscribeClick = function ()
 			}
 		}, this);
 	}
+};
+
+CFolderModel.prototype.afterMove = function (aParents)
+{
+	_.each(aParents, function (oParent) {
+		if (oParent.constructor.name === 'CAccountFoldersPaneView')
+		{
+			oParent.afterMove();
+		}
+	});
 };
 
 module.exports = CFolderModel;

@@ -19,7 +19,7 @@
 
 <!-- ko if: subfolders().length > 0 -->
 <div class="children" data-bind="sortable: {data: subfolders, connectClass: fullNameHash(), 
-	 afterMove: $root.afterSortableFolderMoveBinded, options: {axis: 'y', revert: true}}">
+	 afterMove: function () { afterMove($parents); }, options: {axis: 'y', revert: true}}">
 	<div data-bind="attr: {'class': 'item canSelect canDrag folder-level' + (iLevel + 1)}, 
 		visible: !bVirtual, template: { name: '%ModuleName%_Settings_AccountFolderItemMovedWithMouse'},
 		css: {'canSubscribe': canSubscribe, 'canRename': canRename, 'canDelete': canDelete}"></div>

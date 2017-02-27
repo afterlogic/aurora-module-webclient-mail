@@ -8,10 +8,10 @@ var
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	Utils = require('%PathToCoreWebclientModule%/js/utils/Common.js'),
 	
+	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
 	App = require('%PathToCoreWebclientModule%/js/App.js'),
 	
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
-	ConfirmPopup = require('%PathToCoreWebclientModule%/js/popups/ConfirmPopup.js'),
 	CreateFolderPopup = require('modules/%ModuleName%/js/popups/CreateFolderPopup.js'),
 	SetSystemFoldersPopup = require('modules/%ModuleName%/js/popups/SetSystemFoldersPopup.js'),
 	
@@ -61,9 +61,32 @@ function CAccountFoldersPaneView()
 	}, this));
 	
 	App.broadcastEvent('%ModuleName%::ConstructView::after', {'Name': 'CAccountFoldersPaneView', 'View': this});
+	
+	this.afterMove = _.debounce(_.bind(this.folderListOrderUpdate, this), 3000);
 }
 
 CAccountFoldersPaneView.prototype.ViewTemplate = '%ModuleName%_Settings_AccountFoldersPaneView';
+
+CAccountFoldersPaneView.prototype.folderListOrderUpdate = function ()
+{
+	var
+		aLinedCollection = MailCache.editedFolderList().repopulateLinedCollection(),
+		oParameters = {
+			'AccountID': AccountList.editedId(),
+			'FolderList': _.map(aLinedCollection, function (oFolder) {
+				return oFolder.fullName();
+			})
+		}
+	;
+	
+	Ajax.send('UpdateFoldersOrder', oParameters, function (oResponse) {
+		if (!oResponse.Result)
+		{
+			Api.showErrorByCode(oResponse, TextUtils.i18n('%MODULENAME%/ERROR_CHANGE_FOLDERS_ORDER'));
+			MailCache.getFolderList(AccountList.editedId());
+		}
+	}, this);
+};
 
 CAccountFoldersPaneView.prototype.hide = function (fAfterHideHandler)
 {
