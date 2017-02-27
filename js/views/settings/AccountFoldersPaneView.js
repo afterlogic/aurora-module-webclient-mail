@@ -73,9 +73,12 @@ CAccountFoldersPaneView.prototype.folderListOrderUpdate = function ()
 		aLinedCollection = MailCache.editedFolderList().repopulateLinedCollection(),
 		oParameters = {
 			'AccountID': AccountList.editedId(),
-			'FolderList': _.map(aLinedCollection, function (oFolder) {
-				return oFolder.fullName();
-			})
+			'FolderList': _.compact(_.map(aLinedCollection, function (oFolder) {
+				if (!oFolder.bVirtual)
+				{
+					return oFolder.fullName();
+				}
+			}))
 		}
 	;
 	
