@@ -273,14 +273,7 @@ CAccountListModel.prototype.getEmail = function (iAccountId)
  */
 CAccountListModel.prototype.addAccount = function (oAccount)
 {
-	var oCurrAccount = this.getCurrent();
-	
 	this.collection.push(oAccount);
-	
-	if (oCurrAccount)
-	{
-		this.changeCurrentAccount(oAccount.id(), false);
-	}
 };
 
 /**
