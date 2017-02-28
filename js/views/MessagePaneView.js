@@ -412,7 +412,7 @@ CMessagePaneView.prototype.onCurrentMessageSubscribe = function ()
 		oReplyData = null
 	;
 	
-	if (MainTab)
+	if (MainTab && oMessage)
 	{
 		oReplyData = MainTab.getReplyData(oMessage.sUniq);
 		if (oReplyData)
@@ -665,6 +665,8 @@ CMessagePaneView.prototype.doHidingBlockquotes = function (aCollapsedStatuses)
 CMessagePaneView.prototype.onRoute = function (aParams)
 {
 	var oParams = LinksUtils.parseMailbox(aParams);
+	
+	AccountList.changeCurrentAccountByHash(oParams.AccountHash);
 	
 	if (this.replyText() !== '' && this.uid() !== oParams.Uid)
 	{
