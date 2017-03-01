@@ -64,5 +64,13 @@ module.exports = {
 			this.SaveRepliesToCurrFolder = !!oAppDataSection.SaveRepliesToCurrFolder;
 			this.useThreads(!!oAppDataSection.UseThreads);
 		}
+	},
+	
+	update: function (iMailsPerPage, bUseThreads, bSaveRepliesToCurrFolder, bAllowChangeInputDirection)
+	{
+		this.MailsPerPage = Types.pInt(iMailsPerPage);
+		this.useThreads(!!bUseThreads);
+		this.SaveRepliesToCurrFolder = !!bSaveRepliesToCurrFolder;
+		this.AllowChangeInputDirection = !!bAllowChangeInputDirection;
 	}
 };

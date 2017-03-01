@@ -7,7 +7,6 @@ var
 	MailUtils = require('modules/%ModuleName%/js/utils/Mail.js'),
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	MailCache = require('modules/%ModuleName%/js/Cache.js'),
-	Prefetcher = require('modules/%ModuleName%/js/Prefetcher.js'),
 	
 	aComposedMessages = [],
 	aReplyData = []
@@ -24,13 +23,7 @@ var MainTabMailMethods = {
 		return MailCache.oFolderListItems;
 	},
 	getUidList: function () {
-		return MailCache.uidList;
-	},
-	prefetchNextPage: function (sCurrentUid) {
-		Prefetcher.prefetchNextPage(sCurrentUid);
-	},
-	prefetchPrevPage: function (sCurrentUid) {
-		Prefetcher.prefetchPrevPage(sCurrentUid);
+		return MailCache.uidList();
 	},
 	getComposedMessageAccountId: function (sWindowName) {
 		var oComposedMessage = aComposedMessages[sWindowName];

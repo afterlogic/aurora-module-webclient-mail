@@ -116,13 +116,6 @@ function CMailCache()
 	this.messagesLoadingError = ko.observable(false);
 	
 	this.currentMessage = ko.observable(null);
-//	this.currentMessage.subscribe(function () {
-//		if (this.currentMessage())
-//		{
-//			AfterLogicApi.runPluginHook('view-message', 
-//				[AccountList.currentId(), this.currentMessage().folder(), this.currentMessage().uid()]);
-//		}
-//	}, this);
 	
 	this.nextMessageUid = ko.observable('');
 	this.prevMessageUid = ko.observable('');
@@ -174,7 +167,7 @@ CMailCache.prototype.init = function ()
 	if (MainTab)
 	{
 		this.oFolderListItems = MainTab.getFolderListItems();
-		this.uidList = MainTab.getUidList();
+		this.uidList(MainTab.getUidList());
 		
 		if (window.name)
 		{
@@ -256,7 +249,8 @@ CMailCache.prototype.calcNextMessageUid = function ()
 			});
 			if (sNextUid === '' && MainTab)
 			{
-				MainTab.prefetchNextPage(sCurrentUid);
+				this.requirePrefetcher();
+				Prefetcher.prefetchNextPage(sCurrentUid);
 			}
 		}
 	}
@@ -309,7 +303,8 @@ CMailCache.prototype.calcPrevMessageUid = function ()
 			});
 			if (sPrevUid === '' && MainTab)
 			{
-				MainTab.prefetchPrevPage(sCurrentUid);
+				this.requirePrefetcher();
+				Prefetcher.prefetchPrevPage(sCurrentUid);
 			}
 		}
 	}
