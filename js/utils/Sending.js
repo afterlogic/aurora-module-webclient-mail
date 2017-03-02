@@ -196,8 +196,8 @@ SendingUtils.sendReplyMessage = function (sMethod, sText, sDraftUid, fSendMessag
 
 		oParameters.Bcc = '';
 		oParameters.Importance = Enums.Importance.Normal;
-		oParameters.ReadingConfirmation = '0';
-		oParameters.IsQuickReply = '1';
+		oParameters.SendReadingConfirmation = false;
+		oParameters.IsQuickReply = true;
 		oParameters.IsHtml = true;
 
 		oParameters.Attachments = this.convertAttachmentsForSending(oParameters.Attachments);

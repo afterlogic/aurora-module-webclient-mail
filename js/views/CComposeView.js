@@ -104,7 +104,7 @@ function CComposeView()
 	}, this);
 	this.bVisibleCounter = false;
 
-	this.readingConfirmation = ko.observable(false);
+	this.sendReadingConfirmation = ko.observable(false);
 
 	this.composeUploaderButton = ko.observable(null);
 	this.composeUploaderButton.subscribe(function () {
@@ -943,7 +943,7 @@ CComposeView.prototype.setDataFromMessage = function (oMessage)
 	this.plainText(oMessage.isPlain());
 	this.textBody(sTextBody);
 	this.selectedImportance(oMessage.importance());
-	this.readingConfirmation(oMessage.readingConfirmation());
+	this.sendReadingConfirmation(oMessage.readingConfirmationAddressee() !== '');
 	
 	_.each(this.toolbarControllers(), function (oController) {
 		if ($.isFunction(oController.doAfterPopulatingMessage))
@@ -1254,7 +1254,7 @@ CComposeView.prototype.setMessageDataInNewTab = function (oParameters)
 	}, this));
 	this.textBody(oParameters.textBody);
 	this.selectedImportance(oParameters.selectedImportance);
-	this.readingConfirmation(oParameters.readingConfirmation);
+	this.sendReadingConfirmation(oParameters.sendReadingConfirmation);
 	this.changedInPreviousWindow(oParameters.changedInPreviousWindow);
 
 	_.each(this.toolbarControllers(), function (oController) {
@@ -1492,7 +1492,7 @@ CComposeView.prototype.getSendSaveParameters = function (bRemoveSignatureAnchor)
 		'Text': this.plainText() ? this.oHtmlEditor.getPlainText() : this.oHtmlEditor.getText(bRemoveSignatureAnchor),
 		'IsHtml': !this.plainText(),
 		'Importance': this.selectedImportance(),
-		'ReadingConfirmation': this.readingConfirmation(),
+		'SendReadingConfirmation': this.sendReadingConfirmation(),
 		'Attachments': oAttachments,
 		'InReplyTo': this.inReplyTo(),
 		'References': this.references()
@@ -1734,7 +1734,7 @@ CComposeView.prototype.getMessageDataForNewTab = function ()
 		attachments: aAttachments,
 		textBody: this.oHtmlEditor.getText(),
 		selectedImportance: this.selectedImportance(),
-		readingConfirmation: this.readingConfirmation(),
+		sendReadingConfirmation: this.sendReadingConfirmation(),
 		changedInPreviousWindow: this.isChanged(),
 		focusedField: this.focusedField()
 	};
@@ -1825,7 +1825,7 @@ CComposeView.prototype.registerOwnToolbarControllers = function ()
 	this.registerToolbarController({
 		ViewTemplate: '%ModuleName%_Compose_ConfirmationCheckboxView',
 		sId: 'confirmation',
-		readingConfirmation: this.readingConfirmation
+		sendReadingConfirmation: this.sendReadingConfirmation
 	});
 };
 

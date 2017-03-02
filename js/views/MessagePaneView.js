@@ -118,7 +118,7 @@ function CMessagePaneView()
 	this.visibleShowPicturesLink = ko.observable(false);
 	
 	this.visibleConfirmationControl = ko.computed(function () {
-		return (this.currentMessage() && this.currentMessage().readingConfirmation() !== '');
+		return (this.currentMessage() && this.currentMessage().readingConfirmationAddressee() !== '');
 	}, this);
 	
 	this.isCurrentNotDraftOrSent = ko.computed(function () {
@@ -355,10 +355,10 @@ CMessagePaneView.prototype.resizeDblClick = function (oData, oEvent)
 
 CMessagePaneView.prototype.notifySender = function ()
 {
-	if (this.currentMessage() && this.currentMessage().readingConfirmation() !== '')
+	if (this.currentMessage() && this.currentMessage().readingConfirmationAddressee() !== '')
 	{
 		Ajax.send('SendConfirmationMessage', {
-			'Confirmation': this.currentMessage().readingConfirmation(),
+			'ConfirmationAddressee': this.currentMessage().readingConfirmationAddressee(),
 			'Subject': TextUtils.i18n('%MODULENAME%/LABEL_RETURN_RECEIPT_MAIL_SUBJECT'),
 			'Text': TextUtils.i18n('%MODULENAME%/LABEL_RETURN_RECEIPT_MAIL_TEXT', {
 				'EMAIL': AccountList.getEmail(),
@@ -367,7 +367,7 @@ CMessagePaneView.prototype.notifySender = function ()
 			'ConfirmFolder': this.currentMessage().folder(),
 			'ConfirmUid': this.currentMessage().uid()
 		});
-		this.currentMessage().readingConfirmation('');
+		this.currentMessage().readingConfirmationAddressee('');
 	}
 };
 

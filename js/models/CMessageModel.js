@@ -206,7 +206,7 @@ function CMessageModel()
 	this.trimmedTextSize = ko.observable(0);
 	this.inReplyTo = ko.observable('');
 	this.references = ko.observable('');
-	this.readingConfirmation = ko.observable('');
+	this.readingConfirmationAddressee = ko.observable('');
 	this.sensitivity = ko.observable(Enums.Sensitivity.Nothing);
 	this.isPlain = ko.observable(false);
 	this.text = ko.observable('');
@@ -445,7 +445,7 @@ CMessageModel.prototype.parse = function (oData, iAccountId, bThreadPart, bTrust
 			this.trimmedTextSize(oData.TrimmedTextSize);
 			this.inReplyTo(oData.InReplyTo);
 			this.references(oData.References);
-			this.readingConfirmation(oData.ReadingConfirmation);
+			this.readingConfirmationAddressee(Types.pString(oData.ReadingConfirmationAddressee));
 			sHtml = Types.pString(oData.Html);
 			sPlain = Types.pString(oData.Plain);
 			if (sHtml !== '')
