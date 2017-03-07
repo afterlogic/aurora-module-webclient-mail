@@ -967,7 +967,6 @@ CComposeView.prototype.addDataAsAttachment = function (sData, sFileName)
 	var
 		sHash = 'data-as-attachment-' + Math.random(),
 		oParameters = {
-			'Action': 'DataAsAttachmentUpload',
 			'Data': sData,
 			'FileName': sFileName,
 			'Hash': sHash
@@ -985,7 +984,7 @@ CComposeView.prototype.addDataAsAttachment = function (sData, sFileName)
 
 	this.messageUploadAttachmentsStarted(true);
 
-	Ajax.send(oParameters, this.onDataAsAttachmentUpload, this);
+	Ajax.send('DataAsAttachmentUpload', oParameters, this.onDataAsAttachmentUpload, this);
 };
 
 /**
@@ -1025,8 +1024,7 @@ CComposeView.prototype.addFilesAsAttachment = function (aFiles)
 {
 	var
 		oAttach = null,
-		aHashes = [],
-		oParameters = null
+		aHashes = []
 	;
 
 	_.each(aFiles, function (oFile) {
@@ -1043,14 +1041,9 @@ CComposeView.prototype.addFilesAsAttachment = function (aFiles)
 
 	if (aHashes.length > 0)
 	{
-		oParameters = {
-			'Action': 'FilesUpload',
-			'Hashes': aHashes
-		};
-
 		this.messageUploadAttachmentsStarted(true);
 
-		Ajax.send(oParameters, this.onFilesUpload, this);
+		Ajax.send('FilesUpload', { 'Hashes': aHashes }, this.onFilesUpload, this);
 	}
 };
 
@@ -1116,7 +1109,6 @@ CComposeView.prototype.addContactAsAttachment = function (oContact)
 		this.attachments.push(oAttach);
 
 		oParameters = {
-			'Action': 'ContactVCardUpload',
 			'ContactId': oContact.idContact(),
 			'Global': oContact.global() ? '1' : '0',
 			'Name': oAttach.fileName(),
@@ -1125,7 +1117,7 @@ CComposeView.prototype.addContactAsAttachment = function (oContact)
 
 		this.messageUploadAttachmentsStarted(true);
 
-		Ajax.send(oParameters, this.onContactVCardUpload, this);
+		Ajax.send('ContactVCardUpload', oParameters, this.onContactVCardUpload, this);
 	}
 };
 
@@ -1174,18 +1166,13 @@ CComposeView.prototype.requestAttachmentsTempName = function ()
 			oAttach.uploadUid(oAttach.hash());
 			oAttach.uploadStarted(true);
 			return oAttach.hash();
-		}),
-		oParameters = {
-			'Action': 'MessageAttachmentsUpload',
-			'Attachments': aHash
-		}
+		})
 	;
 
 	if (aHash.length > 0)
 	{
 		this.messageUploadAttachmentsStarted(true);
-
-		Ajax.send(oParameters, this.onMessageUploadAttachmentsResponse, this);
+		Ajax.send('MessageAttachmentsUpload', { 'Attachments': aHash }, this.onMessageUploadAttachmentsResponse, this);
 	}
 };
 
@@ -1195,7 +1182,7 @@ CComposeView.prototype.requestAttachmentsTempName = function ()
  */
 CComposeView.prototype.onMessageUploadAttachmentsResponse = function (oResponse, oRequest)
 {
-	var aHashes = oRequest.Attachments;
+	var aHashes = oRequest.Parameters.Attachments;
 
 	this.messageUploadAttachmentsStarted(false);
 
@@ -1209,7 +1196,7 @@ CComposeView.prototype.onMessageUploadAttachmentsResponse = function (oResponse,
 			var oAttachment = _.find(this.attachments(), function (oAttach) {
 				return oAttach.hash() === sHash;
 			});
-
+			
 			if (oAttachment)
 			{
 				oAttachment.errorFromUpload();
