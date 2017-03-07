@@ -1221,4 +1221,42 @@ CFolderModel.prototype.afterMove = function (aParents)
 	});
 };
 
+CFolderModel.prototype.cancelNameEdit = function ()
+{
+	this.edited(false);
+};
+
+CFolderModel.prototype.applyNameEdit = function ()
+{
+	if (this.name() !== this.nameForEdit())
+	{
+		var
+			oParameters = {
+				'AccountID': AccountList.editedId(),
+				'PrevFolderFullNameRaw': this.fullName(),
+				'NewFolderNameInUtf8': this.nameForEdit()
+			}
+		;
+
+		Ajax.send('RenameFolder', oParameters, _.bind(this.onResponseFolderRename, this), this);
+		this.name(this.nameForEdit());
+	}
+	
+	this.edited(false);
+};
+
+CFolderModel.prototype.onResponseFolderRename = function (oResponse, oRequest)
+{
+	if (!oResponse || !oResponse.Result)
+	{
+		Api.showErrorByCode(oResponse, TextUtils.i18n('%MODULENAME%/ERROR_RENAME_FOLDER'));
+		MailCache.getFolderList(AccountList.editedId());
+	}
+	else if (oResponse && oResponse.Result && oResponse.Result.FullName)
+	{
+		this.fullName(Types.pString(oResponse.Result.FullName));
+		this.fullNameHash(Types.pString(oResponse.Result.FullNameHash));
+	}
+};
+
 module.exports = CFolderModel;
