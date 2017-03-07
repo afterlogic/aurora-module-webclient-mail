@@ -39,12 +39,12 @@ function CMailView()
 	this.folderList = MailCache.folderList;
 	this.domFoldersMoveTo = ko.observable(null);
 	
-	this.openMessageInNewWindowBinded = _.bind(this.openMessageInNewWindow, this);
+	this.openMessageInNewWindowBound = _.bind(this.openMessageInNewWindow, this);
 	
 	this.oFolderList = new CFolderListView();
-	this.oMessageList = new CMessageListView(this.openMessageInNewWindowBinded);
+	this.oMessageList = new CMessageListView(this.openMessageInNewWindowBound);
 	this.oMessagePane = MessagePaneView;
-	MessagePaneView.openMessageInNewWindowBinded = this.openMessageInNewWindowBinded;
+	MessagePaneView.openMessageInNewWindowBound = this.openMessageInNewWindowBound;
 
 	this.isEnableGroupOperations = this.oMessageList.isEnableGroupOperations;
 

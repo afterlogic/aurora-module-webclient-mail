@@ -703,7 +703,7 @@ CMessagePaneView.prototype.alwaysShowPictures = function ()
 
 CMessagePaneView.prototype.openInNewWindow = function ()
 {
-	this.openMessageInNewWindowBinded(this.currentMessage());
+	this.openMessageInNewWindowBound(this.currentMessage());
 };
 
 CMessagePaneView.prototype.getReplyHtmlText = function ()

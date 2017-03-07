@@ -31,9 +31,9 @@ var
 /**
  * @constructor
  * 
- * @param {Function} fOpenMessageInNewWindowBinded
+ * @param {Function} fOpenMessageInNewWindowBound
  */
-function CMessageListView(fOpenMessageInNewWindowBinded)
+function CMessageListView(fOpenMessageInNewWindowBound)
 {
 	this.uploaderArea = ko.observable(null);
 	this.bDragActive = ko.observable(false);
@@ -41,7 +41,7 @@ function CMessageListView(fOpenMessageInNewWindowBinded)
 		return this.bDragActive();
 	}, this);
 
-	this.openMessageInNewWindowBinded = fOpenMessageInNewWindowBinded;
+	this.openMessageInNewWindowBound = fOpenMessageInNewWindowBound;
 	
 	this.isFocused = ko.observable(false);
 
@@ -392,7 +392,7 @@ CMessageListView.prototype.onMessageDblClick = function (oMessage)
 		}
 		else
 		{
-			this.openMessageInNewWindowBinded(oMessage);
+			this.openMessageInNewWindowBound(oMessage);
 		}
 	}
 };
