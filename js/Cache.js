@@ -15,6 +15,7 @@ var
 	Pulse = require('%PathToCoreWebclientModule%/js/Pulse.js'),
 	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
 	UserSettings = require('%PathToCoreWebclientModule%/js/Settings.js'),
+	WindowOpener = require('%PathToCoreWebclientModule%/js/WindowOpener.js'),
 	
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
 	ConfirmPopup = require('%PathToCoreWebclientModule%/js/popups/ConfirmPopup.js'),
@@ -759,11 +760,10 @@ CMailCache.prototype.onClearFolder = function (oFolder)
 CMailCache.prototype.getOpenedDraftUids = function ()
 {
 	var
-//		aOpenedWins = WindowOpener.getOpenedWindows(),
-		aDraftUids = []
-//		aDraftUids = _.map(aOpenedWins, function (oWin) {
-//			return (oWin.App && (window.location.origin === oWin.location.origin)) ? oWin.App.MailCache.editedDraftUid() : '';
-//		})
+		aOpenedWins = WindowOpener.getOpenedWindows(),
+		aDraftUids = _.map(aOpenedWins, function (oWin) {
+			return (oWin.SlaveTabMailMethods && (window.location.origin === oWin.location.origin)) ? oWin.SlaveTabMailMethods.getEditedDraftUid() : '';
+		})
 	;
 
 	if (Popups.hasOpenedMinimizedPopups())
@@ -774,16 +774,19 @@ CMailCache.prototype.getOpenedDraftUids = function ()
 	return _.uniq(_.compact(aDraftUids));
 };
 
+/*
+ * @param {array} aUids
+ */
 CMailCache.prototype.closeComposesWithDraftUids = function (aUids)
 {
-//	var aOpenedWins = WindowOpener.getOpenedWindows();
+	var aOpenedWins = WindowOpener.getOpenedWindows();
 	
-//	_.each(aOpenedWins, function (oWin) {
-//		if (oWin.App && -1 !== $.inArray(oWin.App.MailCache.editedDraftUid(), aUids))
-//		{
-//			oWin.close();
-//		}
-//	});
+	_.each(aOpenedWins, function (oWin) {
+		if (oWin.SlaveTabMailMethods && (window.location.origin === oWin.location.origin) && -1 !== $.inArray(oWin.SlaveTabMailMethods.getEditedDraftUid(), aUids))
+		{
+			oWin.close();
+		}
+	});
 
 	if (-1 !== $.inArray(this.editedDraftUid(), aUids))
 	{
