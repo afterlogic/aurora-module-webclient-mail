@@ -666,7 +666,7 @@ CMailCache.prototype.requestMessageList = function (sFolder, iPage, sSearch, sFi
 			'Limit': Settings.MailsPerPage,
 			'Search': sSearch,
 			'Filters': sFilters,
-			'UseThreads': bUseThreads ? '1' : '0'
+			'UseThreads': bUseThreads
 		},
 		bStartRequest = false,
 		bDataExpected = false,
@@ -1446,7 +1446,7 @@ CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 		oFolderList = this.oFolderListItems[iAccountId],
 		oFolder = null,
 		oUidList = null,
-		bTrustThreadInfo = (oParameters.UseThreads === '1'),
+		bTrustThreadInfo = oParameters.UseThreads,
 		bHasFolderChanges = false,
 		bCurrentFolder = this.currentAccountId() === iAccountId &&
 				this.folderList().currentFolderFullName() === oResult.FolderName,
