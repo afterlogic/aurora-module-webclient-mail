@@ -31,6 +31,8 @@ function CAccountPropertiesPaneView()
 {
 	CAbstractSettingsFormView.call(this, Settings.ServerModuleName);
 	
+	this.sFakePass = 'xxxxxxxx'; // fake password uses to display something in password input while account editing
+	
 	this.bAllowChangeEmailSettings =  Settings.AllowChangeEmailSettings;
 	this.bAllowIdentities = Settings.AllowIdentities;
 	
@@ -84,7 +86,8 @@ CAccountPropertiesPaneView.prototype.getCurrentValues = function ()
 			this.useToAuthorize(),
 			this.friendlyName(),
 			this.email(),
-			this.incomingLogin()
+			this.incomingLogin(),
+			this.incomingPassword()
 		],
 		aServers = this.oServerPairPropertiesView.currentValues()
 	;
@@ -101,7 +104,7 @@ CAccountPropertiesPaneView.prototype.getParametersForSave = function ()
 		'FriendlyName': this.friendlyName(),
 		'Email': this.email(),
 		'IncomingLogin': this.incomingLogin(),
-		'IncomingPassword': this.incomingPassword(),
+		'IncomingPassword': this.incomingPassword() === this.sFakePass ? '' : this.incomingPassword(),
 		'Server': this.oServerPairPropertiesView.getParametersForSave()
 	};
 };
@@ -121,6 +124,7 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 		this.friendlyName(oAccount.friendlyName());
 		this.email(oAccount.email());
 		this.incomingLogin(oAccount.incomingLogin());
+		this.incomingPassword(this.sFakePass);
 		this.oServerPairPropertiesView.setServer(oAccount.oServer);
 		
 		this.isInternal(oAccount.bInternal);
@@ -135,6 +139,7 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 		this.friendlyName('');
 		this.email('');
 		this.incomingLogin('');
+		this.incomingPassword('');
 		
 		this.oServerPairPropertiesView.clear();
 		
