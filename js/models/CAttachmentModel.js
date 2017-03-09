@@ -183,7 +183,7 @@ CAttachmentModel.prototype.viewCommonFile = function ()
 {
 	var
 		oWin = null,
-		sViewLink = this.sViewUrl,
+		sViewLink = this.getActionUrl('view'),
 		sUrl = UrlUtils.getAppPath() + sViewLink
 	;
 	

@@ -759,7 +759,7 @@ CHtmlEditorView.prototype.insertWebImageFromPopup = function (oCurrentViewModel,
 CHtmlEditorView.prototype.insertComputerImageFromPopup = function (sUid, oAttachment)
 {
 	var
-		sViewLink = oAttachment.sViewUrl,
+		sViewLink = oAttachment.getActionUrl('view'),
 		bResult = false
 	;
 

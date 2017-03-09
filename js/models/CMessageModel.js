@@ -259,10 +259,24 @@ CMessageModel.prototype.viewMessage = function (oWin)
 		oWin.focus();
 		_.each(this.attachments(), function (oAttach) {
 			var oLink = $(oWin.document.body).find("[data-hash='download-" + oAttach.hash() + "']");
-			oLink.on('click', _.bind(oAttach.downloadFile, oAttach));
+			if (oAttach.hasAction('download'))
+			{
+				oLink.on('click', _.bind(oAttach.executeAction, oAttach, 'download'));
+			}
+			else
+			{
+				oLink.hide();
+			}
 			
 			oLink = $(oWin.document.body).find("[data-hash='view-" + oAttach.hash() + "']");
-			oLink.on('click', _.bind(oAttach.viewFile, oAttach));
+			if (oAttach.hasAction('view'))
+			{
+				oLink.on('click', _.bind(oAttach.executeAction, oAttach, 'view'));
+			}
+			else
+			{
+				oLink.hide();
+			}
 		}, this);
 	}
 };
@@ -597,7 +611,7 @@ CMessageModel.prototype.showInlinePictures = function (sAppPath)
 		return {
 			CID: oAttachment.cid(),
 			ContentLocation: oAttachment.contentLocation(),
-			ViewLink: oAttachment.sViewUrl
+			ViewLink: oAttachment.getActionUrl('view')
 		};
 	});
 	
@@ -746,7 +760,7 @@ CMessageModel.prototype.downloadAllAttachmentsSeparately = function ()
 	_.each(this.attachments(), function (oAttach) {
 		if (!oAttach.linked())
 		{
-			oAttach.downloadFile();
+			oAttach.executeAction('download');
 		}
 	});
 };
