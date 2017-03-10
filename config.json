@@ -1,5 +1,45 @@
 {
+	"AllowAppRegisterMailto": [
+		false,
+		"bool"
+	],
+	"AllowChangeInputDirection": [
+		false,
+		"bool"
+	],
+	"AllowExpandFolders": [
+		false,
+		"bool"
+	],
+	"ComposeToolbarOrder": [
+		["back", "send", "save", "importance", "MailSensitivity", "confirmation", "OpenPgp"],
+		"array"
+	],
+	"DefaultFontName": [
+		"Tahoma",
+		"string"
+	],
+	"DefaultFontSize": [
+		3,
+		"int"
+	],
     "Disabled": [
+		false,
+		"bool"
+	],
+	"JoinReplyPrefixes": [
+		false,
+		"bool"
+	],
+	"MailsPerPage": [
+		20,
+		"int"
+	],
+	"MaxMessagesBodiesSizeToPrefetch": [
+		50000,
+		"int"
+	],
+	"SaveRepliesToCurrFolder": [
 		false,
 		"bool"
 	]

@@ -22,7 +22,6 @@ module.exports = {
 	AllowSaveMessageAsPdf: false,
 	AllowThreads: true,
 	AllowZipAttachments: false,
-	AutoSave: true,
 	AutoSaveIntervalSeconds: 60,
 	AutosignOutgoingEmails: false,
 	ComposeToolbarOrder: ['back', 'send', 'save', 'importance', 'MailSensitivity', 'confirmation', 'OpenPgp'],
@@ -51,7 +50,6 @@ module.exports = {
 			this.AllowSaveMessageAsPdf = !!oAppDataSection.AllowSaveMessageAsPdf;
 			this.AllowThreads = !!oAppDataSection.AllowThreads;
 			this.AllowZipAttachments = !!oAppDataSection.AllowZipAttachments;
-			this.AutoSave = !!oAppDataSection.AutoSave;
 			this.AutoSaveIntervalSeconds = Types.pInt(oAppDataSection.AutoSaveIntervalSeconds);
 			this.AutosignOutgoingEmails = !!oAppDataSection.AutosignOutgoingEmails;
 			this.ComposeToolbarOrder = Types.isNonEmptyArray(oAppDataSection.ComposeToolbarOrder) ? oAppDataSection.ComposeToolbarOrder : [];
