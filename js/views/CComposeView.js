@@ -31,6 +31,7 @@ var
 	SendingUtils = require('modules/%ModuleName%/js/utils/Sending.js'),
 	
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
+	CoreAjax = require('%PathToCoreWebclientModule%/js/Ajax.js'),
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
 	MailCache = require('modules/%ModuleName%/js/Cache.js'),
 	MainTabExtMethods = require('modules/%ModuleName%/js/MainTabExtMethods.js'),
@@ -1043,7 +1044,7 @@ CComposeView.prototype.addFilesAsAttachment = function (aFiles)
 	{
 		this.messageUploadAttachmentsStarted(true);
 
-		Ajax.send('FilesUpload', { 'Hashes': aHashes }, this.onFilesUpload, this);
+		CoreAjax.send('Files', 'GetFilesForUpload', { 'Hashes': aHashes }, this.onFilesUpload, this);
 	}
 };
 
@@ -1172,7 +1173,7 @@ CComposeView.prototype.requestAttachmentsTempName = function ()
 	if (aHash.length > 0)
 	{
 		this.messageUploadAttachmentsStarted(true);
-		Ajax.send('MessageAttachmentsUpload', { 'Attachments': aHash }, this.onMessageUploadAttachmentsResponse, this);
+		Ajax.send('UploadMessageAttachments', { 'Attachments': aHash }, this.onMessageUploadAttachmentsResponse, this);
 	}
 };
 
