@@ -6,7 +6,6 @@ var
 	ko = require('knockout'),
 	
 	AddressUtils = require('%PathToCoreWebclientModule%/js/utils/Address.js'),
-	FilesUtils = require('%PathToCoreWebclientModule%/js/utils/Files.js'),
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	
@@ -17,8 +16,10 @@ var
 	
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
 	AlertPopup = require('%PathToCoreWebclientModule%/js/popups/AlertPopup.js'),
-			
+	
+	CAttachmentModel = require('modules/%ModuleName%/js/models/CAttachmentModel.js'),
 	CCrea = require('modules/%ModuleName%/js/CCrea.js'),
+	MailCache = require('modules/%ModuleName%/js/Cache.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	
 	CColorPickerView = require('modules/%ModuleName%/js/views/CColorPickerView.js')
@@ -754,15 +755,19 @@ CHtmlEditorView.prototype.insertWebImageFromPopup = function (oCurrentViewModel,
 
 /**
  * @param {string} sUid
- * @param oAttachment
+ * @param oAttachmentData
  */
-CHtmlEditorView.prototype.insertComputerImageFromPopup = function (sUid, oAttachment)
+CHtmlEditorView.prototype.insertComputerImageFromPopup = function (sUid, oAttachmentData)
 {
 	var
-		sViewLink = oAttachment.getActionUrl('view'),
+		oAttachment = new CAttachmentModel(),
+		sViewLink = '',
 		bResult = false
 	;
-
+	
+	oAttachment.parse(oAttachmentData);
+	sViewLink = oAttachment.getActionUrl('view');
+	
 	if (Settings.AllowInsertImage && sViewLink.length > 0)
 	{
 		bResult = this.oCrea.insertImage(sViewLink);
@@ -773,8 +778,8 @@ CHtmlEditorView.prototype.insertComputerImageFromPopup = function (sUid, oAttach
 				.attr('data-x-src-cid', sUid)
 			;
 
-			oAttachment.CID = sUid;
-			this.uploadedImagePathes.push(oAttachment);
+			oAttachmentData.CID = sUid;
+			this.uploadedImagePathes.push(oAttachmentData);
 		}
 	}
 

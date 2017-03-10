@@ -12,9 +12,7 @@ var
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
 	WindowOpener = require('%PathToCoreWebclientModule%/js/WindowOpener.js'),
 	
-	CAbstractFileModel = require('%PathToCoreWebclientModule%/js/models/CAbstractFileModel.js'),
-	
-	Settings = require('modules/%ModuleName%/js/Settings.js')
+	CAbstractFileModel = require('%PathToCoreWebclientModule%/js/models/CAbstractFileModel.js')
 ;
 
 /**
@@ -44,8 +42,6 @@ function CAttachmentModel()
 }
 
 _.extendOwn(CAttachmentModel.prototype, CAbstractFileModel.prototype);
-
-CAttachmentModel.prototype.dataObjectName = 'Object/CApiMailAttachment';
 
 CAttachmentModel.prototype.getCopy = function ()
 {
@@ -219,6 +215,15 @@ CAttachmentModel.prototype.fillDataAfterUploadComplete = function (oResult, sFil
 	this.size(oResult.Result.Attachment.Size);
 	this.hash(oResult.Result.Attachment.Hash);
 	this.iframedView(oResult.Result.Attachment.Iframed);
+	this.sThumbUrl = Types.pString(oResult.Result.Attachment.ThumbnailUrl);
+	_.each (oResult.Result.Attachment.Actions, function (oData, sAction) {
+		if (!this.oActionsData[sAction])
+		{
+			this.oActionsData[sAction] = {};
+		}
+		this.oActionsData[sAction].Url = Types.pString(oData.url);
+		this.actions.push(sAction);
+	}, this);
 };
 
 /**
