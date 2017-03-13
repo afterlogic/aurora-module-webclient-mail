@@ -69,6 +69,9 @@ CAttachmentModel.prototype.copyProperties = function (oSource)
 	this.statusText(oSource.statusText());
 	this.uploaded(oSource.uploaded());
 	this.iframedView(oSource.iframedView());
+	this.oActionsData = oSource.oActionsData;
+	this.actions(oSource.actions());
+	this.sThumbUrl = oSource.sThumbUrl;
 };
 
 /**
@@ -87,7 +90,14 @@ CAttachmentModel.prototype.additionalParse = function (oData)
 	
 	if (this.isMessageType())
 	{
-		this.actions.unshift('view');
+		if (!this.hasAction('view'))
+		{
+			this.actions.unshift('view');
+		}
+		this.otherTemplates.push({
+			name: '%ModuleName%_PrintMessageView',
+			data: this.messagePart
+		});
 	}
 };
 
