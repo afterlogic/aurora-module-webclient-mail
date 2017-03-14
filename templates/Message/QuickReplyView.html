@@ -1,10 +1,8 @@
-<div class="quick_reply fields" data-bind="initDom: domQuickReply, 
-	quickReplyAnim: {
+<div class="quick_reply fields" data-bind="quickReplyAnim: {
 		'sendAction': replySendingStarted(), 
 		'saveAction': replySavingStarted(), 
 		'activeAction': isQuickReplyActive()
-	},
-	visible: replyPaneVisible() && isVisibleReplyTool()">
+	}, visible: replyPaneVisible() && isVisibleReplyTool()">
 	<div class="status">
 		<div class="text" data-bind="text: replyLoadingText"></div>
 	</div>
