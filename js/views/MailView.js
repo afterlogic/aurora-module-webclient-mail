@@ -110,10 +110,6 @@ function CMailView()
 		this.gotoMessagePane();
 	}, this);
 	
-	this.allowSplitter = ko.computed(function () {
-		return this.shown() && AccountList.hasAccount();
-	}, this);
-	
 	App.broadcastEvent('%ModuleName%::ConstructView::after', {'Name': this.ViewConstructorName, 'View': this});
 }
 
