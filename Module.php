@@ -101,20 +101,19 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			}
 			if ($oUser->Role === \EUserRole::SuperAdmin)
 			{
-				$oSettings =& \Aurora\System\Api::GetSettings();
 				if (isset($Args['MailsPerPage']))
 				{
-					$oSettings->SetConf('MailsPerPage', $Args['MailsPerPage']);
+					$this->setConfig('MailsPerPage', $Args['MailsPerPage']);
 				}
 				if (isset($Args['SaveRepliesToCurrFolder']))
 				{
-					$oSettings->SetConf('SaveRepliesToCurrFolder', $Args['SaveRepliesToCurrFolder']);
+					$this->setConfig('SaveRepliesToCurrFolder', $Args['SaveRepliesToCurrFolder']);
 				}
 				if (isset($Args['AllowChangeInputDirection']))
 				{
-					$oSettings->SetConf('AllowChangeInputDirection', $Args['AllowChangeInputDirection']);
+					$this->setConfig('AllowChangeInputDirection', $Args['AllowChangeInputDirection']);
 				}
-				return $oSettings->Save();
+				return $this->saveModuleConfig();
 			}
 		}
 	}
