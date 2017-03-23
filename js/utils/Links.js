@@ -183,7 +183,12 @@ LinksUtils.getViewMessage = function (sFolder, sUid)
  */
 LinksUtils.getCompose = function ()
 {
-	return [Settings.HashModuleName + '-compose'];
+	var
+		AccountList = require('modules/%ModuleName%/js/AccountList.js'),
+		oCurrAccount = AccountList.getCurrent(),
+		sAccountHash = oCurrAccount ? oCurrAccount.hash() : ''
+	;
+	return [Settings.HashModuleName + '-compose', sAccountHash];
 };
 
 /**
@@ -195,7 +200,12 @@ LinksUtils.getCompose = function ()
  */
 LinksUtils.getComposeFromMessage = function (sType, sFolder, sUid)
 {
-	return [Settings.HashModuleName + '-compose', sType, sFolder, sUid];
+	var
+		AccountList = require('modules/%ModuleName%/js/AccountList.js'),
+		oCurrAccount = AccountList.getCurrent(),
+		sAccountHash = oCurrAccount ? oCurrAccount.hash() : ''
+	;
+	return [Settings.HashModuleName + '-compose', sAccountHash, sType, sFolder, sUid];
 };
 
 /**
@@ -205,7 +215,12 @@ LinksUtils.getComposeFromMessage = function (sType, sFolder, sUid)
  */
 LinksUtils.getComposeWithToField = function (sTo)
 {
-	return [Settings.HashModuleName + '-compose', 'to', sTo];
+	var
+		AccountList = require('modules/%ModuleName%/js/AccountList.js'),
+		oCurrAccount = AccountList.getCurrent(),
+		sAccountHash = oCurrAccount ? oCurrAccount.hash() : ''
+	;
+	return [Settings.HashModuleName + '-compose', sAccountHash, 'to', sTo];
 };
 
 /**

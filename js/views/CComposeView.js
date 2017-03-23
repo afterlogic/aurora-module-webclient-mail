@@ -562,10 +562,10 @@ CComposeView.prototype.getMessageOnRoute = function ()
 		sUid = ''
 	;
 
-	if (this.routeType() !== '' && aParams.length === 3)
+	if (this.routeType() !== '' && aParams.length === 4)
 	{
-		sFolderName = aParams[1];
-		sUid = aParams[2];
+		sFolderName = aParams[2];
+		sUid = aParams[3];
 
 		MailCache.getMessage(sFolderName, sUid, this.onMessageResponse, this);
 	}
@@ -620,9 +620,12 @@ CComposeView.prototype.reset = function ()
  */
 CComposeView.prototype.onRoute = function (aParams)
 {
+	// should be the first action to set right account id in new tab
+	AccountList.changeCurrentAccountByHash((aParams.length > 0) ? aParams[0] : '');
+	
 	this.reset();
 	
-	this.routeType((aParams.length > 0) ? aParams[0] : '');
+	this.routeType((aParams.length > 1) ? aParams[1] : '');
 	switch (this.routeType())
 	{
 		case Enums.ReplyType.Reply:
@@ -637,6 +640,11 @@ CComposeView.prototype.onRoute = function (aParams)
 			}
 			break;
 		default:
+			var
+				oCurrAccount = AccountList.getCurrent(),
+				sAccountHash = oCurrAccount ? oCurrAccount.hash() : ''
+			;
+			this.routeParams([sAccountHash]);
 			this.fillDefault(aParams);
 			break;
 	}
