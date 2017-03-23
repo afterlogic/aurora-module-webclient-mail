@@ -47,6 +47,7 @@ function CServerPairPropertiesView(sPairId, bEditMode)
 			this.oOutgoing.isEnabled(this.bEditMode);
 			this.outgoingUseAuth(oSelectedServer.bOutgoingUseAuth);
 			this.outgoingUseAuth.enable(this.bEditMode);
+			this.domains(oSelectedServer.sDomains);
 		}
 		else
 		{
@@ -57,6 +58,7 @@ function CServerPairPropertiesView(sPairId, bEditMode)
 			this.oOutgoing.isEnabled(true);
 			this.outgoingUseAuth(this.oLastEditableServer.bOutgoingUseAuth);
 			this.outgoingUseAuth.enable(true);
+			this.domains('');
 		}
 		
 		this.setCurrentValues();
@@ -69,6 +71,7 @@ function CServerPairPropertiesView(sPairId, bEditMode)
 	this.oOutgoing = new CServerPropertiesView(25, 465, sPairId + '_outgoing', TextUtils.i18n('%MODULENAME%/LABEL_SMTP_SERVER'), this.oIncoming.server);
 	this.outgoingUseAuth = ko.observable(true);
 	this.outgoingUseAuth.enable = ko.observable(true);
+	this.domains = ko.observable('');
 	
 	this.currentValues = ko.observable([]);
 	
@@ -160,7 +163,8 @@ CServerPairPropertiesView.prototype.setCurrentValues = function ()
 			this.oOutgoing.port(),
 			this.oOutgoing.server(),
 			this.oOutgoing.ssl(),
-			this.outgoingUseAuth()
+			this.outgoingUseAuth(),
+			this.domains()
 		]
 	;
 	
@@ -192,7 +196,8 @@ CServerPairPropertiesView.prototype.getParametersForSave = function ()
 		'OutgoingServer': this.oOutgoing.server(),
 		'OutgoingPort': this.oOutgoing.getIntPort(),
 		'OutgoingUseSsl': this.oOutgoing.ssl(),
-		'OutgoingUseAuth': this.outgoingUseAuth()
+		'OutgoingUseAuth': this.outgoingUseAuth(),
+		'Domains': this.domains()
 	};
 };
 

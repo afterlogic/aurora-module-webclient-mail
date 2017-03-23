@@ -14,6 +14,10 @@
 <div class="row outgoing">
 	<!-- ko template: {name: '%ModuleName%_Settings_ServerPropertiesView', data: oOutgoing} --><!-- /ko -->
 </div>
+<div class="row server" data-bind="visible: bEditMode">
+	<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_DOMAINS'}"></span>
+	<textarea class="input" data-bind="value: domains"></textarea>
+</div>
 
 <div class="row smtp_authentication" data-bind="css: {'disabled': !outgoingUseAuth.enable()}">
 	<div>
