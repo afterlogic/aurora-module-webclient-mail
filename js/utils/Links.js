@@ -223,6 +223,34 @@ LinksUtils.getComposeWithToField = function (sTo)
 	return [Settings.HashModuleName + '-compose', sAccountHash, 'to', sTo];
 };
 
+LinksUtils.parseCompose = function (aParams)
+{
+	var
+		sAccountHash = (aParams.length > 0) ? aParams[0] : '',
+		sRouteType = (aParams.length > 1) ? aParams[1] : '',
+		oObject = ((sRouteType === 'vcard' || sRouteType === 'vcard') && aParams.length > 2) ? aParams[2] : null,
+		sFileData = (sRouteType === 'data-as-file' && aParams.length > 2) ? aParams[2] : '',
+		sFileName = (sRouteType === 'data-as-file' && aParams.length > 3) ? aParams[3] : '',
+		oToAddr = (sRouteType === 'to' && aParams.length > 2) ? LinksUtils.parseToAddr(aParams[2]) : null,
+		bMessage = ((sRouteType === Enums.ReplyType.Reply || sRouteType === Enums.ReplyType.ReplyAll 
+					|| sRouteType === Enums.ReplyType.Resend || sRouteType === Enums.ReplyType.Forward 
+					|| sRouteType === 'drafts') && aParams.length > 2),
+		sFolderName = bMessage ? aParams[2] : '',
+		sUid = bMessage ? aParams[3] : ''
+	;
+	
+	return {
+		'AccountHash': sAccountHash,
+		'RouteType': sRouteType,
+		'ToAddr': oToAddr,
+		'Object': oObject,
+		'FileData': sFileData,
+		'FileName': sFileName,
+		'MessageFolderName': sFolderName,
+		'MessageUid': sUid
+	};
+};
+
 /**
  * @param {?} mToAddr
  * @returns {Object}

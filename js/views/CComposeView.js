@@ -556,18 +556,10 @@ CComposeView.prototype.hotKeysBind = function ()
 
 CComposeView.prototype.getMessageOnRoute = function ()
 {
-	var
-		aParams = this.routeParams(),
-		sFolderName = '',
-		sUid = ''
-	;
-
-	if (this.routeType() !== '' && aParams.length === 4)
+	var oParams = LinksUtils.parseCompose(this.routeParams());
+	if (this.routeType() !== '' && oParams.MessageFolderName && oParams.MessageUid)
 	{
-		sFolderName = aParams[2];
-		sUid = aParams[3];
-
-		MailCache.getMessage(sFolderName, sUid, this.onMessageResponse, this);
+		MailCache.getMessage(oParams.MessageFolderName, oParams.MessageUid, this.onMessageResponse, this);
 	}
 };
 
@@ -620,12 +612,14 @@ CComposeView.prototype.reset = function ()
  */
 CComposeView.prototype.onRoute = function (aParams)
 {
+	var oParams = LinksUtils.parseCompose(aParams);
+	
 	// should be the first action to set right account id in new tab
-	AccountList.changeCurrentAccountByHash((aParams.length > 0) ? aParams[0] : '');
+	AccountList.changeCurrentAccountByHash(oParams.AccountHash);
 	
 	this.reset();
 	
-	this.routeType((aParams.length > 1) ? aParams[1] : '');
+	this.routeType(oParams.RouteType);
 	switch (this.routeType())
 	{
 		case Enums.ReplyType.Reply:
@@ -640,25 +634,18 @@ CComposeView.prototype.onRoute = function (aParams)
 			}
 			break;
 		default:
-			var
-				oCurrAccount = AccountList.getCurrent(),
-				sAccountHash = oCurrAccount ? oCurrAccount.hash() : ''
-			;
-			this.routeParams([sAccountHash]);
-			this.fillDefault(aParams);
+			this.routeParams(aParams);
+			this.fillDefault(oParams);
 			break;
 	}
 };
 
-/**
- * @param {Array} aParams
- */
-CComposeView.prototype.fillDefault = function (aParams)
+CComposeView.prototype.fillDefault = function (oParams)
 {
 	var
 		sSignature = SendingUtils.getSignatureText(this.senderAccountId(), this.selectedFetcherOrIdentity(), true),
 		oComposedMessage = MainTab ? MainTab.getComposedMessage(window.name) : null,
-		oToAddr = (this.routeType() === 'to' && aParams.length === 2) ? LinksUtils.parseToAddr(aParams[1]) : null
+		oToAddr = oParams.ToAddr
 	;
 
 	if (oComposedMessage)
@@ -689,19 +676,19 @@ CComposeView.prototype.fillDefault = function (aParams)
 		}
 	}
 
-	if (this.routeType() === 'vcard' && aParams.length === 2)
+	if (this.routeType() === 'vcard' && oParams.Object)
 	{
-		this.addContactAsAttachment(aParams[1]);
+		this.addContactAsAttachment(oParams.Object);
 	}
 
-	if (this.routeType() === 'file' && aParams.length === 2)
+	if (this.routeType() === 'file' && oParams.Object)
 	{
-		this.addFilesAsAttachment(aParams[1]);
+		this.addFilesAsAttachment(oParams.Object);
 	}
 
-	if (this.routeType() === 'data-as-file' && aParams.length === 3)
+	if (this.routeType() === 'data-as-file' && oParams.FileData && oParams.FileName)
 	{
-		this.addDataAsAttachment(aParams[1], aParams[2]);
+		this.addDataAsAttachment(oParams.FileData, oParams.FileName);
 	}
 
 	_.defer(_.bind(function () {
@@ -1764,7 +1751,10 @@ CComposeView.prototype.openInNewWindow = function ()
 	}
 	else if (!this.isChanged())
 	{
-		sHash = Routing.buildHashFromArray(_.union([Settings.HashModuleName + '-compose'], this.routeParams()));
+		if (this.routeParams().length > 0)
+		{
+			sHash = Routing.buildHashFromArray(_.union([Settings.HashModuleName + '-compose'], this.routeParams()));
+		}
 		oWin = WindowOpener.openTab('?message-newtab' + sHash);
 	}
 	else
