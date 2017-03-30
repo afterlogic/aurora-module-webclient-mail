@@ -1168,7 +1168,7 @@ CComposeView.prototype.requestAttachmentsTempName = function ()
 	if (aHash.length > 0)
 	{
 		this.messageUploadAttachmentsStarted(true);
-		Ajax.send('UploadMessageAttachments', { 'Attachments': aHash }, this.onMessageUploadAttachmentsResponse, this);
+		Ajax.send('SaveAttachmentsAsTempFiles', { 'Attachments': aHash }, this.onMessageUploadAttachmentsResponse, this);
 	}
 };
 
