@@ -223,12 +223,27 @@ LinksUtils.getComposeWithToField = function (sTo)
 	return [Settings.HashModuleName + '-compose', sAccountHash, 'to', sTo];
 };
 
+/**
+ * @param {string} sType
+ * @param {Object} oObject
+ * @returns {Array}
+ */
+LinksUtils.getComposeWithObject = function (sType, oObject)
+{
+	var
+		AccountList = require('modules/%ModuleName%/js/AccountList.js'),
+		oCurrAccount = AccountList.getCurrent(),
+		sAccountHash = oCurrAccount ? oCurrAccount.hash() : ''
+	;
+	return [Settings.HashModuleName + '-compose', sAccountHash, sType, oObject];
+};
+
 LinksUtils.parseCompose = function (aParams)
 {
 	var
 		sAccountHash = (aParams.length > 0) ? aParams[0] : '',
 		sRouteType = (aParams.length > 1) ? aParams[1] : '',
-		oObject = ((sRouteType === 'vcard' || sRouteType === 'vcard') && aParams.length > 2) ? aParams[2] : null,
+		oObject = ((sRouteType === 'vcard' || sRouteType === 'eml') && aParams.length > 2) ? aParams[2] : null,
 		sFileData = (sRouteType === 'data-as-file' && aParams.length > 2) ? aParams[2] : '',
 		sFileName = (sRouteType === 'data-as-file' && aParams.length > 3) ? aParams[3] : '',
 		oToAddr = (sRouteType === 'to' && aParams.length > 2) ? LinksUtils.parseToAddr(aParams[2]) : null,

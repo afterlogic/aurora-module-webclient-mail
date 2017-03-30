@@ -37,7 +37,7 @@ function CAttachmentModel()
 	this.isMessageType = ko.computed(function () {
 		this.mimeType();
 		this.mimePartIndex();
-		return (this.mimeType() === 'message/rfc822' && this.mimePartIndex() !== '');
+		return (this.mimeType() === 'message/rfc822');
 	}, this);
 }
 
@@ -225,8 +225,39 @@ CAttachmentModel.prototype.fillDataAfterUploadComplete = function (oResult, sFil
 	this.size(oResult.Result.Attachment.Size);
 	this.hash(oResult.Result.Attachment.Hash);
 	this.iframedView(oResult.Result.Attachment.Iframed);
-	this.sThumbUrl = Types.pString(oResult.Result.Attachment.ThumbnailUrl);
-	_.each (oResult.Result.Attachment.Actions, function (oData, sAction) {
+	this.parseActions(oResult.Result.Attachment);
+};
+
+/**
+ * Parses contact attachment data from server.
+ *
+ * @param {Object} oData
+ * @param {string} sMessageFolder
+ * @param {string} sMessageUid
+ */
+CAttachmentModel.prototype.parseFromUpload = function (oData, sMessageFolder, sMessageUid)
+{
+	this.folderName(sMessageFolder);
+	this.messageUid(sMessageUid);
+
+	this.fileName(oData.Name.toString());
+	this.tempName(oData.TempName ? oData.TempName.toString() : this.fileName());
+	this.mimeType(oData.MimeType.toString());
+	this.size(Types.pInt(oData.Size));
+
+	this.hash(oData.Hash);
+	this.parseActions(oData);
+
+	this.uploadUid(this.hash());
+	this.uploaded(true);
+	
+	this.uploadStarted(false);
+};
+
+CAttachmentModel.prototype.parseActions = function (oData)
+{
+	this.sThumbUrl = Types.pString(oData.ThumbnailUrl);
+	_.each (oData.Actions, function (oData, sAction) {
 		if (!this.oActionsData[sAction])
 		{
 			this.oActionsData[sAction] = {};
@@ -234,26 +265,25 @@ CAttachmentModel.prototype.fillDataAfterUploadComplete = function (oResult, sFil
 		this.oActionsData[sAction].Url = Types.pString(oData.url);
 		this.actions.push(sAction);
 	}, this);
-};
-
-/**
- * Parses contact attachment data from server.
- *
- * @param {AjaxFileDataResponse} oData
- */
-CAttachmentModel.prototype.parseFromUpload = function (oData)
-{
-	this.fileName(oData.Name.toString());
-	this.tempName(oData.TempName ? oData.TempName.toString() : this.fileName());
-	this.mimeType(oData.MimeType.toString());
-	this.size(Types.pInt(oData.Size));
-
-	this.hash(oData.Hash);
-
-	this.uploadUid(this.hash());
-	this.uploaded(true);
 	
-	this.uploadStarted(false);
+	if (this.isMessageType())
+	{
+		if (this.folderName() !== '' && this.messageUid() !== '')
+		{
+			if (!this.hasAction('view'))
+			{
+				this.actions.unshift('view');
+			}
+			this.otherTemplates.push({
+				name: '%ModuleName%_PrintMessageView',
+				data: this.messagePart
+			});
+		}
+		else
+		{
+			this.actions(_.without(this.actions(), 'view'));
+		}
+	}
 };
 
 CAttachmentModel.prototype.errorFromUpload = function ()

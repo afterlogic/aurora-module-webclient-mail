@@ -681,6 +681,11 @@ CComposeView.prototype.fillDefault = function (oParams)
 		this.addContactAsAttachment(oParams.Object);
 	}
 
+	if (this.routeType() === 'eml' && oParams.Object)
+	{
+		this.addMessageAsAttachment(oParams.Object);
+	}
+
 	if (this.routeType() === 'file' && oParams.Object)
 	{
 		this.addFilesAsAttachment(oParams.Object);
@@ -1084,6 +1089,73 @@ CComposeView.prototype.onFilesUpload = function (oResponse, oRequest)
 				oAttachment.errorFromUpload();
 			}
 		}, this);
+	}
+};
+
+/**
+ * @param {Object} oMessage
+ */
+CComposeView.prototype.addMessageAsAttachment = function (oMessage)
+{
+	var
+		oAttach = new CAttachmentModel(),
+		oParameters = null
+	;
+	
+	if (oMessage)
+	{
+		oAttach.fileName(oMessage.subject() + '.eml');
+		oAttach.uploadStarted(true);
+		
+		this.attachments.push(oAttach);
+		
+		oParameters = {
+			'MessageFolder': oMessage.folder(),
+			'MessageUid': oMessage.uid(),
+			'FileName': oAttach.fileName()
+		};
+		
+		this.messageUploadAttachmentsStarted(true);
+		
+		Ajax.send('SaveMessageAsTempFile', oParameters, this.onSaveMessageAsTempFile, this);
+	}
+};
+
+/**
+ * @param {Object} oResponse
+ * @param {Object} oRequest
+ */
+CComposeView.prototype.onSaveMessageAsTempFile = function (oResponse, oRequest)
+{
+	var
+		oResult = oResponse.Result,
+		sFileName = oRequest.Parameters.FileName,
+		oAttach = null
+	;
+	
+	this.messageUploadAttachmentsStarted(false);
+	
+	if (oResult)
+	{
+		oAttach = _.find(this.attachments(), function (oAttach) {
+			return oAttach.fileName() === sFileName && oAttach.uploadStarted();
+		});
+		
+		if (oAttach)
+		{
+			oAttach.parseFromUpload(oResult, oRequest.Parameters.MessageFolder, oRequest.Parameters.MessageUid);
+		}
+	}
+	else
+	{
+		oAttach = _.find(this.attachments(), function (oAttach) {
+			return oAttach.fileName() === sFileName && oAttach.uploadStarted();
+		});
+		
+		if (oAttach)
+		{
+			oAttach.errorFromUpload();
+		}
 	}
 };
 

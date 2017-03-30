@@ -53,6 +53,14 @@ ScreenComposeUtils.composeMessageWithVcard = function (oVcard)
 };
 
 /**
+ * @param {Object} oMessage
+ */
+ScreenComposeUtils.composeMessageWithEml = function (oMessage)
+{
+	Routing.goDirectly(LinksUtils.compose(), LinksUtils.getComposeWithObject('eml', oMessage));
+};
+
+/**
  * @param {string} sArmor
  * @param {string} sDownloadLinkFilename
  */

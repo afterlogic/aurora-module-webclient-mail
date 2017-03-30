@@ -112,6 +112,7 @@ function CMessagePaneView()
 	this.printCommand = Utils.createCommand(this, this.executePrint, this.isEnablePrint);
 	this.saveCommand = Utils.createCommand(this, this.executeSave, this.isEnableSave);
 	this.saveAsPdfCommand = Utils.createCommand(this, this.executeSaveAsPdf, this.isEnableSaveAsPdf);
+	this.forwardAsAttachment = Utils.createCommand(this, this.executeForwardAsAttachment, this.isCurrentMessageLoaded);
 	this.moreCommand = Utils.createCommand(this, null, this.isCurrentMessageLoaded);
 
 	this.visiblePicturesControl = ko.observable(false);
@@ -801,6 +802,14 @@ CMessagePaneView.prototype.executeSave = function ()
 	if (this.isEnableSave())
 	{
 		UrlUtils.downloadByUrl(this.currentMessage().sDownloadAsEmlUrl);
+	}
+};
+
+CMessagePaneView.prototype.executeForwardAsAttachment = function ()
+{
+	if (this.currentMessage())
+	{
+		ComposeUtils.composeMessageWithEml(this.currentMessage());
 	}
 };
 

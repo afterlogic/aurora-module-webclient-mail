@@ -61,6 +61,16 @@ PopupComposeUtils.composeMessageWithVcard = function (oVcard)
 };
 
 /**
+ * @param {Object} oMessage
+ */
+PopupComposeUtils.composeMessageWithEml = function (oMessage)
+{
+	var aParams = LinksUtils.getComposeWithObject('eml', oMessage);
+	aParams.shift();
+	Popups.showPopup(GetComposePopup(), [aParams]);
+};
+
+/**
  * @param {string} sArmor
  * @param {string} sDownloadLinkFilename
  */
