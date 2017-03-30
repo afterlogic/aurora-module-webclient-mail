@@ -73,7 +73,7 @@ function CServerPairPropertiesView(sPairId, bEditMode)
 	this.outgoingUseAuth.enable = ko.observable(true);
 	this.domains = ko.observable('');
 	
-	this.currentValues = ko.observable([]);
+	this.currentValues = ko.observable('');
 	
 	this.aRequiredFields = [this.oIncoming.server, this.oIncoming.port, this.oOutgoing.server, this.oOutgoing.port];
 	if (bEditMode)
@@ -155,8 +155,6 @@ CServerPairPropertiesView.prototype.setCurrentValues = function ()
 	var
 		aNamePart = this.bEditMode ? [ this.selectedServerId(), this.name() ] : [],
 		aServerPart = [
-			this.selectedServerId(),
-			this.name(),
 			this.oIncoming.port(),
 			this.oIncoming.server(),
 			this.oIncoming.ssl(),
@@ -168,13 +166,13 @@ CServerPairPropertiesView.prototype.setCurrentValues = function ()
 		]
 	;
 	
-	this.currentValues(aNamePart.concat(aServerPart));
+	this.currentValues((aNamePart.concat(aServerPart)).join(':'));
 };
 
 CServerPairPropertiesView.prototype.getCurrentValues = function ()
 {
 	this.setCurrentValues();
-	return this.currentValues();
+	return [this.currentValues()];
 };
 
 CServerPairPropertiesView.prototype.getParametersForSave = function ()

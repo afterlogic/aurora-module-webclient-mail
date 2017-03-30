@@ -41,12 +41,17 @@ function CServersAdminSettingsPaneView()
 		}
 		if (!this.serversRetrieved())
 		{
-			this.revertGlobalValues();
+			this.revert();
 		}
 	}, this);
 	this.serversRetrieved = this.oServerPairPropertiesView.serversRetrieved;
 	this.createMode = ko.observable(false);
 	this.editedServerId = ko.observable(0);
+	
+	this.updateSavedState();
+	this.oServerPairPropertiesView.currentValues.subscribe(function () {
+		this.updateSavedState();
+	}, this);
 }
 
 _.extendOwn(CServersAdminSettingsPaneView.prototype, CAbstractSettingsFormView.prototype);
@@ -94,35 +99,8 @@ CServersAdminSettingsPaneView.prototype.onRouteChild = function (aParams)
 	
 	this.oServerPairPropertiesView.init(bCreate);
 	
-	this.revertGlobalValues();
+	this.revert();
 };
-
-/**
- * Requests server list from server.
- */
-//CServersAdminSettingsPaneView.prototype.requestServers = function ()
-//{
-//	Ajax.send('GetServers', {}, function (oResponse) {
-//		if (_.isArray(oResponse.Result))
-//		{
-//			this.servers(_.map(oResponse.Result, function (oServerData) {
-//				return new CServerModel(oServerData);
-//			}));
-//			var oEditedServer = _.find(this.servers(), _.bind(function (oServer) {
-//				return oServer.iId === this.editedServerId();
-//			}, this));
-//			if (!oEditedServer)
-//			{
-//				this.routeServerList();
-//			}
-//			if (!this.received())
-//			{
-//				this.revertGlobalValues();
-//			}
-//			this.received(true);
-//		}
-//	}, this);
-//};
 
 /**
  * Shows popup to confirm server deletion and sends request to delete on server.
