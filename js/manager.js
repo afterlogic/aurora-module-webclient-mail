@@ -53,10 +53,6 @@ module.exports = function (oAppData) {
 				};
 				return oScreens;
 			},
-			registerMessagePaneController: function (oController, sPlace) {
-				var MessagePaneView = require('modules/%ModuleName%/js/views/MessagePaneView.js');
-				MessagePaneView.registerController(oController, sPlace);
-			},
 			registerComposeToolbarController: function (oController) {
 				var ComposeView = GetComposeView();
 				ComposeView.registerToolbarController(oController);
@@ -178,10 +174,6 @@ module.exports = function (oAppData) {
 			},
 			getPrefetcher: function () {
 				return require('modules/%ModuleName%/js/Prefetcher.js');
-			},
-			registerMessagePaneController: function (oController, sPlace) {
-				var MessagePaneView = require('modules/%ModuleName%/js/views/MessagePaneView.js');
-				MessagePaneView.registerController(oController, sPlace);
 			},
 			registerComposeToolbarController: function (oController) {
 				var ComposePopup = require('modules/%ModuleName%/js/popups/ComposePopup.js');

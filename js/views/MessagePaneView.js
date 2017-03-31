@@ -189,6 +189,9 @@ function CMessagePaneView()
 	this.controllers = ko.computed(function () {
 		return _.union(this.topControllers(), this.bodyControllers());
 	}, this);
+	App.broadcastEvent('%ModuleName%::RegisterMessagePaneController', _.bind(function (oController, sPlace) {
+		this.registerController(oController, sPlace);
+	}, this));
 	
 	this.fakeHeader = ko.computed(function () {
 		var topControllersVisible = !!_.find(this.topControllers(), function (oController) {
@@ -214,16 +217,22 @@ function CMessagePaneView()
 			return !oAttach.linked();
 		});
 	}, this);
+	
+	this.allAttachmentsDownloadMethods = ko.observableArray([]);
 	this.visibleDownloadAllAttachments = ko.computed(function () {
 		return Settings.AllowZipAttachments && this.notInlineAttachments().length > 1;
 	}, this);
-	this.visibleSaveAttachmentsToFiles = ModulesManager.isModuleIncluded('FilesWebclient');
 	this.visibleDownloadAllAttachmentsSeparately = ko.computed(function () {
 		return this.notInlineAttachments().length > 1;
 	}, this);
 	this.visibleExtendedDownload = ko.computed(function () {
-		return !App.isMobile() && (this.visibleDownloadAllAttachments() || this.visibleDownloadAllAttachmentsSeparately() || this.visibleSaveAttachmentsToFiles);
+		return !App.isMobile() && (this.visibleDownloadAllAttachments() 
+				|| this.visibleDownloadAllAttachmentsSeparately() 
+				|| this.allAttachmentsDownloadMethods().length > 0);
 	}, this);
+	App.broadcastEvent('%ModuleName%::AddAllAttachmentsDownloadMethod', _.bind(function (oMethod) {
+		this.allAttachmentsDownloadMethods.push(oMethod);
+	}, this));
 	
 	this.detailsVisible = ko.observable(Storage.getData('MessageDetailsVisible') === '1');
 	this.detailsTooltip = ko.computed(function () {
@@ -963,11 +972,11 @@ CMessagePaneView.prototype.downloadAllAttachments = function ()
 	}
 };
 
-CMessagePaneView.prototype.saveAttachmentsToFiles = function ()
+CMessagePaneView.prototype.executeAllAttachmentsDownloadMethod = function (fHandler)
 {
 	if (this.currentMessage())
 	{
-		ModulesManager.run('FilesWebclient', 'saveFilesByHashes', [this.currentMessage().getAttachmentsHashes()]);
+		fHandler(this.currentMessage().accountId(), this.currentMessage().getAttachmentsHashes());
 	}
 };
 

@@ -141,10 +141,12 @@
 								<span class="icon"></span>
 								<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_DOWNLOAD_ATTACHMENTS_SEPARATELY'}"></span>
 							</span>
-							<span class="link to_filestorage" data-bind="click: saveAttachmentsToFiles, visible: visibleSaveAttachmentsToFiles">
+							<!-- ko foreach: allAttachmentsDownloadMethods -->
+							<span class="link" data-bind="click: function () { $parent.executeAllAttachmentsDownloadMethod(Handler); }">
 								<span class="icon"></span>
-								<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_SAVE_ATTACHMENTS_TO_FILES'}"></span>
+								<span class="text" data-bind="text: Text"></span>
 							</span>
+							<!-- /ko -->
 						</div>
 					</div>
 					<div data-bind="template: {name: 'CoreWebclient_FileView', foreach: notInlineAttachments}"></div>
