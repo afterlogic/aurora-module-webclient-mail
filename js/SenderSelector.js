@@ -124,10 +124,7 @@ CSenderSelector.prototype.fillSenderList = function (oFetcherOrIdentity)
 		if (_.isArray(oAccount.identities()))
 		{
 			_.each(oAccount.identities(), function (oIdentity) {
-				if (oIdentity.enabled())
-				{
-					aSenderList.push({fullEmail: oIdentity.fullEmail(), id: Types.pString(oIdentity.id())});
-				}
+				aSenderList.push({fullEmail: oIdentity.fullEmail(), id: Types.pString(oIdentity.id())});
 			}, this);
 		}
 

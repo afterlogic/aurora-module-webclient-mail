@@ -112,7 +112,7 @@ function CAccountsSettingsPaneView()
 		{
 			name: 'properties',
 			title: TextUtils.i18n('%MODULENAME%/LABEL_PROPERTIES_TAB'),
-			view: new CIdentityPropertiesPaneView(),
+			view: new CIdentityPropertiesPaneView(this),
 			visible: ko.observable(true)
 		},
 		{
@@ -381,6 +381,12 @@ CAccountsSettingsPaneView.prototype.populate = function ()
 			this.currentTab(this.getAutoselectedTab());
 		}
 	}
+};
+
+CAccountsSettingsPaneView.prototype.onRemoveIdentity = function ()
+{
+	this.editedIdentity(null);
+	this.changeTab(this.currentTab() ? this.currentTab().name : '');
 };
 
 module.exports = new CAccountsSettingsPaneView();

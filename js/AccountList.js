@@ -386,13 +386,12 @@ CAccountListModel.prototype.onGetIdentitiesResponse = function (oResponse, oRequ
 
 		oIdentity.parse({
 			'@Object': 'Object/CIdentity',
-			Loyal: true,
+			AccountPart: true,
 			Default: !_.find(aIdentities, function(oIdentity){ return oIdentity.isDefault(); }),
 			Email: oAccount.email(),
-			Enabled: true,
 			FriendlyName: oAccount.friendlyName(),
 			IdAccount: oAccount.id(),
-			IdIdentity: oAccount.id() * 100000,
+			EntityId: oAccount.id() * 100000,
 			Signature: oAccount.signature(),
 			UseSignature: oAccount.useSignature()
 		});

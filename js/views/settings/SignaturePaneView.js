@@ -87,7 +87,7 @@ CSignaturePaneView.prototype.getParametersForSave = function ()
 		oAccount = AccountList.getEdited(),
 		oParameters = {
 			'AccountID': oAccount ? oAccount.id() : 0,
-			'UseSignature': !!this.useSignatureRadio(),
+			'UseSignature': this.useSignatureRadio() === '1',
 			'Signature': this.signature()
 		}
 	;
@@ -98,7 +98,7 @@ CSignaturePaneView.prototype.getParametersForSave = function ()
 		{
 			_.extendOwn(oParameters, { 'FetcherId': this.fetcherOrIdentity().id() });
 		}
-		else
+		else if (!this.fetcherOrIdentity().bAccountPart)
 		{
 			_.extendOwn(oParameters, { 'IdentityId': this.fetcherOrIdentity().id() });
 		}
@@ -112,13 +112,16 @@ CSignaturePaneView.prototype.getParametersForSave = function ()
  */
 CSignaturePaneView.prototype.applySavedValues = function (oParameters)
 {
-	var oAccount = AccountList.getEdited();
-	
-	if (oAccount)
+	if (!oParameters.IdentityId)
 	{
-		oAccount.useSignature(!!oParameters.UseSignature);
-		oAccount.signature(oParameters.Signature);
+		var oAccount = AccountList.getEdited();
+		if (oAccount)
+		{
+			oAccount.useSignature(!!oParameters.UseSignature);
+			oAccount.signature(oParameters.Signature);
+		}
 	}
+	AccountList.populateIdentities();
 };
 
 CSignaturePaneView.prototype.populate = function ()

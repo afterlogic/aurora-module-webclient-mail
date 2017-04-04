@@ -37,8 +37,8 @@ CCreateIdentityPopup.prototype.onShow = function (iAccountId)
 	
 	oIdentity.accountId(iAccountId);
 	oIdentity.email(oAccount.email());
-	
-	this.oIdentityPropertiesViewModel.populate(oIdentity);
+	this.oIdentityPropertiesViewModel.show(oIdentity);
+	this.oIdentityPropertiesViewModel.populate();
 	this.oIdentityPropertiesViewModel.friendlyNameHasFocus(true);
 };
 

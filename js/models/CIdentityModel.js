@@ -13,9 +13,8 @@ var
  */
 function CIdentityModel()
 {
-	this.loyal = ko.observable(false);
+	this.bAccountPart = false;
 	this.isDefault = ko.observable(false);
-	this.enabled = ko.observable(true);
 	this.email = ko.observable('');
 	this.friendlyName = ko.observable('');
 	this.fullEmail = ko.computed(function () {
@@ -37,13 +36,12 @@ CIdentityModel.prototype.parse = function (oData)
 {
 	if (oData['@Object'] === 'Object/CIdentity')
 	{
-		this.loyal(!!oData.Loyal);
+		this.bAccountPart = !!oData.AccountPart;
 		this.isDefault(!!oData.Default);
-		this.enabled(!!oData.Enabled);
 		this.email(Types.pString(oData.Email));
 		this.friendlyName(Types.pString(oData.FriendlyName));
 		this.accountId(Types.pInt(oData.IdAccount));
-		this.id(Types.pInt(oData.IdIdentity));
+		this.id(Types.pInt(oData.EntityId));
 		this.signature(Types.pString(oData.Signature));
 		this.useSignature(!!oData.UseSignature);
 	}

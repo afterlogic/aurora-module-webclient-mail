@@ -37,10 +37,9 @@ function CIdentityPropertiesPaneView(oParent, bCreate)
 
 	this.disableCheckbox = ko.observable(false);
 
-	this.enabled = ko.observable(true);
 	this.isDefault = ko.observable(false);
 	this.email = ko.observable('');
-	this.loyal = ko.observable(false);
+	this.accountPart = ko.observable(false);
 	this.friendlyName = ko.observable('');
 	this.friendlyNameHasFocus = ko.observable(false);
 }
@@ -74,22 +73,21 @@ CIdentityPropertiesPaneView.prototype.getParametersForSave = function ()
 		var
 			oParameters = {
 				'AccountID': this.identity().accountId(),
-				'Default': this.isDefault() ? 1 : 0,
+				'Default': this.isDefault(),
 				'FriendlyName': this.friendlyName(),
-				'Loyal': this.identity().loyal() ? 1 : 0
+				'AccountPart': this.identity().bAccountPart
 			}
 		;
 
-		if (!this.identity().loyal())
+		if (!this.identity().bAccountPart)
 		{
 			_.extendOwn(oParameters, {
-				'Email': this.email(),
-				'Enabled': this.enabled() ? 1 : 0
+				'Email': this.email()
 			});
 
 			if (!this.bCreate)
 			{
-				oParameters.IdIdentity = this.identity().id();
+				oParameters.EntityId = this.identity().id();
 			}
 		}
 
@@ -142,7 +140,7 @@ CIdentityPropertiesPaneView.prototype.onResponse = function (oResponse, oRequest
 			this.oParent.closePopup();
 		}
 
-		if (oParameters.Loyal === 1 && oAccount)
+		if (oParameters.AccountPart && oAccount)
 		{
 			oAccount.updateFriendlyName(oParameters.FriendlyName);
 		}
@@ -159,10 +157,9 @@ CIdentityPropertiesPaneView.prototype.populate = function ()
 	
 	if (oIdentity)
 	{
-		this.enabled(oIdentity.enabled());
 		this.isDefault(oIdentity.isDefault());
 		this.email(oIdentity.email());
-		this.loyal(oIdentity.loyal());
+		this.accountPart(oIdentity.bAccountPart);
 		this.friendlyName(oIdentity.friendlyName());
 
 		this.disableCheckbox(oIdentity.isDefault());
@@ -175,11 +172,11 @@ CIdentityPropertiesPaneView.prototype.populate = function ()
 
 CIdentityPropertiesPaneView.prototype.remove = function ()
 {
-	if (this.identity() && !this.identity().loyal())
+	if (this.identity() && !this.identity().bAccountPart)
 	{
 		var oParameters = {
 			'AccountID': this.identity().accountId(),
-			'IdIdentity': this.identity().id()
+			'EntityId': this.identity().id()
 		};
 
 		Ajax.send('DeleteIdentity', oParameters, this.onAccountIdentityDeleteResponse, this);
@@ -199,7 +196,7 @@ CIdentityPropertiesPaneView.prototype.onAccountIdentityDeleteResponse = function
 {
 	if (!oResponse.Result)
 	{
-		Api.showErrorByCode(oResponse, Utils.i18n('%MODULENAME%/ERROR_IDENTITY_DELETING'));
+		Api.showErrorByCode(oResponse, TextUtils.i18n('%MODULENAME%/ERROR_IDENTITY_DELETING'));
 	}
 	AccountList.populateIdentities();
 };

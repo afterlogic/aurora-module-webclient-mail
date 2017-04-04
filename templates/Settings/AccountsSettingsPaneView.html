@@ -25,7 +25,7 @@
 					<span class="icon fetcher"></span>
 					<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_IDENTITY'}"></span>
 					<span class="title" data-bind="text: fullEmail"></span>
-					<span class="icon loyal" data-bind="visible: useToAuthorize() && $parent.identities().length > 1">√</span>
+					<span class="icon default-identity" data-bind="visible: isDefault() && $parent.identities().length > 1">√</span>
 				</div>
 				<!-- /ko -->
 
