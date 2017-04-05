@@ -83,9 +83,10 @@ PopupComposeUtils.composeMessageWithPgpKey = function (sArmor, sDownloadLinkFile
 /**
  * @param {Array} aFileItems
  */
-PopupComposeUtils.composeMessageWithFiles = function (aFileItems)
+PopupComposeUtils.composeMessageWithAttachments = function (aFileItems)
 {
-	var aParams = ['file', aFileItems];
+	var aParams = LinksUtils.getComposeWithObject('attachments', aFileItems);
+	aParams.shift();
 	Popups.showPopup(GetComposePopup(), [aParams]);
 };
 

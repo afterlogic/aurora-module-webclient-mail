@@ -686,9 +686,9 @@ CComposeView.prototype.fillDefault = function (oParams)
 		this.addMessageAsAttachment(oParams.Object);
 	}
 
-	if (this.routeType() === 'file' && oParams.Object)
+	if (this.routeType() === 'attachments' && oParams.Object)
 	{
-		this.addFilesAsAttachment(oParams.Object);
+		this.addAttachments(oParams.Object);
 	}
 
 	if (this.routeType() === 'data-as-file' && oParams.FileData && oParams.FileName)
@@ -1016,6 +1016,19 @@ CComposeView.prototype.onDataAsAttachmentUpload = function (oResponse, oRequest)
 			oAttachment.errorFromUpload();
 		}
 	}
+};
+
+CComposeView.prototype.addAttachments = function (aFiles)
+{
+	var oAttach = new CAttachmentModel();
+	
+	_.each(aFiles, function (oFileData) {
+		var sThumbSessionUid = Date.now().toString();
+		oAttach.parseFromUpload(oFileData);
+		oAttach.getInThumbQueue(sThumbSessionUid);
+	});
+
+	this.attachments.push(oAttach);
 };
 
 /**

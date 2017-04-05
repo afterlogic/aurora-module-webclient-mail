@@ -243,7 +243,7 @@ LinksUtils.parseCompose = function (aParams)
 	var
 		sAccountHash = (aParams.length > 0) ? aParams[0] : '',
 		sRouteType = (aParams.length > 1) ? aParams[1] : '',
-		oObject = ((sRouteType === 'vcard' || sRouteType === 'eml') && aParams.length > 2) ? aParams[2] : null,
+		oObject = ((sRouteType === 'vcard' || sRouteType === 'eml' || sRouteType === 'attachments') && aParams.length > 2) ? aParams[2] : null,
 		sFileData = (sRouteType === 'data-as-file' && aParams.length > 2) ? aParams[2] : '',
 		sFileName = (sRouteType === 'data-as-file' && aParams.length > 3) ? aParams[3] : '',
 		oToAddr = (sRouteType === 'to' && aParams.length > 2) ? LinksUtils.parseToAddr(aParams[2]) : null,

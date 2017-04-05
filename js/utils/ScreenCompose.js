@@ -73,9 +73,9 @@ ScreenComposeUtils.composeMessageWithPgpKey = function (sArmor, sDownloadLinkFil
 /**
  * @param {Array} aFileItems
  */
-ScreenComposeUtils.composeMessageWithFiles = function (aFileItems)
+ScreenComposeUtils.composeMessageWithAttachments = function (aFileItems)
 {
-	var aParams = ['file', aFileItems];
+	var aParams = LinksUtils.getComposeWithObject('attachments', aFileItems);
 	Routing.goDirectly(LinksUtils.getCompose(), aParams);
 };
 

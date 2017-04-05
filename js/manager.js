@@ -62,8 +62,14 @@ module.exports = function (oAppData) {
 					bAllowSendMail = true,
 					ComposeUtils = require('modules/%ModuleName%/js/utils/ScreenCompose.js')
 				;
-
 				return bAllowSendMail ? ComposeUtils.composeMessageToAddresses : false;
+			},
+			getComposeMessageWithAttachments: function () {
+				var
+					bAllowSendMail = true,
+					ComposeUtils = require('modules/%ModuleName%/js/utils/ScreenCompose.js')
+				;
+				return bAllowSendMail ? ComposeUtils.composeMessageWithAttachments : false;
 			},
 			getSearchMessagesInCurrentFolder: function () {
 				var MainTab = window.opener && window.opener.MainTabMailMethods;
@@ -184,8 +190,14 @@ module.exports = function (oAppData) {
 					bAllowSendMail = true,
 					ComposeUtils = (App.isMobile() || App.isNewTab()) ? require('modules/%ModuleName%/js/utils/ScreenCompose.js') : require('modules/%ModuleName%/js/utils/PopupCompose.js')
 				;
-
 				return bAllowSendMail ? ComposeUtils.composeMessageToAddresses : false;
+			},
+			getComposeMessageWithAttachments: function () {
+				var
+					bAllowSendMail = true,
+					ComposeUtils = (App.isMobile() || App.isNewTab()) ? require('modules/%ModuleName%/js/utils/ScreenCompose.js') : require('modules/%ModuleName%/js/utils/PopupCompose.js')
+				;
+				return bAllowSendMail ? ComposeUtils.composeMessageWithAttachments : false;
 			},
 			getSearchMessagesInInbox: function () {
 				return _.bind(Cache.searchMessagesInInbox, Cache);
