@@ -132,7 +132,7 @@ module.exports = function (oAppData) {
 		}
 
 		return {
-			enableModule: ko.observable(Settings.AllowAddNewAccounts || AccountList.hasAccount()),
+			enableModule: ko.observable(Settings.AllowAddAccounts || AccountList.hasAccount() ),
 			start: function (ModulesManager) {
 				var
 					TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
@@ -151,7 +151,7 @@ module.exports = function (oAppData) {
 					MailUtils.registerMailto(Browser.firefox);
 				}
 
-				if (Settings.AllowAddNewAccounts || AccountList.hasAccount())
+				if (Settings.AllowAddAccounts || AccountList.hasAccount())
 				{
 					ModulesManager.run('SettingsWebclient', 'registerSettingsTab', [
 						function () {

@@ -10,7 +10,8 @@ module.exports = {
 	ServerModuleName: 'Mail',
 	HashModuleName: 'mail',
 	
-	AllowAddNewAccounts: false,
+	AllowAddAccounts: false,
+	AllowMultiAccounts: false,
 	AllowAppRegisterMailto: false,
 	AllowAutosaveInDrafts: true,
 	AllowChangeEmailSettings: true,
@@ -37,7 +38,8 @@ module.exports = {
 	init: function (oAppDataSection) {
 		if (oAppDataSection)
 		{
-			this.AllowAddNewAccounts = !!oAppDataSection.AllowAddNewAccounts;
+			this.AllowAddAccounts = !!oAppDataSection.AllowAddAccounts;
+			this.AllowMultiAccounts = !!oAppDataSection.AllowMultiAccounts;
 			this.AllowAppRegisterMailto = !!oAppDataSection.AllowAppRegisterMailto;
 			this.AllowAutosaveInDrafts = !!oAppDataSection.AllowAutosaveInDrafts;
 			this.AllowChangeEmailSettings = !!oAppDataSection.AllowChangeEmailSettings;

@@ -35,13 +35,17 @@ var
  */
 function CAccountsSettingsPaneView()
 {
-	this.bAllowAddNewAccounts = Settings.AllowAddNewAccounts;
+	console.log(Settings.AllowAddAccounts);
+	console.log(Settings.AllowMultiAccounts);
+	this.bAllowAddAccounts = Settings.AllowAddAccounts;
+	this.bAllowMultiAccounts = Settings.AllowMultiAccounts;
 	this.bAllowIdentities = !!Settings.AllowIdentities;
 	this.bAllowFetchers = !!Settings.AllowFetchers;
 	
 	this.accounts = AccountList.collection;
 	this.onlyOneAccount = ko.computed(function () {
-		var bOnlyOneAccount = this.accounts().length === 1 && !Settings.AllowAddNewAccounts;
+//		var bOnlyOneAccount = this.accounts().length === 1 && !Settings.bAllowMultiAccounts;
+		var bOnlyOneAccount = this.accounts().length === 1 && !Settings.bAllowMultiAccounts;
 //		if (bOnlyOneAccount)
 //		{
 //			this.TabTitle = Utils.i18n('%MODULENAME%/LABEL_ACCOUNT_SETTINGS_TAB');
