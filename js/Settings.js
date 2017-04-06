@@ -19,7 +19,6 @@ module.exports = {
 	AllowFetchers: true,
 	AllowIdentities: false,
 	AllowInsertImage: true,
-	AllowSaveMessageAsPdf: false,
 	AllowThreads: true,
 	AllowZipAttachments: false,
 	AutoSaveIntervalSeconds: 60,
@@ -47,7 +46,6 @@ module.exports = {
 			this.AllowFetchers = !!oAppDataSection.AllowFetchers;
 			this.AllowIdentities = !!oAppDataSection.AllowIdentities;
 			this.AllowInsertImage = !!oAppDataSection.AllowInsertImage;
-			this.AllowSaveMessageAsPdf = !!oAppDataSection.AllowSaveMessageAsPdf;
 			this.AllowThreads = !!oAppDataSection.AllowThreads;
 			this.AllowZipAttachments = !!oAppDataSection.AllowZipAttachments;
 			this.AutoSaveIntervalSeconds = Types.pInt(oAppDataSection.AutoSaveIntervalSeconds);

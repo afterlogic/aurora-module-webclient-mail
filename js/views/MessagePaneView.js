@@ -5,7 +5,6 @@ var
 	$ = require('jquery'),
 	ko = require('knockout'),
 	
-	FilesUtils = require('%PathToCoreWebclientModule%/js/utils/Files.js'),
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	UrlUtils = require('%PathToCoreWebclientModule%/js/utils/Url.js'),
@@ -16,7 +15,6 @@ var
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 	Pulse = require('%PathToCoreWebclientModule%/js/Pulse.js'),
 	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
-	Screens = require('%PathToCoreWebclientModule%/js/Screens.js'),
 	Storage = require('%PathToCoreWebclientModule%/js/Storage.js'),
 	UserSettings = require('%PathToCoreWebclientModule%/js/Settings.js'),
 	WindowOpener = require('%PathToCoreWebclientModule%/js/WindowOpener.js'),
@@ -97,11 +95,6 @@ function CMessagePaneView()
 		return this.isCurrentMessage() && this.currentMessage().sDownloadAsEmlUrl !== '';
 	};
 	
-	this.bAllowSaveMessageAsPdf = Settings.AllowSaveMessageAsPdf;
-	this.isEnableSaveAsPdf = ko.computed(function () {
-		return this.bAllowSaveMessageAsPdf && this.isCurrentMessageLoaded();
-	}, this);
-
 	this.deleteCommand = Utils.createCommand(this, this.executeDeleteMessage, this.isEnableDelete);
 	this.prevMessageCommand = Utils.createCommand(this, this.executePrevMessage, this.isEnablePrevMessage);
 	this.nextMessageCommand = Utils.createCommand(this, this.executeNextMessage, this.isEnableNextMessage);
@@ -111,9 +104,14 @@ function CMessagePaneView()
 	this.forwardCommand = Utils.createCommand(this, this.executeForward, this.isEnableForward);
 	this.printCommand = Utils.createCommand(this, this.executePrint, this.isEnablePrint);
 	this.saveCommand = Utils.createCommand(this, this.executeSave, this.isEnableSave);
-	this.saveAsPdfCommand = Utils.createCommand(this, this.executeSaveAsPdf, this.isEnableSaveAsPdf);
 	this.forwardAsAttachment = Utils.createCommand(this, this.executeForwardAsAttachment, this.isCurrentMessageLoaded);
 	this.moreCommand = Utils.createCommand(this, null, this.isCurrentMessageLoaded);
+	this.moreSectionCommands = ko.observableArray([]);
+	App.broadcastEvent('%ModuleName%::AddMoreSectionCommand', _.bind(function (oCommand) {
+		var oNewCommand = _.extend({'Text': '', 'CssClass': '', 'Handler': function () {}}, oCommand);
+		oNewCommand.Command = Utils.createCommand(this, oNewCommand.Handler, this.isCurrentMessageLoaded);
+		this.moreSectionCommands.push(oNewCommand);
+	}, this));
 
 	this.visiblePicturesControl = ko.observable(false);
 	this.visibleShowPicturesLink = ko.observable(false);
@@ -819,53 +817,6 @@ CMessagePaneView.prototype.executeForwardAsAttachment = function ()
 	if (this.currentMessage())
 	{
 		ComposeUtils.composeMessageWithEml(this.currentMessage());
-	}
-};
-
-CMessagePaneView.prototype.executeSaveAsPdf = function ()
-{
-	if (this.currentMessage())
-	{
-		var
-			oBody = this.currentMessage().getDomText(),
-			fReplaceWithBase64 = function (oImg) {
-
-				try
-				{
-					var
-						oCanvas = document.createElement('canvas'),
-						oCtx = null
-					;
-
-					oCanvas.width = oImg.width;
-					oCanvas.height = oImg.height;
-
-					oCtx = oCanvas.getContext('2d');
-					oCtx.drawImage(oImg, 0, 0);
-
-					oImg.src = oCanvas.toDataURL('image/png');
-				}
-				catch (e) {}
-			}
-		;
-
-		$('img[data-x-src-cid]', oBody).each(function () {
-			fReplaceWithBase64(this);
-		});
-
-		Ajax.send('GeneratePdfFile', {
-			'FileName': this.subject() + '.pdf',
-			'Html': oBody.html()
-		}, function (oResponse) {
-			if (oResponse.Result && oResponse.Result.Actions && oResponse.Result.Actions.download)
-			{
-				UrlUtils.downloadByUrl(oResponse.Result.Actions.download.url);
-			}
-			else
-			{
-				Screens.showError(TextUtils.i18n('%MODULENAME%/ERROR_CREATING_PDF'));
-			}
-		}, this);
 	}
 };
 
