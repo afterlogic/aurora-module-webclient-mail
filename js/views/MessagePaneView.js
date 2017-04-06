@@ -854,12 +854,12 @@ CMessagePaneView.prototype.executeSaveAsPdf = function ()
 		});
 
 		Ajax.send('GeneratePdfFile', {
-			'FileName': this.subject(),
+			'FileName': this.subject() + '.pdf',
 			'Html': oBody.html()
 		}, function (oResponse) {
-			if (oResponse.Result && oResponse.Result['Hash'])
+			if (oResponse.Result && oResponse.Result.Actions && oResponse.Result.Actions.download)
 			{
-				UrlUtils.downloadByUrl(FilesUtils.getDownloadLink(Settings.ServerModuleName, oResponse.Result['Hash']));
+				UrlUtils.downloadByUrl(oResponse.Result.Actions.download.url);
 			}
 			else
 			{
