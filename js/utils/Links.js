@@ -238,18 +238,39 @@ LinksUtils.getComposeWithObject = function (sType, oObject)
 	return [Settings.HashModuleName + '-compose', sAccountHash, sType, oObject];
 };
 
+/**
+ * @param {string} sFolderName
+ * @param {string} sUid
+ * @param {object} oObject
+ * @returns {Array}
+ */
+LinksUtils.getComposeWithEmlObject = function (sFolderName, sUid, oObject)
+{
+	var
+		AccountList = require('modules/%ModuleName%/js/AccountList.js'),
+		oCurrAccount = AccountList.getCurrent(),
+		sAccountHash = oCurrAccount ? oCurrAccount.hash() : ''
+	;
+	return [Settings.HashModuleName + '-compose', sAccountHash, Enums.ReplyType.ForwardAsAttach, sFolderName, sUid, oObject];
+};
+
+/**
+ * @param {array} aParams
+ * @returns {object}
+ */
 LinksUtils.parseCompose = function (aParams)
 {
 	var
 		sAccountHash = (aParams.length > 0) ? aParams[0] : '',
 		sRouteType = (aParams.length > 1) ? aParams[1] : '',
-		oObject = ((sRouteType === 'vcard' || sRouteType === 'eml' || sRouteType === 'attachments') && aParams.length > 2) ? aParams[2] : null,
+		oObject = ((sRouteType === 'vcard' || sRouteType === Enums.ReplyType.ForwardAsAttach || sRouteType === 'attachments') && aParams.length > 2) ? 
+					(sRouteType === Enums.ReplyType.ForwardAsAttach ? aParams[4] : aParams[2]) : null,
 		sFileData = (sRouteType === 'data-as-file' && aParams.length > 2) ? aParams[2] : '',
 		sFileName = (sRouteType === 'data-as-file' && aParams.length > 3) ? aParams[3] : '',
 		oToAddr = (sRouteType === 'to' && aParams.length > 2) ? LinksUtils.parseToAddr(aParams[2]) : null,
 		bMessage = ((sRouteType === Enums.ReplyType.Reply || sRouteType === Enums.ReplyType.ReplyAll 
 					|| sRouteType === Enums.ReplyType.Resend || sRouteType === Enums.ReplyType.Forward 
-					|| sRouteType === 'drafts') && aParams.length > 2),
+					|| sRouteType === 'drafts' || sRouteType === Enums.ReplyType.ForwardAsAttach) && aParams.length > 2),
 		sFolderName = bMessage ? aParams[2] : '',
 		sUid = bMessage ? aParams[3] : ''
 	;

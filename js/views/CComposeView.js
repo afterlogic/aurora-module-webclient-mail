@@ -622,6 +622,9 @@ CComposeView.prototype.onRoute = function (aParams)
 	this.routeType(oParams.RouteType);
 	switch (this.routeType())
 	{
+		case Enums.ReplyType.ForwardAsAttach:
+			this.routeParams(aParams);
+			this.fillDefault(oParams);
 		case Enums.ReplyType.Reply:
 		case Enums.ReplyType.ReplyAll:
 		case Enums.ReplyType.Resend:
@@ -681,7 +684,7 @@ CComposeView.prototype.fillDefault = function (oParams)
 		this.addContactAsAttachment(oParams.Object);
 	}
 
-	if (this.routeType() === 'eml' && oParams.Object)
+	if (this.routeType() === Enums.ReplyType.ForwardAsAttach && oParams.Object)
 	{
 		this.addMessageAsAttachment(oParams.Object);
 	}
@@ -868,6 +871,14 @@ CComposeView.prototype.onMessageResponse = function (oMessage)
 				this.references(oReplyData.References);
 				break;
 
+			case Enums.ReplyType.ForwardAsAttach:
+				oReplyData = SendingUtils.getReplyDataFromMessage(oMessage, this.routeType(), this.senderAccountId(), this.selectedFetcherOrIdentity(), true);
+				this.draftInfo(oReplyData.DraftInfo);
+				this.draftUid(oReplyData.DraftUid);
+				this.inReplyTo(oReplyData.InReplyTo);
+				this.references(oReplyData.References);
+				break;
+			
 			case Enums.ReplyType.Forward:
 				SenderSelector.setFetcherOrIdentityByReplyMessage(oMessage);
 
@@ -894,12 +905,12 @@ CComposeView.prototype.onMessageResponse = function (oMessage)
 				break;
 		}
 
+		if (this.routeType() !== Enums.ReplyType.ForwardAsAttach && this.attachments().length > 0)
+		{
+			this.requestAttachmentsTempName();
+		}
+		
 		this.routeType('');
-	}
-
-	if (this.attachments().length > 0)
-	{
-		this.requestAttachmentsTempName();
 	}
 
 	this.visibleCc(this.ccAddr() !== '');

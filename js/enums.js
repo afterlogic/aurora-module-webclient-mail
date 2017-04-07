@@ -63,7 +63,8 @@ Enums.ReplyType = {
 	'Reply': 'reply',
 	'ReplyAll': 'reply-all',
 	'Resend': 'resend',
-	'Forward': 'forward'
+	'Forward': 'forward',
+	'ForwardAsAttach': 'eml'
 };
 
 Enums.HtmlEditorImageSizes = {

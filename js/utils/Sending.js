@@ -238,6 +238,7 @@ SendingUtils.convertAttachmentsForSending = function (aAttachments)
 SendingUtils.onSendOrSaveMessageResponse = function (oResponse, oRequest, bRequiresPostponedSending)
 {
 	var
+		oParameters = oRequest.Parameters,
 		bResult = !!oResponse.Result,
 		sFullName, sUid, sReplyType
 	;
@@ -252,14 +253,14 @@ SendingUtils.onSendOrSaveMessageResponse = function (oResponse, oRequest, bRequi
 		case 'SaveMessage':
 			if (!bResult)
 			{
-				if (oRequest.ShowReport)
+				if (oParameters.ShowReport)
 				{
 					Api.showErrorByCode(oResponse, TextUtils.i18n('%MODULENAME%/ERROR_MESSAGE_SAVING'));
 				}
 			}
 			else
 			{
-				if (oRequest.ShowReport && !bRequiresPostponedSending)
+				if (oParameters.ShowReport && !bRequiresPostponedSending)
 				{
 					Screens.showReport(TextUtils.i18n('%MODULENAME%/REPORT_MESSAGE_SAVED'));
 				}
@@ -281,7 +282,7 @@ SendingUtils.onSendOrSaveMessageResponse = function (oResponse, oRequest, bRequi
 				{
 					Screens.showError(TextUtils.i18n('%MODULENAME%/ERROR_SENT_EMAIL_NOT_SAVED'));
 				}
-				else if (oRequest.IsQuickReply)
+				else if (oParameters.IsQuickReply)
 				{
 					Screens.showReport(TextUtils.i18n('%MODULENAME%/REPORT_MESSAGE_SENT'));
 				}
@@ -297,39 +298,39 @@ SendingUtils.onSendOrSaveMessageResponse = function (oResponse, oRequest, bRequi
 					}
 				}
 
-				if (_.isArray(oRequest.DraftInfo) && oRequest.DraftInfo.length === 3)
+				if (_.isArray(oParameters.DraftInfo) && oParameters.DraftInfo.length === 3)
 				{
-					sReplyType = oRequest.DraftInfo[0];
-					sUid = oRequest.DraftInfo[1];
-					sFullName = oRequest.DraftInfo[2];
-					MailCache.markMessageReplied(oRequest.AccountID, sFullName, sUid, sReplyType);
+					sReplyType = oParameters.DraftInfo[0];
+					sUid = oParameters.DraftInfo[1];
+					sFullName = oParameters.DraftInfo[2];
+					MailCache.markMessageReplied(oParameters.AccountID, sFullName, sUid, sReplyType);
 				}
 			}
 			
-			if (oRequest.SentFolder)
+			if (oParameters.SentFolder)
 			{
 				if (MainTab)
 				{
-					MainTab.removeMessagesFromCacheForFolder(oRequest.AccountID, oRequest.SentFolder);
+					MainTab.removeMessagesFromCacheForFolder(oParameters.AccountID, oParameters.SentFolder);
 				}
 				else
 				{
-					MailCache.removeMessagesFromCacheForFolder(oRequest.AccountID, oRequest.SentFolder);
+					MailCache.removeMessagesFromCacheForFolder(oParameters.AccountID, oParameters.SentFolder);
 				}
 			}
 			
 			break;
 	}
 
-	if (oRequest.DraftFolder && !bRequiresPostponedSending)
+	if (oParameters.DraftFolder && !bRequiresPostponedSending)
 	{
 		if (MainTab)
 		{
-			MainTab.removeMessagesFromCacheForFolder(oRequest.AccountID, oRequest.DraftFolder);
+			MainTab.removeMessagesFromCacheForFolder(oParameters.AccountID, oParameters.DraftFolder);
 		}
 		else
 		{
-			MailCache.removeMessagesFromCacheForFolder(oRequest.AccountID, oRequest.DraftFolder);
+			MailCache.removeMessagesFromCacheForFolder(oParameters.AccountID, oParameters.DraftFolder);
 		}
 	}
 	
@@ -428,6 +429,7 @@ SendingUtils.getReplyDataFromMessage = function (oMessage, sReplyType, iAccountI
 			oReplyData.Subject = oMessage.subject();
 			aAttachmentsLink = oMessage.attachments();
 			break;
+		case Enums.ReplyType.ForwardAsAttach:
 		case Enums.ReplyType.Forward:
 			oReplyData.DraftInfo = [Enums.ReplyType.Forward, oMessage.uid(), oMessage.folder()];
 			oReplyData.Subject = this.getReplySubject(oMessage.subject(), false);

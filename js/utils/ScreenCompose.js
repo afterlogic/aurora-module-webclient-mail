@@ -57,7 +57,8 @@ ScreenComposeUtils.composeMessageWithVcard = function (oVcard)
  */
 ScreenComposeUtils.composeMessageWithEml = function (oMessage)
 {
-	Routing.goDirectly(LinksUtils.compose(), LinksUtils.getComposeWithObject('eml', oMessage));
+	var aParams = LinksUtils.getComposeWithEmlObject(oMessage.folder(), oMessage.uid(), oMessage);
+	Routing.goDirectly(LinksUtils.compose(), aParams);
 };
 
 /**

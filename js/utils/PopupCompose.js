@@ -65,7 +65,7 @@ PopupComposeUtils.composeMessageWithVcard = function (oVcard)
  */
 PopupComposeUtils.composeMessageWithEml = function (oMessage)
 {
-	var aParams = LinksUtils.getComposeWithObject('eml', oMessage);
+	var aParams = LinksUtils.getComposeWithEmlObject(oMessage.folder(), oMessage.uid(), oMessage);
 	aParams.shift();
 	Popups.showPopup(GetComposePopup(), [aParams]);
 };

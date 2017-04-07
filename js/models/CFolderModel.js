@@ -436,6 +436,7 @@ CFolderModel.prototype.markMessageReplied = function (sUid, sReplyType)
 				oMsg.answered(true);
 				break;
 			case Enums.ReplyType.Forward:
+			case Enums.ReplyType.ForwardAsAttach:
 				oMsg.forwarded(true);
 				break;
 		}
