@@ -205,6 +205,7 @@ CAccountPropertiesPaneView.prototype.changePassword = function ()
 	if (ChangePasswordPopup)
 	{
 		Popups.showPopup(ChangePasswordPopup, [{
+			iAccountId: AccountList.editedId(),
 			sModule: Settings.ServerModuleName,
 			bHasOldPassword: true
 		}]);
