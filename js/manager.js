@@ -160,12 +160,14 @@ module.exports = function (oAppData) {
 						Settings.HashModuleName,
 						TextUtils.i18n('%MODULENAME%/LABEL_SETTINGS_TAB')
 					]);
+					
+					var sTabName = Settings.AllowMultiAccounts ? TextUtils.i18n('%MODULENAME%/LABEL_ACCOUNTS_SETTINGS_TAB') : TextUtils.i18n('%MODULENAME%/LABEL_ACCOUNT_SETTINGS_TAB');
 					ModulesManager.run('SettingsWebclient', 'registerSettingsTab', [
 						function () {
 							return require('modules/%ModuleName%/js/views/settings/AccountsSettingsPaneView.js');
 						},
 						Settings.HashModuleName + '-accounts',
-						TextUtils.i18n('%MODULENAME%/LABEL_ACCOUNTS_SETTINGS_TAB')
+						sTabName
 					]);
 				}
 			},

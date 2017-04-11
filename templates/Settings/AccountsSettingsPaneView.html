@@ -2,7 +2,7 @@
 	<div class="buttons" data-bind="visible: bAllowAddAccounts && (bAllowMultiAccounts || accounts().length === 0)">
 		<span class="button add_account_button" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ADD_NEW_ACCOUNT'}, click: addAccount" id="selenium_settings_create_account_button"></span>
 	</div>
-	<h2 class="settings_heading" data-bind="text: settingsHeading"></h2>
+	<h2 class="settings_heading" data-bind="i18n: {'key': bAllowMultiAccounts ? '%MODULENAME%/HEADING_ACCOUNTS_SETTINGS' : '%MODULENAME%/HEADING_ACCOUNT_SETTINGS'}"></h2>
 </div>
 
 <div class="panel_center">
