@@ -363,7 +363,9 @@ CAccountsSettingsPaneView.prototype.populate = function ()
 		this.allowFolders(true);
 		this.allowForward(oAccount.extensionExists('AllowForwardExtension') && oAccount.forward());
 		this.allowAutoresponder(oAccount.extensionExists('AllowAutoresponderExtension') && oAccount.autoresponder());
-		this.allowFilters(oAccount.extensionExists('AllowSieveFiltersExtension'));
+//		this.allowFilters(oAccount.extensionExists('AllowSieveFiltersExtension'));
+//		this.allowFilters(oAccount.filters());
+		this.allowFilters(true);
 		this.allowSignature(!Settings.AllowIdentities);
 		
 		if (!this.currentTab() || !this.currentTab().visible())
