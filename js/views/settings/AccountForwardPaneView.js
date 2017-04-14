@@ -19,7 +19,9 @@ var
 	
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
-	Settings = require('modules/%ModuleName%/js/Settings.js')
+	Settings = require('modules/%ModuleName%/js/Settings.js'),
+	
+	CForwardModel = require('modules/%ModuleName%/js/models/CForwardModel.js')
 ;
 
 /**
@@ -139,19 +141,19 @@ CAccountForwardPaneView.prototype.onResponse = function (oResponse, oRequest)
 
 CAccountForwardPaneView.prototype.populate = function ()
 {
-	var oAccount = AccountList.getEdited();
+	var 
+		oAccount = AccountList.getEdited(),
+		oForward = oAccount.forward() ? oAccount.forward() : null
+	;
 	
-	if (oAccount)
+	if (oForward !== null)
 	{
-		if (oAccount.forward() !== null)
-		{
-			this.enable(oAccount.forward().enable);
-			this.email(oAccount.forward().email);
-		}
-		else
-		{
-			Ajax.send('GetForward', {'AccountID': oAccount.id()}, this.onGetForwardResponse, this);
-		}
+		this.enable(oForward.enable);
+		this.email(oForward.email);
+	}
+	else
+	{
+		Ajax.send('GetForward', {'AccountID': oAccount.id()}, this.onGetForwardResponse, this);
 	}
 	
 	this.updateSavedState();
