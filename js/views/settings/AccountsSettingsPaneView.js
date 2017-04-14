@@ -363,7 +363,8 @@ CAccountsSettingsPaneView.prototype.populate = function ()
 		this.allowFolders(true);
 //		this.allowForward(oAccount.extensionExists('AllowForwardExtension') && oAccount.forward());
 		this.allowForward(true);
-		this.allowAutoresponder(oAccount.extensionExists('AllowAutoresponderExtension') && oAccount.autoresponder());
+//		this.allowAutoresponder(oAccount.extensionExists('AllowAutoresponderExtension') && oAccount.autoresponder());
+		this.allowAutoresponder(true);
 //		this.allowFilters(oAccount.extensionExists('AllowSieveFiltersExtension'));
 //		this.allowFilters(oAccount.filters());
 		this.allowFilters(true);
