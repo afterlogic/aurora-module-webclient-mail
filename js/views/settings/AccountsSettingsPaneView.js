@@ -361,13 +361,9 @@ CAccountsSettingsPaneView.prototype.populate = function ()
 	{
 		this.allowProperties(Settings.AllowUsersChangeEmailSettings || !Settings.AllowIdentities || bChangePass || bCanBeRemoved);
 		this.allowFolders(true);
-//		this.allowForward(oAccount.extensionExists('AllowForwardExtension') && oAccount.forward());
-		this.allowForward(true);
-//		this.allowAutoresponder(oAccount.extensionExists('AllowAutoresponderExtension') && oAccount.autoresponder());
-		this.allowAutoresponder(true);
-//		this.allowFilters(oAccount.extensionExists('AllowSieveFiltersExtension'));
-//		this.allowFilters(oAccount.filters());
-		this.allowFilters(true);
+		this.allowForward(!!Settings.AllowForward);
+		this.allowAutoresponder(!!Settings.AllowAutoresponder);
+		this.allowFilters(!!Settings.AllowFilters);
 		this.allowSignature(!Settings.AllowIdentities);
 		
 		if (!this.currentTab() || !this.currentTab().visible())

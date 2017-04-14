@@ -22,6 +22,9 @@ module.exports = {
 	AllowInsertImage: true,
 	AllowThreads: true,
 	AllowZipAttachments: false,
+	AllowFilters: false,
+	AllowForward: false,
+	AllowAutoresponder: false,
 	AutoSaveIntervalSeconds: 60,
 	AutosignOutgoingEmails: false,
 	ComposeToolbarOrder: ['back', 'send', 'save', 'importance', 'MailSensitivity', 'confirmation', 'OpenPgp'],
@@ -50,6 +53,9 @@ module.exports = {
 			this.AllowInsertImage = !!oAppDataSection.AllowInsertImage;
 			this.AllowThreads = !!oAppDataSection.AllowThreads;
 			this.AllowZipAttachments = !!oAppDataSection.AllowZipAttachments;
+			this.AllowFilters = !!oAppDataSection.AllowFilters;
+			this.AllowForward = !!oAppDataSection.AllowForward;
+			this.AllowAutoresponder = !!oAppDataSection.AllowAutoresponder;
 			this.AutoSaveIntervalSeconds = Types.pInt(oAppDataSection.AutoSaveIntervalSeconds);
 			this.AutosignOutgoingEmails = !!oAppDataSection.AutosignOutgoingEmails;
 			this.ComposeToolbarOrder = Types.isNonEmptyArray(oAppDataSection.ComposeToolbarOrder) ? oAppDataSection.ComposeToolbarOrder : [];
