@@ -1,8 +1,6 @@
 'use strict';
 
 var
-	ko = require('knockout'),
-
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js')
 ;
 
