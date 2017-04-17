@@ -93,8 +93,6 @@ CAttachmentModel.prototype.additionalParse = function (oData)
 	this.contentLocation(Types.pString(oData.ContentLocation));
 	this.inline(!!oData.IsInline);
 	this.linked(!!oData.IsLinked);
-	
-	this.parseActions(oData);
 };
 
 /**
@@ -233,8 +231,7 @@ CAttachmentModel.prototype.fillDataAfterUploadComplete = function (oResult, sFil
  */
 CAttachmentModel.prototype.parseFromUpload = function (oData, sMessageFolder, sMessageUid)
 {
-	this.folderName(sMessageFolder);
-	this.messageUid(sMessageUid);
+	this.setMessageData(sMessageFolder, sMessageUid);
 
 	this.fileName(oData.Name.toString());
 	this.tempName(oData.TempName ? oData.TempName.toString() : this.fileName());
@@ -252,15 +249,7 @@ CAttachmentModel.prototype.parseFromUpload = function (oData, sMessageFolder, sM
 
 CAttachmentModel.prototype.parseActions = function (oData)
 {
-	this.thumbUrlInQueue(Types.pString(oData.ThumbnailUrl));
-	_.each (oData.Actions, function (oData, sAction) {
-		if (!this.oActionsData[sAction])
-		{
-			this.oActionsData[sAction] = {};
-		}
-		this.oActionsData[sAction].Url = Types.pString(oData.url);
-		this.actions.push(sAction);
-	}, this);
+	this.commonParseActions(oData);
 	
 	if (this.isMessageType())
 	{
