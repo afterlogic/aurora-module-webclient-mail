@@ -440,11 +440,7 @@ SendingUtils.getReplyDataFromMessage = function (oMessage, sReplyType, iAccountI
 	_.each(aAttachmentsLink, function (oAttachLink) {
 		if (oAttachLink.getCopy)
 		{
-			var
-				oCopy = oAttachLink.getCopy(),
-				sThumbSessionUid = Date.now().toString()
-			;
-			oCopy.getInThumbQueue(sThumbSessionUid);
+			var oCopy = oAttachLink.getCopy();
 			oReplyData.Attachments.push(oCopy);
 		}
 	});

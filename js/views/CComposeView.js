@@ -1034,9 +1034,7 @@ CComposeView.prototype.addAttachments = function (aFiles)
 	var oAttach = new CAttachmentModel();
 	
 	_.each(aFiles, function (oFileData) {
-		var sThumbSessionUid = Date.now().toString();
 		oAttach.parseFromUpload(oFileData);
-		oAttach.getInThumbQueue(sThumbSessionUid);
 	});
 
 	this.attachments.push(oAttach);
@@ -1056,7 +1054,7 @@ CComposeView.prototype.addFilesAsAttachment = function (aFiles)
 		oAttach = new CAttachmentModel();
 		oAttach.fileName(oFile.fileName());
 		oAttach.hash(oFile.hash());
-		oAttach.sThumbUrl = oFile.sThumbUrl;
+		oAttach.thumbUrlInQueue(oFile.thumbUrlInQueue());
 		oAttach.uploadStarted(true);
 
 		this.attachments.push(oAttach);
@@ -1081,8 +1079,7 @@ CComposeView.prototype.onFilesUpload = function (oResponse, oRequest)
 	var
 		oParameters = oRequest.Parameters,
 		aResult = oResponse.Result,
-		aHashes = oParameters.Hashes,
-		sThumbSessionUid = Date.now().toString()
+		aHashes = oParameters.Hashes
 	;
 	
 	this.messageUploadAttachmentsStarted(false);
@@ -1097,7 +1094,6 @@ CComposeView.prototype.onFilesUpload = function (oResponse, oRequest)
 			{
 				oAttachment.parseFromUpload(oFileData);
 				oAttachment.hash(oFileData.NewHash);
-				oAttachment.getInThumbQueue(sThumbSessionUid);
 			}
 		}, this);
 	}
@@ -1469,18 +1465,11 @@ CComposeView.prototype.onFileUploadProgress = function (sFileUid, iUploadedSize,
  */
 CComposeView.prototype.onFileUploadComplete = function (sFileUid, bResponseReceived, oResult)
 {
-	var
-		oAttach = this.getAttachmentByUid(sFileUid),
-		sThumbSessionUid = Date.now().toString()
-	;
+	var oAttach = this.getAttachmentByUid(sFileUid);
 
 	if (oAttach)
 	{
 		oAttach.onUploadComplete(sFileUid, bResponseReceived, oResult);
-		if (oAttach.mimeType().substr(0, 5) === 'image')
-		{
-			oAttach.getInThumbQueue(sThumbSessionUid);
-		}
 	}
 };
 

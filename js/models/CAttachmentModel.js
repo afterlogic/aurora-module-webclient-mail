@@ -9,10 +9,12 @@ var
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	UrlUtils = require('%PathToCoreWebclientModule%/js/utils/Url.js'),
 	
-	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
+	App = require('%PathToCoreWebclientModule%/js/App.js'),
 	WindowOpener = require('%PathToCoreWebclientModule%/js/WindowOpener.js'),
 	
-	CAbstractFileModel = require('%PathToCoreWebclientModule%/js/models/CAbstractFileModel.js')
+	CAbstractFileModel = require('%PathToCoreWebclientModule%/js/models/CAbstractFileModel.js'),
+	
+	Ajax = require('modules/%ModuleName%/js/Ajax.js')
 ;
 
 /**
@@ -43,6 +45,11 @@ function CAttachmentModel()
 
 _.extendOwn(CAttachmentModel.prototype, CAbstractFileModel.prototype);
 
+CAttachmentModel.prototype.getNewInstance = function ()
+{
+	return new CAttachmentModel();
+};
+
 CAttachmentModel.prototype.getCopy = function ()
 {
 	var oCopy = new CAttachmentModel();
@@ -63,7 +70,6 @@ CAttachmentModel.prototype.copyProperties = function (oSource)
 	this.contentLocation(oSource.contentLocation());
 	this.inline(oSource.inline());
 	this.linked(oSource.linked());
-	this.sThumbUrl = oSource.sThumbUrl;
 	this.thumbnailSrc(oSource.thumbnailSrc());
 	this.thumbnailLoaded(oSource.thumbnailLoaded());
 	this.statusText(oSource.statusText());
@@ -71,7 +77,7 @@ CAttachmentModel.prototype.copyProperties = function (oSource)
 	this.iframedView(oSource.iframedView());
 	this.oActionsData = oSource.oActionsData;
 	this.actions(oSource.actions());
-	this.sThumbUrl = oSource.sThumbUrl;
+	this.thumbUrlInQueue(oSource.thumbUrlInQueue());
 };
 
 /**
@@ -88,17 +94,7 @@ CAttachmentModel.prototype.additionalParse = function (oData)
 	this.inline(!!oData.IsInline);
 	this.linked(!!oData.IsLinked);
 	
-	if (this.isMessageType())
-	{
-		if (!this.hasAction('view'))
-		{
-			this.actions.unshift('view');
-		}
-		this.otherTemplates.push({
-			name: '%ModuleName%_PrintMessageView',
-			data: this.messagePart
-		});
-	}
+	this.parseActions(oData);
 };
 
 /**
@@ -256,7 +252,7 @@ CAttachmentModel.prototype.parseFromUpload = function (oData, sMessageFolder, sM
 
 CAttachmentModel.prototype.parseActions = function (oData)
 {
-	this.sThumbUrl = Types.pString(oData.ThumbnailUrl);
+	this.thumbUrlInQueue(Types.pString(oData.ThumbnailUrl));
 	_.each (oData.Actions, function (oData, sAction) {
 		if (!this.oActionsData[sAction])
 		{
@@ -284,6 +280,8 @@ CAttachmentModel.prototype.parseActions = function (oData)
 			this.actions(_.without(this.actions(), 'view'));
 		}
 	}
+	
+	App.broadcastEvent('%ModuleName%::ParseFile::after', this);
 };
 
 CAttachmentModel.prototype.errorFromUpload = function ()

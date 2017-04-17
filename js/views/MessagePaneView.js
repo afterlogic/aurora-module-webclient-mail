@@ -474,16 +474,12 @@ CMessagePaneView.prototype.onCurrentMessageSubscribe = function ()
 		if (App.isNewTab())
 		{
 			/*jshint onevar: false*/
-			var
-				aAtachments = [],
-				sThumbSessionUid = Date.now().toString()
-			;
+			var aAtachments = [];
 			/*jshint onevar: true*/
 
 			_.each(oMessage.attachments(), _.bind(function (oAttach) {
 				var oCopy = new CAttachmentModel();
 				oCopy.copyProperties(oAttach);
-				oCopy.getInThumbQueue(sThumbSessionUid);
 				aAtachments.push(oCopy);
 			}, this));
 			
