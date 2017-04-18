@@ -74,7 +74,6 @@ CAttachmentModel.prototype.copyProperties = function (oSource)
 	this.thumbnailLoaded(oSource.thumbnailLoaded());
 	this.statusText(oSource.statusText());
 	this.uploaded(oSource.uploaded());
-	this.iframedView(oSource.iframedView());
 	this.oActionsData = oSource.oActionsData;
 	this.actions(oSource.actions());
 	this.thumbUrlInQueue(oSource.thumbUrlInQueue());
@@ -177,37 +176,6 @@ CAttachmentModel.prototype.viewMessageFile = function ()
 };
 
 /**
- * Starts viewing attachment on click.
- */
-CAttachmentModel.prototype.viewCommonFile = function ()
-{
-	var
-		oWin = null,
-		sViewLink = this.getActionUrl('view'),
-		sUrl = UrlUtils.getAppPath() + sViewLink
-	;
-	
-	if (sViewLink.length > 0 && sViewLink !== '#')
-	{
-		sUrl = UrlUtils.getAppPath() + sViewLink;
-
-		if (this.iframedView())
-		{
-			oWin = WindowOpener.openTab(sUrl);
-		}
-		else
-		{
-			oWin = WindowOpener.open(sUrl, sUrl, false);
-		}
-
-		if (oWin)
-		{
-			oWin.focus();
-		}
-	}
-};
-
-/**
  * @param {Object} oResult
  * @param {string} sFileUid
  */
@@ -218,7 +186,6 @@ CAttachmentModel.prototype.fillDataAfterUploadComplete = function (oResult, sFil
 	this.mimeType(oResult.Result.Attachment.MimeType);
 	this.size(oResult.Result.Attachment.Size);
 	this.hash(oResult.Result.Attachment.Hash);
-	this.iframedView(oResult.Result.Attachment.Iframed);
 	this.parseActions(oResult.Result.Attachment);
 };
 
