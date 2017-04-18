@@ -35,13 +35,7 @@ function CSetSystemFoldersPopup()
 	
 	this.defaultOptionsAfterRender = Utils.defaultOptionsAfterRender;
 	
-	this.allowSpamFolderEditing = ko.computed(function () {
-		var
-			oAccount = AccountList.getEdited(),
-			bAllowSpamFolderExtension = !!oAccount && oAccount.extensionExists('AllowSpamFolderExtension')
-		;
-		return bAllowSpamFolderExtension && !Settings.IsMailsuite;
-	}, this);
+	this.bAllowSpamFolderEditing = Settings.AllowSpamFolder;
 }
 
 _.extendOwn(CSetSystemFoldersPopup.prototype, CAbstractPopup.prototype);
@@ -56,7 +50,7 @@ CSetSystemFoldersPopup.prototype.onShow = function ()
 
 	this.sentFolderFullName(oFolderList.sentFolderFullName());
 	this.draftsFolderFullName(oFolderList.draftsFolderFullName());
-	if (this.allowSpamFolderEditing())
+	if (Settings.AllowSpamFolder)
 	{
 		this.spamFolderFullName(oFolderList.spamFolderFullName());
 	}
@@ -94,7 +88,7 @@ CSetSystemFoldersPopup.prototype.apply = function ()
 		oFolderList.draftsFolderFullName(this.draftsFolderFullName());
 		bHasChanges = true;
 	}
-	if (this.allowSpamFolderEditing() && this.spamFolderFullName() !== oFolderList.spamFolderFullName())
+	if (Settings.AllowSpamFolder && this.spamFolderFullName() !== oFolderList.spamFolderFullName())
 	{
 		oFolderList.spamFolderFullName(this.spamFolderFullName());
 		bHasChanges = true;

@@ -47,6 +47,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			'AllowAppRegisterMailto' => $this->getConfig('AllowAppRegisterMailto', false),
 			'AllowChangeInputDirection' => $this->getConfig('AllowChangeInputDirection', false),
 			'AllowExpandFolders' => $this->getConfig('AllowExpandFolders', false),
+			'AllowSpamFolder' => $this->getConfig('AllowSpamFolder', true),
 			'ComposeToolbarOrder' => $this->getConfig('ComposeToolbarOrder', array()),
 			'DefaultFontName' => $this->getConfig('DefaultFontName', 'Tahoma'),
 			'DefaultFontSize' => $this->getConfig('DefaultFontSize', 3),

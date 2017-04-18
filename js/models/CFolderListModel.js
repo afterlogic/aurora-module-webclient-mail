@@ -227,23 +227,7 @@ CFolderListModel.prototype.parseRecursively = function (aRawCollection, oNamedFo
 		oSubFolders = null,
 		aSubfolders = [],
 		oAccount = AccountList.getAccount(this.iAccountId),
-		bDisableManageSubscribe = oAccount && oAccount.extensionExists('DisableManageSubscribe'),
-		fDetectSpamFolder = function () {
-			var oSpamFolder = self.spamFolder();
-			if (!oAccount || !oAccount.extensionExists('AllowSpamFolderExtension'))
-			{
-				oSpamFolder.type(Enums.FolderTypes.User);
-				self.spamFolder(null);
-			}
-		},
-		fAccountExtensionsRequestedSubscribe = function () {
-			if (oAccount && oAccount.extensionsRequested())
-			{
-				fDetectSpamFolder();
-				oAccount.extensionsRequestedSubscription.dispose();
-				oAccount.extensionsRequestedSubscription = undefined;
-			}
-		}
+		bDisableManageSubscribe = oAccount && oAccount.extensionExists('DisableManageSubscribe')
 	;
 
 	sParentFullName = sParentFullName || '';
@@ -293,17 +277,6 @@ CFolderListModel.prototype.parseRecursively = function (aRawCollection, oNamedFo
 					break;
 				case Enums.FolderTypes.Spam:
 					this.spamFolder(oFolder);
-					if (oAccount)
-					{
-						if (oAccount.extensionsRequested())
-						{
-							fDetectSpamFolder();
-						}
-						else
-						{
-							oAccount.extensionsRequestedSubscription = oAccount.extensionsRequested.subscribe(fAccountExtensionsRequestedSubscribe);
-						}
-					}
 					break;
 			}
 

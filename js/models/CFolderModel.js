@@ -22,6 +22,7 @@ var
 	
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	MailCache = null,
+	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	
 	CMessageModel = require('modules/%ModuleName%/js/models/CMessageModel.js'),
 	CUidListModel = require('modules/%ModuleName%/js/models/CUidListModel.js')
@@ -688,6 +689,7 @@ CFolderModel.prototype.parse = function (oData, sParentFullName, bDisableManageS
 {
 	var
 		sName = '',
+		iType = Enums.FolderTypes.User,
 		aFolders = Storage.getData('folderAccordion') || []
 	;
 
@@ -700,7 +702,12 @@ CFolderModel.prototype.parse = function (oData, sParentFullName, bDisableManageS
 		this.fullName(Types.pString(oData.FullNameRaw));
 		this.fullNameHash(Types.pString(oData.FullNameHash));
 		this.sDelimiter = oData.Delimiter;
-		this.type(oData.Type);
+		
+		iType = Types.pInt(oData.Type);
+		if (Settings.AllowSpamFolder || iType !== Enums.FolderTypes.Spam)
+		{
+			this.type(oData.Type);
+		}
 		this.bNamespace = (sNamespaceFolder === this.fullName());
 		
 		this.subscribed(oData.IsSubscribed);

@@ -20,6 +20,7 @@ module.exports = {
 	AllowFetchers: true,
 	AllowIdentities: false,
 	AllowInsertImage: true,
+	AllowSpamFolder: true,
 	AllowThreads: true,
 	AllowZipAttachments: false,
 	AllowFilters: false,
@@ -51,6 +52,7 @@ module.exports = {
 			this.AllowFetchers = !!oAppDataSection.AllowFetchers;
 			this.AllowIdentities = !!oAppDataSection.AllowIdentities;
 			this.AllowInsertImage = !!oAppDataSection.AllowInsertImage;
+			this.AllowSpamFolder = !!oAppDataSection.AllowSpamFolder;
 			this.AllowThreads = !!oAppDataSection.AllowThreads;
 			this.AllowZipAttachments = !!oAppDataSection.AllowZipAttachments;
 			this.AllowFilters = !!oAppDataSection.AllowFilters;

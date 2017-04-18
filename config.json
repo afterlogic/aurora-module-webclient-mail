@@ -11,6 +11,10 @@
 		false,
 		"bool"
 	],
+	"AllowSpamFolder": [
+		true,
+		"bool"
+	],
 	"ComposeToolbarOrder": [
 		["back", "send", "save", "importance", "MailSensitivity", "confirmation", "OpenPgp"],
 		"array"

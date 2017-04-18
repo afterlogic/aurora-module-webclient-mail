@@ -19,6 +19,7 @@ var
 	
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	MailCache = require('modules/%ModuleName%/js/Cache.js'),
+	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	
 	CFolderListView = require('modules/%ModuleName%/js/views/CFolderListView.js'),
 	CMessageListView = require('modules/%ModuleName%/js/views/CMessageListView.js'),
@@ -88,13 +89,11 @@ function CMailView()
 	}, this);
 	
 	this.allowedSpamAction = ko.computed(function () {
-		var oAccount = AccountList.getCurrent();
-		return oAccount ? oAccount.extensionExists('AllowSpamFolderExtension') && !this.isSpamFolder() : false;
+		return Settings.AllowSpamFolder && !this.isSpamFolder();
 	}, this);
 	
 	this.allowedNotSpamAction = ko.computed(function () {
-		var oAccount = AccountList.getCurrent();
-		return oAccount ? oAccount.extensionExists('AllowSpamFolderExtension') && this.isSpamFolder() : false;
+		return Settings.AllowSpamFolder && this.isSpamFolder();
 	}, this);
 	
 	this.isTrashFolder = ko.computed(function () {
