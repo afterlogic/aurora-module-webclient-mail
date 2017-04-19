@@ -1031,13 +1031,11 @@ CComposeView.prototype.onDataAsAttachmentUpload = function (oResponse, oRequest)
 
 CComposeView.prototype.addAttachments = function (aFiles)
 {
-	var oAttach = new CAttachmentModel();
-	
-	_.each(aFiles, function (oFileData) {
+	_.each(aFiles, _.bind(function (oFileData) {
+		var oAttach = new CAttachmentModel();
 		oAttach.parseFromUpload(oFileData);
-	});
-
-	this.attachments.push(oAttach);
+		this.attachments.push(oAttach);
+	}, this));
 };
 
 /**
