@@ -353,13 +353,12 @@ CAccountsSettingsPaneView.prototype.populate = function ()
 {
 	var
 		oAccount = AccountList.getEdited(),
-		bChangePass = !!oAccount && oAccount.extensionExists('AllowChangePasswordExtension'),
 		bCanBeRemoved = !!oAccount && oAccount.canBeRemoved()
 	;
 	
 	if (oAccount)
 	{
-		this.allowProperties(Settings.AllowUsersChangeEmailSettings || !Settings.AllowIdentities || bChangePass || bCanBeRemoved);
+		this.allowProperties(Settings.AllowUsersChangeEmailSettings || !Settings.AllowIdentities || bCanBeRemoved);
 		this.allowFolders(true);
 		this.allowForward(!!Settings.AllowForward);
 		this.allowAutoresponder(!!Settings.AllowAutoresponder);

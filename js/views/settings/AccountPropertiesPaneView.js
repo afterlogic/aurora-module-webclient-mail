@@ -119,7 +119,7 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 	var oAccount = AccountList.getEdited();
 	if (oAccount)
 	{	
-		this.allowChangePassword(!!ChangePasswordPopup);// && oAccount.extensionExists('AllowChangePasswordExtension'));
+		this.allowChangePassword(!!ChangePasswordPopup);
 
 		this.friendlyName(oAccount.friendlyName());
 		this.email(oAccount.email());

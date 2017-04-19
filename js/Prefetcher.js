@@ -31,7 +31,7 @@ Prefetcher.prefetchAccountFilters = function ()
 {
 	var oAccount = AccountList.getCurrent();
 	
-	if (oAccount && !oAccount.filters() && oAccount.extensionExists('AllowSieveFiltersExtension'))
+	if (oAccount && !oAccount.filters() && Settings.AllowFilters)
 	{
 		oAccount.requestFilters();
 	}

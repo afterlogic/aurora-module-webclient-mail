@@ -27,15 +27,6 @@ function CAccountListModel()
 	this.collection = ko.observableArray([]);
 }
 
-CAccountListModel.prototype.initCurrentAccount = function ()
-{
-	var oCurrentAccount = this.getCurrent();
-	if (oCurrentAccount)
-	{
-		oCurrentAccount.requestExtensions();
-	}
-};
-
 /**
  * @param {string} sHash
  */
@@ -202,10 +193,6 @@ CAccountListModel.prototype.initObservables = function (iCurrentId)
 
 	this.currentId = ko.observable(iCurrentId);
 	this.editedId = ko.observable(iCurrentId);
-	
-	this.currentId.subscribe(function() {
-		this.initCurrentAccount();
-	}, this);
 };
 
 /**

@@ -682,10 +682,9 @@ CFolderModel.prototype.initStarredFolder = function (iLevel, sFullName)
 /**
  * @param {Object} oData
  * @param {string} sParentFullName
- * @param {boolean} bDisableManageSubscribe
  * @param {string} sNamespaceFolder
  */
-CFolderModel.prototype.parse = function (oData, sParentFullName, bDisableManageSubscribe, sNamespaceFolder)
+CFolderModel.prototype.parse = function (oData, sParentFullName, sNamespaceFolder)
 {
 	var
 		sName = '',
@@ -726,7 +725,7 @@ CFolderModel.prototype.parse = function (oData, sParentFullName, bDisableManageS
 		}
 
 		this.initSubscriptions(sParentFullName);
-		this.initComputedFields(bDisableManageSubscribe);
+		this.initComputedFields();
 		
 		return oData.SubFolders;
 	}
@@ -769,10 +768,7 @@ CFolderModel.prototype.initSubscriptions = function (sParentFullName)
 	}, this);
 };
 
-/**
- * @param {boolean} bDisableManageSubscribe
- */
-CFolderModel.prototype.initComputedFields = function (bDisableManageSubscribe)
+CFolderModel.prototype.initComputedFields = function ()
 {
 	this.routingHash = ko.computed(function () {
 		// At the moment the application supports only one type of virtual folders - for starred messages.
@@ -840,7 +836,7 @@ CFolderModel.prototype.initComputedFields = function (bDisableManageSubscribe)
 	this.bCanBeSelected = this.bExists && this.bSelectable;
 	
 	this.canSubscribe = ko.computed(function () {
-		return !bDisableManageSubscribe && !this.isSystem() && this.bCanBeSelected;
+		return !this.isSystem() && this.bCanBeSelected;
 	}, this);
 	
 	this.canDelete = ko.computed(function () {

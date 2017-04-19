@@ -217,7 +217,6 @@ CFolderListModel.prototype.parse = function (iAccountId, oData, oNamedFolderList
 CFolderListModel.prototype.parseRecursively = function (aRawCollection, oNamedFolderListOld, iLevel, sParentFullName)
 {
 	var
-		self = this,
 		aParsedCollection = [],
 		iIndex = 0,
 		iLen = 0,
@@ -225,9 +224,7 @@ CFolderListModel.prototype.parseRecursively = function (aRawCollection, oNamedFo
 		oFolderOld = null,
 		sFolderFullName = '',
 		oSubFolders = null,
-		aSubfolders = [],
-		oAccount = AccountList.getAccount(this.iAccountId),
-		bDisableManageSubscribe = oAccount && oAccount.extensionExists('DisableManageSubscribe')
+		aSubfolders = []
 	;
 
 	sParentFullName = sParentFullName || '';
@@ -245,7 +242,7 @@ CFolderListModel.prototype.parseRecursively = function (aRawCollection, oNamedFo
 			sFolderFullName = Types.pString(aRawCollection[iIndex].FullNameRaw);
 			oFolderOld = oNamedFolderListOld[sFolderFullName];
 			oFolder = new CFolderModel(this.iAccountId);
-			oSubFolders = oFolder.parse(aRawCollection[iIndex], sParentFullName, bDisableManageSubscribe, this.sNamespaceFolder);
+			oSubFolders = oFolder.parse(aRawCollection[iIndex], sParentFullName, this.sNamespaceFolder);
 			if (oFolderOld && oFolderOld.hasExtendedInfo() && !oFolder.hasExtendedInfo())
 			{
 				oFolder.setRelevantInformation(oFolderOld.sUidNext, oFolderOld.sHash, 

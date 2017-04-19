@@ -142,18 +142,6 @@ CAccountModel.prototype.updateQuotaParams = function ()
 	}
 };
 
-CAccountModel.prototype.requestExtensions = function ()
-{
-	//Should be executed lately - slows execution of more necessary requests
-//	if (!this.extensionsRequested())
-//	{
-//		this.requireAjax();
-//		Ajax.send('GetExtensions', {
-//			'AccountID': this.id()
-//		}, this.onGetExtensionsResponse, this);
-//	}
-};
-
 /**
  * @param {Object} oResult
  * @param {Object} oRequest
@@ -291,6 +279,7 @@ CAccountModel.prototype.onAccountDeleteResponse = function (oResponse, oRequest)
 
 CAccountModel.prototype.requestFilters = function ()
 {
+	this.requireAjax();
 	Ajax.send('GetFilters', { 'AccountID': this.id() }, this.onGetFiltersResponse, this);
 };
 

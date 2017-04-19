@@ -52,8 +52,7 @@ function CAccountFoldersPaneView()
 	this.setSystemFoldersCommand = Utils.createCommand(this, this.setSystemFolders, this.enableButtons);
 	
 	this.showMovedWithMouseItem = ko.computed(function () {
-		var oAccount = AccountList.getEdited();
-		return oAccount ? !App.isMobile() && !oAccount.extensionExists('DisableFoldersManualSort') : false;
+		return !App.isMobile();
 	}, this);
 	
 	App.subscribeEvent('%ModuleName%::AttemptDeleteNonemptyFolder', _.bind(function () {
