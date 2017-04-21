@@ -72,10 +72,11 @@ module.exports = {
 		}
 	},
 	
-	update: function (iMailsPerPage, bUseThreads, bSaveRepliesToCurrFolder, bAllowChangeInputDirection)
+	update: function (iMailsPerPage, bUseThreads, bAllowAutosaveInDrafts, bSaveRepliesToCurrFolder, bAllowChangeInputDirection)
 	{
 		this.MailsPerPage = Types.pInt(iMailsPerPage);
 		this.useThreads(!!bUseThreads);
+		this.AllowAutosaveInDrafts = !!bAllowAutosaveInDrafts;
 		this.SaveRepliesToCurrFolder = !!bSaveRepliesToCurrFolder;
 		this.AllowChangeInputDirection = !!bAllowChangeInputDirection;
 	}

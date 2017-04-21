@@ -344,7 +344,7 @@ function CComposeView()
 			});
 
 			window.clearInterval(this.iAutosaveInterval);
-
+			
 			if (bAllowAutosave)
 			{
 				this.iAutosaveInterval = window.setInterval(_.bind(this.executeSave, this, true), Settings.AutoSaveIntervalSeconds * 1000);

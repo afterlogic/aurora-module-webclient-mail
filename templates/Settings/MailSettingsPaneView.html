@@ -19,6 +19,15 @@
 			</div>
 			<div class="row">
 				<span class="value offset">
+					<label class="custom_checkbox" data-bind="css: {'checked': allowAutosaveInDrafts}">
+						<span class="icon"></span>
+						<input type="checkbox" id="allowAutosaveInDrafts" data-bind="checked: allowAutosaveInDrafts" />
+					</label>
+					<label for="allowAutosaveInDrafts" data-bind="i18n: {'key': '%MODULENAME%/LABEL_ALLOW_AUTOSAVE'}"></label>
+				</span>
+			</div>
+			<div class="row">
+				<span class="value offset">
 					<label class="custom_checkbox" data-bind="css: {'checked': saveRepliesToCurrFolder}">
 						<span class="icon"></span>
 						<input type="checkbox" id="saveRepliesToCurrFolder" data-bind="checked: saveRepliesToCurrFolder" />
