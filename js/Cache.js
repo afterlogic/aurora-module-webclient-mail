@@ -1128,7 +1128,7 @@ CMailCache.prototype.executeGroupOperation = function (sMethod, aUids, sField, b
 		oParameters = {
 			'Folder': oCurrFolder ? oCurrFolder.fullName() : '',
 			'Uids': aUids.join(','),
-			'SetAction': bSetAction ? 1 : 0
+			'SetAction': bSetAction
 		},
 		iOffset = (this.page() - 1) * Settings.MailsPerPage,
 		iUidsCount = aUids.length,
