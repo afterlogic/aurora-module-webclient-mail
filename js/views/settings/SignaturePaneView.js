@@ -58,7 +58,6 @@ CSignaturePaneView.prototype.init = function ()
 {
 	this.oHtmlEditor.initCrea(this.signature(), false, '');
 	this.oHtmlEditor.setActivitySource(this.useSignatureRadio);
-	this.oHtmlEditor.resize();
 	this.enableImageDragNDrop(this.oHtmlEditor.editorUploader && this.oHtmlEditor.editorUploader.isDragAndDropSupported() && !Browser.ie10AndAbove);
 };
 

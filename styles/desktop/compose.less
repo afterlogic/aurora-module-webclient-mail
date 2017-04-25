@@ -84,8 +84,9 @@
 		}
 		
 		.panel_center {
-			background: none;
-			padding-top: 1px;
+			//background: none;
+			//padding-top: 1px;
+			overflow: hidden;
 		}
 		
 		.panel_bottom {
@@ -213,8 +214,12 @@
 	}
 	
 	.html_editor {
-		margin-left: 11px;
-		margin-right: 11px;
+		//margin-left: 11px;
+		//margin-right: 11px;
+		padding: 0px 11px;
+		display: flex;
+		flex-direction: column;
+		flex-wrap: nowrap;
 	}
 
 	.input.inputosaurus {

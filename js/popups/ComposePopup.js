@@ -149,14 +149,12 @@ CComposePopup.prototype.minimize = function ()
 {
 	this.minimized(true);
 	this.$popupDom.addClass('minimized');
-	this.minHeightRemoveTrigger(true);
 };
 
 CComposePopup.prototype.maximize = function ()
 {
 	this.minimized(false);
 	this.$popupDom.removeClass('minimized');
-	this.minHeightAdjustTrigger(true);
 };
 
 CComposePopup.prototype.saveAndClose = function ()

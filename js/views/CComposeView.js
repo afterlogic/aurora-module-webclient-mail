@@ -383,10 +383,6 @@ function CComposeView()
 	this.closeBecauseSingleCompose = ko.observable(false);
 	this.changedInPreviousWindow = ko.observable(false);
 
-	this.minHeightAdjustTrigger = ko.observable(false).extend({'autoResetToFalse': 105});
-	this.minHeightRemoveTrigger = ko.observable(false).extend({'autoResetToFalse': 105});
-	this.jqContainers = $('.auroraMain:first, .popup.compose_popup');
-	
 	this.hasSomethingToSave = ko.computed(function () {
 		return this.isChanged() && this.isEnableSaving();
 	}, this);
@@ -467,7 +463,7 @@ CComposeView.prototype.initInputosaurus = function (koAddrDom, koAddr, koLockAdd
 			change : _.bind(function (ev) {
 				koLockAddr(true);
 				this.setRecipient(koAddr, ev.target.value);
-				this.minHeightAdjustTrigger(true);
+//				this.minHeightAdjustTrigger(true);
 				koLockAddr(false);
 			}, this),
 			copy: _.bind(function (sVal) {
@@ -497,28 +493,6 @@ CComposeView.prototype.changeHeadersCompressed = function ()
  */
 CComposeView.prototype.onBind = function ()
 {
-	ko.computed(function () {
-		this.minHeightAdjustTrigger();
-		this.minHeightRemoveTrigger();
-		_.delay(function () {
-			$('.compose_popup .panel_content .panels').trigger('resize');
-		}, 200);
-	}, this);
-	
-	this.jqContainers = $('.auroraMain:first, .popup.compose_popup');
-	
-	(this.$popupDom || this.$viewDom).find('.panel_content').on('resize', _.debounce(_.bind(function () {
-		this.oHtmlEditor.resize();
-	}, this), 1));
-	
-	ko.computed(function () {
-		this.visibleBcc();
-		this.visibleCc();
-		this.headersCompressed();
-		
-		this.minHeightAdjustTrigger(true);
-	}, this);
-	
 	ModulesManager.run('SessionTimeoutWeblient', 'registerFunction', [_.bind(this.executeSave, this, false)]);
 
 	this.hotKeysBind();
@@ -814,7 +788,6 @@ CComposeView.prototype.onHide = function ()
 	this.messageUploadAttachmentsStarted(false);
 
 	$html.removeClass('screen-compose').removeClass('screen-compose-cc').removeClass('screen-compose-bcc').removeClass('screen-compose-attachments');
-	this.minHeightRemoveTrigger(true);
 
 	if (this.oJua)
 	{
@@ -921,7 +894,7 @@ CComposeView.prototype.onMessageResponse = function (oMessage)
 		this.focusAfterFilling();
 	}, this));
 
-	this.minHeightAdjustTrigger(true);
+//	this.minHeightAdjustTrigger(true);
 };
 
 /**

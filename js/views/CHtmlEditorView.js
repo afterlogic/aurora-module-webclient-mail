@@ -151,32 +151,6 @@ CHtmlEditorView.prototype.hasOpenedPopup = function ()
 	return this.visibleInsertLinkPopup() || this.visibleLinkPopup() || this.visibleImagePopup() || this.visibleInsertImagePopup() || this.visibleFontColorPopup();
 };
 	
-CHtmlEditorView.prototype.resize = function ()
-{
-	var
-		$htmlEditor = $(this.htmlEditorDom()),
-		$parent = $htmlEditor.parent(),
-		$workarea = $(this.workareaDom()),
-		$toolbar = $(this.toolbarDom()),
-
-		iWaWidthMargins = $workarea.outerWidth(true) - $workarea.width(),
-		iHeWidthMargins = $htmlEditor.outerWidth(true) - $htmlEditor.width(),
-		iHeWidth = $parent.width() - iHeWidthMargins,
-
-		iWaHeightMargins = $workarea.outerHeight(true) - $workarea.height(),
-		iHeHeight = $parent.height()
-	;
-	
-	if (iHeWidth > 0)
-	{
-		$htmlEditor.width(iHeWidth);
-		$workarea.width(iHeWidth - iWaWidthMargins);
-
-		$htmlEditor.height(iHeHeight);
-		$workarea.height(iHeHeight - iWaHeightMargins - $toolbar.outerHeight());
-	}
-};
-	
 CHtmlEditorView.prototype.init = function ()
 {
 	$(document.body).on('click', _.bind(function () {
