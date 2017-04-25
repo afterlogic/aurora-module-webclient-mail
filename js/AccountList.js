@@ -328,7 +328,7 @@ CAccountListModel.prototype.onGetFetchersResponse = function (oResponse, oReques
 
 CAccountListModel.prototype.populateIdentities = function ()
 {
-	if (Settings.AllowIdentities && this.collection().length > 1)
+	if (Settings.AllowIdentities && this.collection().length >= 1)
 	{
 		Ajax.send('GetIdentities', null, this.onGetIdentitiesResponse, this);
 	}
