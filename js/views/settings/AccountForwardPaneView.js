@@ -65,7 +65,7 @@ CAccountForwardPaneView.prototype.getParametersForSave = function ()
 	var oAccount = AccountList.getEdited();
 	return {
 		'AccountID': oAccount.id(),
-		'Enable': this.enable() ? '1' : '0',
+		'Enable': this.enable(),
 		'Email': this.email()
 	};
 };

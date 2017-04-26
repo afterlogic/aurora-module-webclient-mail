@@ -66,7 +66,7 @@ CAccountAutoresponderPaneView.prototype.getParametersForSave = function ()
 {
 	return {
 		'AccountID': AccountList.editedId(),
-		'Enable': this.enable() ? '1' : '0',
+		'Enable': this.enable(),
 		'Subject': this.subject(),
 		'Message': this.message()
 	};
