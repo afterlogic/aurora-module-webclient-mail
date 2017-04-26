@@ -365,13 +365,14 @@ CMessagePaneView.prototype.notifySender = function ()
 {
 	if (this.currentMessage() && this.currentMessage().readingConfirmationAddressee() !== '')
 	{
-		Ajax.send('SendConfirmationMessage', {
-			'ConfirmationAddressee': this.currentMessage().readingConfirmationAddressee(),
+		var sText = TextUtils.i18n('%MODULENAME%/LABEL_RETURN_RECEIPT_MAIL_TEXT', {
+			'EMAIL': AccountList.getEmail(),
+			'SUBJECT': this.subject()
+		}).replace(/\\r\\n/g, '\n');
+		Ajax.send('SendMessage', {
+			'To': this.currentMessage().readingConfirmationAddressee(),
 			'Subject': TextUtils.i18n('%MODULENAME%/LABEL_RETURN_RECEIPT_MAIL_SUBJECT'),
-			'Text': TextUtils.i18n('%MODULENAME%/LABEL_RETURN_RECEIPT_MAIL_TEXT', {
-				'EMAIL': AccountList.getEmail(),
-				'SUBJECT': this.subject()
-			}),
+			'Text': sText,
 			'ConfirmFolder': this.currentMessage().folder(),
 			'ConfirmUid': this.currentMessage().uid()
 		});
