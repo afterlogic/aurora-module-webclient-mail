@@ -22,12 +22,10 @@ module.exports = {
 	AllowInsertImage: true,
 	AllowSpamFolder: true,
 	AllowThreads: true,
-	AllowZipAttachments: false,
 	AllowFilters: false,
 	AllowForward: false,
 	AllowAutoresponder: false,
 	AutoSaveIntervalSeconds: 60,
-	AutosignOutgoingEmails: false,
 	ComposeToolbarOrder: ['back', 'send', 'save', 'importance', 'MailSensitivity', 'confirmation', 'OpenPgp'],
 	DefaultFontName: 'Tahoma',
 	DefaultFontSize: 3,
@@ -54,12 +52,10 @@ module.exports = {
 			this.AllowInsertImage = !!oAppDataSection.AllowInsertImage;
 			this.AllowSpamFolder = !!oAppDataSection.AllowSpamFolder;
 			this.AllowThreads = !!oAppDataSection.AllowThreads;
-			this.AllowZipAttachments = !!oAppDataSection.AllowZipAttachments;
 			this.AllowFilters = !!oAppDataSection.AllowFilters;
 			this.AllowForward = !!oAppDataSection.AllowForward;
 			this.AllowAutoresponder = !!oAppDataSection.AllowAutoresponder;
 			this.AutoSaveIntervalSeconds = Types.pInt(oAppDataSection.AutoSaveIntervalSeconds);
-			this.AutosignOutgoingEmails = !!oAppDataSection.AutosignOutgoingEmails;
 			this.ComposeToolbarOrder = Types.isNonEmptyArray(oAppDataSection.ComposeToolbarOrder) ? oAppDataSection.ComposeToolbarOrder : [];
 			this.DefaultFontName = Types.pString(oAppDataSection.DefaultFontName) || this.DefaultFontName;
 			this.DefaultFontSize = Types.pInt(oAppDataSection.DefaultFontSize) || this.DefaultFontSize;

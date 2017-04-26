@@ -219,7 +219,6 @@ function CMessageModel()
 	this.foundCids = ko.observableArray([]);
 	this.attachments = ko.observableArray([]);
 	this.usesAttachmentString = false;
-	this.sAllAttachmentsHash = '';
 	this.safety = ko.observable(false);
 	this.sourceHeaders = ko.observable('');
 
@@ -659,40 +658,6 @@ CMessageModel.prototype.openThread = function ()
 				MailCache.showOpenedThreads(sFolder);
 			}, 500);
 		}
-	}
-};
-
-CMessageModel.prototype.downloadAllAttachments = function ()
-{
-	if (this.sAllAttachmentsHash !== '')
-	{
-		UrlUtils.downloadByUrl(FilesUtils.getDownloadLink(Settings.ServerModuleName, this.sAllAttachmentsHash));
-	}
-	else
-	{
-		var
-			aNotInlineAttachments = _.filter(this.attachments(), function (oAttach) {
-				return !oAttach.linked();
-			}),
-			aHashes = _.map(aNotInlineAttachments, function (oAttach) {
-				return oAttach.hash();
-			})
-		;
-
-		Ajax.send('GetAttachmentsZipHash', { 'Hashes': aHashes }, this.onGetAttachmentsZipHashResponse, this);
-	}
-};
-
-/**
- * @param {Object} oResponse
- * @param {Object} oRequest
- */
-CMessageModel.prototype.onGetAttachmentsZipHashResponse = function (oResponse, oRequest)
-{
-	if (oResponse.Result)
-	{
-		this.sAllAttachmentsHash = Types.pString(oResponse.Result);
-		UrlUtils.downloadByUrl(FilesUtils.getDownloadLink(Settings.ServerModuleName, this.sAllAttachmentsHash));
 	}
 };
 

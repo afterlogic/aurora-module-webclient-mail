@@ -217,15 +217,11 @@ function CMessagePaneView()
 	}, this);
 	
 	this.allAttachmentsDownloadMethods = ko.observableArray([]);
-	this.visibleDownloadAllAttachments = ko.computed(function () {
-		return Settings.AllowZipAttachments && this.notInlineAttachments().length > 1;
-	}, this);
 	this.visibleDownloadAllAttachmentsSeparately = ko.computed(function () {
 		return this.notInlineAttachments().length > 1;
 	}, this);
 	this.visibleExtendedDownload = ko.computed(function () {
-		return !App.isMobile() && (this.visibleDownloadAllAttachments() 
-				|| this.visibleDownloadAllAttachmentsSeparately() 
+		return !App.isMobile() && (this.visibleDownloadAllAttachmentsSeparately() 
 				|| this.allAttachmentsDownloadMethods().length > 0);
 	}, this);
 	App.broadcastEvent('%ModuleName%::AddAllAttachmentsDownloadMethod', _.bind(function (oMethod) {
@@ -909,14 +905,6 @@ CMessagePaneView.prototype.startAutosaveTimer = function ()
 		{
 			this.autoSaveTimer = window.setTimeout(fSave, Settings.AutoSaveIntervalSeconds * 1000);
 		}
-	}
-};
-
-CMessagePaneView.prototype.downloadAllAttachments = function ()
-{
-	if (this.currentMessage())
-	{
-		this.currentMessage().downloadAllAttachments();
 	}
 };
 
