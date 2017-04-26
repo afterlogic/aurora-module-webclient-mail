@@ -463,7 +463,6 @@ CComposeView.prototype.initInputosaurus = function (koAddrDom, koAddr, koLockAdd
 			change : _.bind(function (ev) {
 				koLockAddr(true);
 				this.setRecipient(koAddr, ev.target.value);
-//				this.minHeightAdjustTrigger(true);
 				koLockAddr(false);
 			}, this),
 			copy: _.bind(function (sVal) {
@@ -546,6 +545,7 @@ CComposeView.prototype.onShow = function ()
 	var sFocusedField = this.focusedField();
 
 	$(this.splitterDom()).trigger('resize');
+	$(this.bottomPanel()).trigger('resize');
 
 	this.oHtmlEditor.initCrea(this.textBody(), this.plainText(), '7');
 	this.oHtmlEditor.commit();
@@ -893,8 +893,6 @@ CComposeView.prototype.onMessageResponse = function (oMessage)
 	_.defer(_.bind(function () {
 		this.focusAfterFilling();
 	}, this));
-
-//	this.minHeightAdjustTrigger(true);
 };
 
 /**
