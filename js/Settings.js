@@ -3,7 +3,9 @@
 var
 	ko = require('knockout'),
 	
-	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js')
+	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
+	
+	App = require('%PathToCoreWebclientModule%/js/App.js')
 ;
 
 module.exports = {
@@ -37,6 +39,8 @@ module.exports = {
 	SaveRepliesToCurrFolder: false,
 	useThreads: ko.observable(true),
 	
+	userAccountsCount: ko.observable(0),
+	
 	init: function (oAppDataSection) {
 		if (oAppDataSection)
 		{
@@ -66,6 +70,8 @@ module.exports = {
 			this.SaveRepliesToCurrFolder = !!oAppDataSection.SaveRepliesToCurrFolder;
 			this.useThreads(!!oAppDataSection.UseThreads);
 		}
+		
+		App.registerUserAccountsCount(this.userAccountsCount);
 	},
 	
 	update: function (iMailsPerPage, bUseThreads, bAllowAutosaveInDrafts, bSaveRepliesToCurrFolder, bAllowChangeInputDirection)

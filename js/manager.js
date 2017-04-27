@@ -170,6 +170,14 @@ module.exports = function (oAppData) {
 						sTabName
 					]);
 				}
+				
+				AccountList.collection.subscribe(function (aList) {
+					var aAuthAcconts = _.filter(aList, function (oAccount) {
+						return oAccount.useToAuthorize();
+					});
+					
+					Settings.userAccountsCount(aAuthAcconts.length);
+				}, this);
 			},
 			getScreens: function () {
 				return oScreens;
