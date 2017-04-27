@@ -36,7 +36,6 @@ function CAccountPropertiesPaneView()
 	this.bAllowChangeEmailSettings =  Settings.AllowChangeEmailSettings;
 	this.bAllowIdentities = Settings.AllowIdentities;
 	
-	this.isInternal = ko.observable(true);
 	this.useToAuthorize = ko.observable(false);
 	this.canBeUsedToAuthorize = ko.observable(false);
 	this.canBeRemoved = ko.observable('');
@@ -127,7 +126,6 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 		this.incomingPassword(this.sFakePass);
 		this.oServerPairPropertiesView.setServer(oAccount.oServer);
 		
-		this.isInternal(oAccount.bInternal);
 		this.useToAuthorize(oAccount.useToAuthorize());
 		this.canBeUsedToAuthorize(oAccount.canBeUsedToAuthorize());
 		this.canBeRemoved(oAccount.canBeRemoved());
@@ -143,7 +141,6 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 		
 		this.oServerPairPropertiesView.clear();
 		
-		this.isInternal(true);
 		this.useToAuthorize(true);
 		this.canBeUsedToAuthorize(false);
 		this.canBeRemoved(false);

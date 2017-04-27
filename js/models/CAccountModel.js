@@ -39,7 +39,6 @@ function CAccountModel(oData)
 	this.useSignature = ko.observable(!!oData.UseSignature);
 	this.serverId = ko.observable(Types.pInt(oData.ServerId));
 	this.oServer = new CServerModel(oData.Server);
-	this.bInternal = !!oData.IsInternal; // If **true**, the account is hosted by bundled mailserver.
 	this.useToAuthorize = ko.observable(!!oData.UseToAuthorize);
 	this.canBeUsedToAuthorize = ko.observable(!!oData.CanBeUsedToAuthorize);
 	
@@ -69,7 +68,7 @@ function CAccountModel(oData)
 	this.extensionsRequested = ko.observable(true);
 	
 	this.canBeRemoved = ko.computed(function () {
-		return !this.bInternal && Settings.AllowChangeEmailSettings;
+		return Settings.AllowChangeEmailSettings;
 	}, this);
 }
 
