@@ -60,7 +60,6 @@ function CMessageModel()
 	this.cc = ko.observable('');
 	this.oBcc = new CAddressListModel();
 	this.bcc = ko.observable('');
-	this.oSender = new CAddressListModel();
 	this.oReplyTo = new CAddressListModel();
 	
 	this.seen = ko.observable(false);
@@ -415,7 +414,6 @@ CMessageModel.prototype.parse = function (oData, iAccountId, bThreadPart, bTrust
 		this.fillFromOrToText();
 		this.oCc.parse(oData.Cc);
 		this.oBcc.parse(oData.Bcc);
-		this.oSender.parse(oData.Sender);
 		this.oReplyTo.parse(oData.ReplyTo);
 		
 		this.fullDate(this.oDateModel.getFullDate());
@@ -435,7 +433,7 @@ CMessageModel.prototype.parse = function (oData, iAccountId, bThreadPart, bTrust
 			}, this));
 		}
 		
-		this.importance(Types.pInt(oData.Priority));
+		this.importance(Types.pInt(oData.Importance));
 		if (!Enums.has('Importance', this.importance()))
 		{
 			this.importance(Enums.Importance.Normal);
