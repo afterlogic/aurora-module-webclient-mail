@@ -1,13 +1,8 @@
 {
 	"name": "afterlogic/aurora-module-webclient-mail",
-    	"version":"0.1.0",
-    	"type": "aurora-module",
-    	"dist":{
-               "url":"https://github.com/afterlogic/aurora-module-webclient-mail/archive/master.zip",
-                "type":"zip"
-        },
+	"type": "aurora-module",
 	"require":{
-		"afterlogic/aurora-framework": "~0.1"
+		"afterlogic/aurora-framework": "~0.4"
 	},
 	"extra": {
 		"installer-name": "MailWebclient"
