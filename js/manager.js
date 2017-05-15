@@ -171,13 +171,13 @@ module.exports = function (oAppData) {
 					]);
 				}
 				
-				AccountList.collection.subscribe(function (aList) {
-					var aAuthAcconts = _.filter(aList, function (oAccount) {
+				ko.computed(function () {
+					var aAuthAcconts = _.filter(AccountList.collection(), function (oAccount) {
 						return oAccount.useToAuthorize();
 					});
 					
 					Settings.userAccountsCount(aAuthAcconts.length);
-				}, this);
+				}, this)
 			},
 			getScreens: function () {
 				return oScreens;
