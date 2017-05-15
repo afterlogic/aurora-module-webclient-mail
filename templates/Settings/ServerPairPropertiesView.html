@@ -29,3 +29,19 @@
 		<label class="label" for="add_new_account_mail_out_auth" data-bind="i18n: {'key': '%MODULENAME%/LABEL_USE_SMTP_AUTHENTICATION'}"></label>
 	</div>	
 </div>
+
+<div class="row" data-bind="visible: bEditMode">
+	<div>
+		<span class="label"></span>
+		<label class="custom_checkbox" data-bind="css: {'checked': enableSieve}">
+			<span class="icon"></span>
+			<input type="checkbox" id="enable_sieve" data-bind="checked: enableSieve" />
+		</label>
+		<label class="label" for="enable_sieve" data-bind="i18n: {'key': '%MODULENAME%/LABEL_ENABLE_SIEVE'}"></label>
+	</div>	
+</div>
+
+<div class="row" data-bind="visible: bEditMode">
+	<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_SIEVE_PORT'}"></span>
+	<input type="number" class="input" data-bind="value: sievePort" />
+</div>

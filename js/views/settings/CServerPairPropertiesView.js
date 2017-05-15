@@ -48,6 +48,8 @@ function CServerPairPropertiesView(sPairId, bEditMode)
 			this.outgoingUseAuth(oSelectedServer.bOutgoingUseAuth);
 			this.outgoingUseAuth.enable(this.bEditMode);
 			this.domains(oSelectedServer.sDomains);
+			this.enableSieve(oSelectedServer.bEnableSieve);
+			this.sievePort(oSelectedServer.iSievePort);
 		}
 		else
 		{
@@ -59,6 +61,8 @@ function CServerPairPropertiesView(sPairId, bEditMode)
 			this.outgoingUseAuth(this.oLastEditableServer.bOutgoingUseAuth);
 			this.outgoingUseAuth.enable(true);
 			this.domains('');
+			this.enableSieve(false);
+			this.sievePort(2000);
 		}
 		
 		this.setCurrentValues();
@@ -72,6 +76,8 @@ function CServerPairPropertiesView(sPairId, bEditMode)
 	this.outgoingUseAuth = ko.observable(true);
 	this.outgoingUseAuth.enable = ko.observable(true);
 	this.domains = ko.observable('');
+	this.enableSieve = ko.observable(false);
+	this.sievePort = ko.observable(2000);
 	
 	this.currentValues = ko.observable('');
 	
@@ -162,7 +168,9 @@ CServerPairPropertiesView.prototype.setCurrentValues = function ()
 			this.oOutgoing.server(),
 			this.oOutgoing.ssl(),
 			this.outgoingUseAuth(),
-			this.domains()
+			this.domains(),
+			this.enableSieve(),
+			this.sievePort()
 		]
 	;
 	
@@ -195,7 +203,9 @@ CServerPairPropertiesView.prototype.getParametersForSave = function ()
 		'OutgoingPort': this.oOutgoing.getIntPort(),
 		'OutgoingUseSsl': this.oOutgoing.ssl(),
 		'OutgoingUseAuth': this.outgoingUseAuth(),
-		'Domains': this.domains()
+		'Domains': this.domains(),
+		'EnableSieve': this.enableSieve(),
+		'SievePort': this.sievePort()
 	};
 };
 

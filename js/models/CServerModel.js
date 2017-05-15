@@ -16,6 +16,8 @@ function CServerModel(oServer)
 	this.iOutgoingPort = oServer ? Types.pInt(oServer.OutgoingPort) : 25;
 	this.bOutgoingUseSsl = oServer ? !!oServer.OutgoingUseSsl : false;
 	this.sDomains = oServer ? Types.pString(oServer.Domains) : '';
+	this.bEnableSieve = oServer ? !!oServer.EnableSieve : false;
+	this.iSievePort = oServer && oServer.SievePort ? Types.pInt(oServer.SievePort) : 2000;
 }
 
 module.exports = CServerModel;
