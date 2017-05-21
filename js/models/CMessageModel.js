@@ -461,6 +461,7 @@ CMessageModel.prototype.parse = function (oData, iAccountId, bThreadPart, bTrust
 			sPlain = Types.pString(oData.Plain);
 			if (sHtml !== '')
 			{
+				this.textRaw(oData.HtmlRaw);
 				this.text(sHtml);
 				this.isPlain(false);
 			}
