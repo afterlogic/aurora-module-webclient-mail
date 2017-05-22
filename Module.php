@@ -33,7 +33,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 	
 	public function GetSettings()
 	{
-		\Aurora\System\Api::checkUserRoleIsAtLeast(\EUserRole::Anonymous);
+		\Aurora\System\Api::checkUserRoleIsAtLeast(\Aurora\System\Enums\UserRole::Anonymous);
 		
 		$aSettings = array(
 			'AllowAppRegisterMailto' => $this->getConfig('AllowAppRegisterMailto', false),
@@ -50,7 +50,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 		);
 		
 		$oUser = \Aurora\System\Api::getAuthenticatedUser();
-		if ($oUser && $oUser->Role === \EUserRole::NormalUser)
+		if ($oUser && $oUser->Role === \Aurora\System\Enums\UserRole::NormalUser)
 		{
 			if (isset($oUser->{$this->GetName().'::AllowChangeInputDirection'}))
 			{
@@ -71,12 +71,12 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 	
 	public function onAfterUpdateSettings($Args, &$Result)
 	{
-		\Aurora\System\Api::checkUserRoleIsAtLeast(\EUserRole::NormalUser);
+		\Aurora\System\Api::checkUserRoleIsAtLeast(\Aurora\System\Enums\UserRole::NormalUser);
 		
 		$oUser = \Aurora\System\Api::getAuthenticatedUser();
 		if ($oUser)
 		{
-			if ($oUser->Role === \EUserRole::NormalUser)
+			if ($oUser->Role === \Aurora\System\Enums\UserRole::NormalUser)
 			{
 				$oCoreDecorator = \Aurora\System\Api::GetModuleDecorator('Core');
 				if (isset($Args['MailsPerPage']))
@@ -93,7 +93,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 				}
 				return $oCoreDecorator->UpdateUserObject($oUser);
 			}
-			if ($oUser->Role === \EUserRole::SuperAdmin)
+			if ($oUser->Role === \Aurora\System\Enums\UserRole::SuperAdmin)
 			{
 				if (isset($Args['MailsPerPage']))
 				{
