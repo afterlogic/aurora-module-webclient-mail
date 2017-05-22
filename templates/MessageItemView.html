@@ -17,7 +17,7 @@
 			<span class="size" data-bind="text: friendlySize()"></span>
 			<span class="date" data-bind="text: date"></span>
 			<span class="attachments has_attachments" data-bind="visible: hasAttachments(),
-				css: {'has_ical_attachment': showCalendarIcon(), 'has_vcard_attachment': hasVcardAttachment()}"></span>
+				css: {'has_ical_attachment': hasIcalAttachment(), 'has_vcard_attachment': hasVcardAttachment()}"></span>
 			<span class="marker"></span>
 			<span class="from fadeout">
 				<span data-bind="text: fromOrToText()"></span>

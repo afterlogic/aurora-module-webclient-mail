@@ -71,9 +71,6 @@ function CMessageModel()
 	this.hasAttachments = ko.observable(false);
 	this.hasIcalAttachment = ko.observable(false);
 	this.hasVcardAttachment = ko.observable(false);
-	this.showCalendarIcon = ko.computed(function () {
-		return false;//AppData.User.AllowCalendar && this.hasIcalAttachment();
-	}, this);
 
 	this.folderObject = ko.computed(function () {
 		this.requireMailCache();
