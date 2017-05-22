@@ -33,6 +33,8 @@ function CMailView()
 {
 	CAbstractScreenView.call(this, '%ModuleName%');
 	
+	App.broadcastEvent('%ModuleName%::ConstructView::before', {'Name': this.ViewConstructorName, 'View': this, 'MailCache': MailCache});
+	
 	this.browserTitle = ko.computed(function () {
 		return AccountList.getEmail() + ' - ' + TextUtils.i18n('%MODULENAME%/HEADING_BROWSER_TAB');
 	});
@@ -44,8 +46,9 @@ function CMailView()
 	
 	this.oFolderList = new CFolderListView();
 	this.oMessageList = new CMessageListView(this.openMessageInNewWindowBound);
-	this.oMessagePane = MessagePaneView;
-	MessagePaneView.openMessageInNewWindowBound = this.openMessageInNewWindowBound;
+	
+	this.messagePane = ko.observable(MessagePaneView);
+	this.messagePane().openMessageInNewWindowBound = this.openMessageInNewWindowBound;
 
 	this.isEnableGroupOperations = this.oMessageList.isEnableGroupOperations;
 
@@ -117,6 +120,23 @@ _.extendOwn(CMailView.prototype, CAbstractScreenView.prototype);
 CMailView.prototype.ViewTemplate = '%ModuleName%_MailView';
 CMailView.prototype.ViewConstructorName = 'CMailView';
 
+CMailView.prototype.setCustomPreviewPane = function (sModuleName, oPreviewPane)
+{
+	if (this.messagePane().__customModuleName !== sModuleName)
+	{
+		oPreviewPane.__customModuleName = sModuleName;
+		this.messagePane(oPreviewPane);
+	}
+};
+
+CMailView.prototype.removeCustomPreviewPane = function (sModuleName)
+{
+	if (this.messagePane().__customModuleName === sModuleName)
+	{
+		this.messagePane(MessagePaneView);
+	}
+};
+
 CMailView.prototype.executeCompose = function ()
 {
 	ComposeUtils.composeMessage();
@@ -150,7 +170,10 @@ CMailView.prototype.openMessageInNewWindow = function (oMessage)
 		else
 		{
 			sHash = Routing.buildHashFromArray(LinksUtils.getViewMessage(sFolder, sUid));
-			MessagePaneView.passReplyDataToNewTab(oMessage.sUniq);
+			if (_.isFunction(this.messagePane().passReplyDataToNewTab))
+			{
+				this.messagePane().passReplyDataToNewTab(oMessage.sUniq);
+			}
 		}
 
 		WindowOpener.openTab('?message-newtab' + sHash);
@@ -234,19 +257,28 @@ CMailView.prototype.onRoute = function (aParams)
 	AccountList.changeCurrentAccountByHash(oParams.AccountHash);
 	
 	this.oMessageList.onRoute(aParams);
-	MessagePaneView.onRoute(aParams);
+	if (_.isFunction(this.messagePane().onRoute))
+	{
+		this.messagePane().onRoute(aParams, oParams);
+	}
 };
 
 CMailView.prototype.onShow = function ()
 {
 	this.oMessageList.onShow();
-	MessagePaneView.onShow();
+	if (_.isFunction(this.messagePane().onShow))
+	{
+		this.messagePane().onShow();
+	}
 };
 
 CMailView.prototype.onHide = function ()
 {
 	this.oMessageList.onHide();
-	MessagePaneView.onHide();
+	if (_.isFunction(this.messagePane().onHide))
+	{
+		this.messagePane().onHide();
+	}
 };
 
 CMailView.prototype.onBind = function ()
@@ -254,7 +286,10 @@ CMailView.prototype.onBind = function ()
 	var self = this;
 
 	this.oMessageList.onBind(this.$viewDom);
-	MessagePaneView.onBind(this.$viewDom);
+	if (_.isFunction(this.messagePane().onBind))
+	{
+		this.messagePane().onBind(this.$viewDom);
+	}
 
 	$(this.domFoldersMoveTo()).on('click', 'span.folder', function (oEvent) {
 		if (self.folderList().currentFolderFullName() !== $(this).data('folder')) {
@@ -297,6 +332,11 @@ CMailView.prototype.hotKeysBind = function ()
 			Routing.setHash(LinksUtils.getCompose());
 		}
 	},this));
+};
+
+CMailView.prototype.routeMessageView = function (sFolderName, iUid)
+{
+	Routing.setHash(LinksUtils.getMailbox(sFolderName, this.oMessageList.oPageSwitcher.currentPage(), iUid));
 };
 
 /**

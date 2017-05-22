@@ -316,11 +316,6 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 		this.createDatePickerObject(this.searchDateEndDom());
 	}, this), 1000);
 	
-	var aAddingInfo = TextUtils.i18n('%MODULENAME%/INFO_ADDING_NEW_ACCOUNT').split(/%STARTLINK%|%ENDLINK%/);
-	this.sAddingInfo1 = aAddingInfo.length > 0 ? aAddingInfo[0] : '';
-	this.sAddingInfo2 = aAddingInfo.length > 1 ? aAddingInfo[1] : '';
-	this.sAddingInfo3 = aAddingInfo.length > 2 ? aAddingInfo[2] : '';
-	
 	this.sSearchViewTemplate = App.isMobile() ? '%ModuleName%_SearchMobileView' : '%ModuleName%_SearchView';
 }
 
