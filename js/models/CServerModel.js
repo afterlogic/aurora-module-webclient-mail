@@ -11,7 +11,7 @@ function CServerModel(oServer)
 	this.sIncomingServer = oServer ? Types.pString(oServer.IncomingServer) : '';
 	this.iIncomingPort = oServer ? Types.pInt(oServer.IncomingPort) : 143;
 	this.bIncomingUseSsl = oServer ? !!oServer.IncomingUseSsl : false;
-	this.bOutgoingUseAuth = oServer ? !!oServer.OutgoingUseAuth : false;
+	this.bOutgoingUseAuth = oServer ? !!oServer.OutgoingUseAuth : true;
 	this.sOutgoingServer = oServer ? Types.pString(oServer.OutgoingServer) : '';
 	this.iOutgoingPort = oServer ? Types.pInt(oServer.OutgoingPort) : 25;
 	this.bOutgoingUseSsl = oServer ? !!oServer.OutgoingUseSsl : false;
