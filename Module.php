@@ -22,9 +22,9 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 	 */
 	public function init() {
 		$this->extendObject('CUser', array(
-				'AllowChangeInputDirection'	=> array('bool', false),
-				'MailsPerPage'				=> array('int', 20),
-				'SaveRepliesToCurrFolder'	=> array('bool', false),
+				'AllowChangeInputDirection'	=> array('bool', $this->getConfig('AllowChangeInputDirection', false)),
+				'MailsPerPage'				=> array('int', $this->getConfig('MailsPerPage', 20)),
+				'SaveRepliesToCurrFolder'	=> array('bool', $this->getConfig('SaveRepliesToCurrFolder', false)),
 			)
 		);
 		
