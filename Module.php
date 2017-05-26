@@ -78,7 +78,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 		{
 			if ($oUser->Role === \Aurora\System\Enums\UserRole::NormalUser)
 			{
-				$oCoreDecorator = \Aurora\System\Api::GetModuleDecorator('Core');
+				$oCoreDecorator = \Aurora\Modules\Core\Module::Decorator();
 				if (isset($Args['MailsPerPage']))
 				{
 					$oUser->{$this->GetName().'::MailsPerPage'} = $Args['MailsPerPage'];
