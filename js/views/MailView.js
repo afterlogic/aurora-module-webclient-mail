@@ -53,7 +53,26 @@ function CMailView()
 	this.isEnableGroupOperations = this.oMessageList.isEnableGroupOperations;
 
 	this.composeLink = ko.observable(Routing.buildHashFromArray(LinksUtils.getCompose()));
-	this.composeCommand = Utils.createCommand(this, this.executeCompose);
+	this.sCustomBigButtonModule = '';
+	this.fCustomBigButtonHandler = null;
+	this.customBigButtonText = ko.observable('');
+	this.bigButtonCommand = Utils.createCommand(this, function () {
+		if (_.isFunction(this.fCustomBigButtonHandler))
+		{
+			this.fCustomBigButtonHandler();
+		}
+		else
+		{
+			this.executeCompose();
+		}
+	});
+	this.bigButtonText = ko.computed(function () {
+		if (this.customBigButtonText() !== '')
+		{
+			return this.customBigButtonText();
+		}
+		return TextUtils.i18n('%MODULENAME%/ACTION_NEW_MESSAGE');
+	}, this);
 
 	this.checkMailCommand = Utils.createCommand(this, this.executeCheckMail);
 	this.checkMailIndicator = ko.observable(true).extend({ throttle: 50 });
@@ -134,6 +153,23 @@ CMailView.prototype.removeCustomPreviewPane = function (sModuleName)
 	if (this.messagePane().__customModuleName === sModuleName)
 	{
 		this.messagePane(MessagePaneView);
+	}
+};
+
+CMailView.prototype.setCustomBigButton = function (sModuleName, fHandler, sText)
+{
+	this.sCustomBigButtonModule = sModuleName;
+	this.fCustomBigButtonHandler = fHandler;
+	this.customBigButtonText(sText);
+};
+
+CMailView.prototype.removeCustomBigButton = function (sModuleName)
+{
+	if (this.sCustomBigButtonModule === sModuleName)
+	{
+		this.sCustomBigButtonModule = '';
+		this.fCustomBigButtonHandler = null;
+		this.customBigButtonText('');
 	}
 };
 
