@@ -6,6 +6,7 @@ var
 	ko = require('knockout'),
 	
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
+	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	Utils = require('%PathToCoreWebclientModule%/js/utils/Common.js'),
 	
 	App = require('%PathToCoreWebclientModule%/js/App.js'),
@@ -79,9 +80,17 @@ function CMailView()
 	ko.computed(function () {
 		this.checkMailIndicator(MailCache.checkMailStarted() || MailCache.messagesLoading());
 	}, this);
+	this.customModulesDisabledMark = ko.observableArray([]);
+	this.visibleMarkTool = ko.computed(function () {
+		return Types.isNonEmptyArray(this.customModulesDisabledMark());
+	}, this);
 	this.markAsReadCommand = Utils.createCommand(this.oMessageList, this.oMessageList.executeMarkAsRead, this.isEnableGroupOperations);
 	this.markAsUnreadCommand = Utils.createCommand(this.oMessageList, this.oMessageList.executeMarkAsUnread, this.isEnableGroupOperations);
 	this.markAllReadCommand = Utils.createCommand(this.oMessageList, this.oMessageList.executeMarkAllRead);
+	this.customModulesDisabledMove = ko.observableArray([]);
+	this.visibleMoveTool = ko.computed(function () {
+		return Types.isNonEmptyArray(this.customModulesDisabledMove());
+	}, this);
 	this.moveToFolderCommand = Utils.createCommand(this, function () {}, this.isEnableGroupOperations);
 //	this.copyToFolderCommand = Utils.createCommand(this, function () {}, this.isEnableGroupOperations);
 	this.deleteCommand = Utils.createCommand(this.oMessageList, this.oMessageList.executeDelete, this.isEnableGroupOperations);
@@ -110,8 +119,9 @@ function CMailView()
 		return this.folderList().currentFolderType() === Enums.FolderTypes.Spam;
 	}, this);
 	
+	this.customModulesDisabledSpam = ko.observableArray([]);
 	this.allowedSpamAction = ko.computed(function () {
-		return Settings.AllowSpamFolder && !this.isSpamFolder();
+		return Settings.AllowSpamFolder && !this.isSpamFolder() && Types.isNonEmptyArray(this.customModulesDisabledSpam());
 	}, this);
 	
 	this.allowedNotSpamAction = ko.computed(function () {
@@ -170,6 +180,34 @@ CMailView.prototype.removeCustomBigButton = function (sModuleName)
 		this.sCustomBigButtonModule = '';
 		this.fCustomBigButtonHandler = null;
 		this.customBigButtonText('');
+	}
+};
+
+CMailView.prototype.resetDisabledTools = function (sModuleName, aDisabledTools)
+{
+	if ($.inArray('spam', aDisabledTools) !== -1)
+	{
+		this.customModulesDisabledSpam().push(sModuleName);
+	}
+	else
+	{
+		this.customModulesDisabledSpam(_.without(this.customModulesDisabledSpam(), sModuleName));
+	}
+	if ($.inArray('move', aDisabledTools) !== -1)
+	{
+		this.customModulesDisabledMove().push(sModuleName);
+	}
+	else
+	{
+		this.customModulesDisabledMove(_.without(this.customModulesDisabledMove(), sModuleName));
+	}
+	if ($.inArray('mark', aDisabledTools) !== -1)
+	{
+		this.customModulesDisabledMark().push(sModuleName);
+	}
+	else
+	{
+		this.customModulesDisabledMark(_.without(this.customModulesDisabledMark(), sModuleName));
 	}
 };
 

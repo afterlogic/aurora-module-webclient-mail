@@ -9,7 +9,8 @@
 		
 		<!-- ko template: {name: '%ModuleName%_Messages_MarkButtonView'} --><!-- /ko -->
 		
-		<span class="item move" id="selenium_move_to_folder" data-bind="dropdown: {control: false, scrollToTopContainer: '.scroll-inner'}, command: moveToFolderCommand, customTooltip: '%MODULENAME%/ACTION_MOVE_TO_FOLDER'">
+		<span class="item move" id="selenium_move_to_folder" data-bind="dropdown: {control: false, scrollToTopContainer: '.scroll-inner'},
+				command: moveToFolderCommand, customTooltip: '%MODULENAME%/ACTION_MOVE_TO_FOLDER', visible: visibleMoveTool">
 			<span class="icon"></span>
 			<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_MOVE_TO_FOLDER'}"></span>
 			<span class="icon arrow"></span>
