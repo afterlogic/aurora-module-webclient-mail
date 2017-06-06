@@ -513,7 +513,14 @@ CAccountListModel.prototype.getAttendee = function (aEmails)
 
 var AccountList = new CAccountListModel();
 
-AccountList.parse(window.auroraAppData.Mail.Accounts);
+if (window.auroraAppData.Mail && _.isArray(window.auroraAppData.Mail.Accounts))
+{
+	AccountList.parse(window.auroraAppData.Mail.Accounts);
+}
+else
+{
+	AccountList.parse([]);
+}
 
 if (MainTab)
 {
