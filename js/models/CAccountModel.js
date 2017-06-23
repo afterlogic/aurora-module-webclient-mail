@@ -265,10 +265,11 @@ CAccountModel.prototype.onAccountDeleteResponse = function (oResponse, oRequest)
 	else
 	{
 		this.requireApp();
-		if (!App.isMobile() && !App.isNewTab())
+		
+		var ComposeUtils = require('modules/%ModuleName%/js/utils/Compose.js');
+		if (_.isFunction(ComposeUtils.closeComposePopup))
 		{
-			var PopupComposeUtils = require('modules/%ModuleName%/js/utils/PopupCompose.js');
-			PopupComposeUtils.closeComposePopup();
+			ComposeUtils.closeComposePopup();
 		}
 		
 		this.requireAccounts();

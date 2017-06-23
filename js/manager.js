@@ -15,69 +15,13 @@ module.exports = function (oAppData) {
 		bAdminUser = App.getUserRole() === Enums.UserRole.SuperAdmin,
 		bNormalUser = App.getUserRole() === Enums.UserRole.NormalUser,
 
-		AccountList = null,
-		Cache = null,
-		ComposeView = null,
-
-		oScreens = {}
+		AccountList = require('modules/MailWebclient/js/AccountList.js'),
+		ComposeView = null
 	;
 	
 	Settings.init(oSettings);
 	
-	if (App.isNewTab() && bNormalUser)
-	{
-		var GetComposeView = function() {
-			if (ComposeView === null)
-			{
-				var CComposeView = require('modules/%ModuleName%/js/views/CComposeView.js');
-				ComposeView = new CComposeView();
-			}
-			return ComposeView;
-		};
-		
-		Cache = require('modules/%ModuleName%/js/Cache.js');
-		Cache.init();
-		AccountList = require('modules/MailWebclient/js/AccountList.js');
-		
-		return {
-			start: function () {
-				require('modules/%ModuleName%/js/koBindings.js');
-			},
-			getScreens: function () {
-				var oScreens = {};
-				oScreens[Settings.HashModuleName + '-view'] = function () {
-					return require('modules/%ModuleName%/js/views/MessagePaneView.js');
-				};
-				oScreens[Settings.HashModuleName + '-compose'] = function () {
-					return GetComposeView();
-				};
-				return oScreens;
-			},
-			registerComposeToolbarController: function (oController) {
-				var ComposeView = GetComposeView();
-				ComposeView.registerToolbarController(oController);
-			},
-			getComposeMessageToAddresses: function () {
-				var
-					bAllowSendMail = true,
-					ComposeUtils = require('modules/%ModuleName%/js/utils/ScreenCompose.js')
-				;
-				return bAllowSendMail ? ComposeUtils.composeMessageToAddresses : false;
-			},
-			getComposeMessageWithAttachments: function () {
-				var
-					bAllowSendMail = true,
-					ComposeUtils = require('modules/%ModuleName%/js/utils/ScreenCompose.js')
-				;
-				return bAllowSendMail ? ComposeUtils.composeMessageWithAttachments : false;
-			},
-			getSearchMessagesInCurrentFolder: function () {
-				var MainTab = window.opener && window.opener.MainTabMailMethods;
-				return MainTab ? _.bind(MainTab.searchMessagesInCurrentFolder, MainTab) : false;
-			}
-		};
-	}
-	else if (bAdminUser)
+	if (bAdminUser)
 	{
 		return {
 			start: function (ModulesManager) {
@@ -110,118 +54,167 @@ module.exports = function (oAppData) {
 				]);
 			},
 			getAccountList: function () {
-				return require('modules/MailWebclient/js/AccountList.js');
+				return AccountList;
 			}
 		};
 	}
 	else if (bNormalUser)
 	{
-		Cache = require('modules/%ModuleName%/js/Cache.js');
-		Cache.init();
-		AccountList = require('modules/MailWebclient/js/AccountList.js');
-
-		oScreens[Settings.HashModuleName] = function () {
-			return require('modules/%ModuleName%/js/views/MailView.js');
-		};
-		if (App.isMobile())
+		if (App.isNewTab())
 		{
-			oScreens[Settings.HashModuleName + '-compose'] = function () {
-				var CComposeView = require('modules/%ModuleName%/js/views/CComposeView.js');
-				return new CComposeView();
+			var GetComposeView = function() {
+				if (ComposeView === null)
+				{
+					var CComposeView = require('modules/%ModuleName%/js/views/CComposeView.js');
+					ComposeView = new CComposeView();
+				}
+				return ComposeView;
+			};
+
+			return {
+				start: function () {
+					require('modules/%ModuleName%/js/koBindings.js');
+				},
+				getScreens: function () {
+					var oScreens = {};
+					oScreens[Settings.HashModuleName + '-view'] = function () {
+						return require('modules/%ModuleName%/js/views/MessagePaneView.js');
+					};
+					oScreens[Settings.HashModuleName + '-compose'] = function () {
+						return GetComposeView();
+					};
+					return oScreens;
+				},
+				registerComposeToolbarController: function (oController) {
+					var ComposeView = GetComposeView();
+					ComposeView.registerToolbarController(oController);
+				},
+				getComposeMessageToAddresses: function () {
+					var
+						bAllowSendMail = true,
+						ComposeUtils = require('modules/%ModuleName%/js/utils/Compose.js')
+					;
+					return bAllowSendMail ? ComposeUtils.composeMessageToAddresses : false;
+				},
+				getComposeMessageWithAttachments: function () {
+					var
+						bAllowSendMail = true,
+						ComposeUtils = require('modules/%ModuleName%/js/utils/Compose.js')
+					;
+					return bAllowSendMail ? ComposeUtils.composeMessageWithAttachments : false;
+				},
+				getSearchMessagesInCurrentFolder: function () {
+					var MainTab = window.opener && window.opener.MainTabMailMethods;
+					return MainTab ? _.bind(MainTab.searchMessagesInCurrentFolder, MainTab) : false;
+				}
 			};
 		}
-
-		return {
-			enableModule: ko.observable(Settings.AllowAddAccounts || AccountList.hasAccount() ),
-			start: function (ModulesManager) {
-				var
-					TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
-					Browser = require('%PathToCoreWebclientModule%/js/Browser.js'),
-					MailUtils = require('modules/%ModuleName%/js/utils/Mail.js')
-				;
-
-				require('modules/%ModuleName%/js/koBindings.js');
-				if (!App.isMobile())
-				{
-					require('modules/%ModuleName%/js/koBindingSearchHighlighter.js');
+		else
+		{
+			var Cache = require('modules/%ModuleName%/js/Cache.js');
+			Cache.init();
+			
+			var oMethods = {
+				enableModule: ko.observable(Settings.AllowAddAccounts || AccountList.hasAccount() ),
+				getComposeMessageToAddresses: function () {
+					var
+						bAllowSendMail = true,
+						ComposeUtils = require('modules/%ModuleName%/js/utils/Compose.js')
+					;
+					return bAllowSendMail ? ComposeUtils.composeMessageToAddresses : false;
+				},
+				getComposeMessageWithAttachments: function () {
+					var
+						bAllowSendMail = true,
+						ComposeUtils = require('modules/%ModuleName%/js/utils/Compose.js')
+					;
+					return bAllowSendMail ? ComposeUtils.composeMessageWithAttachments : false;
+				},
+				getPrefetcher: function () {
+					return require('modules/%ModuleName%/js/Prefetcher.js');
+				},
+				registerComposeToolbarController: function (oController) {
+					var ComposePopup = require('modules/%ModuleName%/js/popups/ComposePopup.js');
+					ComposePopup.registerToolbarController(oController);
+				},
+				getSearchMessagesInInbox: function () {
+					return _.bind(Cache.searchMessagesInInbox, Cache);
+				},
+				getSearchMessagesInCurrentFolder: function () {
+					return _.bind(Cache.searchMessagesInCurrentFolder, Cache);
+				},
+				getAllAccountsFullEmails: function () {
+					return AccountList.getAllFullEmails();
+				},
+				getAccountList: function () {
+					return AccountList;
 				}
+			};
 
-				if (Settings.AllowAppRegisterMailto)
-				{
-					MailUtils.registerMailto(Browser.firefox);
-				}
+			if (!App.isMobile())
+			{
+				oMethods = _.extend(oMethods, {
+					start: function (ModulesManager) {
+						var
+							TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
+							Browser = require('%PathToCoreWebclientModule%/js/Browser.js'),
+							MailUtils = require('modules/%ModuleName%/js/utils/Mail.js')
+						;
 
-				if (Settings.AllowAddAccounts || AccountList.hasAccount())
-				{
-					ModulesManager.run('SettingsWebclient', 'registerSettingsTab', [
-						function () {
-							return require('modules/%ModuleName%/js/views/settings/MailSettingsPaneView.js');
-						},
-						Settings.HashModuleName,
-						TextUtils.i18n('%MODULENAME%/LABEL_SETTINGS_TAB')
-					]);
-					
-					var sTabName = Settings.AllowMultiAccounts ? TextUtils.i18n('%MODULENAME%/LABEL_ACCOUNTS_SETTINGS_TAB') : TextUtils.i18n('%MODULENAME%/LABEL_ACCOUNT_SETTINGS_TAB');
-					ModulesManager.run('SettingsWebclient', 'registerSettingsTab', [
-						function () {
-							return require('modules/%ModuleName%/js/views/settings/AccountsSettingsPaneView.js');
-						},
-						Settings.HashModuleName + '-accounts',
-						sTabName
-					]);
-				}
-				
-				ko.computed(function () {
-					var aAuthAcconts = _.filter(AccountList.collection(), function (oAccount) {
-						return oAccount.useToAuthorize();
-					});
-					
-					Settings.userAccountsCount(aAuthAcconts.length);
-				}, this)
-			},
-			getScreens: function () {
-				return oScreens;
-			},
-			getHeaderItem: function () {
-				return {
-					item: require('modules/%ModuleName%/js/views/HeaderItemView.js'),
-					name: Settings.HashModuleName
-				};
-			},
-			getPrefetcher: function () {
-				return require('modules/%ModuleName%/js/Prefetcher.js');
-			},
-			registerComposeToolbarController: function (oController) {
-				var ComposePopup = require('modules/%ModuleName%/js/popups/ComposePopup.js');
-				ComposePopup.registerToolbarController(oController);
-			},
-			getComposeMessageToAddresses: function () {
-				var
-					bAllowSendMail = true,
-					ComposeUtils = (App.isMobile() || App.isNewTab()) ? require('modules/%ModuleName%/js/utils/ScreenCompose.js') : require('modules/%ModuleName%/js/utils/PopupCompose.js')
-				;
-				return bAllowSendMail ? ComposeUtils.composeMessageToAddresses : false;
-			},
-			getComposeMessageWithAttachments: function () {
-				var
-					bAllowSendMail = true,
-					ComposeUtils = (App.isMobile() || App.isNewTab()) ? require('modules/%ModuleName%/js/utils/ScreenCompose.js') : require('modules/%ModuleName%/js/utils/PopupCompose.js')
-				;
-				return bAllowSendMail ? ComposeUtils.composeMessageWithAttachments : false;
-			},
-			getSearchMessagesInInbox: function () {
-				return _.bind(Cache.searchMessagesInInbox, Cache);
-			},
-			getSearchMessagesInCurrentFolder: function () {
-				return _.bind(Cache.searchMessagesInCurrentFolder, Cache);
-			},
-			getAllAccountsFullEmails: function () {
-				return AccountList.getAllFullEmails();
-			},
-			getAccountList: function () {
-				return AccountList;
+						require('modules/%ModuleName%/js/koBindings.js');
+						require('modules/%ModuleName%/js/koBindingSearchHighlighter.js');
+
+						if (Settings.AllowAppRegisterMailto)
+						{
+							MailUtils.registerMailto(Browser.firefox);
+						}
+
+						if (Settings.AllowAddAccounts || AccountList.hasAccount())
+						{
+							ModulesManager.run('SettingsWebclient', 'registerSettingsTab', [
+								function () {
+									return require('modules/%ModuleName%/js/views/settings/MailSettingsPaneView.js');
+								},
+								Settings.HashModuleName,
+								TextUtils.i18n('%MODULENAME%/LABEL_SETTINGS_TAB')
+							]);
+
+							var sTabName = Settings.AllowMultiAccounts ? TextUtils.i18n('%MODULENAME%/LABEL_ACCOUNTS_SETTINGS_TAB') : TextUtils.i18n('%MODULENAME%/LABEL_ACCOUNT_SETTINGS_TAB');
+							ModulesManager.run('SettingsWebclient', 'registerSettingsTab', [
+								function () {
+									return require('modules/%ModuleName%/js/views/settings/AccountsSettingsPaneView.js');
+								},
+								Settings.HashModuleName + '-accounts',
+								sTabName
+							]);
+						}
+
+						ko.computed(function () {
+							var aAuthAcconts = _.filter(AccountList.collection(), function (oAccount) {
+								return oAccount.useToAuthorize();
+							});
+
+							Settings.userAccountsCount(aAuthAcconts.length);
+						}, this);
+					},
+					getScreens: function () {
+						var oScreens = {};
+						oScreens[Settings.HashModuleName] = function () {
+							return require('modules/%ModuleName%/js/views/MailView.js');
+						};
+						return oScreens;
+					},
+					getHeaderItem: function () {
+						return {
+							item: require('modules/%ModuleName%/js/views/HeaderItemView.js'),
+							name: Settings.HashModuleName
+						};
+					}
+				});
 			}
-		};
+
+			return oMethods;
+		}
 	}
 	
 	return null;

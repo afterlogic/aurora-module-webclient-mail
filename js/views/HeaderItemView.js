@@ -6,8 +6,6 @@ var
 	
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	
-	App = require('%PathToCoreWebclientModule%/js/App.js'),
-	
 	CAbstractHeaderItemView = require('%PathToCoreWebclientModule%/js/views/CHeaderItemView.js'),
 			
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
@@ -42,7 +40,7 @@ function CHeaderItemView()
 
 _.extendOwn(CHeaderItemView.prototype, CAbstractHeaderItemView.prototype);
 
-CHeaderItemView.prototype.ViewTemplate = App.isMobile() ? '%ModuleName%_HeaderItemMobileView' : '%ModuleName%_HeaderItemView';
+CHeaderItemView.prototype.ViewTemplate = '%ModuleName%_HeaderItemView';
 
 var HeaderItemView = new CHeaderItemView();
 

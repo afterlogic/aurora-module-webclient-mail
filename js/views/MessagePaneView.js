@@ -21,7 +21,7 @@ var
 	
 	CAbstractScreenView = require('%PathToCoreWebclientModule%/js/views/CAbstractScreenView.js'),
 	
-	ComposeUtils = (App.isMobile() || App.isNewTab()) ? require('modules/%ModuleName%/js/utils/ScreenCompose.js') : require('modules/%ModuleName%/js/utils/PopupCompose.js'),
+	ComposeUtils = require('modules/%ModuleName%/js/utils/Compose.js'),
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
 	MailUtils = require('modules/%ModuleName%/js/utils/Mail.js'),
 	SendingUtils = require('modules/%ModuleName%/js/utils/Sending.js'),

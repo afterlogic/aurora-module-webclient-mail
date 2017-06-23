@@ -790,10 +790,10 @@ CMailCache.prototype.closeComposesWithDraftUids = function (aUids)
 
 	if (-1 !== $.inArray(this.editedDraftUid(), aUids))
 	{
-		if (!App.isMobile() && !App.isNewTab())
+		var ComposeUtils = require('modules/%ModuleName%/js/utils/Compose.js');
+		if (_.isFunction(ComposeUtils.closeComposePopup))
 		{
-			var PopupComposeUtils = require('modules/%ModuleName%/js/utils/PopupCompose.js');
-			PopupComposeUtils.closeComposePopup();
+			ComposeUtils.closeComposePopup();
 		}
 	}
 };
