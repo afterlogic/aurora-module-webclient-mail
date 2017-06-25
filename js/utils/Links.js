@@ -36,9 +36,10 @@ function IsMsgParam(sTemp)
  * @param {string=} sUid = ''
  * @param {string=} sSearch = ''
  * @param {string=} sFilters = ''
+ * @param {string=} sCustom = ''
  * @return {Array}
  */
-LinksUtils.getMailbox = function (sFolder, iPage, sUid, sSearch, sFilters)
+LinksUtils.getMailbox = function (sFolder, iPage, sUid, sSearch, sFilters, sCustom)
 {
 	var
 		AccountList = require('modules/%ModuleName%/js/AccountList.js'),
@@ -76,6 +77,11 @@ LinksUtils.getMailbox = function (sFolder, iPage, sUid, sSearch, sFilters)
 		aResult.push(sSearch);
 	}
 	
+	if (sCustom && '' !== sCustom)
+	{
+		aResult.push('custom:' + sCustom);
+	}
+	
 	return aResult;
 };
 
@@ -93,6 +99,7 @@ LinksUtils.parseMailbox = function (aParams)
 		sUid = '',
 		sSearch = '',
 		sFilters = '',
+		sCustom = '',
 		sTemp = '',
 		iIndex = 0
 	;
@@ -149,7 +156,21 @@ LinksUtils.parseMailbox = function (aParams)
 
 		if (aParams.length > iIndex)
 		{
-			sSearch = Types.pString(aParams[iIndex]);
+			sTemp = Types.pString(aParams[iIndex]);
+			if ('custom:' !== sTemp.substr(0, 7))
+			{
+				sSearch = '';
+				iIndex++;
+			}
+		}
+		
+		if (aParams.length > iIndex)
+		{
+			sTemp = Types.pString(aParams[iIndex]);
+			if ('custom:' === sTemp.substr(0, 7))
+			{
+				sCustom = sTemp.substr(7);
+			}
 		}
 	}
 	
@@ -159,7 +180,8 @@ LinksUtils.parseMailbox = function (aParams)
 		'Page': iPage,
 		'Uid': sUid,
 		'Search': sSearch,
-		'Filters': sFilters
+		'Filters': sFilters,
+		'Custom': sCustom
 	};
 };
 

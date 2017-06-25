@@ -148,6 +148,13 @@ module.exports = function (oAppData) {
 				},
 				getAccountList: function () {
 					return AccountList;
+				},
+				setCustomRouting: function (sFolder, iPage, sUid, sSearch, sFilters, sCustom) {
+					var
+						Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
+						LinksUtils = require('modules/%ModuleName%/js/utils/Links.js')
+					;
+					Routing.setHash(LinksUtils.getMailbox(sFolder, iPage, sUid, sSearch, sFilters, sCustom));
 				}
 			};
 
