@@ -5,7 +5,6 @@ var
 	
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	
-	App = require('%PathToCoreWebclientModule%/js/App.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
 	UserSettings = require('%PathToCoreWebclientModule%/js/Settings.js'),
@@ -19,8 +18,6 @@ var
  */
 function CFolderListView()
 {
-	this.accounts = AccountList.collection; // todo: only mobile version
-	
 	this.folderList = MailCache.folderList;
 	
 	this.manageFoldersHash = ko.computed(function () {
@@ -68,6 +65,6 @@ function CFolderListView()
 	}
 }
 
-CFolderListView.prototype.ViewTemplate = App.isMobile() ? '%ModuleName%_FoldersMobileView' : '%ModuleName%_FoldersView';
+CFolderListView.prototype.ViewTemplate = '%ModuleName%_FoldersView';
 
 module.exports = CFolderListView;

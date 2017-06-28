@@ -207,7 +207,8 @@ module.exports = function (oAppData) {
 					getScreens: function () {
 						var oScreens = {};
 						oScreens[Settings.HashModuleName] = function () {
-							return require('modules/%ModuleName%/js/views/MailView.js');
+							var CMailView = require('modules/%ModuleName%/js/views/CMailView.js');
+							return new CMailView();
 						};
 						return oScreens;
 					},

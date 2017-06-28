@@ -16,7 +16,7 @@
 						<div class="panel_content">
 							<div class="middle_bar">
 								<div class="panel_top" data-bind="initDom: messageFields">
-									<span class="table-compressor" data-bind="visible: bAllowHeadersCompressing, click: changeHeadersCompressed, css: { 'compressed': headersCompressed }">
+									<span class="table-compressor" data-bind="click: changeHeadersCompressed, css: { 'compressed': headersCompressed }">
 										<span class="arrow"></span>
 									</span>
 
@@ -50,13 +50,12 @@
 															</div>
 														</td>
 														<td class="value">
-															<!-- ko template: {name: sCcBccSwitchersViewTemplate} --><!-- /ko -->
+															<!-- ko template: {name: '%ModuleName%_Compose_CcBccSwitchersView'} --><!-- /ko -->
 														</td>
 													</tr>
 												</table>
 											</td>
 										</tr>
-										<!-- ko template: {name: sCcBccSwitchersMobileViewTemplate} --><!-- /ko -->
 										<tr class="cc" data-bind="visible: visibleCc() && !headersCompressed()">
 											<td class="label">
 												<span data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_CC'}"></span>:
@@ -106,7 +105,6 @@
 											</td>
 										</tr>
 									</table>
-									<!-- ko template: { name: sAttachmentsMobileViewTemplate} --><!-- /ko -->
 								</div>
 								<div class="panel_center">
 									<!-- ko template: { name: oHtmlEditor.ViewTemplate, data: oHtmlEditor} --><!-- /ko -->
@@ -115,7 +113,7 @@
 							</div>
 						</div>
 					</div>
-					<!-- ko template: {name: sAttachmentsViewTemplate} --><!-- /ko -->
+					<!-- ko template: {name: '%ModuleName%_Compose_AttachmentsView'} --><!-- /ko -->
 				</div>
 			</div>
 		</div>

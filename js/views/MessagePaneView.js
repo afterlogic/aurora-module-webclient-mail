@@ -198,8 +198,6 @@ function CMessagePaneView()
 		return !(this.visiblePicturesControl() || this.visibleConfirmationControl() || topControllersVisible);
 	}, this);
 
-	this.sToolbarViewTemplate = App.isMobile() ? '' : '%ModuleName%_Message_ToolbarView';
-	this.sToolbarMobileViewTemplate = App.isMobile() ? '%ModuleName%_Message_ToolbarMobileView' : '';
 	this.sAttachmentsSwitcherViewTemplate = App.isMobile() ? '%ModuleName%_Message_AttachmentsSwitcherView' : '';
 	this.sQuickReplyViewTemplate = App.isMobile() ? '' : '%ModuleName%_Message_QuickReplyView';
 	

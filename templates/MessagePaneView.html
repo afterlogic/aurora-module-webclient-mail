@@ -1,5 +1,3 @@
-<!-- ko template: {name: sToolbarMobileViewTemplate} --><!-- /ko -->
-
 <div class="panel_top">
 	<div class="message_header" data-bind="initDom: domMessageHeader, visible: isCurrentMessage, event: {'dblclick': resizeDblClick}">
 		<span data-bind="click: switchDetailsVisibility, css: { 'compressed': !detailsVisible() }" class="table-compressor">
@@ -29,7 +27,7 @@
 		
 		<div class="header_content clearfix">
 			<div class="header_row">
-				<!-- ko template: {name: sToolbarViewTemplate} --><!-- /ko -->
+				<!-- ko template: {name: '%ModuleName%_Message_ToolbarView'} --><!-- /ko -->
 				
 				<div class="message_info" data-bind="visible: !detailsVisible()">
 					<div class="message_info_line">

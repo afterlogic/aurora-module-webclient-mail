@@ -48,7 +48,8 @@ function CMailView()
 	this.oFolderList = new CFolderListView();
 	this.oMessageList = new CMessageListView(this.openMessageInNewWindowBound);
 	
-	this.messagePane = ko.observable(MessagePaneView);
+	this.oBaseMessagePaneView = MessagePaneView;
+	this.messagePane = ko.observable(this.oBaseMessagePaneView);
 	this.messagePane().openMessageInNewWindowBound = this.openMessageInNewWindowBound;
 
 	this.isEnableGroupOperations = this.oMessageList.isEnableGroupOperations;
@@ -134,13 +135,6 @@ function CMailView()
 
 	this.jqPanelHelper = null;
 	
-	this.sToolbarViewTemplate = App.isMobile() ? '%ModuleName%_Messages_ToolbarMobileView' : '%ModuleName%_Messages_ToolbarView';
-	
-	this.selectedPanel = ko.observable(Enums.MobilePanel.Items);
-	MailCache.currentMessage.subscribe(function () {
-		this.gotoMessagePane();
-	}, this);
-	
 	App.broadcastEvent('%ModuleName%::ConstructView::after', {'Name': this.ViewConstructorName, 'View': this});
 }
 
@@ -162,7 +156,7 @@ CMailView.prototype.removeCustomPreviewPane = function (sModuleName)
 {
 	if (this.messagePane().__customModuleName === sModuleName)
 	{
-		this.messagePane(MessagePaneView);
+		this.messagePane(this.oBaseMessagePaneView);
 	}
 };
 
@@ -251,43 +245,6 @@ CMailView.prototype.openMessageInNewWindow = function (oMessage)
 		}
 
 		WindowOpener.openTab('?message-newtab' + sHash);
-	}
-};
-
-CMailView.prototype.gotoFolderList = function ()
-{
-	this.changeSelectedPanel(Enums.MobilePanel.Groups);
-};
-
-CMailView.prototype.gotoMessageList = function ()
-{
-	this.changeSelectedPanel(Enums.MobilePanel.Items);
-	return true;
-};
-
-CMailView.prototype.gotoMessagePane = function ()
-{
-	if (MailCache.currentMessage())
-	{
-		this.changeSelectedPanel(Enums.MobilePanel.View);
-	}
-	else
-	{
-		this.gotoMessageList();
-	}
-};
-
-/**
- * @param {number} iPanel
- */
-CMailView.prototype.changeSelectedPanel = function (iPanel)
-{
-	if (App.isMobile())
-	{
-		if (this.selectedPanel() !== iPanel)
-		{
-			this.selectedPanel(iPanel);
-		}
 	}
 };
 
@@ -492,4 +449,4 @@ CMailView.prototype.uncheckMessages = function ()
 	});
 };
 
-module.exports = new CMailView();
+module.exports = CMailView;

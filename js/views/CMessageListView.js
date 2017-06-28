@@ -315,8 +315,6 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 		this.createDatePickerObject(this.searchDateStartDom());
 		this.createDatePickerObject(this.searchDateEndDom());
 	}, this), 1000);
-	
-	this.sSearchViewTemplate = App.isMobile() ? '%ModuleName%_SearchMobileView' : '%ModuleName%_SearchView';
 }
 
 CMessageListView.prototype.ViewTemplate = '%ModuleName%_MessagesView';

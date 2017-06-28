@@ -44,7 +44,6 @@ var
 	CHtmlEditorView = require('modules/%ModuleName%/js/views/CHtmlEditorView.js'),
 	
 	MainTab = App.isNewTab() && window.opener && window.opener.MainTabMailMethods,
-	bMobileApp = App.isMobile(),
 	
 	$html = $('html')
 ;
@@ -359,13 +358,8 @@ function CComposeView()
 	this.messageFields = ko.observable(null);
 	this.bottomPanel = ko.observable(null);
 
-	this.sHotkeysHintsViewTemplate = !Browser.mobileDevice && !bMobileApp ? '%ModuleName%_Compose_HotkeysHintsView' : '';
-	this.sAttachmentsViewTemplate = bMobileApp ? '' : '%ModuleName%_Compose_AttachmentsView';
-	this.sAttachmentsMobileViewTemplate = bMobileApp ? '%ModuleName%_Compose_AttachmentsMobileView' : '';
-	this.sCcBccSwitchersViewTemplate = bMobileApp ? '' : '%ModuleName%_Compose_CcBccSwitchersView';
-	this.sCcBccSwitchersMobileViewTemplate = bMobileApp ? '%ModuleName%_Compose_CcBccSwitchersMobileView' : '';
-	this.sPopupButtonsViewTemplate = !bMobileApp && !App.isNewTab() ? '%ModuleName%_Compose_PopupButtonsView' : '';
-	this.bAllowHeadersCompressing = !bMobileApp;
+	this.sHotkeysHintsViewTemplate = !Browser.mobileDevice ? '%ModuleName%_Compose_HotkeysHintsView' : '';
+	this.sPopupButtonsViewTemplate = !App.isNewTab() ? '%ModuleName%_Compose_PopupButtonsView' : '';
 
 	this.aHotkeys = [
 		{ value: 'Ctrl+Enter', action: TextUtils.i18n('%MODULENAME%/LABEL_SEND_HOTKEY') },
@@ -1875,7 +1869,7 @@ CComposeView.prototype.registerOwnToolbarControllers = function ()
 CComposeView.prototype.registerToolbarController = function (oController)
 {
 	var
-		bAllowRegister = bMobileApp ? (oController.bOnlyMobile || oController.bAllowMobile) : (!oController.bOnlyMobile),
+		bAllowRegister = App.isMobile() ? (oController.bOnlyMobile || oController.bAllowMobile) : (!oController.bOnlyMobile),
 		iLastIndex = Settings.ComposeToolbarOrder.length
 	;
 	
