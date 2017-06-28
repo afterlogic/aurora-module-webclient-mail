@@ -1,13 +1,13 @@
 <div class="fields">
 	<div class="fieldset">
-		<div class="row" data-bind="visible: canBeUsedToAuthorize">
+		<div class="row" data-bind="visible: bAllowChangeEmailSettings && canBeUsedToAuthorize()">
 			<div>
 				<span class="label"></span>
 				<label class="custom_checkbox" data-bind="css: {'checked': useToAuthorize}">
 					<span class="icon"></span>
 					<input type="checkbox" id="account_use_to_authorize" data-bind="checked: useToAuthorize" />
 				</label>
-				<label class="label" for="account_use_to_authorize" data-bind="i18n: {'key': '%MODULENAME%/LABEL_USE_TO_AUTHORIZE'}"></label>
+				<label for="account_use_to_authorize" data-bind="i18n: {'key': '%MODULENAME%/LABEL_USE_TO_AUTHORIZE'}"></label>
 			</div>	
 		</div>
 		
@@ -35,7 +35,7 @@
 			<span class="button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_CHANGE_PASSWORD'}, click: changePassword"></span>
 		</div>
 
-		<div data-bind="visible: canBeRemoved()">
+		<div data-bind="visible: canBeRemoved">
             <div class="row remove_account">
 				<span class="link" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_REMOVE_ACCOUNT'}, click: remove, attr: {'id': 'selenium_settings_delete_account_' + email()}"></span>
             </div>

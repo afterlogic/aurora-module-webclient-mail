@@ -52,7 +52,6 @@ function CAccountsSettingsPaneView()
 		return this.editedIdentity() ? this.editedIdentity().id() : null;
 	}, this);
 	
-	this.allowProperties = ko.observable(false);
 	this.allowFolders = ko.observable(false);
 	this.allowForward = ko.observable(false);
 	this.allowAutoresponder = ko.observable(false);
@@ -64,7 +63,7 @@ function CAccountsSettingsPaneView()
 			name: 'properties',
 			title: TextUtils.i18n('%MODULENAME%/LABEL_PROPERTIES_TAB'),
 			view: AccountPropertiesPaneView,
-			visible: this.allowProperties
+			visible: AccountPropertiesPaneView.visibleTab
 		},
 		{
 			name: 'folders',
@@ -351,14 +350,10 @@ CAccountsSettingsPaneView.prototype.changeTab = function (sName)
 
 CAccountsSettingsPaneView.prototype.populate = function ()
 {
-	var
-		oAccount = AccountList.getEdited(),
-		bCanBeRemoved = !!oAccount && oAccount.canBeRemoved()
-	;
+	var oAccount = AccountList.getEdited();
 	
 	if (oAccount)
 	{
-		this.allowProperties(Settings.AllowUsersChangeEmailSettings || !Settings.AllowIdentities || bCanBeRemoved);
 		this.allowFolders(true);
 		this.allowForward(!!Settings.AllowForward && oAccount.oServer.bEnableSieve);
 		this.allowAutoresponder(!!Settings.AllowAutoresponder && oAccount.oServer.bEnableSieve);

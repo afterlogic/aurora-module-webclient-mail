@@ -18,7 +18,6 @@ var
 	
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
-	CAccountModel = require('modules/%ModuleName%/js/models/CAccountModel.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	
 	CServerPairPropertiesView = require('modules/%ModuleName%/js/views/settings/CServerPairPropertiesView.js')
@@ -38,7 +37,7 @@ function CAccountPropertiesPaneView()
 	
 	this.useToAuthorize = ko.observable(false);
 	this.canBeUsedToAuthorize = ko.observable(false);
-	this.canBeRemoved = ko.observable('');
+	this.canBeRemoved = ko.observable(false);
 	this.friendlyName = ko.observable('');
 	this.email = ko.observable('');
 	this.incomingLogin = ko.observable('');
@@ -65,6 +64,21 @@ function CAccountPropertiesPaneView()
 	this.updateSavedState();
 	this.oServerPairPropertiesView.currentValues.subscribe(function () {
 		this.updateSavedState();
+	}, this);
+	
+	this.visibleTab = ko.computed(function () {
+		var oAccount = AccountList.getEdited();
+		if (oAccount)
+		{	
+			this.allowChangePassword(!!ChangePasswordPopup);
+			this.canBeRemoved(oAccount.canBeRemoved());
+		}
+		else
+		{
+			this.allowChangePassword(false);
+			this.canBeRemoved(false);
+		}
+		return this.bAllowChangeEmailSettings || !this.bAllowIdentities || this.allowChangePassword() || this.canBeRemoved();
 	}, this);
 }
 
@@ -118,8 +132,6 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 	var oAccount = AccountList.getEdited();
 	if (oAccount)
 	{	
-		this.allowChangePassword(!!ChangePasswordPopup);
-
 		this.friendlyName(oAccount.friendlyName());
 		this.email(oAccount.email());
 		this.incomingLogin(oAccount.incomingLogin());
@@ -128,12 +140,9 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 		
 		this.useToAuthorize(oAccount.useToAuthorize());
 		this.canBeUsedToAuthorize(oAccount.canBeUsedToAuthorize());
-		this.canBeRemoved(oAccount.canBeRemoved());
 	}
 	else
 	{
-		this.allowChangePassword(false);
-
 		this.friendlyName('');
 		this.email('');
 		this.incomingLogin('');
@@ -143,7 +152,6 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 		
 		this.useToAuthorize(true);
 		this.canBeUsedToAuthorize(false);
-		this.canBeRemoved(false);
 	}
 	
 	this.updateSavedState();

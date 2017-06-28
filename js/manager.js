@@ -15,11 +15,12 @@ module.exports = function (oAppData) {
 		bAdminUser = App.getUserRole() === Enums.UserRole.SuperAdmin,
 		bNormalUser = App.getUserRole() === Enums.UserRole.NormalUser,
 
-		AccountList = require('modules/MailWebclient/js/AccountList.js'),
+		AccountList = null,
 		ComposeView = null
 	;
 	
 	Settings.init(oSettings);
+	AccountList = require('modules/MailWebclient/js/AccountList.js');
 	
 	if (bAdminUser)
 	{
