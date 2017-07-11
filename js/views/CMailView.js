@@ -83,14 +83,14 @@ function CMailView()
 	}, this);
 	this.customModulesDisabledMark = ko.observableArray([]);
 	this.visibleMarkTool = ko.computed(function () {
-		return Types.isNonEmptyArray(this.customModulesDisabledMark());
+		return !Types.isNonEmptyArray(this.customModulesDisabledMark());
 	}, this);
 	this.markAsReadCommand = Utils.createCommand(this.oMessageList, this.oMessageList.executeMarkAsRead, this.isEnableGroupOperations);
 	this.markAsUnreadCommand = Utils.createCommand(this.oMessageList, this.oMessageList.executeMarkAsUnread, this.isEnableGroupOperations);
 	this.markAllReadCommand = Utils.createCommand(this.oMessageList, this.oMessageList.executeMarkAllRead);
 	this.customModulesDisabledMove = ko.observableArray([]);
 	this.visibleMoveTool = ko.computed(function () {
-		return Types.isNonEmptyArray(this.customModulesDisabledMove());
+		return !Types.isNonEmptyArray(this.customModulesDisabledMove());
 	}, this);
 	this.moveToFolderCommand = Utils.createCommand(this, function () {}, this.isEnableGroupOperations);
 //	this.copyToFolderCommand = Utils.createCommand(this, function () {}, this.isEnableGroupOperations);
@@ -122,7 +122,7 @@ function CMailView()
 	
 	this.customModulesDisabledSpam = ko.observableArray([]);
 	this.allowedSpamAction = ko.computed(function () {
-		return Settings.AllowSpamFolder && !this.isSpamFolder() && Types.isNonEmptyArray(this.customModulesDisabledSpam());
+		return Settings.AllowSpamFolder && !this.isSpamFolder() && !Types.isNonEmptyArray(this.customModulesDisabledSpam());
 	}, this);
 	
 	this.allowedNotSpamAction = ko.computed(function () {
@@ -181,7 +181,7 @@ CMailView.prototype.resetDisabledTools = function (sModuleName, aDisabledTools)
 {
 	if ($.inArray('spam', aDisabledTools) !== -1)
 	{
-		this.customModulesDisabledSpam().push(sModuleName);
+		this.customModulesDisabledSpam(_.union(this.customModulesDisabledSpam(), [sModuleName]));
 	}
 	else
 	{
@@ -189,7 +189,7 @@ CMailView.prototype.resetDisabledTools = function (sModuleName, aDisabledTools)
 	}
 	if ($.inArray('move', aDisabledTools) !== -1)
 	{
-		this.customModulesDisabledMove().push(sModuleName);
+		this.customModulesDisabledMove(_.union(this.customModulesDisabledMove(), [sModuleName]));
 	}
 	else
 	{
@@ -197,7 +197,7 @@ CMailView.prototype.resetDisabledTools = function (sModuleName, aDisabledTools)
 	}
 	if ($.inArray('mark', aDisabledTools) !== -1)
 	{
-		this.customModulesDisabledMark().push(sModuleName);
+		this.customModulesDisabledMark(_.union(this.customModulesDisabledMark(), [sModuleName]));
 	}
 	else
 	{
