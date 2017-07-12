@@ -71,16 +71,6 @@ PopupComposeUtils.composeMessageWithEml = function (oMessage)
 };
 
 /**
- * @param {string} sArmor
- * @param {string} sDownloadLinkFilename
- */
-PopupComposeUtils.composeMessageWithPgpKey = function (sArmor, sDownloadLinkFilename)
-{
-	var aParams = ['data-as-file', sArmor, sDownloadLinkFilename];
-	Popups.showPopup(GetComposePopup(), [aParams]);
-};
-
-/**
  * @param {Array} aFileItems
  */
 PopupComposeUtils.composeMessageWithAttachments = function (aFileItems)

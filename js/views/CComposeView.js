@@ -662,11 +662,6 @@ CComposeView.prototype.fillDefault = function (oParams)
 		this.addAttachments(oParams.Object);
 	}
 
-	if (this.routeType() === 'data-as-file' && oParams.FileData && oParams.FileName)
-	{
-		this.addDataAsAttachment(oParams.FileData, oParams.FileName);
-	}
-
 	_.defer(_.bind(function () {
 		this.focusAfterFilling();
 	}, this));
@@ -933,35 +928,6 @@ CComposeView.prototype.setDataFromMessage = function (oMessage)
 			});
 		}
 	});
-};
-
-/**
- * @param {string} sData
- * @param {string} sFileName
- */
-CComposeView.prototype.addDataAsAttachment = function (sData, sFileName)
-{
-	var
-		sHash = 'data-as-attachment-' + Math.random(),
-		oParameters = {
-			'Data': sData,
-			'FileName': sFileName,
-			'Hash': sHash
-		},
-		oAttach = new CAttachmentModel()
-	;
-
-	this.subject(sFileName.substr(0, sFileName.length - 4));
-
-	oAttach.fileName(sFileName);
-	oAttach.hash(sHash);
-	oAttach.uploadStarted(true);
-
-	this.attachments.push(oAttach);
-
-	this.messageUploadAttachmentsStarted(true);
-
-	Ajax.send('DataAsAttachmentUpload', oParameters, this.onDataAsAttachmentUpload, this);
 };
 
 /**

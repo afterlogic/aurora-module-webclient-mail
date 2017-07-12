@@ -62,16 +62,6 @@ ScreenComposeUtils.composeMessageWithEml = function (oMessage)
 };
 
 /**
- * @param {string} sArmor
- * @param {string} sDownloadLinkFilename
- */
-ScreenComposeUtils.composeMessageWithPgpKey = function (sArmor, sDownloadLinkFilename)
-{
-	var aParams = ['data-as-file', sArmor, sDownloadLinkFilename];
-	Routing.goDirectly(LinksUtils.getCompose(), aParams);
-};
-
-/**
  * @param {Array} aFileItems
  */
 ScreenComposeUtils.composeMessageWithAttachments = function (aFileItems)
