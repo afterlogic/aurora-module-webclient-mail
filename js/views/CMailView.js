@@ -51,6 +51,9 @@ function CMailView()
 	this.oBaseMessagePaneView = MessagePaneView;
 	this.messagePane = ko.observable(this.oBaseMessagePaneView);
 	this.messagePane().openMessageInNewWindowBound = this.openMessageInNewWindowBound;
+	this.messagePane.subscribe(function () {
+		this.bindMessagePane();
+	}, this);
 
 	this.isEnableGroupOperations = this.oMessageList.isEnableGroupOperations;
 
@@ -312,23 +315,36 @@ CMailView.prototype.onHide = function ()
 	}
 };
 
-CMailView.prototype.onBind = function ()
+CMailView.prototype.bindMessagePane = function ()
 {
-	var self = this;
-
-	this.oMessageList.onBind(this.$viewDom);
 	if (_.isFunction(this.messagePane().onBind))
 	{
 		this.messagePane().onBind(this.$viewDom);
+		this.messagePane().__bound = true;
 	}
+};
+
+CMailView.prototype.onBind = function ()
+{
+	var
+		koFolderList = this.folderList,
+		oMessageList = this.oMessageList
+	;
+
+	this.oMessageList.onBind(this.$viewDom);
+	this.bindMessagePane();
 
 	$(this.domFoldersMoveTo()).on('click', 'span.folder', function (oEvent) {
-		if (self.folderList().currentFolderFullName() !== $(this).data('folder')) {
-			if (oEvent.ctrlKey) {
-				self.oMessageList.executeCopyToFolder($(this).data('folder'));
+		var sClickedFolder = $(this).data('folder');
+		if (koFolderList().currentFolderFullName() !== sClickedFolder)
+		{
+			if (oEvent.ctrlKey)
+			{
+				oMessageList.executeCopyToFolder(sClickedFolder);
 			}
-			else {
-				self.oMessageList.executeMoveToFolder($(this).data('folder'));
+			else
+			{
+				oMessageList.executeMoveToFolder(sClickedFolder);
 			}
 		}
 	});
