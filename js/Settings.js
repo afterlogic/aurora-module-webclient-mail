@@ -69,6 +69,8 @@ module.exports = {
 			this.MaxMessagesBodiesSizeToPrefetch = Types.pInt(oAppDataSection.MaxMessagesBodiesSizeToPrefetch);
 			this.SaveRepliesToCurrFolder = !!oAppDataSection.SaveRepliesToCurrFolder;
 			this.useThreads(!!oAppDataSection.UseThreads);
+			
+			window.Enums.SmtpAuthType = oAppDataSection.SmtpAuthType;
 		}
 		
 		App.registerUserAccountsCount(this.userAccountsCount);

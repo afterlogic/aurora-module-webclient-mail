@@ -11,12 +11,14 @@ function CServerModel(oServer)
 	this.sIncomingServer = oServer ? Types.pString(oServer.IncomingServer) : '';
 	this.iIncomingPort = oServer ? Types.pInt(oServer.IncomingPort) : 143;
 	this.bIncomingUseSsl = oServer ? !!oServer.IncomingUseSsl : false;
-	this.bOutgoingUseAuth = oServer ? !!oServer.OutgoingUseAuth : true;
 	this.sOutgoingServer = oServer ? Types.pString(oServer.OutgoingServer) : '';
 	this.iOutgoingPort = oServer ? Types.pInt(oServer.OutgoingPort) : 25;
 	this.bOutgoingUseSsl = oServer ? !!oServer.OutgoingUseSsl : false;
 	this.sDomains = oServer ? Types.pString(oServer.Domains) : '';
 	this.bEnableSieve = oServer ? !!oServer.EnableSieve : false;
+	this.sSmtpAuthType = oServer ? Types.pString(oServer.SmtpAuthType) : window.Enums.SmtpAuthType.NoAuthentication;
+	this.sSmtpLogin = oServer ? Types.pString(oServer.SmtpLogin) : '';
+	this.sSmtpPassword = oServer ? Types.pString(oServer.SmtpPassword) : '';
 	this.iSievePort = oServer && oServer.SievePort ? Types.pInt(oServer.SievePort) : 2000;
 }
 

@@ -16,9 +16,9 @@ var
 /**
  * @constructor
  * @param {string} sPairId
- * @param {boolean} bEditMode
+ * @param {boolean} bAdminEdit
  */
-function CServerPairPropertiesView(sPairId, bEditMode)
+function CServerPairPropertiesView(sPairId, bAdminEdit)
 {
 	this.servers = ko.observableArray([]);
 	this.serversRetrieved = ko.observable(false);
@@ -42,12 +42,15 @@ function CServerPairPropertiesView(sPairId, bEditMode)
 			}
 			this.name(oSelectedServer.sName);
 			this.oIncoming.set(oSelectedServer.sIncomingServer, oSelectedServer.iIncomingPort, oSelectedServer.bIncomingUseSsl);
-			this.oIncoming.isEnabled(this.bEditMode);
+			this.oIncoming.isEnabled(this.bAdminEdit);
 			this.oOutgoing.set(oSelectedServer.sOutgoingServer, oSelectedServer.iOutgoingPort, oSelectedServer.bOutgoingUseSsl);
-			this.oOutgoing.isEnabled(this.bEditMode);
-			this.outgoingUseAuth(oSelectedServer.bOutgoingUseAuth);
-			this.outgoingUseAuth.enable(this.bEditMode);
+			this.oOutgoing.isEnabled(this.bAdminEdit);
+			this.outgoingUseAuth(oSelectedServer.sSmtpAuthType === window.Enums.SmtpAuthType.UseUserCredentials);
+			this.outgoingUseAuth.enable(this.bAdminEdit);
 			this.domains(oSelectedServer.sDomains);
+			this.smtpAuthType(oSelectedServer.sSmtpAuthType);
+			this.smtpLogin(oSelectedServer.sSmtpLogin);
+			this.smtpPassword(oSelectedServer.sSmtpPassword);
 			this.enableSieve(oSelectedServer.bEnableSieve);
 			this.sievePort(oSelectedServer.iSievePort);
 		}
@@ -58,9 +61,12 @@ function CServerPairPropertiesView(sPairId, bEditMode)
 			this.oIncoming.isEnabled(true);
 			this.oOutgoing.set(this.oLastEditableServer.sOutgoingServer, this.oLastEditableServer.iOutgoingPort, this.oLastEditableServer.bOutgoingUseSsl);
 			this.oOutgoing.isEnabled(true);
-			this.outgoingUseAuth(this.oLastEditableServer.bOutgoingUseAuth);
+			this.outgoingUseAuth(this.oLastEditableServer.sSmtpAuthType === window.Enums.SmtpAuthType.UseUserCredentials);
 			this.outgoingUseAuth.enable(true);
 			this.domains('');
+			this.smtpAuthType(window.Enums.SmtpAuthType.NoAuthentication);
+			this.smtpLogin('');
+			this.smtpPassword('');
 			this.enableSieve(false);
 			this.sievePort(2000);
 		}
@@ -70,19 +76,22 @@ function CServerPairPropertiesView(sPairId, bEditMode)
 
 	this.name = ko.observable('');
 	this.name.focused = ko.observable(false);
-	this.bEditMode = bEditMode;
-	this.oIncoming = new CServerPropertiesView(143, 993, sPairId + '_incoming', TextUtils.i18n('%MODULENAME%/LABEL_IMAP_SERVER'), bEditMode ? this.name : null);
+	this.bAdminEdit = bAdminEdit;
+	this.oIncoming = new CServerPropertiesView(143, 993, sPairId + '_incoming', TextUtils.i18n('%MODULENAME%/LABEL_IMAP_SERVER'), bAdminEdit ? this.name : null);
 	this.oOutgoing = new CServerPropertiesView(25, 465, sPairId + '_outgoing', TextUtils.i18n('%MODULENAME%/LABEL_SMTP_SERVER'), this.oIncoming.server);
 	this.outgoingUseAuth = ko.observable(true);
 	this.outgoingUseAuth.enable = ko.observable(true);
 	this.domains = ko.observable('');
+	this.smtpAuthType = ko.observable(window.Enums.SmtpAuthType.NoAuthentication);
+	this.smtpLogin = ko.observable('');
+	this.smtpPassword = ko.observable('');
 	this.enableSieve = ko.observable(false);
 	this.sievePort = ko.observable(2000);
 	
 	this.currentValues = ko.observable('');
 	
 	this.aRequiredFields = [this.oIncoming.server, this.oIncoming.port, this.oOutgoing.server, this.oOutgoing.port];
-	if (bEditMode)
+	if (bAdminEdit)
 	{
 		this.aRequiredFields.unshift(this.name);
 	}
@@ -159,7 +168,7 @@ CServerPairPropertiesView.prototype.clear = function ()
 CServerPairPropertiesView.prototype.setCurrentValues = function ()
 {
 	var
-		aNamePart = this.bEditMode ? [ this.selectedServerId(), this.name() ] : [],
+		aNamePart = this.bAdminEdit ? [ this.selectedServerId(), this.name() ] : [],
 		aServerPart = [
 			this.oIncoming.port(),
 			this.oIncoming.server(),
@@ -169,6 +178,9 @@ CServerPairPropertiesView.prototype.setCurrentValues = function ()
 			this.oOutgoing.ssl(),
 			this.outgoingUseAuth(),
 			this.domains(),
+			this.smtpAuthType(),
+			this.smtpLogin(),
+			this.smtpPassword(),
 			this.enableSieve(),
 			this.sievePort()
 		]
@@ -183,11 +195,24 @@ CServerPairPropertiesView.prototype.getCurrentValues = function ()
 	return [this.currentValues()];
 };
 
+CServerPairPropertiesView.prototype.getSmtpAuthType = function ()
+{
+	if (this.bAdminEdit || this.smtpAuthType() === window.Enums.SmtpAuthType.UseSpecifiedCredentials)
+	{
+		return this.smtpAuthType();
+	}
+	else
+	{
+		return this.outgoingUseAuth() ? window.Enums.SmtpAuthType.UseUserCredentials : window.Enums.SmtpAuthType.NoAuthentication;
+	}
+};
+
 CServerPairPropertiesView.prototype.getParametersForSave = function ()
 {
 	var
 		iServerId = this.selectedServerId(),
-		iLastEditableServerId = this.oLastEditableServer.iId
+		iLastEditableServerId = this.oLastEditableServer.iId,
+		sSmtpAuthType = this.getSmtpAuthType()
 	;
 	if (iServerId === 0 && !_.find(this.servers(), function (oServer) { return iLastEditableServerId === oServer.iId; }))
 	{
@@ -195,15 +220,17 @@ CServerPairPropertiesView.prototype.getParametersForSave = function ()
 	}
 	return {
 		'ServerId': iServerId,
-		'Name': this.bEditMode ? this.name() : this.oIncoming.server(),
+		'Name': this.bAdminEdit ? this.name() : this.oIncoming.server(),
 		'IncomingServer': this.oIncoming.server(),
 		'IncomingPort': this.oIncoming.getIntPort(),
 		'IncomingUseSsl': this.oIncoming.ssl(),
 		'OutgoingServer': this.oOutgoing.server(),
 		'OutgoingPort': this.oOutgoing.getIntPort(),
 		'OutgoingUseSsl': this.oOutgoing.ssl(),
-		'OutgoingUseAuth': this.outgoingUseAuth(),
 		'Domains': this.domains(),
+		'SmtpAuthType': sSmtpAuthType,
+		'SmtpLogin': sSmtpAuthType === window.Enums.SmtpAuthType.UseSpecifiedCredentials ? this.smtpLogin() : '',
+		'SmtpPassword': sSmtpAuthType === window.Enums.SmtpAuthType.UseSpecifiedCredentials ? this.smtpPassword() : '',
 		'EnableSieve': this.enableSieve(),
 		'SievePort': this.sievePort()
 	};
