@@ -960,7 +960,10 @@ CMessagePaneView.prototype.onBind = function ($MailViewDom)
 		return true;
 	});
 
-	this.hotKeysBind();
+	if (!App.isMobile())
+	{
+		this.hotKeysBind();
+	}
 };
 
 CMessagePaneView.prototype.hotKeysBind = function ()

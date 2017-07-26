@@ -349,7 +349,10 @@ CMailView.prototype.onBind = function ()
 		}
 	});
 
-	this.hotKeysBind();
+	if (!App.isMobile())
+	{
+		this.hotKeysBind();
+	}
 };
 
 CMailView.prototype.hotKeysBind = function ()

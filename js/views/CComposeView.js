@@ -488,7 +488,10 @@ CComposeView.prototype.onBind = function ()
 {
 	ModulesManager.run('SessionTimeoutWeblient', 'registerFunction', [_.bind(this.executeSave, this, false)]);
 
-	this.hotKeysBind();
+	if (!App.isMobile())
+	{
+		this.hotKeysBind();
+	}
 };
 
 CComposeView.prototype.hotKeysBind = function ()
