@@ -9,7 +9,6 @@ var
 	Storage = require('%PathToCoreWebclientModule%/js/Storage.js'),
 	
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
-	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	CFolderModel = require('modules/%ModuleName%/js/models/CFolderModel.js')
 ;
 

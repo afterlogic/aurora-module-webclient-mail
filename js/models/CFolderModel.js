@@ -819,7 +819,7 @@ CFolderModel.prototype.initComputedFields = function ()
 	}, this);
 	
 	this.messageCountToShow = ko.computed(function () {
-		if (this.canExpand())
+		if (!App.isMobile() && this.canExpand())
 		{
 			return (this.showUnseenMessages()) ? this.unseenMessageCount() + this.subfoldersMessagesCount() : this.messageCount();
 		}
