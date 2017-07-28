@@ -10,6 +10,7 @@ var
 	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 	Screens = require('%PathToCoreWebclientModule%/js/Screens.js'),
+	App = require('%PathToCoreWebclientModule%/js/App.js'),
 	
 	CAbstractSettingsFormView = ModulesManager.run('SettingsWebclient', 'getAbstractSettingsFormViewClass'),
 	
@@ -80,6 +81,7 @@ function CAccountPropertiesPaneView()
 		}
 		return this.bAllowChangeEmailSettings || !this.bAllowIdentities || this.allowChangePassword() || this.canBeRemoved();
 	}, this);
+	this.isDisableAuthorize = ko.observable(App.userAccountsCount() <= 1);
 }
 
 _.extendOwn(CAccountPropertiesPaneView.prototype, CAbstractSettingsFormView.prototype);
@@ -90,6 +92,7 @@ CAccountPropertiesPaneView.prototype.onShow = function ()
 {
 	this.oServerPairPropertiesView.init(false);
 	this.populate();
+	this.isDisableAuthorize(this.useToAuthorize() ? App.userAccountsCount() <= 1 : false);
 };
 
 CAccountPropertiesPaneView.prototype.getCurrentValues = function ()
