@@ -3,9 +3,9 @@
 		<div class="row" data-bind="visible: bAllowChangeEmailSettings && canBeUsedToAuthorize()">
 			<div>
 				<span class="label"></span>
-				<label class="custom_checkbox" data-bind="css: {'checked': useToAuthorize, 'disabled': isDisableAuthorize()}">
+				<label class="custom_checkbox" data-bind="css: {'checked': useToAuthorize(), 'disabled': isDisableAuthorize()}">
 					<span class="icon"></span>
-					<input type="checkbox" id="account_use_to_authorize" data-bind="checked:isDisableAuthorize ? true : useToAuthorize" />
+					<input type="checkbox" id="account_use_to_authorize" data-bind="checked:isDisableAuthorize() ? true : useToAuthorize" />
 				</label>
 				<label for="account_use_to_authorize" data-bind="i18n: {'key': '%MODULENAME%/LABEL_USE_TO_AUTHORIZE'}"></label>
 			</div>	
