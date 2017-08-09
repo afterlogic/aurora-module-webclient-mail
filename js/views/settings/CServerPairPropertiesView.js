@@ -64,7 +64,7 @@ function CServerPairPropertiesView(sPairId, bAdminEdit)
 			this.outgoingUseAuth(this.oLastEditableServer.sSmtpAuthType === window.Enums.SmtpAuthType.UseUserCredentials);
 			this.outgoingUseAuth.enable(true);
 			this.domains('');
-			this.smtpAuthType(window.Enums.SmtpAuthType.NoAuthentication);
+			this.smtpAuthType(window.Enums.SmtpAuthType.UseUserCredentials);
 			this.smtpLogin('');
 			this.smtpPassword('');
 			this.enableSieve(false);
@@ -82,7 +82,7 @@ function CServerPairPropertiesView(sPairId, bAdminEdit)
 	this.outgoingUseAuth = ko.observable(true);
 	this.outgoingUseAuth.enable = ko.observable(true);
 	this.domains = ko.observable('');
-	this.smtpAuthType = ko.observable(window.Enums.SmtpAuthType.NoAuthentication);
+	this.smtpAuthType = ko.observable(window.Enums.SmtpAuthType.UseUserCredentials);
 	this.smtpLogin = ko.observable('');
 	this.smtpPassword = ko.observable('');
 	this.enableSieve = ko.observable(false);

@@ -16,7 +16,7 @@ function CServerModel(oServer)
 	this.bOutgoingUseSsl = oServer ? !!oServer.OutgoingUseSsl : false;
 	this.sDomains = oServer ? Types.pString(oServer.Domains) : '';
 	this.bEnableSieve = oServer ? !!oServer.EnableSieve : false;
-	this.sSmtpAuthType = oServer ? Types.pString(oServer.SmtpAuthType) : window.Enums.SmtpAuthType.NoAuthentication;
+	this.sSmtpAuthType = oServer ? Types.pString(oServer.SmtpAuthType) : window.Enums.SmtpAuthType.UseUserCredentials;
 	this.sSmtpLogin = oServer ? Types.pString(oServer.SmtpLogin) : '';
 	this.sSmtpPassword = oServer ? Types.pString(oServer.SmtpPassword) : '';
 	this.iSievePort = oServer && oServer.SievePort ? Types.pInt(oServer.SievePort) : 2000;
