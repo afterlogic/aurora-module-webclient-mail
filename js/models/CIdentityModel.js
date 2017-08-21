@@ -34,7 +34,7 @@ function CIdentityModel()
  */
 CIdentityModel.prototype.parse = function (oData)
 {
-	if (oData['@Object'] === 'Object/CIdentity')
+	if (oData['@Object'] === 'Object/CMailIdentity')
 	{
 		this.bAccountPart = !!oData.AccountPart;
 		this.isDefault(!!oData.Default);
