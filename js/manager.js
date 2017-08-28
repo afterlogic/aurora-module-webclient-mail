@@ -30,19 +30,6 @@ module.exports = function (oAppData) {
 				ModulesManager.run('AdminPanelWebclient', 'registerAdminPanelTab', [
 					function(resolve) {
 						require.ensure(
-							['modules/%ModuleName%/js/views/settings/MailSettingsPaneView.js'],
-							function() {
-								resolve(require('modules/%ModuleName%/js/views/settings/MailSettingsPaneView.js'));
-							},
-							"admin-bundle"
-						);
-					},
-					Settings.HashModuleName,
-					TextUtils.i18n('%MODULENAME%/LABEL_SETTINGS_TAB')
-				]);
-				ModulesManager.run('AdminPanelWebclient', 'registerAdminPanelTab', [
-					function(resolve) {
-						require.ensure(
 							['modules/%ModuleName%/js/views/settings/ServersAdminSettingsPaneView.js'],
 							function() {
 								resolve(require('modules/%ModuleName%/js/views/settings/ServersAdminSettingsPaneView.js'));
