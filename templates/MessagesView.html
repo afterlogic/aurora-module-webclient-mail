@@ -57,7 +57,7 @@
 
 				<div class="items_sub_list message_sub_list" data-bind="foreach: collection, 
 					 draggablePlace: function (oMessage, bCtrl) {return $root.dragAndDropHelper(oMessage, bCtrl);},
-					 css: {'not_use_threads': !useThreads(), 'use_threads': useThreads}">
+					 css: {'not_use_threads': !useThreading(), 'use_threads': useThreading}">
 					<!-- ko template: {name: '%ModuleName%_MessageItemView'} --><!-- /ko -->
 				</div>
 

@@ -8,15 +8,6 @@
 				<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_MESSAGES_PER_PAGE'}"></span>
 				<select class="value input" data-bind="options: mailsPerPageValues, value: mailsPerPage"></select>
 			</div>
-			<div class="row" data-bind="visible: bAllowThreads">
-				<span class="value offset">
-					<label class="custom_checkbox" data-bind="css: {'checked': useThreads}">
-						<span class="icon"></span>
-						<input type="checkbox" id="useThreads" data-bind="checked: useThreads" />
-					</label>
-					<label for="useThreads" data-bind="i18n: {'key': '%MODULENAME%/LABEL_USE_THREADING'}"></label>
-				</span>
-			</div>
 			<div class="row">
 				<span class="value offset">
 					<label class="custom_checkbox" data-bind="css: {'checked': allowAutosaveInDrafts}">

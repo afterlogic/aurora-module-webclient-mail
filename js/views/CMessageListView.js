@@ -87,14 +87,15 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 		}
 	}, this);
 
-	this.useThreads = ko.computed(function () {
+	this.useThreading = ko.computed(function () {
 		var
+			oAccount = AccountList.getCurrent(),
 			oFolder = this.folderList().currentFolder(),
 			bFolderWithoutThreads = oFolder && oFolder.withoutThreads(),
 			bNotSearchOrFilters = this.uidList().search() === '' && this.uidList().filters() === ''
 		;
 		
-		return Settings.useThreads() && !bFolderWithoutThreads && bNotSearchOrFilters;
+		return oAccount.threadingIsAvailable() && !bFolderWithoutThreads && bNotSearchOrFilters;
 	}, this);
 
 	this.collection = MailCache.messages;

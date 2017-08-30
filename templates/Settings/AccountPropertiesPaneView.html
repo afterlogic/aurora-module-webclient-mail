@@ -28,6 +28,17 @@
 			
 			<!-- ko template: {name: oServerPairPropertiesView.ViewTemplate, data: oServerPairPropertiesView} --><!-- /ko -->
 			
+			<div class="row" data-bind="visible: enableThreading">
+				<div>
+					<span class="label"></span>
+					<label class="custom_checkbox" data-bind="css: {'checked': useThreading()}">
+						<span class="icon"></span>
+						<input type="checkbox" id="useThreading" data-bind="checked: useThreading" />
+					</label>
+					<label for="useThreading" data-bind="i18n: {'key': '%MODULENAME%/LABEL_USE_THREADING'}"></label>
+				</div>	
+			</div>
+			
 			<div class="row"></div>
 		</div>
 

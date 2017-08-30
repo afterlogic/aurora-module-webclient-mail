@@ -41,6 +41,11 @@ function CAccountModel(oData)
 	this.oServer = new CServerModel(oData.Server);
 	this.useToAuthorize = ko.observable(!!oData.UseToAuthorize);
 	this.canBeUsedToAuthorize = ko.observable(!!oData.CanBeUsedToAuthorize);
+	this.useThreading = ko.observable(!!oData.UseThreading);
+	this.useThreading.subscribe(function () {
+		this.requireCache();
+		Cache.clearMessagesCache(this.id());
+	}, this);
 	
 	this.isCurrent = ko.observable(false);
 	this.isEdited = ko.observable(false);
@@ -72,6 +77,11 @@ function CAccountModel(oData)
 	}, this);
 }
 
+CAccountModel.prototype.threadingIsAvailable = function ()
+{
+	return this.oServer.bEnableThreading && this.useThreading();
+};
+
 CAccountModel.prototype.updateFromServer = function (oData)
 {
 	this.email(Types.pString(oData.Email));
@@ -80,6 +90,7 @@ CAccountModel.prototype.updateFromServer = function (oData)
 	this.serverId(Types.pInt(oData.ServerId));
 	this.oServer = new CServerModel(oData.Server);
 	this.useToAuthorize(!!oData.UseToAuthorize);
+	this.useThreading(!!oData.UseThreading);
 };
 
 CAccountModel.prototype.requireAccounts = function ()

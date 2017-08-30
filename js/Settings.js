@@ -23,7 +23,6 @@ module.exports = {
 	AllowIdentities: false,
 	AllowInsertImage: true,
 	AllowSpamFolder: true,
-	AllowThreads: true,
 	AllowFilters: false,
 	AllowForward: false,
 	AllowAutoresponder: false,
@@ -37,7 +36,6 @@ module.exports = {
 	MailsPerPage: 20,
 	MaxMessagesBodiesSizeToPrefetch: 50000,
 	SaveRepliesToCurrFolder: false,
-	useThreads: ko.observable(true),
 	
 	userAccountsCount: ko.observable(0),
 	
@@ -55,7 +53,6 @@ module.exports = {
 			this.AllowIdentities = !!oAppDataSection.AllowIdentities;
 			this.AllowInsertImage = !!oAppDataSection.AllowInsertImage;
 			this.AllowSpamFolder = !!oAppDataSection.AllowSpamFolder;
-			this.AllowThreads = !!oAppDataSection.AllowThreads;
 			this.AllowFilters = !!oAppDataSection.AllowFilters;
 			this.AllowForward = !!oAppDataSection.AllowForward;
 			this.AllowAutoresponder = !!oAppDataSection.AllowAutoresponder;
@@ -68,7 +65,6 @@ module.exports = {
 			this.MailsPerPage = Types.pInt(oAppDataSection.MailsPerPage);
 			this.MaxMessagesBodiesSizeToPrefetch = Types.pInt(oAppDataSection.MaxMessagesBodiesSizeToPrefetch);
 			this.SaveRepliesToCurrFolder = !!oAppDataSection.SaveRepliesToCurrFolder;
-			this.useThreads(!!oAppDataSection.UseThreads);
 			
 			window.Enums.SmtpAuthType = oAppDataSection.SmtpAuthType;
 		}
@@ -76,10 +72,9 @@ module.exports = {
 		App.registerUserAccountsCount(this.userAccountsCount);
 	},
 	
-	update: function (iMailsPerPage, bUseThreads, bAllowAutosaveInDrafts, bSaveRepliesToCurrFolder, bAllowChangeInputDirection)
+	update: function (iMailsPerPage, bAllowAutosaveInDrafts, bSaveRepliesToCurrFolder, bAllowChangeInputDirection)
 	{
 		this.MailsPerPage = Types.pInt(iMailsPerPage);
-		this.useThreads(!!bUseThreads);
 		this.AllowAutosaveInDrafts = !!bAllowAutosaveInDrafts;
 		this.SaveRepliesToCurrFolder = !!bSaveRepliesToCurrFolder;
 		this.AllowChangeInputDirection = !!bAllowChangeInputDirection;

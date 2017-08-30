@@ -53,6 +53,7 @@ function CServerPairPropertiesView(sPairId, bAdminEdit)
 			this.smtpPassword(oSelectedServer.sSmtpPassword);
 			this.enableSieve(oSelectedServer.bEnableSieve);
 			this.sievePort(oSelectedServer.iSievePort);
+			this.enableThreading(oSelectedServer.bEnableThreading);
 		}
 		else
 		{
@@ -69,6 +70,7 @@ function CServerPairPropertiesView(sPairId, bAdminEdit)
 			this.smtpPassword('');
 			this.enableSieve(false);
 			this.sievePort(2000);
+			this.enableThreading(true);
 		}
 		
 		this.setCurrentValues();
@@ -87,6 +89,7 @@ function CServerPairPropertiesView(sPairId, bAdminEdit)
 	this.smtpPassword = ko.observable('');
 	this.enableSieve = ko.observable(false);
 	this.sievePort = ko.observable(2000);
+	this.enableThreading = ko.observable(true);
 	
 	this.currentValues = ko.observable('');
 	
@@ -182,7 +185,8 @@ CServerPairPropertiesView.prototype.setCurrentValues = function ()
 			this.smtpLogin(),
 			this.smtpPassword(),
 			this.enableSieve(),
-			this.sievePort()
+			this.sievePort(),
+			this.enableThreading()
 		]
 	;
 	
@@ -232,7 +236,8 @@ CServerPairPropertiesView.prototype.getParametersForSave = function ()
 		'SmtpLogin': sSmtpAuthType === window.Enums.SmtpAuthType.UseSpecifiedCredentials ? this.smtpLogin() : '',
 		'SmtpPassword': sSmtpAuthType === window.Enums.SmtpAuthType.UseSpecifiedCredentials ? this.smtpPassword() : '',
 		'EnableSieve': this.enableSieve(),
-		'SievePort': this.sievePort()
+		'SievePort': this.sievePort(),
+		'EnableThreading': this.enableThreading()
 	};
 };
 

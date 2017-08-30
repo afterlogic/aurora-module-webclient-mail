@@ -127,16 +127,6 @@ function CMailCache()
 	
 	this.aResponseHandlers = [];
 
-	Settings.useThreads.subscribe(function () {
-		_.each(this.oFolderListItems, function (oFolderList) {
-			_.each(oFolderList.collection(), function (oFolder) {
-				oFolder.markHasChanges();
-				oFolder.removeAllMessageListsFromCacheIfHasChanges();
-			}, this);
-		}, this);
-		this.messages([]);
-	}, this);
-	
 	this.iAutoCheckMailTimer = -1;
 	
 	this.waitForUnseenMessages = ko.observable(true);
@@ -398,7 +388,8 @@ CMailCache.prototype.markMessageReplied = function (iAccountId, sFullName, sUid,
  */
 CMailCache.prototype.hideThreads = function (oMessage)
 {
-	if (Settings.useThreads() && oMessage.folder() === this.folderList().currentFolderFullName() && !oMessage.threadOpened())
+	var oAccount = AccountList.getCurrent();
+	if (oAccount.threadingIsAvailable() && oMessage.folder() === this.folderList().currentFolderFullName() && !oMessage.threadOpened())
 	{
 		this.folderList().currentFolder().hideThreadMessages(oMessage);
 	}
@@ -416,17 +407,18 @@ CMailCache.prototype.showOpenedThreads = function (sFolderFullName)
  * @param {Object} oUidList
  * @returns {Boolean}
  */
-CMailCache.prototype.useThreadsInCurrentList = function (oUidList)
+CMailCache.prototype.useThreadingInCurrentList = function (oUidList)
 {
 	oUidList = oUidList || this.uidList();
 	
 	var
+		oAccount = AccountList.getCurrent(),
 		oCurrFolder = this.folderList().currentFolder(),
 		bFolderWithoutThreads = oCurrFolder && oCurrFolder.withoutThreads(),
 		bNotSearchOrFilters = oUidList.search() === '' && oUidList.filters() === ''
 	;
 	
-	return Settings.useThreads() && !bFolderWithoutThreads && bNotSearchOrFilters;
+	return oAccount.threadingIsAvailable() && !bFolderWithoutThreads && bNotSearchOrFilters;
 };
 
 /**
@@ -442,7 +434,7 @@ CMailCache.prototype.getMessagesWithThreads = function (sFolderFullName, oUidLis
 		oCurrFolder = this.folderList().currentFolder()
 	;
 	
-	if (oCurrFolder && sFolderFullName === oCurrFolder.fullName() && this.useThreadsInCurrentList(oUidList))
+	if (oCurrFolder && sFolderFullName === oCurrFolder.fullName() && this.useThreadingInCurrentList(oUidList))
 	{
 		aMessages = _.filter(aOrigMessages, function (oMess) {
 			return !oMess.threadPart();
@@ -656,7 +648,8 @@ CMailCache.prototype.requestMessageList = function (sFolder, iPage, sSearch, sFi
 		oFolderList = this.oFolderListItems[this.currentAccountId()],
 		oFolder = (oFolderList) ? oFolderList.getFolderByFullName(sFolder) : null,
 		bFolderWithoutThreads = oFolder && oFolder.withoutThreads(),
-		bUseThreads = Settings.useThreads() && !bFolderWithoutThreads && sSearch === '' && sFilters === '',
+		oAccount = AccountList.getCurrent(),
+		bUseThreading = oAccount.threadingIsAvailable() && !bFolderWithoutThreads && sSearch === '' && sFilters === '',
 		oUidList = (oFolder) ? oFolder.getUidList(sSearch, sFilters) : null,
 		bCacheIsEmpty = oUidList && oUidList.resultCount() === -1,
 		iOffset = (iPage - 1) * Settings.MailsPerPage,
@@ -666,7 +659,7 @@ CMailCache.prototype.requestMessageList = function (sFolder, iPage, sSearch, sFi
 			'Limit': Settings.MailsPerPage,
 			'Search': sSearch,
 			'Filters': sFilters,
-			'UseThreads': bUseThreads
+			'UseThreading': bUseThreading
 		},
 		bStartRequest = false,
 		bDataExpected = false,
@@ -1446,7 +1439,7 @@ CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 		oFolderList = this.oFolderListItems[iAccountId],
 		oFolder = null,
 		oUidList = null,
-		bTrustThreadInfo = oParameters.UseThreads,
+		bTrustThreadInfo = oParameters.UseThreading,
 		bHasFolderChanges = false,
 		bCurrentFolder = this.currentAccountId() === iAccountId &&
 				this.folderList().currentFolderFullName() === oResult.FolderName,
@@ -1696,6 +1689,25 @@ CMailCache.prototype.changeDatesInMessages = function () {
 			}, this);
 		});
 	});
+};
+
+/**
+ * Clears messages cache for specified account.
+ * @param {number} iAccountId
+ */
+CMailCache.prototype.clearMessagesCache = function (iAccountId)
+{
+	var oFolderList = this.oFolderListItems[iAccountId];
+	
+	_.each(oFolderList.collection(), function (oFolder) {
+		oFolder.markHasChanges();
+		oFolder.removeAllMessageListsFromCacheIfHasChanges();
+	}, this);
+	
+	if (iAccountId === this.currentAccountId())
+	{
+		this.messages([]);
+	}
 };
 
 var MailCache = new CMailCache();

@@ -78,11 +78,12 @@ function CMessageModel()
 	}, this);
 	this.threadsAllowed = ko.computed(function () {
 		var
+			oAccount = AccountList.getAccount(this.accountId()),
 			oFolder = this.folderObject(),
 			bFolderWithoutThreads = oFolder && (oFolder.type() === Enums.FolderTypes.Drafts || 
 				oFolder.type() === Enums.FolderTypes.Spam || oFolder.type() === Enums.FolderTypes.Trash)
 		;
-		return Settings.useThreads() && !bFolderWithoutThreads;
+		return oAccount.threadingIsAvailable() && !bFolderWithoutThreads;
 	}, this);
 	this.otherSendersAllowed = ko.computed(function () {
 		var oFolder = this.folderObject();
@@ -181,7 +182,7 @@ function CMessageModel()
 	this.checked = ko.observable(false);
 	this.checked.subscribe(function (bChecked) {
 		this.requireMailCache();
-		if (!this.threadOpened() && MailCache.useThreadsInCurrentList())
+		if (!this.threadOpened() && MailCache.useThreadingInCurrentList())
 		{
 			var
 				oFolder = MailCache.folderList().getFolderByFullName(this.folder())

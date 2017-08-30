@@ -43,8 +43,16 @@ function CAccountPropertiesPaneView()
 	this.email = ko.observable('');
 	this.incomingLogin = ko.observable('');
 	this.incomingPassword = ko.observable('');
+	this.useThreading = ko.observable(false);
 
 	this.oServerPairPropertiesView = new CServerPairPropertiesView('acc_edit');
+	this.enableThreading = this.oServerPairPropertiesView.enableThreading;
+	this.enableThreading.subscribe(function () {
+		if (!this.enableThreading())
+		{
+			this.useThreading(false);
+		}
+	}, this);
 
 	this.allowChangePassword = ko.observable(false);
 	
@@ -103,7 +111,8 @@ CAccountPropertiesPaneView.prototype.getCurrentValues = function ()
 			this.friendlyName(),
 			this.email(),
 			this.incomingLogin(),
-			this.incomingPassword()
+			this.incomingPassword(),
+			this.useThreading()
 		],
 		aServers = this.oServerPairPropertiesView.currentValues()
 	;
@@ -121,7 +130,8 @@ CAccountPropertiesPaneView.prototype.getParametersForSave = function ()
 		'Email': this.email(),
 		'IncomingLogin': this.incomingLogin(),
 		'IncomingPassword': this.incomingPassword() === this.sFakePass ? '' : this.incomingPassword(),
-		'Server': this.oServerPairPropertiesView.getParametersForSave()
+		'Server': this.oServerPairPropertiesView.getParametersForSave(),
+		'UseThreading': this.useThreading()
 	};
 };
 
@@ -143,6 +153,7 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 		
 		this.useToAuthorize(oAccount.useToAuthorize());
 		this.canBeUsedToAuthorize(oAccount.canBeUsedToAuthorize());
+		this.useThreading(oAccount.useThreading());
 	}
 	else
 	{
@@ -155,6 +166,7 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 		
 		this.useToAuthorize(true);
 		this.canBeUsedToAuthorize(false);
+		this.useThreading(false);
 	}
 	
 	this.updateSavedState();
