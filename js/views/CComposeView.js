@@ -1703,7 +1703,7 @@ CComposeView.prototype.getMessageDataForNewTab = function ()
 		aAttachments = _.map(this.attachments(), function (oAttach)
 		{
 			return {
-				'@Object': 'Object/CApiMailAttachment',
+				'@Object': 'Object/Aurora\\Modules\\Mail\\Classes\\Attachment',
 				'FileName': oAttach.fileName(),
 				'TempName': oAttach.tempName(),
 				'MimeType': oAttach.mimeType(),

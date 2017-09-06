@@ -372,7 +372,7 @@ CAccountListModel.prototype.onGetIdentitiesResponse = function (oResponse, oRequ
 		}
 
 		oIdentity.parse({
-			'@Object': 'Object/CMailIdentity',
+			'@Object': 'Object/Aurora\\Modules\\Mail\\Classes\\Identity',
 			AccountPart: true,
 			Default: !_.find(aIdentities, function(oIdentity){ return oIdentity.isDefault(); }),
 			Email: oAccount.email(),
