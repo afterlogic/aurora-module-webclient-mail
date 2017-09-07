@@ -48,6 +48,9 @@ module.exports = function (oAppData) {
 	}
 	else if (bNormalUser)
 	{
+		var Cache = require('modules/%ModuleName%/js/Cache.js');
+		Cache.init();
+		
 		if (App.isNewTab())
 		{
 			var GetComposeView = function() {
@@ -99,9 +102,6 @@ module.exports = function (oAppData) {
 		}
 		else
 		{
-			var Cache = require('modules/%ModuleName%/js/Cache.js');
-			Cache.init();
-			
 			var oMethods = {
 				enableModule: ko.observable(Settings.AllowAddAccounts || AccountList.hasAccount() ),
 				getComposeMessageToAddresses: function () {
