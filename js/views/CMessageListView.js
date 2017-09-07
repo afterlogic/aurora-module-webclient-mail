@@ -95,7 +95,7 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 			bNotSearchOrFilters = this.uidList().search() === '' && this.uidList().filters() === ''
 		;
 		
-		return oAccount.threadingIsAvailable() && !bFolderWithoutThreads && bNotSearchOrFilters;
+		return oAccount && oAccount.threadingIsAvailable() && !bFolderWithoutThreads && bNotSearchOrFilters;
 	}, this);
 
 	this.collection = MailCache.messages;
