@@ -377,16 +377,22 @@ CMessageListView.prototype.onMessageDblClick = function (oMessage)
 	if (!this.isSavingDraft(oMessage))
 	{
 		var
-			oFolder = this.folderList().getFolderByFullName(oMessage.folder())
+			oFolder = this.folderList().getFolderByFullName(oMessage.folder()),
+			oParams = { Message: oMessage, Cancel: false }
 		;
+		
+		App.broadcastEvent('%ModuleName%::MessageDblClick::before', oParams);
 
-		if (oFolder.type() === Enums.FolderTypes.Drafts)
+		if (!oParams.Cancel)
 		{
-			ComposeUtils.composeMessageFromDrafts(oMessage.folder(), oMessage.uid());
-		}
-		else
-		{
-			this.openMessageInNewWindowBound(oMessage);
+			if (oFolder.type() === Enums.FolderTypes.Drafts)
+			{
+				ComposeUtils.composeMessageFromDrafts(oMessage.folder(), oMessage.uid());
+			}
+			else
+			{
+				this.openMessageInNewWindowBound(oMessage);
+			}
 		}
 	}
 };
