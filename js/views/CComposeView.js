@@ -1259,6 +1259,7 @@ CComposeView.prototype.setMessageDataInNewTab = function (oParameters)
 		oAttach.parse(oRawAttach);
 		return oAttach;
 	}, this));
+	this.plainText(oParameters.plainText);
 	this.textBody(oParameters.textBody);
 	this.selectedImportance(oParameters.selectedImportance);
 	this.sendReadingConfirmation(oParameters.sendReadingConfirmation);
@@ -1732,7 +1733,8 @@ CComposeView.prototype.getMessageDataForNewTab = function ()
 		bccAddr: this.bccAddr(),
 		subject: this.subject(),
 		attachments: aAttachments,
-		textBody: this.oHtmlEditor.getText(),
+		plainText: this.plainText(),
+		textBody: this.plainText() ? this.oHtmlEditor.getPlainText() : this.oHtmlEditor.getText(),
 		selectedImportance: this.selectedImportance(),
 		sendReadingConfirmation: this.sendReadingConfirmation(),
 		changedInPreviousWindow: this.isChanged(),
