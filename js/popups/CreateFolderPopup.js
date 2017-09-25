@@ -56,7 +56,7 @@ CCreateFolderPopup.prototype.PopupTemplate = '%ModuleName%_Settings_CreateFolder
 /**
  * @param {Function} fCallback
  */
-CCreateFolderPopup.prototype.onShow = function (fCallback)
+CCreateFolderPopup.prototype.onOpen = function (fCallback)
 {
 	this.options(MailCache.editedFolderList().getOptions(TextUtils.i18n('%MODULENAME%/LABEL_NO_PARENT_FOLDER'), true, false, true));
 	

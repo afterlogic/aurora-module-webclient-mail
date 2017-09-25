@@ -42,7 +42,7 @@ _.extendOwn(CSetSystemFoldersPopup.prototype, CAbstractPopup.prototype);
 
 CSetSystemFoldersPopup.prototype.PopupTemplate = '%ModuleName%_Settings_SetSystemFoldersPopup';
 
-CSetSystemFoldersPopup.prototype.onShow = function ()
+CSetSystemFoldersPopup.prototype.onOpen = function ()
 {
 	var oFolderList = MailCache.editedFolderList();
 	

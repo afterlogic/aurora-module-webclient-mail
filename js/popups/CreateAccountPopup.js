@@ -65,7 +65,7 @@ CCreateAccountPopup.prototype.init = function ()
 /**
  * @param {Function=} fCallback
  */
-CCreateAccountPopup.prototype.onShow = function (fCallback)
+CCreateAccountPopup.prototype.onOpen = function (fCallback)
 {
 	this.fCallback = fCallback;
 	
@@ -90,7 +90,7 @@ CCreateAccountPopup.prototype.focusFieldToEdit = function ()
 	}
 };
 
-CCreateAccountPopup.prototype.onHide = function ()
+CCreateAccountPopup.prototype.onClose = function ()
 {
 	this.init();
 };

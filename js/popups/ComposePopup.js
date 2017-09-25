@@ -74,7 +74,7 @@ CComposePopup.prototype.preventBackspaceOff = function ()
 	$(document).off('keydown', this.fPreventBackspace);
 };
 
-CComposePopup.prototype.onHide = function ()
+CComposePopup.prototype.onClose = function ()
 {
 	this.preventBackspaceOff();
 };
@@ -82,7 +82,7 @@ CComposePopup.prototype.onHide = function ()
 /**
  * @param {Array} aParams
  */
-CComposePopup.prototype.onShow = function (aParams)
+CComposePopup.prototype.onOpen = function (aParams)
 {
 	aParams = aParams || [];
 	

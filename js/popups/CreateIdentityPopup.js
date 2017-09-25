@@ -28,7 +28,7 @@ CCreateIdentityPopup.prototype.PopupTemplate = '%ModuleName%_Settings_CreateIden
 /**
  * @param {number} iAccountId
  */
-CCreateIdentityPopup.prototype.onShow = function (iAccountId)
+CCreateIdentityPopup.prototype.onOpen = function (iAccountId)
 {
 	var
 		oAccount = AccountList.getAccount(iAccountId),

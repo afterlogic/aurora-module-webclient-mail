@@ -25,13 +25,13 @@ CConfirmAnotherMessageComposedPopup.prototype.PopupTemplate = '%ModuleName%_Conf
 /**
  * @param {Function} fConfirmCallback
  */
-CConfirmAnotherMessageComposedPopup.prototype.onShow = function (fConfirmCallback)
+CConfirmAnotherMessageComposedPopup.prototype.onOpen = function (fConfirmCallback)
 {
 	this.fConfirmCallback = $.isFunction(fConfirmCallback) ? fConfirmCallback : null;
 	this.shown = true;
 };
 
-CConfirmAnotherMessageComposedPopup.prototype.onHide = function ()
+CConfirmAnotherMessageComposedPopup.prototype.onClose = function ()
 {
 	this.shown = false;
 };

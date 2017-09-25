@@ -55,7 +55,7 @@ _.extendOwn(CCreateFetcherPopup.prototype, CAbstractPopup.prototype);
 
 CCreateFetcherPopup.prototype.PopupTemplate = '%ModuleName%_Settings_CreateFetcherPopup';
 
-CCreateFetcherPopup.prototype.onShow = function ()
+CCreateFetcherPopup.prototype.onOpen = function ()
 {
 	this.bShown = true;
 	this.populateOptions();
@@ -77,7 +77,7 @@ CCreateFetcherPopup.prototype.populateOptions = function ()
 	}
 };
 
-CCreateFetcherPopup.prototype.onHide = function ()
+CCreateFetcherPopup.prototype.onClose = function ()
 {
 	this.bShown = false;
 };
