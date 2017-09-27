@@ -5,8 +5,6 @@
 		"afterlogic/aurora-framework": "~0.6"
 	},
 	"extra": {
-		"installer-name": "MailWebclient",
-		"include-in-mobile": false,
-		"include-in-desktop": true
+		"installer-name": "MailWebclient"
 	}
 }
