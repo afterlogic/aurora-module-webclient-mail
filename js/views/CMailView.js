@@ -379,7 +379,8 @@ CMailView.prototype.hotKeysBind = function ()
 		}
 		else if (bComputed && sKey === Enums.Key.n)
 		{
-			Routing.setHash(LinksUtils.getCompose());
+			this.executeCompose();
+			ev.preventDefault();
 		}
 	},this));
 };
