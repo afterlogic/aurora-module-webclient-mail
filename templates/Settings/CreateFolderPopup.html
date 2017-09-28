@@ -14,7 +14,7 @@
 			</div>
 			<div class="row">
 				<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_FOLDER_NAME'}"></span>
-				<input type="text" class="value input" spellcheck="false" maxlength="30" data-bind="value: folderName, hasfocus: folderNameFocus, onEnter: create" />
+				<input type="text" class="value input" spellcheck="false" maxlength="30" data-bind="value: folderName, valueUpdate: 'afterkeydown', hasfocus: folderNameFocus, onEnter: create" />
 			</div>
 			<div class="buttons">
 				<span class="button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_OK'}, click: create, visible: !isCreating()"></span>
