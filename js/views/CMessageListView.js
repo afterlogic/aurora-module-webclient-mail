@@ -316,9 +316,14 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 		this.createDatePickerObject(this.searchDateStartDom());
 		this.createDatePickerObject(this.searchDateEndDom());
 	}, this), 1000);
+	
+	this.customMessageItemViewTemplate = ko.observable('');
+	
+	App.broadcastEvent('%ModuleName%::ConstructView::after', {'Name': this.ViewConstructorName, 'View': this, 'MailCache': MailCache});
 }
 
 CMessageListView.prototype.ViewTemplate = '%ModuleName%_MessagesView';
+CMessageListView.prototype.ViewConstructorName = 'CMessageListView';
 
 CMessageListView.prototype.addNewAccount = function ()
 {
