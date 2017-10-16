@@ -322,7 +322,7 @@ CAccountFiltersPaneView.prototype.onAccountSieveFiltersUpdateResponse = function
 {
 	this.isSaving(false);
 
-	if (oRequest && oRequest.Action)
+	if (oRequest && oRequest.Method)
 	{
 		if (oResponse && oResponse.Result)
 		{
