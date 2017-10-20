@@ -1557,6 +1557,9 @@ CMailCache.prototype.onMoveMessagesResponse = function (oResponse, oRequest)
 	else
 	{
 		oFolder.commitDeleted(oParameters.Uids.split(','));
+		_.each(oParameters.Uids.split(','), function (sUid) {
+			Routing.replaceHashWithoutMessageUid(sUid);
+		});
 	}
 	
 	if (sCurrFolderFullName === oFolder.fullName() || oToFolder && sCurrFolderFullName === oToFolder.fullName())
