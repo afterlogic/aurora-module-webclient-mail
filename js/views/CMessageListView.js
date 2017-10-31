@@ -164,7 +164,7 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 
 		return TextUtils.i18n('%MODULENAME%/INFO_SEARCH_RESULT', {
 			'SEARCH': this.calculateSearchStringForDescription(),
-			'FOLDER': this.folderList().currentFolder() ? this.folderList().currentFolder().displayName() : ''
+			'FOLDER': this.folderList().currentFolder() ? TextUtils.encodeHtml(this.folderList().currentFolder().displayName()) : ''
 		});
 		
 	}, this);
@@ -174,14 +174,14 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 		if (this.search() === '')
 		{
 			return TextUtils.i18n('%MODULENAME%/INFO_UNREAD_MESSAGES', {
-				'FOLDER': this.folderList().currentFolder() ? this.folderList().currentFolder().displayName() : ''
+				'FOLDER': this.folderList().currentFolder() ? TextUtils.encodeHtml(this.folderList().currentFolder().displayName()) : ''
 			});
 		}
 		else
 		{
 			return TextUtils.i18n('%MODULENAME%/INFO_UNREAD_MESSAGES_SEARCH_RESULT', {
 				'SEARCH': this.calculateSearchStringForDescription(),
-				'FOLDER': this.folderList().currentFolder() ? this.folderList().currentFolder().displayName() : ''
+				'FOLDER': this.folderList().currentFolder() ? TextUtils.encodeHtml(this.folderList().currentFolder().displayName()) : ''
 			});
 		}
 		
