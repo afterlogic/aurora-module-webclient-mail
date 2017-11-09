@@ -1563,7 +1563,10 @@ CComposeView.prototype.verifyDataForSending = function ()
 		aCcIncorrect = AddressUtils.getIncorrectEmailsFromAddressString(this.ccAddr()),
 		aBccIncorrect = AddressUtils.getIncorrectEmailsFromAddressString(this.bccAddr()),
 		aIncorrect = _.union(aToIncorrect, aCcIncorrect, aBccIncorrect),
-		sWarning = TextUtils.i18n('%MODULENAME%/ERROR_INPUT_CORRECT_EMAILS') + aIncorrect.join(', ')
+		aEncodedIncorrect = _.map(aIncorrect, function (sIncorrect) {
+			return TextUtils.encodeHtml(sIncorrect);
+		}),
+		sWarning = TextUtils.i18n('%MODULENAME%/ERROR_INPUT_CORRECT_EMAILS') + aEncodedIncorrect.join(', ')
 	;
 
 	if (aIncorrect.length > 0)

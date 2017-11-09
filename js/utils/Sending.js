@@ -649,7 +649,7 @@ SendingUtils.getForwardMessageBody = function (oMessage, iAccountId, oFetcherOrI
 			'TOADDR': TextUtils.encodeHtml(oMessage.oTo.getFull()),
 			'CCPART': sCcPart,
 			'FULLDATE': oMessage.oDateModel.getFullDate(),
-			'SUBJECT': oMessage.subject()
+			'SUBJECT': TextUtils.encodeHtml(oMessage.subject())
 		}),
 		sForwardBody = '<br /><br />' + this.getSignatureText(iAccountId, oFetcherOrIdentity, true) + '<br /><br />' + 
 			'<div data-anchor="reply-title">' + sForwardTitle + '</div><br /><br />' + oMessage.getConvertedHtml()
