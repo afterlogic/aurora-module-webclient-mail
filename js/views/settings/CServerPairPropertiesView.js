@@ -5,6 +5,7 @@ var
 	ko = require('knockout'),
 	
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
+	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	ValidationUtils = require('%PathToCoreWebclientModule%/js/utils/Validation.js'),
 	
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
@@ -144,7 +145,7 @@ CServerPairPropertiesView.prototype.requestServers = function ()
 			var aServerOptions = [{ 'Name': TextUtils.i18n('%MODULENAME%/LABEL_CONFIGURE_SERVER_MANUALLY'), 'Id': 0 }];
 
 			_.each(oResponse.Result, function (oServer) {
-				aServerOptions.push({ 'Name': oServer.Name, 'Id': oServer.EntityId });
+				aServerOptions.push({ 'Name': oServer.Name, 'Id': Types.pInt(oServer.EntityId) });
 			});
 
 			this.servers(_.map(oResponse.Result, function (oServerData) {
