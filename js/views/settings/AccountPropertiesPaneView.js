@@ -174,11 +174,18 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 
 CAccountPropertiesPaneView.prototype.remove = function ()
 {
-	var oAccount = AccountList.getEdited();
-	
-	if (oAccount)
+	if (this.isDisableAuthorize())
 	{
-		oAccount.remove();
+		Screens.showError(TextUtils.i18n('COREWEBCLIENT/ERROR_ACCOUNT_DELETING_DISABLE'), true);
+	}
+	else
+	{
+		var oAccount = AccountList.getEdited();
+
+		if (oAccount)
+		{
+			oAccount.remove();
+		}
 	}
 };
 
