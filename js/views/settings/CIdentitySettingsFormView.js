@@ -26,7 +26,7 @@ var
  * @param {Object} oParent
  * @param {boolean} bCreate
  */
-function CIdentityPropertiesPaneView(oParent, bCreate)
+function CIdentitySettingsFormView(oParent, bCreate)
 {
 	CAbstractSettingsFormView.call(this, Settings.ServerModuleName);
 	
@@ -44,21 +44,21 @@ function CIdentityPropertiesPaneView(oParent, bCreate)
 	this.friendlyNameHasFocus = ko.observable(false);
 }
 
-_.extendOwn(CIdentityPropertiesPaneView.prototype, CAbstractSettingsFormView.prototype);
+_.extendOwn(CIdentitySettingsFormView.prototype, CAbstractSettingsFormView.prototype);
 
-CIdentityPropertiesPaneView.prototype.ViewTemplate = '%ModuleName%_Settings_IdentityPropertiesPaneView';
-CIdentityPropertiesPaneView.prototype.ViewConstructorName = 'CIdentityPropertiesPaneView';
+CIdentitySettingsFormView.prototype.ViewTemplate = '%ModuleName%_Settings_IdentitySettingsFormView';
+CIdentitySettingsFormView.prototype.ViewConstructorName = 'CIdentitySettingsFormView';
 
 /**
  * @param {Object} oIdentity
  */
-CIdentityPropertiesPaneView.prototype.show = function (oIdentity)
+CIdentitySettingsFormView.prototype.show = function (oIdentity)
 {
 	this.identity(oIdentity && !oIdentity.FETCHER ? oIdentity : null);
 	this.populate();
 };
 
-CIdentityPropertiesPaneView.prototype.getCurrentValues = function ()
+CIdentitySettingsFormView.prototype.getCurrentValues = function ()
 {
 	return [
 		this.friendlyName(),
@@ -66,7 +66,7 @@ CIdentityPropertiesPaneView.prototype.getCurrentValues = function ()
 	];
 };
 
-CIdentityPropertiesPaneView.prototype.getParametersForSave = function ()
+CIdentitySettingsFormView.prototype.getParametersForSave = function ()
 {
 	if (this.identity())
 	{
@@ -97,7 +97,7 @@ CIdentityPropertiesPaneView.prototype.getParametersForSave = function ()
 	return {};
 };
 
-CIdentityPropertiesPaneView.prototype.save = function ()
+CIdentitySettingsFormView.prototype.save = function ()
 {
 	if (this.email() === '')
 	{
@@ -117,7 +117,7 @@ CIdentityPropertiesPaneView.prototype.save = function ()
  * @param {Object} oResponse
  * @param {Object} oRequest
  */
-CIdentityPropertiesPaneView.prototype.onResponse = function (oResponse, oRequest)
+CIdentitySettingsFormView.prototype.onResponse = function (oResponse, oRequest)
 {
 	this.isSaving(false);
 
@@ -151,7 +151,7 @@ CIdentityPropertiesPaneView.prototype.onResponse = function (oResponse, oRequest
 	}
 };
 
-CIdentityPropertiesPaneView.prototype.populate = function ()
+CIdentitySettingsFormView.prototype.populate = function ()
 {
 	var oIdentity = this.identity();
 	
@@ -170,7 +170,7 @@ CIdentityPropertiesPaneView.prototype.populate = function ()
 	}
 };
 
-CIdentityPropertiesPaneView.prototype.remove = function ()
+CIdentitySettingsFormView.prototype.remove = function ()
 {
 	if (this.identity() && !this.identity().bAccountPart)
 	{
@@ -192,7 +192,7 @@ CIdentityPropertiesPaneView.prototype.remove = function ()
  * @param {Object} oResponse
  * @param {Object} oRequest
  */
-CIdentityPropertiesPaneView.prototype.onAccountIdentityDeleteResponse = function (oResponse, oRequest)
+CIdentitySettingsFormView.prototype.onAccountIdentityDeleteResponse = function (oResponse, oRequest)
 {
 	if (!oResponse.Result)
 	{
@@ -201,7 +201,7 @@ CIdentityPropertiesPaneView.prototype.onAccountIdentityDeleteResponse = function
 	AccountList.populateIdentities();
 };
 
-CIdentityPropertiesPaneView.prototype.cancel = function ()
+CIdentitySettingsFormView.prototype.cancel = function ()
 {
 	if ($.isFunction(this.oParent.cancelPopup))
 	{
@@ -209,4 +209,4 @@ CIdentityPropertiesPaneView.prototype.cancel = function ()
 	}
 };
 
-module.exports = CIdentityPropertiesPaneView;
+module.exports = CIdentitySettingsFormView;

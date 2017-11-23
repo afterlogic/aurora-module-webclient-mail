@@ -27,7 +27,7 @@ var
 /**
  * @constructor
  */ 
-function CAccountPropertiesPaneView()
+function CAccountSettingsFormView()
 {
 	CAbstractSettingsFormView.call(this, Settings.ServerModuleName);
 	
@@ -92,18 +92,18 @@ function CAccountPropertiesPaneView()
 	this.isDisableAuthorize = ko.observable(App.userAccountsCount() <= 1);
 }
 
-_.extendOwn(CAccountPropertiesPaneView.prototype, CAbstractSettingsFormView.prototype);
+_.extendOwn(CAccountSettingsFormView.prototype, CAbstractSettingsFormView.prototype);
 
-CAccountPropertiesPaneView.prototype.ViewTemplate = '%ModuleName%_Settings_AccountPropertiesPaneView';
+CAccountSettingsFormView.prototype.ViewTemplate = '%ModuleName%_Settings_AccountSettingsFormView';
 
-CAccountPropertiesPaneView.prototype.onShow = function ()
+CAccountSettingsFormView.prototype.onShow = function ()
 {
 	this.oServerPairPropertiesView.init(false);
 	this.populate();
 	this.isDisableAuthorize(this.useToAuthorize() ? App.userAccountsCount() <= 1 : false);
 };
 
-CAccountPropertiesPaneView.prototype.getCurrentValues = function ()
+CAccountSettingsFormView.prototype.getCurrentValues = function ()
 {
 	var
 		aMain = [
@@ -120,7 +120,7 @@ CAccountPropertiesPaneView.prototype.getCurrentValues = function ()
 	return aMain.concat(aServers);
 };
 
-CAccountPropertiesPaneView.prototype.getParametersForSave = function ()
+CAccountSettingsFormView.prototype.getParametersForSave = function ()
 {
 	var oAccount = AccountList.getEdited();
 	return {
@@ -135,12 +135,12 @@ CAccountPropertiesPaneView.prototype.getParametersForSave = function ()
 	};
 };
 
-CAccountPropertiesPaneView.prototype.revert = function ()
+CAccountSettingsFormView.prototype.revert = function ()
 {
 	this.populate();
 };
 
-CAccountPropertiesPaneView.prototype.populate = function ()
+CAccountSettingsFormView.prototype.populate = function ()
 {
 	var oAccount = AccountList.getEdited();
 	if (oAccount)
@@ -172,7 +172,7 @@ CAccountPropertiesPaneView.prototype.populate = function ()
 	this.updateSavedState();
 };
 
-CAccountPropertiesPaneView.prototype.remove = function ()
+CAccountSettingsFormView.prototype.remove = function ()
 {
 	if (this.isDisableAuthorize())
 	{
@@ -189,7 +189,7 @@ CAccountPropertiesPaneView.prototype.remove = function ()
 	}
 };
 
-CAccountPropertiesPaneView.prototype.save = function ()
+CAccountSettingsFormView.prototype.save = function ()
 {
 	this.isSaving(true);
 	
@@ -202,7 +202,7 @@ CAccountPropertiesPaneView.prototype.save = function ()
  * @param {Object} oResponse
  * @param {Object} oRequest
  */
-CAccountPropertiesPaneView.prototype.onResponse = function (oResponse, oRequest)
+CAccountSettingsFormView.prototype.onResponse = function (oResponse, oRequest)
 {
 	this.isSaving(false);
 
@@ -227,7 +227,7 @@ CAccountPropertiesPaneView.prototype.onResponse = function (oResponse, oRequest)
 	}
 };
 
-CAccountPropertiesPaneView.prototype.changePassword = function ()
+CAccountSettingsFormView.prototype.changePassword = function ()
 {
 	if (ChangePasswordPopup)
 	{
@@ -239,4 +239,4 @@ CAccountPropertiesPaneView.prototype.changePassword = function ()
 	}
 };
 
-module.exports = new CAccountPropertiesPaneView();
+module.exports = new CAccountSettingsFormView();

@@ -19,15 +19,15 @@ var
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	
-	AccountAutoresponderPaneView = require('modules/%ModuleName%/js/views/settings/AccountAutoresponderPaneView.js'),
-	AccountFiltersPaneView = require('modules/%ModuleName%/js/views/settings/AccountFiltersPaneView.js'),
+	AccountAutoresponderSettingsFormView = require('modules/%ModuleName%/js/views/settings/AccountAutoresponderSettingsFormView.js'),
+	AccountFiltersSettingsFormView = require('modules/%ModuleName%/js/views/settings/AccountFiltersSettingsFormView.js'),
 	AccountFoldersPaneView = require('modules/%ModuleName%/js/views/settings/AccountFoldersPaneView.js'),
-	AccountForwardPaneView = require('modules/%ModuleName%/js/views/settings/AccountForwardPaneView.js'),
-	AccountPropertiesPaneView = require('modules/%ModuleName%/js/views/settings/AccountPropertiesPaneView.js'),
-	CIdentityPropertiesPaneView = require('modules/%ModuleName%/js/views/settings/CIdentityPropertiesPaneView.js'),
-	FetcherIncomingPaneView = require('modules/%ModuleName%/js/views/settings/FetcherIncomingPaneView.js'),
-	FetcherOutgoingPaneView = require('modules/%ModuleName%/js/views/settings/FetcherOutgoingPaneView.js'),
-	SignaturePaneView = require('modules/%ModuleName%/js/views/settings/SignaturePaneView.js')
+	AccountForwardSettingsFormView = require('modules/%ModuleName%/js/views/settings/AccountForwardSettingsFormView.js'),
+	AccountSettingsFormView = require('modules/%ModuleName%/js/views/settings/AccountSettingsFormView.js'),
+	CIdentitySettingsFormView = require('modules/%ModuleName%/js/views/settings/CIdentitySettingsFormView.js'),
+	FetcherIncomingSettingsFormView = require('modules/%ModuleName%/js/views/settings/FetcherIncomingSettingsFormView.js'),
+	FetcherOutgoingSettingsFormView = require('modules/%ModuleName%/js/views/settings/FetcherOutgoingSettingsFormView.js'),
+	SignatureSettingsFormView = require('modules/%ModuleName%/js/views/settings/SignatureSettingsFormView.js')
 ;
 
 /**
@@ -62,8 +62,8 @@ function CAccountsSettingsPaneView()
 		{
 			name: 'properties',
 			title: TextUtils.i18n('%MODULENAME%/LABEL_PROPERTIES_TAB'),
-			view: AccountPropertiesPaneView,
-			visible: AccountPropertiesPaneView.visibleTab
+			view: AccountSettingsFormView,
+			visible: AccountSettingsFormView.visibleTab
 		},
 		{
 			name: 'folders',
@@ -74,25 +74,25 @@ function CAccountsSettingsPaneView()
 		{
 			name: 'forward',
 			title: TextUtils.i18n('%MODULENAME%/LABEL_FORWARD_TAB'),
-			view: AccountForwardPaneView,
+			view: AccountForwardSettingsFormView,
 			visible: this.allowForward
 		},
 		{
 			name: 'autoresponder',
 			title: TextUtils.i18n('%MODULENAME%/LABEL_AUTORESPONDER_TAB'),
-			view: AccountAutoresponderPaneView,
+			view: AccountAutoresponderSettingsFormView,
 			visible: this.allowAutoresponder
 		},
 		{
 			name: 'filters',
 			title: TextUtils.i18n('%MODULENAME%/LABEL_FILTERS_TAB'),
-			view: AccountFiltersPaneView,
+			view: AccountFiltersSettingsFormView,
 			visible: this.allowFilters
 		},
 		{
 			name: 'signature',
 			title: TextUtils.i18n('%MODULENAME%/LABEL_SIGNATURE_TAB'),
-			view: SignaturePaneView,
+			view: SignatureSettingsFormView,
 			visible: this.allowSignature
 		}
 	];
@@ -101,13 +101,13 @@ function CAccountsSettingsPaneView()
 		{
 			name: 'properties',
 			title: TextUtils.i18n('%MODULENAME%/LABEL_PROPERTIES_TAB'),
-			view: new CIdentityPropertiesPaneView(this),
+			view: new CIdentitySettingsFormView(this),
 			visible: ko.observable(true)
 		},
 		{
 			name: 'signature',
 			title: TextUtils.i18n('%MODULENAME%/LABEL_SIGNATURE_TAB'),
-			view: SignaturePaneView,
+			view: SignatureSettingsFormView,
 			visible: ko.observable(true)
 		}
 	];
@@ -116,19 +116,19 @@ function CAccountsSettingsPaneView()
 		{
 			name: 'incoming',
 			title: TextUtils.i18n('%MODULENAME%/LABEL_POP3_SETTINGS_TAB'),
-			view: FetcherIncomingPaneView,
+			view: FetcherIncomingSettingsFormView,
 			visible: ko.observable(true)
 		},
 		{
 			name: 'outgoing',
 			title: TextUtils.i18n('%MODULENAME%/LABEL_SMTP_SETTINGS_TAB'),
-			view: FetcherOutgoingPaneView,
+			view: FetcherOutgoingSettingsFormView,
 			visible: ko.observable(true)
 		},
 		{
 			name: 'signature',
 			title: TextUtils.i18n('%MODULENAME%/LABEL_SIGNATURE_TAB'),
-			view: SignaturePaneView,
+			view: SignatureSettingsFormView,
 			visible: ko.observable(true)
 		}
 	];

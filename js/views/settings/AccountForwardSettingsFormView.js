@@ -27,7 +27,7 @@ var
 /**
  * @constructor
  */
-function CAccountForwardPaneView()
+function CAccountForwardSettingsFormView()
 {
 	CAbstractSettingsFormView.call(this, Settings.ServerModuleName);
 	
@@ -43,11 +43,11 @@ function CAccountForwardPaneView()
 	}, this);
 }
 
-_.extendOwn(CAccountForwardPaneView.prototype, CAbstractSettingsFormView.prototype);
+_.extendOwn(CAccountForwardSettingsFormView.prototype, CAbstractSettingsFormView.prototype);
 
-CAccountForwardPaneView.prototype.ViewTemplate = '%ModuleName%_Settings_AccountForwardPaneView';
+CAccountForwardSettingsFormView.prototype.ViewTemplate = '%ModuleName%_Settings_AccountForwardSettingsFormView';
 
-CAccountForwardPaneView.prototype.getCurrentValues = function ()
+CAccountForwardSettingsFormView.prototype.getCurrentValues = function ()
 {
 	return [
 		this.enable(),
@@ -55,12 +55,12 @@ CAccountForwardPaneView.prototype.getCurrentValues = function ()
 	];
 };
 
-CAccountForwardPaneView.prototype.revert = function ()
+CAccountForwardSettingsFormView.prototype.revert = function ()
 {
 	this.populate();
 };
 
-CAccountForwardPaneView.prototype.getParametersForSave = function ()
+CAccountForwardSettingsFormView.prototype.getParametersForSave = function ()
 {
 	var oAccount = AccountList.getEdited();
 	return {
@@ -70,7 +70,7 @@ CAccountForwardPaneView.prototype.getParametersForSave = function ()
 	};
 };
 
-CAccountForwardPaneView.prototype.applySavedValues = function (oParameters)
+CAccountForwardSettingsFormView.prototype.applySavedValues = function (oParameters)
 {
 	var
 		oAccount = AccountList.getEdited(),
@@ -84,7 +84,7 @@ CAccountForwardPaneView.prototype.applySavedValues = function (oParameters)
 	}
 };
 
-CAccountForwardPaneView.prototype.save = function ()
+CAccountForwardSettingsFormView.prototype.save = function ()
 {
 	var
 		fSaveData = function() {
@@ -121,7 +121,7 @@ CAccountForwardPaneView.prototype.save = function ()
  * @param {Object} oResponse
  * @param {Object} oRequest
  */
-CAccountForwardPaneView.prototype.onResponse = function (oResponse, oRequest)
+CAccountForwardSettingsFormView.prototype.onResponse = function (oResponse, oRequest)
 {
 	this.isSaving(false);
 
@@ -139,7 +139,7 @@ CAccountForwardPaneView.prototype.onResponse = function (oResponse, oRequest)
 	}
 };
 
-CAccountForwardPaneView.prototype.populate = function ()
+CAccountForwardSettingsFormView.prototype.populate = function ()
 {
 	var 
 		oAccount = AccountList.getEdited(),
@@ -163,7 +163,7 @@ CAccountForwardPaneView.prototype.populate = function ()
  * @param {Object} oResponse
  * @param {Object} oRequest
  */
-CAccountForwardPaneView.prototype.onGetForwardResponse = function (oResponse, oRequest)
+CAccountForwardSettingsFormView.prototype.onGetForwardResponse = function (oResponse, oRequest)
 {
 	if (oResponse && oResponse.Result)
 	{
@@ -187,4 +187,4 @@ CAccountForwardPaneView.prototype.onGetForwardResponse = function (oResponse, oR
 	}
 };
 
-module.exports = new CAccountForwardPaneView();
+module.exports = new CAccountForwardSettingsFormView();

@@ -24,7 +24,7 @@ var
 /**
  * @constructor
  */
-function CFetcherIncomingPaneView()
+function CFetcherIncomingSettingsFormView()
 {
 	CAbstractSettingsFormView.call(this, Settings.ServerModuleName);
 	
@@ -53,14 +53,14 @@ function CFetcherIncomingPaneView()
 	this.defaultOptionsAfterRender = Utils.defaultOptionsAfterRender;
 }
 
-_.extendOwn(CFetcherIncomingPaneView.prototype, CAbstractSettingsFormView.prototype);
+_.extendOwn(CFetcherIncomingSettingsFormView.prototype, CAbstractSettingsFormView.prototype);
 
-CFetcherIncomingPaneView.prototype.ViewTemplate = '%ModuleName%_Settings_FetcherIncomingPaneView';
+CFetcherIncomingSettingsFormView.prototype.ViewTemplate = '%ModuleName%_Settings_FetcherIncomingSettingsFormView';
 
 /**
  * @param {Object} oFetcher
  */
-CFetcherIncomingPaneView.prototype.show = function (oFetcher)
+CFetcherIncomingSettingsFormView.prototype.show = function (oFetcher)
 {
 	this.bShown = true;
 	this.fetcher(oFetcher && oFetcher.FETCHER ? oFetcher : null);
@@ -71,13 +71,13 @@ CFetcherIncomingPaneView.prototype.show = function (oFetcher)
 /**
  * @param {Function} fShowNewTab
  */
-CFetcherIncomingPaneView.prototype.hide = function (fShowNewTab)
+CFetcherIncomingSettingsFormView.prototype.hide = function (fShowNewTab)
 {
 	this.bShown = false;
 	fShowNewTab();
 };
 
-CFetcherIncomingPaneView.prototype.populateOptions = function ()
+CFetcherIncomingSettingsFormView.prototype.populateOptions = function ()
 {
 	if (this.bShown)
 	{
@@ -90,7 +90,7 @@ CFetcherIncomingPaneView.prototype.populateOptions = function ()
 	}
 };
 
-CFetcherIncomingPaneView.prototype.getCurrentValues = function ()
+CFetcherIncomingSettingsFormView.prototype.getCurrentValues = function ()
 {
 	return [
 		this.isEnabled(),
@@ -103,7 +103,7 @@ CFetcherIncomingPaneView.prototype.getCurrentValues = function ()
 	];
 };
 
-CFetcherIncomingPaneView.prototype.getParametersForSave = function ()
+CFetcherIncomingSettingsFormView.prototype.getParametersForSave = function ()
 {
 	if (this.fetcher())
 	{
@@ -123,7 +123,7 @@ CFetcherIncomingPaneView.prototype.getParametersForSave = function ()
 	return {};
 };
 
-CFetcherIncomingPaneView.prototype.save = function ()
+CFetcherIncomingSettingsFormView.prototype.save = function ()
 {
 	if (this.isEmptyRequiredFields())
 	{
@@ -143,7 +143,7 @@ CFetcherIncomingPaneView.prototype.save = function ()
  * @param {Object} oResponse
  * @param {Object} oRequest
  */
-CFetcherIncomingPaneView.prototype.onResponse = function (oResponse, oRequest)
+CFetcherIncomingSettingsFormView.prototype.onResponse = function (oResponse, oRequest)
 {
 	this.isSaving(false);
 
@@ -159,7 +159,7 @@ CFetcherIncomingPaneView.prototype.onResponse = function (oResponse, oRequest)
 	}
 };
 
-CFetcherIncomingPaneView.prototype.populate = function ()
+CFetcherIncomingSettingsFormView.prototype.populate = function ()
 {
 	var oFetcher = this.fetcher();
 	
@@ -180,7 +180,7 @@ CFetcherIncomingPaneView.prototype.populate = function ()
 		this.updateSavedState();
 	}
 };
-CFetcherIncomingPaneView.prototype.isEmptyRequiredFields = function ()
+CFetcherIncomingSettingsFormView.prototype.isEmptyRequiredFields = function ()
 {
 	if (this.oIncoming.server() === '')
 	{
@@ -197,4 +197,4 @@ CFetcherIncomingPaneView.prototype.isEmptyRequiredFields = function ()
 	return false;
 };
 
-module.exports = new CFetcherIncomingPaneView();
+module.exports = new CFetcherIncomingSettingsFormView();

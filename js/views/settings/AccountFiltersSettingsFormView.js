@@ -24,7 +24,7 @@ var
 /**
  * @constructor
  */
-function CAccountFiltersPaneView()
+function CAccountFiltersSettingsFormView()
 {
 	CAbstractSettingsFormView.call(this, Settings.ServerModuleName);
 	
@@ -76,25 +76,25 @@ function CAccountFiltersPaneView()
 	this.firstState = null;
 }
 
-_.extendOwn(CAccountFiltersPaneView.prototype, CAbstractSettingsFormView.prototype);
+_.extendOwn(CAccountFiltersSettingsFormView.prototype, CAbstractSettingsFormView.prototype);
 
-CAccountFiltersPaneView.prototype.ViewTemplate = '%ModuleName%_Settings_AccountFiltersPaneView';
+CAccountFiltersSettingsFormView.prototype.ViewTemplate = '%ModuleName%_Settings_AccountFiltersSettingsFormView';
 
 /**
  * @param {Object} oAccount
  */
-CAccountFiltersPaneView.prototype.show = function (oAccount)
+CAccountFiltersSettingsFormView.prototype.show = function (oAccount)
 {
 	this.bShown = true;
 	this.populate();
 };
 
-CAccountFiltersPaneView.prototype.onHide = function ()
+CAccountFiltersSettingsFormView.prototype.onHide = function ()
 {
 	this.bShown = false;
 };
 
-CAccountFiltersPaneView.prototype.populate = function ()
+CAccountFiltersSettingsFormView.prototype.populate = function ()
 {
 	var
 		oFolderList = MailCache.editedFolderList(),
@@ -114,28 +114,28 @@ CAccountFiltersPaneView.prototype.populate = function ()
 	}
 };
 
-CAccountFiltersPaneView.prototype.revert = function ()
+CAccountFiltersSettingsFormView.prototype.revert = function ()
 {
 	_.each(this.collection(), function (oFilter) {
 		oFilter.revert();
 	});
 };
 
-CAccountFiltersPaneView.prototype.commit = function ()
+CAccountFiltersSettingsFormView.prototype.commit = function ()
 {
 	_.each(this.collection(), function (oFilter) {
 		oFilter.commit();
 	});
 };
 
-CAccountFiltersPaneView.prototype.getCurrentValues = function ()
+CAccountFiltersSettingsFormView.prototype.getCurrentValues = function ()
 {
 	return _.map(this.collection(), function (oFilter) {
 		return oFilter.toString();
 	}, this);
 };
 
-CAccountFiltersPaneView.prototype.getParametersForSave = function ()
+CAccountFiltersSettingsFormView.prototype.getParametersForSave = function ()
 {
 	var
 		aFilters =_.map(this.collection(), function (oItem) {
@@ -156,7 +156,7 @@ CAccountFiltersPaneView.prototype.getParametersForSave = function ()
 	};
 };
 
-CAccountFiltersPaneView.prototype.save = function ()
+CAccountFiltersSettingsFormView.prototype.save = function ()
 {
 	var bCantSave =_.some(this.collection(), function (oFilter) {
 		return oFilter.filter() === '' || (Types.pString(oFilter.action()) === '3' /* Move */ && oFilter.folder() === '');
@@ -175,7 +175,7 @@ CAccountFiltersPaneView.prototype.save = function ()
 	}
 };
 
-CAccountFiltersPaneView.prototype.populateFilters = function ()
+CAccountFiltersSettingsFormView.prototype.populateFilters = function ()
 {
 	var oAccount = AccountList.getEdited();
 	
@@ -199,12 +199,12 @@ CAccountFiltersPaneView.prototype.populateFilters = function ()
 /**
  * @param {Object} oFilterToDelete
  */
-CAccountFiltersPaneView.prototype.deleteFilter = function (oFilterToDelete)
+CAccountFiltersSettingsFormView.prototype.deleteFilter = function (oFilterToDelete)
 {
 	this.collection.remove(oFilterToDelete);
 };
 
-CAccountFiltersPaneView.prototype.addFilter = function ()
+CAccountFiltersSettingsFormView.prototype.addFilter = function ()
 {
 	var oSieveFilter =  new CFilterModel(AccountList.editedId());
 	this.collection.push(oSieveFilter);
@@ -216,7 +216,7 @@ CAccountFiltersPaneView.prototype.addFilter = function ()
  * 
  * @return {string}
  */
-CAccountFiltersPaneView.prototype.displayFilterPart = function (sPart, sPrefix)
+CAccountFiltersSettingsFormView.prototype.displayFilterPart = function (sPart, sPrefix)
 {
 	var sTemplate = '';
 	if (sPart === '%FIELD%')
@@ -254,7 +254,7 @@ CAccountFiltersPaneView.prototype.displayFilterPart = function (sPart, sPrefix)
 /**
  * @param {string} sText
  */
-CAccountFiltersPaneView.prototype.getDependedText = function (sText)
+CAccountFiltersSettingsFormView.prototype.getDependedText = function (sText)
 {	
 	sText = Types.pString(sText);
 	
@@ -270,7 +270,7 @@ CAccountFiltersPaneView.prototype.getDependedText = function (sText)
  * @param {string} sText
  * @param {Object} oParent
  */
-CAccountFiltersPaneView.prototype.getDependedField = function (sText, oParent)
+CAccountFiltersSettingsFormView.prototype.getDependedField = function (sText, oParent)
 {	
 	sText = Types.pString(sText);
 	
@@ -287,7 +287,7 @@ CAccountFiltersPaneView.prototype.getDependedField = function (sText, oParent)
  * @param {Object} oResponse
  * @param {Object} oRequest
  */
-CAccountFiltersPaneView.prototype.onGetFiltersResponse = function (oResponse, oRequest)
+CAccountFiltersSettingsFormView.prototype.onGetFiltersResponse = function (oResponse, oRequest)
 {
 	var
 		oParameters = oRequest.Parameters,
@@ -318,7 +318,7 @@ CAccountFiltersPaneView.prototype.onGetFiltersResponse = function (oResponse, oR
  * @param {Object} oResponse
  * @param {Object} oRequest
  */
-CAccountFiltersPaneView.prototype.onAccountSieveFiltersUpdateResponse = function (oResponse, oRequest)
+CAccountFiltersSettingsFormView.prototype.onAccountSieveFiltersUpdateResponse = function (oResponse, oRequest)
 {
 	this.isSaving(false);
 
@@ -339,4 +339,4 @@ CAccountFiltersPaneView.prototype.onAccountSieveFiltersUpdateResponse = function
 	}
 };
 
-module.exports = new CAccountFiltersPaneView();
+module.exports = new CAccountFiltersSettingsFormView();

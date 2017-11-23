@@ -170,7 +170,7 @@ module.exports = function (oAppData) {
 						{
 							ModulesManager.run('SettingsWebclient', 'registerSettingsTab', [
 								function () {
-									return require('modules/%ModuleName%/js/views/settings/MailSettingsPaneView.js');
+									return require('modules/%ModuleName%/js/views/settings/MailSettingsFormView.js');
 								},
 								Settings.HashModuleName,
 								TextUtils.i18n('%MODULENAME%/LABEL_SETTINGS_TAB')

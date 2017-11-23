@@ -22,7 +22,7 @@ var
 /**
  * @constructor
  */
-function CFetcherOutgoingPaneView()
+function CFetcherOutgoingSettingsFormView()
 {
 	CAbstractSettingsFormView.call(this, Settings.ServerModuleName);
 	
@@ -47,20 +47,20 @@ function CFetcherOutgoingPaneView()
 	this.firstState = null;
 }
 
-_.extendOwn(CFetcherOutgoingPaneView.prototype, CAbstractSettingsFormView.prototype);
+_.extendOwn(CFetcherOutgoingSettingsFormView.prototype, CAbstractSettingsFormView.prototype);
 
-CFetcherOutgoingPaneView.prototype.ViewTemplate = '%ModuleName%_Settings_FetcherOutgoingPaneView';
+CFetcherOutgoingSettingsFormView.prototype.ViewTemplate = '%ModuleName%_Settings_FetcherOutgoingSettingsFormView';
 
 /**
  * @param {Object} oFetcher
  */
-CFetcherOutgoingPaneView.prototype.show = function (oFetcher)
+CFetcherOutgoingSettingsFormView.prototype.show = function (oFetcher)
 {
 	this.fetcher(oFetcher && oFetcher.FETCHER ? oFetcher : null);
 	this.populate();
 };
 
-CFetcherOutgoingPaneView.prototype.getCurrentValues = function ()
+CFetcherOutgoingSettingsFormView.prototype.getCurrentValues = function ()
 {
 	return [
 		this.isOutgoingEnabled(),
@@ -73,7 +73,7 @@ CFetcherOutgoingPaneView.prototype.getCurrentValues = function ()
 	];
 };
 
-CFetcherOutgoingPaneView.prototype.getParametersForSave = function ()
+CFetcherOutgoingSettingsFormView.prototype.getParametersForSave = function ()
 {
 	if (this.fetcher())
 	{
@@ -93,7 +93,7 @@ CFetcherOutgoingPaneView.prototype.getParametersForSave = function ()
 	return {};
 };
 
-CFetcherOutgoingPaneView.prototype.save = function ()
+CFetcherOutgoingSettingsFormView.prototype.save = function ()
 {
 	if (this.isEmptyRequiredFields())
 	{
@@ -113,7 +113,7 @@ CFetcherOutgoingPaneView.prototype.save = function ()
  * @param {Object} oResponse
  * @param {Object} oRequest
  */
-CFetcherOutgoingPaneView.prototype.onResponse = function (oResponse, oRequest)
+CFetcherOutgoingSettingsFormView.prototype.onResponse = function (oResponse, oRequest)
 {
 	this.isSaving(false);
 
@@ -129,7 +129,7 @@ CFetcherOutgoingPaneView.prototype.onResponse = function (oResponse, oRequest)
 	}
 };
 
-CFetcherOutgoingPaneView.prototype.populate = function ()
+CFetcherOutgoingSettingsFormView.prototype.populate = function ()
 {
 	var oFetcher = this.fetcher();
 	
@@ -151,7 +151,7 @@ CFetcherOutgoingPaneView.prototype.populate = function ()
 		this.updateSavedState();
 	}
 };
-CFetcherOutgoingPaneView.prototype.isEmptyRequiredFields = function ()
+CFetcherOutgoingSettingsFormView.prototype.isEmptyRequiredFields = function ()
 {
 	if (this.outgoingUseAuth() && this.isOutgoingEnabled() && '' === this.oOutgoing.server())
 	{
@@ -168,4 +168,4 @@ CFetcherOutgoingPaneView.prototype.isEmptyRequiredFields = function ()
 	return false;
 };
 
-module.exports = new CFetcherOutgoingPaneView();
+module.exports = new CFetcherOutgoingSettingsFormView();

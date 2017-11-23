@@ -24,7 +24,7 @@ var
 /**
  * @constructor
  */ 
-function CSignaturePaneView()
+function CSignatureSettingsFormView()
 {
 	CAbstractSettingsFormView.call(this, Settings.ServerModuleName);
 	
@@ -39,29 +39,29 @@ function CSignaturePaneView()
 	this.enabled = ko.observable(true);
 }
 
-_.extendOwn(CSignaturePaneView.prototype, CAbstractSettingsFormView.prototype);
+_.extendOwn(CSignatureSettingsFormView.prototype, CAbstractSettingsFormView.prototype);
 
-CSignaturePaneView.prototype.ViewTemplate = '%ModuleName%_Settings_SignaturePaneView';
-CSignaturePaneView.prototype.ViewConstructorName = 'CSignaturePaneView';
+CSignatureSettingsFormView.prototype.ViewTemplate = '%ModuleName%_Settings_SignatureSettingsFormView';
+CSignatureSettingsFormView.prototype.ViewConstructorName = 'CSignatureSettingsFormView';
 
 /**
  * @param {Object} oFetcherOrIdentity
  */
-CSignaturePaneView.prototype.show = function (oFetcherOrIdentity)
+CSignatureSettingsFormView.prototype.show = function (oFetcherOrIdentity)
 {
 	this.fetcherOrIdentity(oFetcherOrIdentity);
 	this.populate();
 	_.defer(_.bind(this.init, this));
 };
 
-CSignaturePaneView.prototype.init = function ()
+CSignatureSettingsFormView.prototype.init = function ()
 {
 	this.oHtmlEditor.initCrea(this.signature(), false, '');
 	this.oHtmlEditor.setActivitySource(this.useSignatureRadio);
 	this.enableImageDragNDrop(this.oHtmlEditor.editorUploader && this.oHtmlEditor.editorUploader.isDragAndDropSupported() && !Browser.ie10AndAbove);
 };
 
-CSignaturePaneView.prototype.getCurrentValues = function ()
+CSignatureSettingsFormView.prototype.getCurrentValues = function ()
 {
 	if (this.oHtmlEditor.oCrea)
 	{
@@ -73,12 +73,12 @@ CSignaturePaneView.prototype.getCurrentValues = function ()
 	];
 };
 
-CSignaturePaneView.prototype.revert = function ()
+CSignatureSettingsFormView.prototype.revert = function ()
 {
 	this.populate();
 };
 
-CSignaturePaneView.prototype.getParametersForSave = function ()
+CSignatureSettingsFormView.prototype.getParametersForSave = function ()
 {
 	this.signature(this.oHtmlEditor.getNotDefaultText());
 	
@@ -109,7 +109,7 @@ CSignaturePaneView.prototype.getParametersForSave = function ()
 /**
  * @param {Object} oParameters
  */
-CSignaturePaneView.prototype.applySavedValues = function (oParameters)
+CSignatureSettingsFormView.prototype.applySavedValues = function (oParameters)
 {
 	if (!oParameters.IdentityId)
 	{
@@ -123,7 +123,7 @@ CSignaturePaneView.prototype.applySavedValues = function (oParameters)
 	AccountList.populateIdentities();
 };
 
-CSignaturePaneView.prototype.populate = function ()
+CSignatureSettingsFormView.prototype.populate = function ()
 {
 	var
 		oAccount = AccountList.getEdited(),
@@ -148,7 +148,7 @@ CSignaturePaneView.prototype.populate = function ()
  * @param {Object} oResponse
  * @param {Object} oRequest
  */
-CSignaturePaneView.prototype.onGetSignatureResponse = function (oResponse, oRequest)
+CSignatureSettingsFormView.prototype.onGetSignatureResponse = function (oResponse, oRequest)
 {
 	if (oResponse && oResponse.Result)
 	{
@@ -170,7 +170,7 @@ CSignaturePaneView.prototype.onGetSignatureResponse = function (oResponse, oRequ
 	}
 };
 
-CSignaturePaneView.prototype.save = function ()
+CSignatureSettingsFormView.prototype.save = function ()
 {
 	this.isSaving(true);
 	
@@ -186,7 +186,7 @@ CSignaturePaneView.prototype.save = function ()
  * @param {Object} oResponse
  * @param {Object} oRequest
  */
-CSignaturePaneView.prototype.onResponse = function (oResponse, oRequest)
+CSignatureSettingsFormView.prototype.onResponse = function (oResponse, oRequest)
 {
 	this.isSaving(false);
 	
@@ -201,4 +201,4 @@ CSignaturePaneView.prototype.onResponse = function (oResponse, oRequest)
 	}
 };
 
-module.exports = new CSignaturePaneView();
+module.exports = new CSignatureSettingsFormView();

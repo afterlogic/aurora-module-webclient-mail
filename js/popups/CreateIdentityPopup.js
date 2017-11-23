@@ -8,7 +8,7 @@ var
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	
 	CIdentityModel = require('modules/%ModuleName%/js/models/CIdentityModel.js'),
-	CIdentityPropertiesPaneView = require('modules/%ModuleName%/js/views/settings/CIdentityPropertiesPaneView.js')
+	CIdentitySettingsFormView = require('modules/%ModuleName%/js/views/settings/CIdentitySettingsFormView.js')
 ;
 
 /**
@@ -18,7 +18,7 @@ function CCreateIdentityPopup()
 {
 	CAbstractPopup.call(this);
 	
-	this.oIdentityPropertiesViewModel = new CIdentityPropertiesPaneView(this, true);
+	this.oIdentityPropertiesViewModel = new CIdentitySettingsFormView(this, true);
 }
 
 _.extendOwn(CCreateIdentityPopup.prototype, CAbstractPopup.prototype);

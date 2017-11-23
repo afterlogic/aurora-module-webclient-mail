@@ -23,7 +23,7 @@ var
 /**
  * @constructor
  */ 
-function CAccountAutoresponderPaneView()
+function CAccountAutoresponderSettingsFormView()
 {
 	CAbstractSettingsFormView.call(this, Settings.ServerModuleName);
 	
@@ -39,11 +39,11 @@ function CAccountAutoresponderPaneView()
 	}, this);
 }
 
-_.extendOwn(CAccountAutoresponderPaneView.prototype, CAbstractSettingsFormView.prototype);
+_.extendOwn(CAccountAutoresponderSettingsFormView.prototype, CAbstractSettingsFormView.prototype);
 
-CAccountAutoresponderPaneView.prototype.ViewTemplate = '%ModuleName%_Settings_AccountAutoresponderPaneView';
+CAccountAutoresponderSettingsFormView.prototype.ViewTemplate = '%ModuleName%_Settings_AccountAutoresponderSettingsFormView';
 
-CAccountAutoresponderPaneView.prototype.getCurrentValues = function ()
+CAccountAutoresponderSettingsFormView.prototype.getCurrentValues = function ()
 {
 	return [
 		this.enable(),
@@ -52,17 +52,17 @@ CAccountAutoresponderPaneView.prototype.getCurrentValues = function ()
 	];
 };
 
-CAccountAutoresponderPaneView.prototype.onShow = function ()
+CAccountAutoresponderSettingsFormView.prototype.onShow = function ()
 {
 	this.populate();
 };
 
-CAccountAutoresponderPaneView.prototype.revert = function ()
+CAccountAutoresponderSettingsFormView.prototype.revert = function ()
 {
 	this.populate();
 };
 
-CAccountAutoresponderPaneView.prototype.getParametersForSave = function ()
+CAccountAutoresponderSettingsFormView.prototype.getParametersForSave = function ()
 {
 	return {
 		'AccountID': AccountList.editedId(),
@@ -72,7 +72,7 @@ CAccountAutoresponderPaneView.prototype.getParametersForSave = function ()
 	};
 };
 
-CAccountAutoresponderPaneView.prototype.applySavedValues = function (oParameters)
+CAccountAutoresponderSettingsFormView.prototype.applySavedValues = function (oParameters)
 {
 	var
 		oAccount = AccountList.getEdited(),
@@ -87,7 +87,7 @@ CAccountAutoresponderPaneView.prototype.applySavedValues = function (oParameters
 	}
 };
 
-CAccountAutoresponderPaneView.prototype.save = function ()
+CAccountAutoresponderSettingsFormView.prototype.save = function ()
 {
 	this.isSaving(true);
 	
@@ -100,7 +100,7 @@ CAccountAutoresponderPaneView.prototype.save = function ()
  * @param {Object} oResponse
  * @param {Object} oRequest
  */
-CAccountAutoresponderPaneView.prototype.onResponse = function (oResponse, oRequest)
+CAccountAutoresponderSettingsFormView.prototype.onResponse = function (oResponse, oRequest)
 {
 	this.isSaving(false);
 
@@ -118,7 +118,7 @@ CAccountAutoresponderPaneView.prototype.onResponse = function (oResponse, oReque
 	}
 };
 
-CAccountAutoresponderPaneView.prototype.populate = function()
+CAccountAutoresponderSettingsFormView.prototype.populate = function()
 {
 	var oAccount = AccountList.getEdited();
 	
@@ -143,7 +143,7 @@ CAccountAutoresponderPaneView.prototype.populate = function()
  * @param {Object} oResponse
  * @param {Object} oRequest
  */
-CAccountAutoresponderPaneView.prototype.onGetAutoresponderResponse = function (oResponse, oRequest)
+CAccountAutoresponderSettingsFormView.prototype.onGetAutoresponderResponse = function (oResponse, oRequest)
 {
 	if (oResponse && oResponse.Result)
 	{
@@ -167,4 +167,4 @@ CAccountAutoresponderPaneView.prototype.onGetAutoresponderResponse = function (o
 	}
 };
 
-module.exports = new CAccountAutoresponderPaneView();
+module.exports = new CAccountAutoresponderSettingsFormView();

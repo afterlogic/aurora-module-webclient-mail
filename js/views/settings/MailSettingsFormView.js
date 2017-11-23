@@ -18,7 +18,7 @@ var
 /**
  * @constructor
  */
-function CMailSettingsPaneView()
+function CMailSettingsFormView()
 {
 	CAbstractSettingsFormView.call(this, Settings.ServerModuleName);
 
@@ -33,16 +33,16 @@ function CMailSettingsPaneView()
 	this.allowChangeInputDirection = ko.observable(Settings.AllowChangeInputDirection);
 }
 
-_.extendOwn(CMailSettingsPaneView.prototype, CAbstractSettingsFormView.prototype);
+_.extendOwn(CMailSettingsFormView.prototype, CAbstractSettingsFormView.prototype);
 
-CMailSettingsPaneView.prototype.ViewTemplate = '%ModuleName%_Settings_MailSettingsPaneView';
+CMailSettingsFormView.prototype.ViewTemplate = '%ModuleName%_Settings_MailSettingsFormView';
 
-CMailSettingsPaneView.prototype.registerMailto = function ()
+CMailSettingsFormView.prototype.registerMailto = function ()
 {
 	MailUtils.registerMailto();
 };
 
-CMailSettingsPaneView.prototype.getCurrentValues = function ()
+CMailSettingsFormView.prototype.getCurrentValues = function ()
 {
 	return [
 		this.mailsPerPage(),
@@ -52,7 +52,7 @@ CMailSettingsPaneView.prototype.getCurrentValues = function ()
 	];
 };
 
-CMailSettingsPaneView.prototype.revertGlobalValues = function ()
+CMailSettingsFormView.prototype.revertGlobalValues = function ()
 {
 	this.mailsPerPage(Settings.MailsPerPage);
 	this.allowAutosaveInDrafts(Settings.AllowAutosaveInDrafts);
@@ -60,7 +60,7 @@ CMailSettingsPaneView.prototype.revertGlobalValues = function ()
 	this.allowChangeInputDirection(Settings.AllowChangeInputDirection);
 };
 
-CMailSettingsPaneView.prototype.getParametersForSave = function ()
+CMailSettingsFormView.prototype.getParametersForSave = function ()
 {
 	return {
 		'MailsPerPage': this.mailsPerPage(),
@@ -70,14 +70,14 @@ CMailSettingsPaneView.prototype.getParametersForSave = function ()
 	};
 };
 
-CMailSettingsPaneView.prototype.applySavedValues = function (oParameters)
+CMailSettingsFormView.prototype.applySavedValues = function (oParameters)
 {
 	Settings.update(oParameters.MailsPerPage, oParameters.AllowAutosaveInDrafts, oParameters.SaveRepliesToCurrFolder, oParameters.AllowChangeInputDirection);
 };
 
-CMailSettingsPaneView.prototype.setAccessLevel = function (sEntityType, iEntityId)
+CMailSettingsFormView.prototype.setAccessLevel = function (sEntityType, iEntityId)
 {
 	this.visible(sEntityType === '');
 };
 
-module.exports = new CMailSettingsPaneView();
+module.exports = new CMailSettingsFormView();
