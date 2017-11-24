@@ -47,9 +47,9 @@ CSignatureSettingsFormView.prototype.ViewConstructorName = 'CSignatureSettingsFo
 /**
  * @param {Object} oFetcherOrIdentity
  */
-CSignatureSettingsFormView.prototype.show = function (oFetcherOrIdentity)
+CSignatureSettingsFormView.prototype.onShow = function (oFetcherOrIdentity)
 {
-	this.fetcherOrIdentity(oFetcherOrIdentity);
+	this.fetcherOrIdentity(oFetcherOrIdentity || null);
 	this.populate();
 	_.defer(_.bind(this.init, this));
 };

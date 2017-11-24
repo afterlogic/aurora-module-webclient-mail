@@ -80,12 +80,8 @@ _.extendOwn(CAccountFiltersSettingsFormView.prototype, CAbstractSettingsFormView
 
 CAccountFiltersSettingsFormView.prototype.ViewTemplate = '%ModuleName%_Settings_AccountFiltersSettingsFormView';
 
-/**
- * @param {Object} oAccount
- */
-CAccountFiltersSettingsFormView.prototype.show = function (oAccount)
+CAccountFiltersSettingsFormView.prototype.onShow = function ()
 {
-	this.bShown = true;
 	this.populate();
 };
 

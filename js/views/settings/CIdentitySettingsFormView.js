@@ -2,7 +2,6 @@
 
 var
 	_ = require('underscore'),
-	$ = require('jquery'),
 	ko = require('knockout'),
 	
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
@@ -52,7 +51,7 @@ CIdentitySettingsFormView.prototype.ViewConstructorName = 'CIdentitySettingsForm
 /**
  * @param {Object} oIdentity
  */
-CIdentitySettingsFormView.prototype.show = function (oIdentity)
+CIdentitySettingsFormView.prototype.onShow = function (oIdentity)
 {
 	this.identity(oIdentity && !oIdentity.FETCHER ? oIdentity : null);
 	this.populate();
@@ -135,7 +134,7 @@ CIdentitySettingsFormView.prototype.onResponse = function (oResponse, oRequest)
 		
 		AccountList.populateIdentities();
 		
-		if (this.bCreate && $.isFunction(this.oParent.closePopup))
+		if (this.bCreate && _.isFunction(this.oParent.closePopup))
 		{
 			this.oParent.closePopup();
 		}
@@ -181,7 +180,7 @@ CIdentitySettingsFormView.prototype.remove = function ()
 
 		Ajax.send('DeleteIdentity', oParameters, this.onAccountIdentityDeleteResponse, this);
 
-		if (!this.bCreate && $.isFunction(this.oParent.onRemoveIdentity))
+		if (!this.bCreate && _.isFunction(this.oParent.onRemoveIdentity))
 		{
 			this.oParent.onRemoveIdentity();
 		}
@@ -203,7 +202,7 @@ CIdentitySettingsFormView.prototype.onAccountIdentityDeleteResponse = function (
 
 CIdentitySettingsFormView.prototype.cancel = function ()
 {
-	if ($.isFunction(this.oParent.cancelPopup))
+	if (_.isFunction(this.oParent.cancelPopup))
 	{
 		this.oParent.cancelPopup();
 	}

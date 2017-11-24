@@ -18,7 +18,7 @@ function CCreateIdentityPopup()
 {
 	CAbstractPopup.call(this);
 	
-	this.oIdentityPropertiesViewModel = new CIdentitySettingsFormView(this, true);
+	this.oIdentitySettingsFormView = new CIdentitySettingsFormView(this, true);
 }
 
 _.extendOwn(CCreateIdentityPopup.prototype, CAbstractPopup.prototype);
@@ -37,9 +37,9 @@ CCreateIdentityPopup.prototype.onOpen = function (iAccountId)
 	
 	oIdentity.accountId(iAccountId);
 	oIdentity.email(oAccount.email());
-	this.oIdentityPropertiesViewModel.show(oIdentity);
-	this.oIdentityPropertiesViewModel.populate();
-	this.oIdentityPropertiesViewModel.friendlyNameHasFocus(true);
+	this.oIdentitySettingsFormView.onShow(oIdentity);
+	this.oIdentitySettingsFormView.populate();
+	this.oIdentitySettingsFormView.friendlyNameHasFocus(true);
 };
 
 module.exports = new CCreateIdentityPopup();

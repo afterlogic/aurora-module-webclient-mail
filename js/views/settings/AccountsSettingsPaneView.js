@@ -2,7 +2,6 @@
 
 var
 	_ = require('underscore'),
-	$ = require('jquery'),
 	ko = require('knockout'),
 	
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
@@ -159,7 +158,7 @@ CAccountsSettingsPaneView.prototype.ViewTemplate = '%ModuleName%_Settings_Accoun
  */
 CAccountsSettingsPaneView.prototype.hide = function (fAfterHideHandler, fRevertRouting)
 {
-	if (this.currentTab() && $.isFunction(this.currentTab().view.hide))
+	if (this.currentTab() && _.isFunction(this.currentTab().view.hide))
 	{
 		this.currentTab().view.hide(fAfterHideHandler, fRevertRouting);
 	}
@@ -172,7 +171,7 @@ CAccountsSettingsPaneView.prototype.hide = function (fAfterHideHandler, fRevertR
 /**
  * @param {Array} aParams
  */
-CAccountsSettingsPaneView.prototype.onRoute = function (aParams)
+CAccountsSettingsPaneView.prototype.showTab = function (aParams)
 {
 	var
 		sType = aParams.length > 0 ? aParams[0] : 'account',
@@ -319,9 +318,9 @@ CAccountsSettingsPaneView.prototype.changeTab = function (sName)
 		fShowNewTab = function () {
 			if (oNewTab)
 			{
-				if ($.isFunction(oNewTab.view.show))
+				if (_.isFunction(oNewTab.view.showTab))
 				{
-					oNewTab.view.show(this.editedIdentity() || this.editedFetcher());
+					oNewTab.view.showTab(this.editedIdentity() || this.editedFetcher());
 				}
 				this.currentTab(oNewTab);
 			}
@@ -331,7 +330,7 @@ CAccountsSettingsPaneView.prototype.changeTab = function (sName)
 	
 	if (oNewTab)
 	{
-		if (oCurrentTab && $.isFunction(oCurrentTab.view.hide))
+		if (oCurrentTab && _.isFunction(oCurrentTab.view.hide))
 		{
 			oCurrentTab.view.hide(fShowNewTab);
 			bShow = false;

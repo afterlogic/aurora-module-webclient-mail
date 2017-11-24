@@ -60,9 +60,8 @@ CFetcherIncomingSettingsFormView.prototype.ViewTemplate = '%ModuleName%_Settings
 /**
  * @param {Object} oFetcher
  */
-CFetcherIncomingSettingsFormView.prototype.show = function (oFetcher)
+CFetcherIncomingSettingsFormView.prototype.onShow = function (oFetcher)
 {
-	this.bShown = true;
 	this.fetcher(oFetcher && oFetcher.FETCHER ? oFetcher : null);
 	this.populateOptions();
 	this.populate();
