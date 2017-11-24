@@ -38,6 +38,7 @@ module.exports = {
 	SaveRepliesToCurrFolder: false,
 	
 	userAccountsCount: ko.observable(0),
+	ShowEmailAsTabName: true,
 	
 	init: function (oAppDataSection) {
 		if (oAppDataSection)
@@ -65,6 +66,7 @@ module.exports = {
 			this.MailsPerPage = Types.pInt(oAppDataSection.MailsPerPage);
 			this.MaxMessagesBodiesSizeToPrefetch = Types.pInt(oAppDataSection.MaxMessagesBodiesSizeToPrefetch);
 			this.SaveRepliesToCurrFolder = !!oAppDataSection.SaveRepliesToCurrFolder;
+			this.ShowEmailAsTabName = !!oAppDataSection.ShowEmailAsTabName;
 			
 			window.Enums.SmtpAuthType = oAppDataSection.SmtpAuthType;
 		}

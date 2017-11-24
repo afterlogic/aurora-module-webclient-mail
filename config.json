@@ -46,5 +46,9 @@
 	"SaveRepliesToCurrFolder": [
 		false,
 		"bool"
+	],
+	"ShowEmailAsTabName": [
+		true,
+		"bool"
 	]
 }

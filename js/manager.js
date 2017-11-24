@@ -8,6 +8,7 @@ module.exports = function (oAppData) {
 		ko = require('knockout'),
 
 		App = require('%PathToCoreWebclientModule%/js/App.js'),
+		TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 
 		Settings = require('modules/%ModuleName%/js/Settings.js'),
 		oSettings = _.extend({}, oAppData[Settings.ServerModuleName] || {}, oAppData['%ModuleName%'] || {}),
@@ -16,7 +17,9 @@ module.exports = function (oAppData) {
 		bNormalUser = App.getUserRole() === Enums.UserRole.NormalUser,
 
 		AccountList = null,
-		ComposeView = null
+		ComposeView = null,
+		
+		HeaderItemView = null
 	;
 	
 	Settings.init(oSettings);
@@ -26,7 +29,6 @@ module.exports = function (oAppData) {
 	{
 		return {
 			start: function (ModulesManager) {
-				var TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js');
 				ModulesManager.run('AdminPanelWebclient', 'registerAdminPanelTab', [
 					function(resolve) {
 						require.ensure(
@@ -201,8 +203,18 @@ module.exports = function (oAppData) {
 						return oScreens;
 					},
 					getHeaderItem: function () {
+						if (HeaderItemView === null)
+						{
+							var 
+								CHeaderItemView = require('%PathToCoreWebclientModule%/js/views/CHeaderItemView.js'),
+								sTabTitle = TextUtils.i18n('%MODULENAME%/ACTION_SHOW_MAIL')
+							;
+
+							HeaderItemView = Settings.ShowEmailAsTabName ? require('modules/%ModuleName%/js/views/HeaderItemView.js') : new CHeaderItemView(sTabTitle);
+						}
+						
 						return {
-							item: require('modules/%ModuleName%/js/views/HeaderItemView.js'),
+							item: HeaderItemView,
 							name: Settings.HashModuleName
 						};
 					}
