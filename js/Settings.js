@@ -66,7 +66,7 @@ module.exports = {
 			this.MailsPerPage = Types.pInt(oAppDataSection.MailsPerPage);
 			this.MaxMessagesBodiesSizeToPrefetch = Types.pInt(oAppDataSection.MaxMessagesBodiesSizeToPrefetch);
 			this.SaveRepliesToCurrFolder = !!oAppDataSection.SaveRepliesToCurrFolder;
-			this.ShowEmailAsTabName = !!oAppDataSection.ShowEmailAsTabName;
+			this.ShowEmailAsTabName = typeof oAppDataSection.ShowEmailAsTabName === 'boolean' ? oAppDataSection.ShowEmailAsTabName : true;
 			
 			window.Enums.SmtpAuthType = oAppDataSection.SmtpAuthType;
 		}
