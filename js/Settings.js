@@ -2,6 +2,7 @@
 
 var
 	ko = require('knockout'),
+	_ = require('underscore'),
 	
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	
@@ -12,73 +13,98 @@ module.exports = {
 	ServerModuleName: 'Mail',
 	HashModuleName: 'mail',
 	
+	// from Mail module
 	AllowAddAccounts: false,
-	AllowMultiAccounts: false,
-	AllowAppRegisterMailto: false,
+	AllowAutoresponder: false,
 	AllowAutosaveInDrafts: true,
 	AllowChangeEmailSettings: true,
-	AllowChangeInputDirection: true,
-	AllowExpandFolders: false,
 	AllowFetchers: true,
-	AllowIdentities: false,
-	AllowInsertImage: true,
-	AllowSpamFolder: true,
 	AllowFilters: false,
 	AllowForward: false,
-	AllowAutoresponder: false,
+	AllowIdentities: false,
+	AllowInsertImage: true,
+	AllowMultiAccounts: false,
 	AutoSaveIntervalSeconds: 60,
+	ImageUploadSizeLimit: 0,
+	
+	// from MailWebclient module
+	AllowAppRegisterMailto: false,
+	AllowChangeInputDirection: true,
+	AllowExpandFolders: false,
+	AllowSpamFolder: true,
 	ComposeToolbarOrder: ['back', 'send', 'save', 'importance', 'MailSensitivity', 'confirmation', 'OpenPgp'],
 	DefaultFontName: 'Tahoma',
 	DefaultFontSize: 3,
-	ImageUploadSizeLimit: 0,
-	IsMailsuite: false,
 	JoinReplyPrefixes: true,
 	MailsPerPage: 20,
 	MaxMessagesBodiesSizeToPrefetch: 50000,
 	SaveRepliesToCurrFolder: false,
-	
-	userAccountsCount: ko.observable(0),
 	ShowEmailAsTabName: true,
 	
-	init: function (oAppDataSection) {
-		if (oAppDataSection)
+	userAccountsCount: ko.observable(0),
+	
+	/**
+	 * Initializes settings from AppData object sections.
+	 * 
+	 * @param {Object} oAppData Object contained modules settings.
+	 */
+	init: function (oAppData)
+	{
+		var
+			oAppDataMailSection = oAppData[this.ServerModuleName],
+			oAppDataMailWebclientSection = oAppData['%ModuleName%']
+		;
+		
+		if (!_.isEmpty(oAppDataMailSection))
 		{
-			this.AllowAddAccounts = !!oAppDataSection.AllowAddAccounts;
-			this.AllowMultiAccounts = !!oAppDataSection.AllowMultiAccounts;
-			this.AllowAppRegisterMailto = !!oAppDataSection.AllowAppRegisterMailto;
-			this.AllowAutosaveInDrafts = !!oAppDataSection.AllowAutosaveInDrafts;
-			this.AllowChangeEmailSettings = !!oAppDataSection.AllowChangeEmailSettings;
-			this.AllowChangeInputDirection = !!oAppDataSection.AllowChangeInputDirection;
-			this.AllowExpandFolders = !!oAppDataSection.AllowExpandFolders;
-			this.AllowFetchers = !!oAppDataSection.AllowFetchers;
-			this.AllowIdentities = !!oAppDataSection.AllowIdentities;
-			this.AllowInsertImage = !!oAppDataSection.AllowInsertImage;
-			this.AllowSpamFolder = !!oAppDataSection.AllowSpamFolder;
-			this.AllowFilters = !!oAppDataSection.AllowFilters;
-			this.AllowForward = !!oAppDataSection.AllowForward;
-			this.AllowAutoresponder = !!oAppDataSection.AllowAutoresponder;
-			this.AutoSaveIntervalSeconds = Types.pInt(oAppDataSection.AutoSaveIntervalSeconds);
-			this.ComposeToolbarOrder = Types.isNonEmptyArray(oAppDataSection.ComposeToolbarOrder) ? oAppDataSection.ComposeToolbarOrder : [];
-			this.DefaultFontName = Types.pString(oAppDataSection.DefaultFontName) || this.DefaultFontName;
-			this.DefaultFontSize = Types.pInt(oAppDataSection.DefaultFontSize) || this.DefaultFontSize;
-			this.ImageUploadSizeLimit = Types.pInt(oAppDataSection.ImageUploadSizeLimit);
-			this.JoinReplyPrefixes = !!oAppDataSection.JoinReplyPrefixes;
-			this.MailsPerPage = Types.pInt(oAppDataSection.MailsPerPage);
-			this.MaxMessagesBodiesSizeToPrefetch = Types.pInt(oAppDataSection.MaxMessagesBodiesSizeToPrefetch);
-			this.SaveRepliesToCurrFolder = !!oAppDataSection.SaveRepliesToCurrFolder;
-			this.ShowEmailAsTabName = typeof oAppDataSection.ShowEmailAsTabName === 'boolean' ? oAppDataSection.ShowEmailAsTabName : true;
+			this.AllowAddAccounts = Types.pBool(oAppDataMailSection.AllowAddAccounts, this.AllowAddAccounts);
+			this.AllowAutoresponder = Types.pBool(oAppDataMailSection.AllowAutoresponder, this.AllowAutoresponder);
+			this.AllowAutosaveInDrafts = Types.pBool(oAppDataMailSection.AllowAutosaveInDrafts, this.AllowAutosaveInDrafts);
+			this.AllowChangeEmailSettings = Types.pBool(oAppDataMailSection.AllowChangeEmailSettings, this.AllowChangeEmailSettings);
+			this.AllowFetchers = Types.pBool(oAppDataMailSection.AllowFetchers, this.AllowFetchers);
+			this.AllowFilters = Types.pBool(oAppDataMailSection.AllowFilters, this.AllowFilters);
+			this.AllowForward = Types.pBool(oAppDataMailSection.AllowForward, this.AllowForward);
+			this.AllowIdentities = Types.pBool(oAppDataMailSection.AllowIdentities, this.AllowIdentities);
+			this.AllowInsertImage = Types.pBool(oAppDataMailSection.AllowInsertImage, this.AllowInsertImage);
+			this.AllowMultiAccounts = Types.pBool(oAppDataMailSection.AllowMultiAccounts, this.AllowMultiAccounts);
+			this.AutoSaveIntervalSeconds = Types.pNonNegativeInt(oAppDataMailSection.AutoSaveIntervalSeconds, this.AutoSaveIntervalSeconds);
+			this.ImageUploadSizeLimit = Types.pNonNegativeInt(oAppDataMailSection.ImageUploadSizeLimit, this.ImageUploadSizeLimit);
+			window.Enums.SmtpAuthType = Types.pObject(oAppDataMailSection.SmtpAuthType);
+		}
 			
-			window.Enums.SmtpAuthType = oAppDataSection.SmtpAuthType;
+		if (!_.isEmpty(oAppDataMailWebclientSection))
+		{
+			this.AllowAppRegisterMailto = Types.pBool(oAppDataMailWebclientSection.AllowAppRegisterMailto, this.AllowAppRegisterMailto);
+			this.AllowChangeInputDirection = Types.pBool(oAppDataMailWebclientSection.AllowChangeInputDirection, this.AllowChangeInputDirection);
+			this.AllowExpandFolders = Types.pBool(oAppDataMailWebclientSection.AllowExpandFolders, this.AllowExpandFolders);
+			this.AllowSpamFolder = Types.pBool(oAppDataMailWebclientSection.AllowSpamFolder, this.AllowSpamFolder);
+			this.ComposeToolbarOrder = Types.pArray(oAppDataMailWebclientSection.ComposeToolbarOrder, this.ComposeToolbarOrder);
+			this.DefaultFontName = Types.pString(oAppDataMailWebclientSection.DefaultFontName, this.DefaultFontName);
+			this.DefaultFontSize = Types.pPositiveInt(oAppDataMailWebclientSection.DefaultFontSize, this.DefaultFontSize);
+			this.JoinReplyPrefixes = Types.pBool(oAppDataMailWebclientSection.JoinReplyPrefixes, this.JoinReplyPrefixes);
+			this.MailsPerPage = Types.pPositiveInt(oAppDataMailWebclientSection.MailsPerPage, this.MailsPerPage);
+			this.MaxMessagesBodiesSizeToPrefetch = Types.pNonNegativeInt(oAppDataMailWebclientSection.MaxMessagesBodiesSizeToPrefetch, this.MaxMessagesBodiesSizeToPrefetch);
+			this.SaveRepliesToCurrFolder = Types.pBool(oAppDataMailWebclientSection.SaveRepliesToCurrFolder, this.SaveRepliesToCurrFolder);
+			this.ShowEmailAsTabName = Types.pBool(oAppDataMailWebclientSection.ShowEmailAsTabName, this.ShowEmailAsTabName);
 		}
 		
 		App.registerUserAccountsCount(this.userAccountsCount);
 	},
 	
+	/**
+	 * Updates new settings values after saving on server.
+	 * 
+	 * @param {number} iMailsPerPage
+	 * @param {boolean} bAllowAutosaveInDrafts
+	 * @param {boolean} bSaveRepliesToCurrFolder
+	 * @param {boolean} bAllowChangeInputDirection
+	 */
 	update: function (iMailsPerPage, bAllowAutosaveInDrafts, bSaveRepliesToCurrFolder, bAllowChangeInputDirection)
 	{
-		this.MailsPerPage = Types.pInt(iMailsPerPage);
-		this.AllowAutosaveInDrafts = !!bAllowAutosaveInDrafts;
-		this.SaveRepliesToCurrFolder = !!bSaveRepliesToCurrFolder;
-		this.AllowChangeInputDirection = !!bAllowChangeInputDirection;
+		this.AllowAutosaveInDrafts = Types.pBool(bAllowAutosaveInDrafts, this.AllowAutosaveInDrafts);
+		
+		this.AllowChangeInputDirection = Types.pBool(bAllowChangeInputDirection, this.AllowChangeInputDirection);
+		this.MailsPerPage = Types.pPositiveInt(iMailsPerPage, this.MailsPerPage);
+		this.SaveRepliesToCurrFolder = Types.pBool(bSaveRepliesToCurrFolder, this.SaveRepliesToCurrFolder);
 	}
 };

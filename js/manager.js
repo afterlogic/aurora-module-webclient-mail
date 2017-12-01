@@ -11,7 +11,6 @@ module.exports = function (oAppData) {
 		TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 
 		Settings = require('modules/%ModuleName%/js/Settings.js'),
-		oSettings = _.extend({}, oAppData[Settings.ServerModuleName] || {}, oAppData['%ModuleName%'] || {}),
 
 		bAdminUser = App.getUserRole() === Enums.UserRole.SuperAdmin,
 		bNormalUser = App.getUserRole() === Enums.UserRole.NormalUser,
@@ -22,7 +21,7 @@ module.exports = function (oAppData) {
 		HeaderItemView = null
 	;
 	
-	Settings.init(oSettings);
+	Settings.init(oAppData);
 	AccountList = require('modules/MailWebclient/js/AccountList.js');
 	
 	if (bAdminUser)
