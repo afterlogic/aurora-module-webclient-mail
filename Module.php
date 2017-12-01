@@ -49,6 +49,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			'MailsPerPage' => $this->getConfig('MailsPerPage', 20),
 			'MaxMessagesBodiesSizeToPrefetch' => $this->getConfig('MaxMessagesBodiesSizeToPrefetch', 50000),
 			'SaveRepliesToCurrFolder' => $this->getConfig('SaveRepliesToCurrFolder', false),
+			'ShowEmailAsTabName' => $this->getConfig('ShowEmailAsTabName', false)
 		);
 		
 		$oUser = \Aurora\System\Api::getAuthenticatedUser();
