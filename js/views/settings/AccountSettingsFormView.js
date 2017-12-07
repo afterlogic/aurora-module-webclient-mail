@@ -79,7 +79,7 @@ function CAccountSettingsFormView()
 		var oAccount = AccountList.getEdited();
 		if (oAccount)
 		{	
-			this.allowChangePassword(!!ChangePasswordPopup);
+			this.allowChangePassword(!!ChangePasswordPopup && (AccountList.collection().length > 1 || Settings.AllowAddAccounts));
 			this.canBeRemoved(oAccount.canBeRemoved());
 		}
 		else
