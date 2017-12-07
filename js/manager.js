@@ -189,8 +189,7 @@ module.exports = function (oAppData) {
 							var aAuthAcconts = _.filter(AccountList.collection(), function (oAccount) {
 								return oAccount.useToAuthorize();
 							});
-
-							Settings.userAccountsCount(aAuthAcconts.length);
+							Settings.userMailAccountsCount(aAuthAcconts.length);
 						}, this);
 					},
 					getScreens: function () {

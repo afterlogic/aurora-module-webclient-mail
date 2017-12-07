@@ -83,7 +83,7 @@ function CMessageModel()
 			bFolderWithoutThreads = oFolder && (oFolder.type() === Enums.FolderTypes.Drafts || 
 				oFolder.type() === Enums.FolderTypes.Spam || oFolder.type() === Enums.FolderTypes.Trash)
 		;
-		return oAccount.threadingIsAvailable() && !bFolderWithoutThreads;
+		return oAccount && oAccount.threadingIsAvailable() && !bFolderWithoutThreads;
 	}, this);
 	this.otherSendersAllowed = ko.computed(function () {
 		var oFolder = this.folderObject();

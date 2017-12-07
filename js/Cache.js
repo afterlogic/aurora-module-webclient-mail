@@ -389,7 +389,7 @@ CMailCache.prototype.markMessageReplied = function (iAccountId, sFullName, sUid,
 CMailCache.prototype.hideThreads = function (oMessage)
 {
 	var oAccount = AccountList.getCurrent();
-	if (oAccount.threadingIsAvailable() && oMessage.folder() === this.folderList().currentFolderFullName() && !oMessage.threadOpened())
+	if (oAccount && oAccount.threadingIsAvailable() && oMessage.folder() === this.folderList().currentFolderFullName() && !oMessage.threadOpened())
 	{
 		this.folderList().currentFolder().hideThreadMessages(oMessage);
 	}
@@ -418,7 +418,7 @@ CMailCache.prototype.useThreadingInCurrentList = function (oUidList)
 		bNotSearchOrFilters = oUidList.search() === '' && oUidList.filters() === ''
 	;
 	
-	return oAccount.threadingIsAvailable() && !bFolderWithoutThreads && bNotSearchOrFilters;
+	return oAccount && oAccount.threadingIsAvailable() && !bFolderWithoutThreads && bNotSearchOrFilters;
 };
 
 /**
@@ -521,7 +521,10 @@ CMailCache.prototype.executeCheckMail = function (bAbortPrevious)
 		
 		this.checkMailStarted(true);
 		this.checkMailStartedAccountId(iAccountID);
-		Ajax.send('GetRelevantFoldersInformation', oParameters, this.onGetRelevantFoldersInformationResponse, this);
+		if (AccountList.getAccount(iAccountID))
+		{
+			Ajax.send('GetRelevantFoldersInformation', oParameters, this.onGetRelevantFoldersInformationResponse, this);
+		}
 	}
 };
 
@@ -649,7 +652,7 @@ CMailCache.prototype.requestMessageList = function (sFolder, iPage, sSearch, sFi
 		oFolder = (oFolderList) ? oFolderList.getFolderByFullName(sFolder) : null,
 		bFolderWithoutThreads = oFolder && oFolder.withoutThreads(),
 		oAccount = AccountList.getCurrent(),
-		bUseThreading = oAccount.threadingIsAvailable() && !bFolderWithoutThreads && sSearch === '' && sFilters === '',
+		bUseThreading = oAccount && oAccount.threadingIsAvailable() && !bFolderWithoutThreads && sSearch === '' && sFilters === '',
 		oUidList = (oFolder) ? oFolder.getUidList(sSearch, sFilters) : null,
 		bCacheIsEmpty = oUidList && oUidList.resultCount() === -1,
 		iOffset = (iPage - 1) * Settings.MailsPerPage,
@@ -1265,7 +1268,7 @@ CMailCache.prototype.getAllFoldersRelevantInformation = function (iAccountId)
 		}
 	;
 	
-	if (aFolders.length > 0)
+	if (aFolders.length > 0 && AccountList.getAccount(iAccountId))
 	{
 		Ajax.send('GetRelevantFoldersInformation', oParameters, this.onGetRelevantFoldersInformationResponse, this);
 	}

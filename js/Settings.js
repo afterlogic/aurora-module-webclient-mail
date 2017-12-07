@@ -41,7 +41,7 @@ module.exports = {
 	SaveRepliesToCurrFolder: false,
 	ShowEmailAsTabName: true,
 	
-	userAccountsCount: ko.observable(0),
+	userMailAccountsCount: ko.observable(0),
 	
 	/**
 	 * Initializes settings from AppData object sections.
@@ -88,7 +88,7 @@ module.exports = {
 			this.ShowEmailAsTabName = Types.pBool(oAppDataMailWebclientSection.ShowEmailAsTabName, this.ShowEmailAsTabName);
 		}
 		
-		App.registerUserAccountsCount(this.userAccountsCount);
+		App.registerUserAccountsCount(this.userMailAccountsCount);
 	},
 	
 	/**

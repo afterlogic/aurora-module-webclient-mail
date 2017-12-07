@@ -100,7 +100,6 @@ CAccountSettingsFormView.prototype.onShow = function ()
 {
 	this.oServerPairPropertiesView.init(false);
 	this.populate();
-	this.isDisableAuthorize(this.useToAuthorize() ? App.userAccountsCount() <= 1 : false);
 };
 
 CAccountSettingsFormView.prototype.getCurrentValues = function ()
@@ -154,6 +153,8 @@ CAccountSettingsFormView.prototype.populate = function ()
 		this.useToAuthorize(oAccount.useToAuthorize());
 		this.canBeUsedToAuthorize(oAccount.canBeUsedToAuthorize());
 		this.useThreading(oAccount.useThreading());
+		
+		this.isDisableAuthorize(this.useToAuthorize() ? App.userAccountsCount() <= 1 : false);
 	}
 	else
 	{
@@ -167,6 +168,8 @@ CAccountSettingsFormView.prototype.populate = function ()
 		this.useToAuthorize(true);
 		this.canBeUsedToAuthorize(false);
 		this.useThreading(false);
+		
+		this.isDisableAuthorize(true);
 	}
 	
 	this.updateSavedState();
