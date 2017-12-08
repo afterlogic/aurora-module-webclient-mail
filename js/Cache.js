@@ -1654,6 +1654,11 @@ CMailCache.prototype.searchMessagesInInbox = function (sSearch)
 	Routing.setHash(LinksUtils.getMailbox(this.folderList().inboxFolderFullName() || 'INBOX', 1, '', sSearch, ''));
 };
 
+CMailCache.prototype.getFolderHash = function (sFolder)
+{
+	return Routing.buildHashFromArray(LinksUtils.getMailbox(sFolder, 1, '', '', ''));
+};
+
 CMailCache.prototype.countMessages = function (oCountedFolder)
 {
 	var aSubfoldersMessagesCount = [],

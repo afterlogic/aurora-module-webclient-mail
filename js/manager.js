@@ -129,6 +129,9 @@ module.exports = function (oAppData) {
 				getSearchMessagesInInbox: function () {
 					return _.bind(Cache.searchMessagesInInbox, Cache);
 				},
+				getFolderHash: function (sFolder) {
+					return Cache.getFolderHash(sFolder);
+				},
 				getSearchMessagesInCurrentFolder: function () {
 					return _.bind(Cache.searchMessagesInCurrentFolder, Cache);
 				},
