@@ -123,6 +123,18 @@ CAccountListModel.prototype.changeEditedAccount = function (iNewEditedId)
 	}
 };
 
+CAccountListModel.prototype.getDefaultFriendlyName = function()
+{
+	var
+		oCurrAccount = this.getCurrent(),
+		oDefIdentity = _.find(oCurrAccount && oCurrAccount.identities() || [], function (oIdnt) {
+			return oIdnt.isDefault();
+		}) || oCurrAccount
+	;
+	
+	return oDefIdentity ? oDefIdentity.friendlyName() || oDefIdentity.email() : '';
+};
+
 /**
  * @param {type} sHash
  * @returns {Object}
