@@ -68,7 +68,9 @@ function CFolderListView()
 		}, this);
 	}
 	
-	this.bAllowAddNewFolderOnMainScreen = Settings.AllowAddNewFolderOnMainScreen;
+	this.visibleNewFolderButton = ko.computed(function () {
+		return Settings.AllowAddNewFolderOnMainScreen && this.folderList().collection().length > 0;
+	}, this);
 }
 
 CFolderListView.prototype.ViewTemplate = '%ModuleName%_FoldersView';
