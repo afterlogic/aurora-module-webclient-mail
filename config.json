@@ -15,6 +15,10 @@
 		true,
 		"bool"
 	],
+	"AllowAddNewFolderOnMainScreen": [
+		false,
+		"bool"
+	],
 	"ComposeToolbarOrder": [
 		["back", "send", "save", "importance", "MailSensitivity", "confirmation", "OpenPgp"],
 		"array"

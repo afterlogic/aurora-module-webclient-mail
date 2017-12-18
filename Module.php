@@ -42,6 +42,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			'AllowChangeInputDirection' => $this->getConfig('AllowChangeInputDirection', false),
 			'AllowExpandFolders' => $this->getConfig('AllowExpandFolders', false),
 			'AllowSpamFolder' => $this->getConfig('AllowSpamFolder', true),
+			'AllowAddNewFolderOnMainScreen' => $this->getConfig('AllowAddNewFolderOnMainScreen', false),
 			'ComposeToolbarOrder' => $this->getConfig('ComposeToolbarOrder', array()),
 			'DefaultFontName' => $this->getConfig('DefaultFontName', 'Tahoma'),
 			'DefaultFontSize' => $this->getConfig('DefaultFontSize', 3),

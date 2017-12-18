@@ -9,8 +9,12 @@ var
 	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
 	UserSettings = require('%PathToCoreWebclientModule%/js/Settings.js'),
 	
+	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
+	CreateFolderPopup = require('modules/%ModuleName%/js/popups/CreateFolderPopup.js'),
+	
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
-	MailCache = require('modules/%ModuleName%/js/Cache.js')
+	MailCache = require('modules/%ModuleName%/js/Cache.js'),
+	Settings = require('modules/%ModuleName%/js/Settings.js')
 ;
 
 /**
@@ -63,8 +67,15 @@ function CFolderListView()
 
 		}, this);
 	}
+	
+	this.bAllowAddNewFolderOnMainScreen = Settings.AllowAddNewFolderOnMainScreen;
 }
 
 CFolderListView.prototype.ViewTemplate = '%ModuleName%_FoldersView';
+
+CFolderListView.prototype.addNewFolder = function ()
+{
+	Popups.showPopup(CreateFolderPopup);
+};
 
 module.exports = CFolderListView;
