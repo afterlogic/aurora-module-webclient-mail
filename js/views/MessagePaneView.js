@@ -52,6 +52,7 @@ function CMessagePaneView()
 	this.currentMessage = MailCache.currentMessage;
 	this.currentMessage.subscribe(this.onCurrentMessageSubscribe, this);
 	UserSettings.timeFormat.subscribe(this.onCurrentMessageSubscribe, this);
+	UserSettings.dateFormat.subscribe(this.onCurrentMessageSubscribe, this);
 	this.displayedMessageUid = ko.observable('');
 	
 	this.browserTitle = ko.computed(function () {

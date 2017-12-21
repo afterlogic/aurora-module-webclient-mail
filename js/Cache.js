@@ -1725,4 +1725,7 @@ var MailCache = new CMailCache();
 
 Pulse.registerDayOfMonthFunction(_.bind(MailCache.changeDatesInMessages, MailCache));
 
+UserSettings.timeFormat.subscribe(MailCache.changeDatesInMessages, MailCache);
+UserSettings.dateFormat.subscribe(MailCache.changeDatesInMessages, MailCache);
+
 module.exports = MailCache;
