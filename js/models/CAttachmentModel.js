@@ -176,17 +176,20 @@ CAttachmentModel.prototype.viewMessageFile = function ()
 };
 
 /**
- * @param {Object} oResult
+ * @param {Object} oResponse
  * @param {string} sFileUid
  */
-CAttachmentModel.prototype.fillDataAfterUploadComplete = function (oResult, sFileUid)
+CAttachmentModel.prototype.fillDataAfterUploadComplete = function (oResponse, sFileUid)
 {
 	this.cid(sFileUid);
-	this.tempName(oResult.Result.Attachment.TempName);
-	this.mimeType(oResult.Result.Attachment.MimeType);
-	this.size(oResult.Result.Attachment.Size);
-	this.hash(oResult.Result.Attachment.Hash);
-	this.parseActions(oResult.Result.Attachment);
+	if (oResponse && oResponse.Result && oResponse.Result.Attachment)
+	{
+		this.tempName(oResponse.Result.Attachment.TempName);
+		this.mimeType(oResponse.Result.Attachment.MimeType);
+		this.size(oResponse.Result.Attachment.Size);
+		this.hash(oResponse.Result.Attachment.Hash);
+		this.parseActions(oResponse.Result.Attachment);
+	}
 };
 
 /**
