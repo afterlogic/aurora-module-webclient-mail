@@ -189,10 +189,16 @@ module.exports = function (oAppData) {
 						}
 
 						ko.computed(function () {
-							var aAuthAcconts = _.filter(AccountList.collection(), function (oAccount) {
-								return oAccount.useToAuthorize();
-							});
+							var
+								aAuthAcconts = _.filter(AccountList.collection(), function (oAccount) {
+									return oAccount.useToAuthorize();
+								}),
+								aAuthAccountsEmails = _.map(aAuthAcconts, function (oAccount) {
+									return oAccount.email();
+								})
+							;
 							Settings.userMailAccountsCount(aAuthAcconts.length);
+							Settings.mailAccountsEmails(aAuthAccountsEmails);
 						}, this);
 					},
 					getScreens: function () {

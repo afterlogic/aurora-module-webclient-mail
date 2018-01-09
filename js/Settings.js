@@ -43,6 +43,7 @@ module.exports = {
 	ShowEmailAsTabName: true,
 	
 	userMailAccountsCount: ko.observable(0),
+	mailAccountsEmails: ko.observableArray([]),
 	
 	/**
 	 * Initializes settings from AppData object sections.
@@ -91,6 +92,7 @@ module.exports = {
 		}
 		
 		App.registerUserAccountsCount(this.userMailAccountsCount);
+		App.registerAccountsWithPass(this.mailAccountsEmails);
 	},
 	
 	/**
