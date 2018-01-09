@@ -28,6 +28,8 @@ var
 	Settings  = require('modules/%ModuleName%/js/Settings.js')
 ;
 
+require("jquery-ui/ui/widgets/datepicker");
+
 /**
  * @constructor
  * 
