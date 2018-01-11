@@ -6,6 +6,8 @@ var
 	
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	
+	Settings = require('modules/%ModuleName%/js/Settings.js'),
+	
 	CAbstractHeaderItemView = require('%PathToCoreWebclientModule%/js/views/CHeaderItemView.js'),
 			
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
@@ -22,12 +24,15 @@ function CHeaderItemView()
 		return TextUtils.i18n('%MODULENAME%/HEADING_UNREAD_MESSAGES_BROWSER_TAB_PLURAL', {'COUNT': this.unseenCount()}, null, this.unseenCount()) + ' - ' + AccountList.getEmail();
 	}, this);
 	
-	this.accounts = AccountList.collection;
+	this.accounts = Settings.ShowEmailAsTabName ? AccountList.collection : ko.observableArray([]);
 	
-	this.linkText = ko.computed(function () {
-		var sEmail = AccountList.getEmail();
-		return sEmail.length > 0 ? sEmail : TextUtils.i18n('%MODULENAME%/HEADING_BROWSER_TAB');
-	});
+	if (Settings.ShowEmailAsTabName)
+	{
+		this.linkText = ko.computed(function () {
+			var sEmail = AccountList.getEmail();
+			return sEmail.length > 0 ? sEmail : TextUtils.i18n('%MODULENAME%/HEADING_BROWSER_TAB');
+		});
+	}
 	
 	this.mainHref = ko.computed(function () {
 		if (this.isCurrent())

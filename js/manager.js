@@ -212,12 +212,7 @@ module.exports = function (oAppData) {
 					getHeaderItem: function () {
 						if (HeaderItemView === null)
 						{
-							var 
-								CHeaderItemView = require('%PathToCoreWebclientModule%/js/views/CHeaderItemView.js'),
-								sTabTitle = TextUtils.i18n('%MODULENAME%/ACTION_SHOW_MAIL')
-							;
-
-							HeaderItemView = Settings.ShowEmailAsTabName ? require('modules/%ModuleName%/js/views/HeaderItemView.js') : new CHeaderItemView(sTabTitle);
+							HeaderItemView = require('modules/%ModuleName%/js/views/HeaderItemView.js');
 						}
 						
 						return {
