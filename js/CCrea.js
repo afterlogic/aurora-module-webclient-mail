@@ -118,7 +118,7 @@ CCrea.prototype.start = function (bEditable)
 	});
 	this.$editableArea.on('blur', function () {
 		self.bFocused = false;
-		self.editableSave();
+		//self.editableSave(); Undo/Redo fix
 	});
 
 	this.$editableArea.on('click', 'img', function (ev) {
@@ -394,67 +394,67 @@ CCrea.prototype.getCaretPos = function (oContainerEl)
 
 CCrea.prototype.setCaretPos = function(oContainerEl, oSavedSel)
 {
-	// if (window.getSelection && document.createRange)
-	// {
-	// 	var
-	// 		oNodeStack = [oContainerEl],
-	// 		oNode = {},
-	// 		oSel = {},
-	// 		bFoundStart = false,
-	// 		bStop = false,
-	// 		iCharIndex = 0,
-	// 		iNextCharIndex = 0,
-	// 		iChildNodes = 0,
-	// 		oRange = document.createRange()
-	// 	;
-    //
-	// 	oRange.setStart(oContainerEl, 0);
-	// 	oRange.collapse(true);
-    //
-	// 	oNode = oNodeStack.pop();
-    //
-	// 	while (!bStop && oNode)
-	// 	{
-	// 		if (oNode.nodeType === 3)
-	// 		{
-	// 			iNextCharIndex = iCharIndex + oNode.length;
-	// 			if (!bFoundStart && oSavedSel.start >= iCharIndex && oSavedSel.start <= iNextCharIndex)
-	// 			{
-	// 				oRange.setStart(oNode, oSavedSel.start - iCharIndex);
-	// 				bFoundStart = true;
-	// 			}
-	// 			if (bFoundStart && oSavedSel.end >= iCharIndex && oSavedSel.end <= iNextCharIndex)
-	// 			{
-	// 				oRange.setEnd(oNode, oSavedSel.end - iCharIndex);
-	// 				bStop = true;
-	// 			}
-	// 			iCharIndex = iNextCharIndex;
-	// 		}
-	// 		else
-	// 		{
-	// 			iChildNodes = oNode.childNodes.length;
-	// 			while (iChildNodes--)
-	// 			{
-	// 				oNodeStack.push(oNode.childNodes[iChildNodes]);
-	// 			}
-	// 		}
-	// 		oNode = oNodeStack.pop();
-	// 	}
-    //
-	// 	oSel = window.getSelection();
-	// 	oSel.removeAllRanges();
-	// 	oSel.addRange(oRange);
-	// }
-	// else if (document.selection && document.body.createTextRange)
-	// {
-	// 	var oTextRange = document.body.createTextRange();
-    //
-	// 	oTextRange.moveToElementText(oContainerEl);
-	// 	oTextRange.collapse(true);
-	// 	oTextRange.moveEnd("character", oSavedSel.end);
-	// 	oTextRange.moveStart("character", oSavedSel.start);
-	// 	oTextRange.select();
-	// }
+	if (window.getSelection && document.createRange)
+	{
+		var
+			oNodeStack = [oContainerEl],
+			oNode = {},
+			oSel = {},
+			bFoundStart = false,
+			bStop = false,
+			iCharIndex = 0,
+			iNextCharIndex = 0,
+			iChildNodes = 0,
+			oRange = document.createRange()
+		;
+
+		oRange.setStart(oContainerEl, 0);
+		oRange.collapse(true);
+
+		oNode = oNodeStack.pop();
+
+		while (!bStop && oNode)
+		{
+			if (oNode.nodeType === 3)
+			{
+				iNextCharIndex = iCharIndex + oNode.length;
+				if (!bFoundStart && oSavedSel.start >= iCharIndex && oSavedSel.start <= iNextCharIndex)
+				{
+					oRange.setStart(oNode, oSavedSel.start - iCharIndex);
+					bFoundStart = true;
+				}
+				if (bFoundStart && oSavedSel.end >= iCharIndex && oSavedSel.end <= iNextCharIndex)
+				{
+					oRange.setEnd(oNode, oSavedSel.end - iCharIndex);
+					bStop = true;
+				}
+				iCharIndex = iNextCharIndex;
+			}
+			else
+			{
+				iChildNodes = oNode.childNodes.length;
+				while (iChildNodes--)
+				{
+					oNodeStack.push(oNode.childNodes[iChildNodes]);
+				}
+			}
+			oNode = oNodeStack.pop();
+		}
+
+		oSel = window.getSelection();
+		oSel.removeAllRanges();
+		oSel.addRange(oRange);
+	}
+	else if (document.selection && document.body.createTextRange)
+	{
+		var oTextRange = document.body.createTextRange();
+
+		oTextRange.moveToElementText(oContainerEl);
+		oTextRange.collapse(true);
+		oTextRange.moveEnd("character", oSavedSel.end);
+		oTextRange.moveStart("character", oSavedSel.start);
+		oTextRange.select();
+	}
 };
 
 /**
