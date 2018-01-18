@@ -118,7 +118,7 @@ CCrea.prototype.start = function (bEditable)
 	});
 	this.$editableArea.on('blur', function () {
 		self.bFocused = false;
-		//self.editableSave(); Undo/Redo fix
+		//self.editableSave(); //Undo/Redo fix
 	});
 
 	this.$editableArea.on('click', 'img', function (ev) {
@@ -1128,8 +1128,7 @@ CCrea.prototype.execCom = function (sCmd, sParam, bDontAddToHistory)
 			this.editableSave();
 		}
 	}
-
-	return bRes;
+    return bRes;
 };
 
 /**
@@ -1317,7 +1316,9 @@ CCrea.prototype.fontSize = function (sFontSize)
  */
 CCrea.prototype.bold = function ()
 {
-	this.execCom('Bold');
+    this.editableSave();
+    this.setCaretPos(this.$editableArea[0], this.aEditableAreaHtml[this.iUndoRedoPosition] ? this.aEditableAreaHtml[this.iUndoRedoPosition][1] : {});
+    this.execCom('Bold');
 };
 
 /**
@@ -1325,6 +1326,8 @@ CCrea.prototype.bold = function ()
  */
 CCrea.prototype.italic = function ()
 {
+    this.editableSave();
+    this.setCaretPos(this.$editableArea[0], this.aEditableAreaHtml[this.iUndoRedoPosition] ? this.aEditableAreaHtml[this.iUndoRedoPosition][1] : {});
 	this.execCom('Italic');
 };
 
@@ -1333,6 +1336,8 @@ CCrea.prototype.italic = function ()
  */
 CCrea.prototype.underline = function ()
 {
+    this.editableSave();
+    this.setCaretPos(this.$editableArea[0], this.aEditableAreaHtml[this.iUndoRedoPosition] ? this.aEditableAreaHtml[this.iUndoRedoPosition][1] : {});
 	this.execCom('Underline');
 };
 
@@ -1341,6 +1346,8 @@ CCrea.prototype.underline = function ()
  */
 CCrea.prototype.strikeThrough = function ()
 {
+    this.editableSave();
+    this.setCaretPos(this.$editableArea[0], this.aEditableAreaHtml[this.iUndoRedoPosition] ? this.aEditableAreaHtml[this.iUndoRedoPosition][1] : {});
 	this.execCom('StrikeThrough');
 };
 
@@ -1393,6 +1400,8 @@ CCrea.prototype.justify = function ()
  */
 CCrea.prototype.textColor = function (sFontColor)
 {
+    this.editableSave();
+    this.setCaretPos(this.$editableArea[0], this.aEditableAreaHtml[this.iUndoRedoPosition] ? this.aEditableAreaHtml[this.iUndoRedoPosition][1] : {});
 	this.execCom('ForeColor', sFontColor);
 };
 
@@ -1403,6 +1412,8 @@ CCrea.prototype.textColor = function (sFontColor)
  */
 CCrea.prototype.backgroundColor = function (sBackColor)
 {
+    this.editableSave();
+    this.setCaretPos(this.$editableArea[0], this.aEditableAreaHtml[this.iUndoRedoPosition] ? this.aEditableAreaHtml[this.iUndoRedoPosition][1] : {});
 	var sCmd = Browser.ie ? 'BackColor' : 'hilitecolor';
 	this.execCom(sCmd, sBackColor);
 };
