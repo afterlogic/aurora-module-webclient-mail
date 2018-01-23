@@ -434,7 +434,17 @@ CAccountListModel.prototype.getAllFullEmails = function ()
 	_.each(this.collection(), function (oAccount) {
 		if (oAccount)
 		{
-			aFullEmails.push(oAccount.fullEmail());
+			if (Types.isNonEmptyArray(oAccount.identities()))
+			{
+				_.each(oAccount.identities(), function (oIdentity) {
+					aFullEmails.push(oIdentity.fullEmail());
+				});
+			}
+			else
+			{
+				aFullEmails.push(oAccount.fullEmail());
+			}
+			
 			if (oAccount.fetchers() && Types.isNonEmptyArray(oAccount.fetchers().collection()))
 			{
 				_.each(oAccount.fetchers().collection(), function (oFetcher) {
@@ -442,12 +452,6 @@ CAccountListModel.prototype.getAllFullEmails = function ()
 					{
 						aFullEmails.push(oFetcher.fullEmail());
 					}
-				});
-			}
-			if (Types.isNonEmptyArray(oAccount.identities()))
-			{
-				_.each(oAccount.identities(), function (oIdentity) {
-					aFullEmails.push(oIdentity.fullEmail());
 				});
 			}
 		}
