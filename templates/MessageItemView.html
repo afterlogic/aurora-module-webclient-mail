@@ -21,8 +21,6 @@
 			<span class="marker"></span>
 			<span class="from fadeout">
 				<span data-bind="text: fromOrToText()"></span>
-				<span class="other_senders" data-bind="text: threadSendersText(), visible: threadSendersVisible()"></span>
-				<span class="plus_more_senders" data-bind="text: threadMoreSendersText(), visible: threadMoreSendersVisible()"></span>
 			</span>
 			<span class="separator"></span>
 			<span class="thread-pin" data-bind="text: threadCount(), visible: threadCountVisible(), click: openThread, css: {'unread': threadUnreadCount() > 0}, customTooltip: threadCountHint"></span>

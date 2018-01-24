@@ -264,7 +264,6 @@ CFolderModel.prototype.computeThreadData = function (oMessage)
 	
 	oMessage.threadUnreadCount(iUnreadCount);
 	oMessage.partialFlagged(bPartialFlagged);
-	oMessage.threadSenders(aSenders);
 };
 
 /**

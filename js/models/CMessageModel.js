@@ -95,43 +95,11 @@ function CMessageModel()
 		if (this.threadPart())
 		{
 			this.partialFlagged(false);
-			this.threadSenders(false);
 		}
 	}, this);
 	this.threadParentUid = ko.observable('');
 	
 	this.threadUids = ko.observableArray([]);
-	this.threadSenders = ko.observableArray([]);
-	this.threadMoreSendersText = ko.observable('');
-	this.threadSendersText = ko.computed(function () {
-		if (this.otherSendersAllowed())
-		{
-			var aSenders = this.threadSenders();
-
-			if (aSenders.length > 3)
-			{
-				this.threadMoreSendersText(TextUtils.i18n('%MODULENAME%/LABEL_PLUS_MORE_SENDERS', {'COUNT': aSenders.length - 1}));
-				return ', ' + aSenders[0];
-			}
-			else
-			{
-				this.threadMoreSendersText('');
-			}
-			
-			if (aSenders.length > 0)
-			{
-				aSenders.unshift('');
-				return aSenders.join(', ');
-			}
-		}
-		return '';
-	}, this);
-	this.threadSendersVisible = ko.computed(function () {
-		return this.threadSendersText().length > 0;
-	}, this);
-	this.threadMoreSendersVisible = ko.computed(function () {
-		return this.threadMoreSendersText().length > 0;
-	}, this);
 	this.threadCount = ko.computed(function () {
 		return this.threadUids().length;
 	}, this);
