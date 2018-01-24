@@ -658,6 +658,17 @@ SendingUtils.getForwardMessageBody = function (oMessage, iAccountId, oFetcherOrI
 	return sForwardBody;
 };
 
+SendingUtils.hasReplyAllCcAddrs = function (oMessage)
+{
+	var
+		iAccountId = oMessage.accountId(),
+		aRecipients = oMessage.oTo.aCollection.concat(oMessage.oCc.aCollection),
+		oFetcherOrIdentity = this.getFirstFetcherOrIdentityByRecipientsOrDefault(aRecipients, oMessage.accountId()),
+		sCcAddrs = GetReplyAllCcAddr(oMessage, iAccountId, oFetcherOrIdentity)
+	;
+	return sCcAddrs !== '';
+};
+
 /**
  * Prepares and returns cc address for reply message.
  *

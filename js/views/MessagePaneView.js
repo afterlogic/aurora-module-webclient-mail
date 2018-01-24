@@ -260,6 +260,13 @@ function CMessagePaneView()
 			this.requiresPostponedSending(false);
 		}
 	}, this);
+	this.hasReplyAllCcAddrs = ko.observable(false);
+	this.placeholderText = ko.computed(function () {
+		return this.hasReplyAllCcAddrs() ? TextUtils.i18n('%MODULENAME%/LABEL_QUICK_REPLY_ALL') : TextUtils.i18n('%MODULENAME%/LABEL_QUICK_REPLY');
+	}, this);
+	this.sendButtonText = ko.computed(function () {
+		return this.hasReplyAllCcAddrs() ? TextUtils.i18n('%MODULENAME%/ACTION_SEND_ALL') : TextUtils.i18n('%MODULENAME%/ACTION_SEND');
+	}, this);
 	
 	ko.computed(function () {
 		if (!this.replyTextFocus() || this.replyAutoSavingStarted() || this.replySavingStarted() || this.replySendingStarted())
@@ -433,6 +440,8 @@ CMessagePaneView.prototype.onCurrentMessageSubscribe = function ()
 	
 	if (oMessage && this.uid() === oMessage.uid())
 	{
+		this.hasReplyAllCcAddrs(SendingUtils.hasReplyAllCcAddrs(oMessage));
+		
 		this.subject(oMessage.subject());
 		this.importance(oMessage.importance());
 		this.from(oMessage.oFrom.getDisplay());
@@ -513,6 +522,8 @@ CMessagePaneView.prototype.onCurrentMessageSubscribe = function ()
 	}
 	else
 	{
+		this.hasReplyAllCcAddrs(false);
+		
 		this.isLoading(false);
 		$(this.domTextBody()).empty().data('displayed-message-uid', '');
 		this.displayedMessageUid('');
