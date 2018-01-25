@@ -19,7 +19,7 @@ function CServerModel(oServer)
 	this.sSmtpLogin = oServer ? Types.pString(oServer.SmtpLogin) : '';
 	this.sSmtpPassword = oServer ? Types.pString(oServer.SmtpPassword) : '';
 	this.bEnableSieve = oServer ? !!oServer.EnableSieve : false;
-	this.iSievePort = oServer && oServer.SievePort ? Types.pInt(oServer.SievePort) : 2000;
+	this.iSievePort = oServer && oServer.SievePort ? Types.pInt(oServer.SievePort) : 4190;
 	this.bEnableThreading = oServer ? !!oServer.EnableThreading : false;
 }
 

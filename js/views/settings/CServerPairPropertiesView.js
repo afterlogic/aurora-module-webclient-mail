@@ -70,7 +70,7 @@ function CServerPairPropertiesView(sPairId, bAdminEdit)
 			this.smtpLogin('');
 			this.smtpPassword('');
 			this.enableSieve(false);
-			this.sievePort(2000);
+			this.sievePort(4190);
 			this.enableThreading(true);
 		}
 		
@@ -89,7 +89,7 @@ function CServerPairPropertiesView(sPairId, bAdminEdit)
 	this.smtpLogin = ko.observable('');
 	this.smtpPassword = ko.observable('');
 	this.enableSieve = ko.observable(false);
-	this.sievePort = ko.observable(2000);
+	this.sievePort = ko.observable(4190);
 	this.enableThreading = ko.observable(true);
 	
 	this.currentValues = ko.observable('');
