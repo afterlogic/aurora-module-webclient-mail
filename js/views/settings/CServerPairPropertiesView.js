@@ -85,6 +85,12 @@ function CServerPairPropertiesView(sPairId, bAdminEdit)
 	this.outgoingUseAuth = ko.observable(true);
 	this.outgoingUseAuth.enable = ko.observable(true);
 	this.domains = ko.observable('');
+	this.name.focused.subscribe(function () {
+		if (!this.name.focused() && this.domains() === '')
+		{
+			this.domains(this.name());
+		}
+	}, this);
 	this.smtpAuthType = ko.observable(window.Enums.SmtpAuthType.UseUserCredentials);
 	this.smtpLogin = ko.observable('');
 	this.smtpPassword = ko.observable('');
