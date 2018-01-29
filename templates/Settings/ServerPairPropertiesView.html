@@ -7,7 +7,7 @@
 	<span class="label required" data-bind="i18n: {'key': '%MODULENAME%/LABEL_DOMAINS'}"></span>
 	<textarea class="input" data-bind="value: domains"></textarea>
 </div>
-<div class="row hint">
+<div class="row hint" data-bind="visible: bAdminEdit">
 	<span class="label"></span>
 	<span class="value" data-bind="i18n: {'key': '%MODULENAME%/LABEL_HINT_DOMAINS'}"></span>
 </div>
