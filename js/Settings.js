@@ -17,7 +17,7 @@ module.exports = {
 	AllowAddAccounts: false,
 	AllowAutoresponder: false,
 	AllowAutosaveInDrafts: true,
-	AllowChangeEmailSettings: true,
+	AllowDefaultAccountForUser: true,
 	AllowFetchers: true,
 	AllowFilters: false,
 	AllowForward: false,
@@ -62,7 +62,7 @@ module.exports = {
 			this.AllowAddAccounts = Types.pBool(oAppDataMailSection.AllowAddAccounts, this.AllowAddAccounts);
 			this.AllowAutoresponder = Types.pBool(oAppDataMailSection.AllowAutoresponder, this.AllowAutoresponder);
 			this.AllowAutosaveInDrafts = Types.pBool(oAppDataMailSection.AllowAutosaveInDrafts, this.AllowAutosaveInDrafts);
-			this.AllowChangeEmailSettings = Types.pBool(oAppDataMailSection.AllowChangeEmailSettings, this.AllowChangeEmailSettings);
+			this.AllowDefaultAccountForUser = Types.pBool(oAppDataMailSection.AllowDefaultAccountForUser, this.AllowDefaultAccountForUser);
 			this.AllowFetchers = Types.pBool(oAppDataMailSection.AllowFetchers, this.AllowFetchers);
 			this.AllowFilters = Types.pBool(oAppDataMailSection.AllowFilters, this.AllowFilters);
 			this.AllowForward = Types.pBool(oAppDataMailSection.AllowForward, this.AllowForward);

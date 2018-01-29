@@ -33,7 +33,7 @@ function CAccountSettingsFormView()
 	
 	this.sFakePass = 'xxxxxxxx'; // fake password uses to display something in password input while account editing
 	
-	this.bAllowChangeEmailSettings =  Settings.AllowChangeEmailSettings;
+	this.bAllowDefaultAccountForUser =  Settings.AllowDefaultAccountForUser;
 	this.bAllowIdentities = Settings.AllowIdentities;
 	
 	this.useToAuthorize = ko.observable(false);
@@ -87,7 +87,7 @@ function CAccountSettingsFormView()
 			this.allowChangePassword(false);
 			this.canBeRemoved(false);
 		}
-		return this.bAllowChangeEmailSettings || !this.bAllowIdentities || this.allowChangePassword() || this.canBeRemoved();
+		return this.bAllowDefaultAccountForUser || !this.bAllowIdentities || this.allowChangePassword() || this.canBeRemoved();
 	}, this);
 	this.isDisableAuthorize = ko.observable(App.userAccountsCount() <= 1);
 }

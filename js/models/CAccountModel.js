@@ -73,8 +73,11 @@ function CAccountModel(oData)
 	this.extensionsRequested = ko.observable(true);
 	
 	this.canBeRemoved = ko.computed(function () {
-		return Settings.AllowChangeEmailSettings;
+		return Settings.AllowDefaultAccountForUser;
 	}, this);
+	
+	this.requireApp();
+	this.bDefault = Settings.AllowDefaultAccountForUser && this.email() === App.getUserPublicId();
 }
 
 CAccountModel.prototype.threadingIsAvailable = function ()
