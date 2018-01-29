@@ -1,6 +1,6 @@
 <div class="fields">
 	<div class="fieldset">
-		<div class="row" data-bind="visible: bAllowDefaultAccountForUser && canBeUsedToAuthorize()">
+		<div class="row" data-bind="visible: !isDefaultAccount() && canBeUsedToAuthorize()">
 			<div>
 				<span class="label"></span>
 				<label class="custom_checkbox" data-bind="css: {'checked': useToAuthorize(), 'disabled': isDisableAuthorize()}">
@@ -16,7 +16,7 @@
 			<input class="value input" spellcheck="false" type="text" maxlength="65" data-bind="value: friendlyName, onEnter: save"/>
 		</div>
 
-        <div data-bind="visible: bAllowDefaultAccountForUser">
+        <div data-bind="visible: !isDefaultAccount()">
             <div class="row">
                 <span class="label required" data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_LOGIN'}"></span>
                 <input class="value input" spellcheck="false" type="text" maxlength="255" data-bind="value: incomingLogin, hasfocus: incLoginFocused, onEnter: save"/>
@@ -46,7 +46,7 @@
 			<span class="button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_CHANGE_PASSWORD'}, click: changePassword"></span>
 		</div>
 
-		<div data-bind="visible: canBeRemoved">
+		<div data-bind="visible: !isDefaultAccount()">
             <div class="row remove_account">
 				<span class="link" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_REMOVE_ACCOUNT'}, click: remove, attr: {'id': 'selenium_settings_delete_account_' + email()}, css: {'disabled': isDisableAuthorize()}"></span>
             </div>
@@ -57,7 +57,7 @@
 
     </div>
 	
-	<div class="buttons" data-bind="visible: bAllowDefaultAccountForUser || !bAllowIdentities">
+	<div class="buttons" data-bind="visible: !isDefaultAccount() || !bAllowIdentities">
 		<span class="button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_SAVE'}, click: save, visible: !isSaving()"></span>
 		<span class="button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_SAVE_IN_PROGRESS'}, click: save, visible: isSaving()"></span>
 	</div>

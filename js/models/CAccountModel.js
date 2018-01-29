@@ -31,6 +31,9 @@ var
  */
 function CAccountModel(oData)
 {
+	App = require('%PathToCoreWebclientModule%/js/App.js');
+	Ajax = require('modules/%ModuleName%/js/Ajax.js');
+	
 	this.id = ko.observable(Types.pInt(oData.AccountID));
 	this.email = ko.observable(Types.pString(oData.Email));
 	this.friendlyName = ko.observable(Types.pString(oData.FriendlyName));
@@ -72,11 +75,6 @@ function CAccountModel(oData)
 	
 	this.extensionsRequested = ko.observable(true);
 	
-	this.canBeRemoved = ko.computed(function () {
-		return Settings.AllowDefaultAccountForUser;
-	}, this);
-	
-	this.requireApp();
 	this.bDefault = Settings.AllowDefaultAccountForUser && this.email() === App.getUserPublicId();
 }
 
@@ -101,22 +99,6 @@ CAccountModel.prototype.requireAccounts = function ()
 	if (AccountList === null)
 	{
 		AccountList = require('modules/%ModuleName%/js/AccountList.js');
-	}
-};
-
-CAccountModel.prototype.requireApp = function ()
-{
-	if (App === null)
-	{
-		App = require('%PathToCoreWebclientModule%/js/App.js');
-	}
-};
-
-CAccountModel.prototype.requireAjax = function ()
-{
-	if (Ajax === null)
-	{
-		Ajax = require('modules/%ModuleName%/js/Ajax.js');
 	}
 };
 
@@ -150,7 +132,6 @@ CAccountModel.prototype.updateQuotaParams = function ()
 {
 	if (UserSettings.ShowQuotaBar)
 	{
-		this.requireAjax();
 		Ajax.send('GetQuota', { 'AccountID': this.id() }, this.onGetQuotaResponse, this);
 	}
 };
@@ -244,7 +225,7 @@ CAccountModel.prototype.remove = function()
 {
 	var fCallBack = _.bind(this.confirmedRemove, this);
 	
-	if (this.canBeRemoved())
+	if (!this.bDefault)
 	{
 		Popups.showPopup(ConfirmPopup, [TextUtils.i18n('%MODULENAME%/CONFIRM_REMOVE_ACCOUNT'), fCallBack, this.email()]);
 	}
@@ -259,7 +240,6 @@ CAccountModel.prototype.confirmedRemove = function(bOkAnswer)
 {
 	if (bOkAnswer)
 	{
-		this.requireAjax();
 		Ajax.send('DeleteAccount', { 'AccountID': this.id() }, this.onAccountDeleteResponse, this);
 	}
 };
@@ -278,8 +258,6 @@ CAccountModel.prototype.onAccountDeleteResponse = function (oResponse, oRequest)
 	}
 	else
 	{
-		this.requireApp();
-		
 		var ComposeUtils = require('modules/%ModuleName%/js/utils/Compose.js');
 		if (_.isFunction(ComposeUtils.closeComposePopup))
 		{
@@ -293,7 +271,6 @@ CAccountModel.prototype.onAccountDeleteResponse = function (oResponse, oRequest)
 
 CAccountModel.prototype.requestFilters = function ()
 {
-	this.requireAjax();
 	Ajax.send('GetFilters', { 'AccountID': this.id() }, this.onGetFiltersResponse, this);
 };
 
