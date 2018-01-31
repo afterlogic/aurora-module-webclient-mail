@@ -54,7 +54,10 @@ MailUtils.deleteMessages = function (aUids, fAfterDelete)
 	}
 	else if (bInTrash)
 	{
-		Popups.showPopup(ConfirmPopup, [TextUtils.i18n('COREWEBCLIENT/CONFIRM_ARE_YOU_SURE'), fDeleteMessages]);
+		Popups.showPopup(ConfirmPopup, [
+			TextUtils.i18n('%MODULENAME%/CONFIRM_DELETE_MESSAGES_PLURAL', {}, null, aUids.length), 
+			fDeleteMessages, '', TextUtils.i18n('COREWEBCLIENT/ACTION_DELETE')
+		]);
 	}
 	else if (oTrash)
 	{
