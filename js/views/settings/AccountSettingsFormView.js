@@ -86,7 +86,7 @@ function CAccountSettingsFormView()
 			this.allowChangePassword(false);
 			this.isDefaultAccount(false);
 		}
-		return !this.isDefaultAccount() || !this.bAllowIdentities || this.allowChangePassword() || this.isDefaultAccount();
+		return !this.isDefaultAccount() || !this.bAllowIdentities || this.allowChangePassword();
 	}, this);
 	this.isDisableAuthorize = ko.observable(App.userAccountsCount() <= 1);
 }
