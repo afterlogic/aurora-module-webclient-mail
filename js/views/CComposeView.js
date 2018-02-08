@@ -372,7 +372,7 @@ function CComposeView()
 		{ value: 'Ctrl+U', action: TextUtils.i18n('%MODULENAME%/LABEL_UNDERLINE_HOTKEY') }
 	];
 
-	this.allowFiles = !!SelectFilesPopup;
+	this.bAllowFiles = !!SelectFilesPopup;
 
 	this.closeBecauseSingleCompose = ko.observable(false);
 	this.changedInPreviousWindow = ko.observable(false);
@@ -1799,7 +1799,7 @@ CComposeView.prototype.openInNewWindow = function ()
 
 CComposeView.prototype.onShowFilesPopupClick = function ()
 {
-	if (SelectFilesPopup)
+	if (this.bAllowFiles)
 	{
 		Popups.showPopup(SelectFilesPopup, [_.bind(this.addFilesAsAttachment, this)]);
 	}

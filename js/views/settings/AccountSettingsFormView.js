@@ -231,7 +231,7 @@ CAccountSettingsFormView.prototype.onResponse = function (oResponse, oRequest)
 
 CAccountSettingsFormView.prototype.changePassword = function ()
 {
-	if (ChangePasswordPopup)
+	if (this.allowChangePassword())
 	{
 		Popups.showPopup(ChangePasswordPopup, [{
 			iAccountId: AccountList.editedId(),
