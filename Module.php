@@ -26,7 +26,6 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			array(
 				'AllowChangeInputDirection'	=> array('bool', $this->getConfig('AllowChangeInputDirection', false)),
 				'MailsPerPage'				=> array('int', $this->getConfig('MailsPerPage', 20)),
-				'SaveRepliesToCurrFolder'	=> array('bool', $this->getConfig('SaveRepliesToCurrFolder', false)),
 			)
 		);
 		
@@ -49,7 +48,6 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			'JoinReplyPrefixes' => $this->getConfig('JoinReplyPrefixes', false),
 			'MailsPerPage' => $this->getConfig('MailsPerPage', 20),
 			'MaxMessagesBodiesSizeToPrefetch' => $this->getConfig('MaxMessagesBodiesSizeToPrefetch', 50000),
-			'SaveRepliesToCurrFolder' => $this->getConfig('SaveRepliesToCurrFolder', false),
 			'ShowEmailAsTabName' => $this->getConfig('ShowEmailAsTabName', true)
 		);
 		
@@ -63,10 +61,6 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			if (isset($oUser->{$this->GetName().'::MailsPerPage'}))
 			{
 				$aSettings['MailsPerPage'] = $oUser->{$this->GetName().'::MailsPerPage'};
-			}
-			if (isset($oUser->{$this->GetName().'::SaveRepliesToCurrFolder'}))
-			{
-				$aSettings['SaveRepliesToCurrFolder'] = $oUser->{$this->GetName().'::SaveRepliesToCurrFolder'};
 			}
 		}
 		
@@ -87,10 +81,6 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 				{
 					$oUser->{$this->GetName().'::MailsPerPage'} = $Args['MailsPerPage'];
 				}
-				if (isset($Args['SaveRepliesToCurrFolder']))
-				{
-					$oUser->{$this->GetName().'::SaveRepliesToCurrFolder'} = $Args['SaveRepliesToCurrFolder'];
-				}
 				if (isset($Args['AllowChangeInputDirection']))
 				{
 					$oUser->{$this->GetName().'::AllowChangeInputDirection'} = $Args['AllowChangeInputDirection'];
@@ -102,10 +92,6 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 				if (isset($Args['MailsPerPage']))
 				{
 					$this->setConfig('MailsPerPage', $Args['MailsPerPage']);
-				}
-				if (isset($Args['SaveRepliesToCurrFolder']))
-				{
-					$this->setConfig('SaveRepliesToCurrFolder', $Args['SaveRepliesToCurrFolder']);
 				}
 				if (isset($Args['AllowChangeInputDirection']))
 				{

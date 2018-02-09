@@ -39,7 +39,6 @@ module.exports = {
 	JoinReplyPrefixes: true,
 	MailsPerPage: 20,
 	MaxMessagesBodiesSizeToPrefetch: 50000,
-	SaveRepliesToCurrFolder: false,
 	ShowEmailAsTabName: true,
 	
 	userMailAccountsCount: ko.observable(0),
@@ -87,7 +86,6 @@ module.exports = {
 			this.JoinReplyPrefixes = Types.pBool(oAppDataMailWebclientSection.JoinReplyPrefixes, this.JoinReplyPrefixes);
 			this.MailsPerPage = Types.pPositiveInt(oAppDataMailWebclientSection.MailsPerPage, this.MailsPerPage);
 			this.MaxMessagesBodiesSizeToPrefetch = Types.pNonNegativeInt(oAppDataMailWebclientSection.MaxMessagesBodiesSizeToPrefetch, this.MaxMessagesBodiesSizeToPrefetch);
-			this.SaveRepliesToCurrFolder = Types.pBool(oAppDataMailWebclientSection.SaveRepliesToCurrFolder, this.SaveRepliesToCurrFolder);
 			this.ShowEmailAsTabName = Types.pBool(oAppDataMailWebclientSection.ShowEmailAsTabName, this.ShowEmailAsTabName);
 		}
 		
@@ -100,15 +98,13 @@ module.exports = {
 	 * 
 	 * @param {number} iMailsPerPage
 	 * @param {boolean} bAllowAutosaveInDrafts
-	 * @param {boolean} bSaveRepliesToCurrFolder
 	 * @param {boolean} bAllowChangeInputDirection
 	 */
-	update: function (iMailsPerPage, bAllowAutosaveInDrafts, bSaveRepliesToCurrFolder, bAllowChangeInputDirection)
+	update: function (iMailsPerPage, bAllowAutosaveInDrafts, bAllowChangeInputDirection)
 	{
 		this.AllowAutosaveInDrafts = Types.pBool(bAllowAutosaveInDrafts, this.AllowAutosaveInDrafts);
 		
 		this.AllowChangeInputDirection = Types.pBool(bAllowChangeInputDirection, this.AllowChangeInputDirection);
 		this.MailsPerPage = Types.pPositiveInt(iMailsPerPage, this.MailsPerPage);
-		this.SaveRepliesToCurrFolder = Types.pBool(bSaveRepliesToCurrFolder, this.SaveRepliesToCurrFolder);
 	}
 };

@@ -24,14 +24,13 @@
 </div>
 
 <div class="row smtp_authentication" data-bind="css: {'disabled': !outgoingUseAuth.enable()}, visible: !bAdminEdit && smtpAuthType() !== Enums.SmtpAuthType.UseSpecifiedCredentials">
-	<div>
-		<span class="label"></span>
+	<span class="value offset">
 		<label class="custom_checkbox" data-bind="css: {'checked': outgoingUseAuth}">
 			<span class="icon"></span>
 			<input type="checkbox" id="add_new_account_mail_out_auth" data-bind="checked: outgoingUseAuth, enable: outgoingUseAuth.enable" />
 		</label>
 		<label for="add_new_account_mail_out_auth" data-bind="i18n: {'key': '%MODULENAME%/LABEL_USE_SMTP_AUTHENTICATION'}"></label>
-	</div>
+	</span>
 </div>
 
 <div class="row smtp_authentication" data-bind="visible: bAdminEdit">
