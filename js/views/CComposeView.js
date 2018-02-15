@@ -102,7 +102,6 @@ function CComposeView()
 			$(this.ccAddrDom()).inputosaurus('resizeInput');
 		}, this));
 	}, this);
-	this.bVisibleCounter = false;
 
 	this.sendReadingConfirmation = ko.observable(false);
 
@@ -204,7 +203,6 @@ function CComposeView()
 		return aEmails;
 	}, this);
 	this.subject = ko.observable('').extend({'reversible': true});
-	this.counter = ko.observable(0);
 	this.plainText = ko.observable(false);
 	this.textBody = ko.observable('');
 	this.textBody.subscribe(function () {
