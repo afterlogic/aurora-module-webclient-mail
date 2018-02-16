@@ -10,19 +10,19 @@
 				<span class="icon"></span>
 			</a>
 
-			<a href="javascript:void(0);" class="item bold" data-bind="click: function () { oCrea.bold(); return false; }, customTooltip: '%MODULENAME%/ACTION_SET_BOLD'">
+			<a href="javascript:void(0);" class="item bold" data-bind="click: function () { oCrea.bold(); isFWBold(!isFWBold()); return false; }, customTooltip: '%MODULENAME%/ACTION_SET_BOLD', css: { active: isFWBold() }">
 				<span class="icon"></span>
 			</a>
 
-			<a href="javascript:void(0);" class="item italic" data-bind="click: function () { oCrea.italic();  return false; }, customTooltip: '%MODULENAME%/ACTION_SET_ITALIC'">
+			<a href="javascript:void(0);" class="item italic" data-bind="click: function () { oCrea.italic(); isFSItalic(!isFSItalic()); return false; }, customTooltip: '%MODULENAME%/ACTION_SET_ITALIC', css: { active: isFSItalic() }">
 				<span class="icon"></span>
 			</a>
 
-			<a href="javascript:void(0);" class="item underline" data-bind="click: function () { oCrea.underline(); return false; }, customTooltip: '%MODULENAME%/ACTION_SET_UNDERLINE'">
+			<a href="javascript:void(0);" class="item underline" data-bind="click: function () { oCrea.underline(); isTDUnderline(!isTDUnderline()); return false; }, customTooltip: '%MODULENAME%/ACTION_SET_UNDERLINE', css: { active: isTDUnderline() }">
 				<span class="icon"></span>
 			</a>
 
-			<a href="javascript:void(0);" class="item strike_through" data-bind="click: function () { oCrea.strikeThrough(); return false; }, customTooltip: '%MODULENAME%/ACTION_SET_STRIKETHROUGH'">
+			<a href="javascript:void(0);" class="item strike_through" data-bind="click: function () { oCrea.strikeThrough(); isTDStrikeThrough(!isTDStrikeThrough()); return false; }, customTooltip: '%MODULENAME%/ACTION_SET_STRIKETHROUGH', css: { active: isTDStrikeThrough() }">
 				<span class="icon"></span>
 			</a>
 			

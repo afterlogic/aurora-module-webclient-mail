@@ -1316,9 +1316,8 @@ CCrea.prototype.fontSize = function (sFontSize)
  */
 CCrea.prototype.bold = function ()
 {
-    this.editableSave();
-    this.setCaretPos(this.$editableArea[0], this.aEditableAreaHtml[this.iUndoRedoPosition] ? this.aEditableAreaHtml[this.iUndoRedoPosition][1] : {});
     this.execCom('Bold');
+    this.$editableArea.focus();
 };
 
 /**
@@ -1326,9 +1325,8 @@ CCrea.prototype.bold = function ()
  */
 CCrea.prototype.italic = function ()
 {
-    this.editableSave();
-    this.setCaretPos(this.$editableArea[0], this.aEditableAreaHtml[this.iUndoRedoPosition] ? this.aEditableAreaHtml[this.iUndoRedoPosition][1] : {});
 	this.execCom('Italic');
+    this.$editableArea.focus();
 };
 
 /**
@@ -1336,9 +1334,8 @@ CCrea.prototype.italic = function ()
  */
 CCrea.prototype.underline = function ()
 {
-    this.editableSave();
-    this.setCaretPos(this.$editableArea[0], this.aEditableAreaHtml[this.iUndoRedoPosition] ? this.aEditableAreaHtml[this.iUndoRedoPosition][1] : {});
 	this.execCom('Underline');
+    this.$editableArea.focus();
 };
 
 /**
@@ -1346,9 +1343,8 @@ CCrea.prototype.underline = function ()
  */
 CCrea.prototype.strikeThrough = function ()
 {
-    this.editableSave();
-    this.setCaretPos(this.$editableArea[0], this.aEditableAreaHtml[this.iUndoRedoPosition] ? this.aEditableAreaHtml[this.iUndoRedoPosition][1] : {});
 	this.execCom('StrikeThrough');
+    this.$editableArea.focus();
 };
 
 CCrea.prototype.undo = function ()
@@ -1400,9 +1396,8 @@ CCrea.prototype.justify = function ()
  */
 CCrea.prototype.textColor = function (sFontColor)
 {
-    this.editableSave();
-    this.setCaretPos(this.$editableArea[0], this.aEditableAreaHtml[this.iUndoRedoPosition] ? this.aEditableAreaHtml[this.iUndoRedoPosition][1] : {});
 	this.execCom('ForeColor', sFontColor);
+    this.$editableArea.focus();
 };
 
 /**
@@ -1412,10 +1407,9 @@ CCrea.prototype.textColor = function (sFontColor)
  */
 CCrea.prototype.backgroundColor = function (sBackColor)
 {
-    this.editableSave();
-    this.setCaretPos(this.$editableArea[0], this.aEditableAreaHtml[this.iUndoRedoPosition] ? this.aEditableAreaHtml[this.iUndoRedoPosition][1] : {});
 	var sCmd = Browser.ie ? 'BackColor' : 'hilitecolor';
-	this.execCom(sCmd, sBackColor);
+    this.execCom(sCmd, sBackColor);
+    this.$editableArea.focus();
 };
 
 /**
@@ -1459,6 +1453,94 @@ CCrea.prototype.getFontName = function ()
 	}
 
 	return sValidFontName;
+};
+
+/**
+ * Gets is font-weight bold.
+ *
+ * @return {boolean}
+ */
+CCrea.prototype.getIsBold = function ()
+{
+	if (this.bEditable)
+	{
+		var
+			sIsBold = window.document.queryCommandValue('bold'),
+			bIsBold = false
+		;
+
+		if(sIsBold === 'true'){
+            bIsBold = true;
+		}
+	}
+
+	return bIsBold;
+};
+
+/**
+ * Gets is font-style italic.
+ *
+ * @return {string}
+ */
+CCrea.prototype.getIsItalic = function ()
+{
+	if (this.bEditable)
+	{
+		var
+			sIsItalic = window.document.queryCommandValue('italic'),
+			bIsItalic = false
+		;
+
+		if(sIsItalic === 'true'){
+            bIsItalic = true;
+		}
+	}
+
+	return bIsItalic;
+};
+
+/**
+ * Gets is text-decoration underline.
+ *
+ * @return {string}
+ */
+CCrea.prototype.getIsUnderline = function ()
+{
+	if (this.bEditable)
+	{
+		var
+			sIsUnderline = window.document.queryCommandValue('underline'),
+			bIsUnderline = false
+		;
+
+		if(sIsUnderline === 'true'){
+            bIsUnderline = true;
+		}
+	}
+
+	return bIsUnderline;
+};
+
+/**
+ * Gets is text-decoration strike-through.
+ *
+ * @return {string}
+ */
+CCrea.prototype.getIsStrikeThrough = function ()
+{
+	if (this.bEditable)
+	{
+		var
+			sIsStrikeThrough = window.document.queryCommandValue('StrikeThrough'),
+			bIsStrikeThrough = false
+		;
+
+		if(sIsStrikeThrough === 'true'){
+            bIsStrikeThrough = true;
+		}
+	}
+
+	return bIsStrikeThrough;
 };
 
 /**

@@ -46,6 +46,11 @@ function CHtmlEditorView(bInsertImageAsBase64, oParent)
 	this.insertLinkDropdownDom = ko.observable();
 	this.insertImageDropdownDom = ko.observable();
 
+    this.isFWBold = ko.observable(false);
+    this.isFSItalic = ko.observable(false);
+    this.isTDUnderline = ko.observable(false);
+    this.isTDStrikeThrough = ko.observable(false);
+
 	this.isEnable = ko.observable(true);
 	this.isEnable.subscribe(function () {
 		if (this.oCrea)
@@ -412,10 +417,13 @@ CHtmlEditorView.prototype.changeSignatureContent = function (sNewSignatureConten
 CHtmlEditorView.prototype.setFontValuesFromText = function ()
 {
 	this.lockFontSubscribing(true);
-	this.selectedFont(this.oCrea.getFontName());
-	this.selectedSize(this.oCrea.getFontSizeInNumber().toString());
-	this.lockFontSubscribing(false);
-
+    this.isFWBold(this.oCrea.getIsBold());
+    this.isFSItalic(this.oCrea.getIsItalic());
+    this.isTDUnderline(this.oCrea.getIsUnderline());
+    this.isTDStrikeThrough(this.oCrea.getIsStrikeThrough());
+    this.selectedFont(this.oCrea.getFontName());
+    this.selectedSize(this.oCrea.getFontSizeInNumber().toString());
+    this.lockFontSubscribing(false);
 };
 
 CHtmlEditorView.prototype.isUndoAvailable = function ()
