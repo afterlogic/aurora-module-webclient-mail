@@ -49,6 +49,7 @@ function CAccountModel(oData)
 		this.requireCache();
 		Cache.clearMessagesCache(this.id());
 	}, this);
+	this.bSaveRepliesToCurrFolder = !!oData.SaveRepliesToCurrFolder;
 	
 	this.isCurrent = ko.observable(false);
 	this.isEdited = ko.observable(false);
@@ -92,6 +93,7 @@ CAccountModel.prototype.updateFromServer = function (oData)
 	this.oServer = new CServerModel(oData.Server);
 	this.useToAuthorize(!!oData.UseToAuthorize);
 	this.useThreading(!!oData.UseThreading);
+	this.bSaveRepliesToCurrFolder = !!oData.SaveRepliesToCurrFolder;
 };
 
 CAccountModel.prototype.requireAccounts = function ()

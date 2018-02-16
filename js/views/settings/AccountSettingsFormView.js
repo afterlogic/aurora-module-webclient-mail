@@ -43,6 +43,7 @@ function CAccountSettingsFormView()
 	this.incomingLogin = ko.observable('');
 	this.incomingPassword = ko.observable('');
 	this.useThreading = ko.observable(false);
+	this.saveRepliesToCurrFolder = ko.observable(false);
 
 	this.oServerPairPropertiesView = new CServerPairPropertiesView('acc_edit');
 	this.enableThreading = this.oServerPairPropertiesView.enableThreading;
@@ -74,7 +75,8 @@ function CAccountSettingsFormView()
 		this.updateSavedState();
 	}, this);
 	
-	this.visibleTab = ko.computed(function () {
+	this.visibleTab = ko.observable(true);
+	ko.computed(function () {
 		var oAccount = AccountList.getEdited();
 		if (oAccount)
 		{	
@@ -86,7 +88,6 @@ function CAccountSettingsFormView()
 			this.allowChangePassword(false);
 			this.isDefaultAccount(false);
 		}
-		return !this.isDefaultAccount() || !this.bAllowIdentities || this.allowChangePassword();
 	}, this);
 	this.isDisableAuthorize = ko.observable(App.userAccountsCount() <= 1);
 }
@@ -110,7 +111,8 @@ CAccountSettingsFormView.prototype.getCurrentValues = function ()
 			this.email(),
 			this.incomingLogin(),
 			this.incomingPassword(),
-			this.useThreading()
+			this.useThreading(),
+			this.saveRepliesToCurrFolder()
 		],
 		aServers = this.oServerPairPropertiesView.currentValues()
 	;
@@ -129,7 +131,8 @@ CAccountSettingsFormView.prototype.getParametersForSave = function ()
 		'IncomingLogin': this.incomingLogin(),
 		'IncomingPassword': this.incomingPassword() === this.sFakePass ? '' : this.incomingPassword(),
 		'Server': this.oServerPairPropertiesView.getParametersForSave(),
-		'UseThreading': this.useThreading()
+		'UseThreading': this.useThreading(),
+		'SaveRepliesToCurrFolder': this.saveRepliesToCurrFolder()
 	};
 };
 
@@ -152,6 +155,7 @@ CAccountSettingsFormView.prototype.populate = function ()
 		this.useToAuthorize(oAccount.useToAuthorize());
 		this.canBeUsedToAuthorize(oAccount.canBeUsedToAuthorize());
 		this.useThreading(oAccount.useThreading());
+		this.saveRepliesToCurrFolder(oAccount.bSaveRepliesToCurrFolder);
 		
 		this.isDisableAuthorize(this.useToAuthorize() ? App.userAccountsCount() <= 1 : false);
 	}
@@ -231,7 +235,7 @@ CAccountSettingsFormView.prototype.onResponse = function (oResponse, oRequest)
 
 CAccountSettingsFormView.prototype.changePassword = function ()
 {
-	if (ChangePasswordPopup)
+	if (this.allowChangePassword())
 	{
 		Popups.showPopup(ChangePasswordPopup, [{
 			iAccountId: AccountList.editedId(),

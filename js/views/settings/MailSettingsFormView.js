@@ -29,7 +29,6 @@ function CMailSettingsFormView()
 	
 	this.mailsPerPage = ko.observable(Settings.MailsPerPage);
 	this.allowAutosaveInDrafts = ko.observable(Settings.AllowAutosaveInDrafts);
-	this.saveRepliesToCurrFolder = ko.observable(Settings.SaveRepliesToCurrFolder);
 	this.allowChangeInputDirection = ko.observable(Settings.AllowChangeInputDirection);
 }
 
@@ -47,7 +46,6 @@ CMailSettingsFormView.prototype.getCurrentValues = function ()
 	return [
 		this.mailsPerPage(),
 		this.allowAutosaveInDrafts(),
-		this.saveRepliesToCurrFolder(),
 		this.allowChangeInputDirection()
 	];
 };
@@ -56,7 +54,6 @@ CMailSettingsFormView.prototype.revertGlobalValues = function ()
 {
 	this.mailsPerPage(Settings.MailsPerPage);
 	this.allowAutosaveInDrafts(Settings.AllowAutosaveInDrafts);
-	this.saveRepliesToCurrFolder(Settings.SaveRepliesToCurrFolder);
 	this.allowChangeInputDirection(Settings.AllowChangeInputDirection);
 };
 
@@ -65,14 +62,13 @@ CMailSettingsFormView.prototype.getParametersForSave = function ()
 	return {
 		'MailsPerPage': this.mailsPerPage(),
 		'AllowAutosaveInDrafts': this.allowAutosaveInDrafts(),
-		'SaveRepliesToCurrFolder': this.saveRepliesToCurrFolder(),
 		'AllowChangeInputDirection': this.allowChangeInputDirection()
 	};
 };
 
 CMailSettingsFormView.prototype.applySavedValues = function (oParameters)
 {
-	Settings.update(oParameters.MailsPerPage, oParameters.AllowAutosaveInDrafts, oParameters.SaveRepliesToCurrFolder, oParameters.AllowChangeInputDirection);
+	Settings.update(oParameters.MailsPerPage, oParameters.AllowAutosaveInDrafts, oParameters.AllowChangeInputDirection);
 };
 
 CMailSettingsFormView.prototype.setAccessLevel = function (sEntityType, iEntityId)
