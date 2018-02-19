@@ -134,7 +134,7 @@ CComposePopup.prototype.onOpen = function (aParams)
 				this.onRoute(aParams);
 			}
 
-			this.oHtmlEditor.oCrea.clearUndoRedo();
+			this.oHtmlEditor.clearUndoRedo();
 		}
 		else
 		{

@@ -328,7 +328,7 @@ function CComposeView()
 			bDisableBodyEdit = bDisableBodyEdit || !!oController.disableBodyEdit && oController.disableBodyEdit();
 		});
 		
-		this.oHtmlEditor.disabled(bDisableBodyEdit);
+		this.oHtmlEditor.setDisableEdit(bDisableBodyEdit);
 	}, this);
 	
 	if (Settings.AllowAutosaveInDrafts && Settings.AutoSaveIntervalSeconds > 0)
@@ -542,7 +542,7 @@ CComposeView.prototype.onShow = function ()
 	$(this.splitterDom()).trigger('resize');
 	$(this.bottomPanel()).trigger('resize');
 
-	this.oHtmlEditor.initCrea(this.textBody(), this.plainText(), '7');
+	this.oHtmlEditor.init(this.textBody(), this.plainText(), '7');
 	this.oHtmlEditor.commit();
 
 	this.initUploader();
@@ -1298,13 +1298,13 @@ CComposeView.prototype.isChanged = function ()
 		ccAddr = this.ccAddr.changed(),
 		bccAddr = this.bccAddr.changed(),
 		subject = this.subject.changed(),
-		oHtmlEditor = this.oHtmlEditor.textChanged(),
+		bHtmlEditor = this.oHtmlEditor.textChanged(),
 		attachmentsChanged = this.attachmentsChanged(),
 		changedInPreviousWindow = this.changedInPreviousWindow()
 	;
 
 	return toAddr || ccAddr || bccAddr ||
-			subject || oHtmlEditor ||
+			subject || bHtmlEditor ||
 			attachmentsChanged || changedInPreviousWindow;
 };
 

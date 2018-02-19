@@ -46,11 +46,6 @@ function CHtmlEditorView(bInsertImageAsBase64, oParent)
 	this.insertLinkDropdownDom = ko.observable();
 	this.insertImageDropdownDom = ko.observable();
 
-    this.isFWBold = ko.observable(false);
-    this.isFSItalic = ko.observable(false);
-    this.isTDUnderline = ko.observable(false);
-    this.isTDStrikeThrough = ko.observable(false);
-
 	this.isEnable = ko.observable(true);
 	this.isEnable.subscribe(function () {
 		if (this.oCrea)
@@ -142,7 +137,7 @@ function CHtmlEditorView(bInsertImageAsBase64, oParent)
 	}, this);
 	
 	this.bAllowChangeInputDirection = UserSettings.IsRTL || Settings.AllowChangeInputDirection;
-	this.disabled = ko.observable(false);
+	this.disableEdit = ko.observable(false);
 	
 	this.textChanged = ko.observable(false);
 }
@@ -154,13 +149,9 @@ CHtmlEditorView.prototype.hasOpenedPopup = function ()
 	return this.visibleInsertLinkPopup() || this.visibleLinkPopup() || this.visibleImagePopup() || this.visibleInsertImagePopup() || this.visibleFontColorPopup();
 };
 	
-CHtmlEditorView.prototype.init = function ()
+CHtmlEditorView.prototype.setDisableEdit = function (bDisableEdit)
 {
-	$(document.body).on('click', _.bind(function () {
-		this.closeAllPopups(true);
-	}, this));
-	
-	this.initEditorUploader();
+	this.disableEdit(!!bDisableEdit);
 };
 
 CHtmlEditorView.prototype.correctFontFromSettings = function ()
@@ -349,7 +340,7 @@ CHtmlEditorView.prototype.commit = function ()
  * @param {boolean} bPlain
  * @param {string} sTabIndex
  */
-CHtmlEditorView.prototype.initCrea = function (sText, bPlain, sTabIndex)
+CHtmlEditorView.prototype.init = function (sText, bPlain, sTabIndex)
 {
 	if (this.oCrea)
 	{
@@ -361,7 +352,12 @@ CHtmlEditorView.prototype.initCrea = function (sText, bPlain, sTabIndex)
 	}
 	else
 	{
-		this.init();
+		$(document.body).on('click', _.bind(function () {
+			this.closeAllPopups(true);
+		}, this));
+
+		this.initEditorUploader();
+		
 		this.oCrea = new CCrea({
 			'creaId': this.creaId,
 			'fontNameArray': this.aFonts,
@@ -386,7 +382,7 @@ CHtmlEditorView.prototype.initCrea = function (sText, bPlain, sTabIndex)
 	}
 
 	this.oCrea.setTabIndex(sTabIndex);
-	this.oCrea.clearUndoRedo();
+	this.clearUndoRedo();
 	this.setText(sText, bPlain);
 	this.setFontValuesFromText();
 	this.uploadedImagePathes([]);
@@ -417,13 +413,10 @@ CHtmlEditorView.prototype.changeSignatureContent = function (sNewSignatureConten
 CHtmlEditorView.prototype.setFontValuesFromText = function ()
 {
 	this.lockFontSubscribing(true);
-    this.isFWBold(this.oCrea.getIsBold());
-    this.isFSItalic(this.oCrea.getIsItalic());
-    this.isTDUnderline(this.oCrea.getIsUnderline());
-    this.isTDStrikeThrough(this.oCrea.getIsStrikeThrough());
-    this.selectedFont(this.oCrea.getFontName());
-    this.selectedSize(this.oCrea.getFontSizeInNumber().toString());
-    this.lockFontSubscribing(false);
+	this.selectedFont(this.oCrea.getFontName());
+	this.selectedSize(this.oCrea.getFontSizeInNumber().toString());
+	this.lockFontSubscribing(false);
+
 };
 
 CHtmlEditorView.prototype.isUndoAvailable = function ()
