@@ -47,10 +47,6 @@
 		50000,
 		"int"
 	],
-	"SaveRepliesToCurrFolder": [
-		false,
-		"bool"
-	],
 	"ShowEmailAsTabName": [
 		true,
 		"bool"

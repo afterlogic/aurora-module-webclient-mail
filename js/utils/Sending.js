@@ -52,16 +52,17 @@ SendingUtils.send = function (sMethod, oParameters, bShowLoading, fSendMessageRe
 {
 	var
 		iAccountID = oParameters.AccountID,
+		oAccount = AccountList.getAccount(iAccountID),
 		oFolderList = MailCache.oFolderListItems[iAccountID],
 		sLoadingMessage = '',
 		sSentFolder = oFolderList ? oFolderList.sentFolderFullName() : '',
 		sDraftFolder = oFolderList ? oFolderList.draftsFolderFullName() : '',
-		sCurrEmail = AccountList.getEmail(iAccountID),
+		sCurrEmail = oAccount ? oAccount.email() : '',
 		bSelfRecipient = (oParameters.To.indexOf(sCurrEmail) > -1 || oParameters.Cc.indexOf(sCurrEmail) > -1 || 
 			oParameters.Bcc.indexOf(sCurrEmail) > -1)
 	;
 	
-	if (Settings.SaveRepliesToCurrFolder && !bSelfRecipient && Types.isNonEmptyArray(oParameters.DraftInfo, 3))
+	if (oAccount.bSaveRepliesToCurrFolder && !bSelfRecipient && Types.isNonEmptyArray(oParameters.DraftInfo, 3))
 	{
 		sSentFolder = oParameters.DraftInfo[2];
 	}

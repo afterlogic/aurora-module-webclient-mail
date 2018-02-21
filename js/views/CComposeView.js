@@ -102,7 +102,6 @@ function CComposeView()
 			$(this.ccAddrDom()).inputosaurus('resizeInput');
 		}, this));
 	}, this);
-	this.bVisibleCounter = false;
 
 	this.sendReadingConfirmation = ko.observable(false);
 
@@ -204,7 +203,6 @@ function CComposeView()
 		return aEmails;
 	}, this);
 	this.subject = ko.observable('').extend({'reversible': true});
-	this.counter = ko.observable(0);
 	this.plainText = ko.observable(false);
 	this.textBody = ko.observable('');
 	this.textBody.subscribe(function () {
@@ -330,7 +328,7 @@ function CComposeView()
 			bDisableBodyEdit = bDisableBodyEdit || !!oController.disableBodyEdit && oController.disableBodyEdit();
 		});
 		
-		this.oHtmlEditor.disabled(bDisableBodyEdit);
+		this.oHtmlEditor.setDisableEdit(bDisableBodyEdit);
 	}, this);
 	
 	if (Settings.AllowAutosaveInDrafts && Settings.AutoSaveIntervalSeconds > 0)
@@ -372,7 +370,7 @@ function CComposeView()
 		{ value: 'Ctrl+U', action: TextUtils.i18n('%MODULENAME%/LABEL_UNDERLINE_HOTKEY') }
 	];
 
-	this.allowFiles = !!SelectFilesPopup;
+	this.bAllowFiles = !!SelectFilesPopup;
 
 	this.closeBecauseSingleCompose = ko.observable(false);
 	this.changedInPreviousWindow = ko.observable(false);
@@ -544,7 +542,7 @@ CComposeView.prototype.onShow = function ()
 	$(this.splitterDom()).trigger('resize');
 	$(this.bottomPanel()).trigger('resize');
 
-	this.oHtmlEditor.initCrea(this.textBody(), this.plainText(), '7');
+	this.oHtmlEditor.init(this.textBody(), this.plainText(), '7');
 	this.oHtmlEditor.commit();
 
 	this.initUploader();
@@ -1300,13 +1298,13 @@ CComposeView.prototype.isChanged = function ()
 		ccAddr = this.ccAddr.changed(),
 		bccAddr = this.bccAddr.changed(),
 		subject = this.subject.changed(),
-		oHtmlEditor = this.oHtmlEditor.textChanged(),
+		bHtmlEditor = this.oHtmlEditor.textChanged(),
 		attachmentsChanged = this.attachmentsChanged(),
 		changedInPreviousWindow = this.changedInPreviousWindow()
 	;
 
 	return toAddr || ccAddr || bccAddr ||
-			subject || oHtmlEditor ||
+			subject || bHtmlEditor ||
 			attachmentsChanged || changedInPreviousWindow;
 };
 
@@ -1799,7 +1797,7 @@ CComposeView.prototype.openInNewWindow = function ()
 
 CComposeView.prototype.onShowFilesPopupClick = function ()
 {
-	if (SelectFilesPopup)
+	if (this.bAllowFiles)
 	{
 		Popups.showPopup(SelectFilesPopup, [_.bind(this.addFilesAsAttachment, this)]);
 	}

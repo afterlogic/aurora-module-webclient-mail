@@ -1,5 +1,5 @@
 <div class="html_editor" data-bind="css: {'inactive': inactive()}, onEsc: onEscHandler, initDom: htmlEditorDom">
-	<div class="disable_mask" data-bind="visible: disabled"></div>
+	<div class="disable_mask" data-bind="visible: disableEdit"></div>
 	<div class="toolbar" data-bind="initDom: toolbarDom">
 		<div class="content">
 			<a href="javascript:void(0);" class="item undo" data-bind="click: function () { oCrea.undo(); return false; }, customTooltip: '%MODULENAME%/ACTION_UNDO'">
