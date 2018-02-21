@@ -58,7 +58,7 @@ CSignatureSettingsFormView.prototype.init = function ()
 {
 	this.oHtmlEditor.init(this.signature(), false, '');
 	this.oHtmlEditor.setActivitySource(this.useSignatureRadio);
-	this.enableImageDragNDrop(this.oHtmlEditor.editorUploader && this.oHtmlEditor.editorUploader.isDragAndDropSupported() && !Browser.ie10AndAbove);
+	this.enableImageDragNDrop(this.oHtmlEditor.isDragAndDropSupported() && !Browser.ie10AndAbove);
 };
 
 CSignatureSettingsFormView.prototype.getCurrentValues = function ()

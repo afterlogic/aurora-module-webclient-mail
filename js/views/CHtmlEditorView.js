@@ -900,6 +900,11 @@ CHtmlEditorView.prototype.initEditorUploader = function ()
 	}
 };
 
+CHtmlEditorView.prototype.isDragAndDropSupported = function ()
+{
+	return this.editorUploader ? this.editorUploader.isDragAndDropSupported() : false;
+};
+
 CHtmlEditorView.prototype.onEditorDrop = function (sUid, oData) {
 	var 
 		oReader = null,
