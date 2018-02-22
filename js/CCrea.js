@@ -1418,6 +1418,7 @@ CCrea.prototype.backgroundColor = function (sBackColor)
 CCrea.prototype.removeFormat = function ()
 {
     this.execCom('removeformat');
+    this.$editableArea.focus();
 };
 
 /**
