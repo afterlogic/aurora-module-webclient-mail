@@ -30,10 +30,13 @@ function CSignatureSettingsFormView()
 	
 	this.fetcherOrIdentity = ko.observable(null);
 	
-	this.useSignatureRadio = ko.observable('0');
+	this.useSignatureRadio = ko.observable(Enums.UseSignature.Off);
 	this.signature = ko.observable('');
 
 	this.oHtmlEditor = new CHtmlEditorView(true);
+	this.useSignatureRadio.subscribe(function () {
+		this.oHtmlEditor.setInactive(this.useSignatureRadio() === Enums.UseSignature.Off);
+	}, this);
 	this.enableImageDragNDrop = ko.observable(false);
 
 	this.enabled = ko.observable(true);
@@ -56,16 +59,21 @@ CSignatureSettingsFormView.prototype.onShow = function (oFetcherOrIdentity)
 
 CSignatureSettingsFormView.prototype.init = function ()
 {
-	this.oHtmlEditor.init(this.signature(), false, '');
-	this.oHtmlEditor.setActivitySource(this.useSignatureRadio);
+	this.oHtmlEditor.init(this.signature(), false, '', TextUtils.i18n('%MODULENAME%/LABEL_ENTER_SIGNATURE_HERE'));
+	this.oHtmlEditor.textFocused.subscribe(function () {
+		if (this.oHtmlEditor.textFocused())
+		{
+			this.useSignatureRadio(Enums.UseSignature.On);
+		}
+	}, this);
 	this.enableImageDragNDrop(this.oHtmlEditor.isDragAndDropSupported() && !Browser.ie10AndAbove);
 };
 
 CSignatureSettingsFormView.prototype.getCurrentValues = function ()
 {
-	if (this.oHtmlEditor.oCrea)
+	if (this.oHtmlEditor.isInitialized())
 	{
-		this.signature(this.oHtmlEditor.getNotDefaultText());
+		this.signature(this.oHtmlEditor.getText());
 	}
 	return [
 		this.useSignatureRadio(),
@@ -80,13 +88,13 @@ CSignatureSettingsFormView.prototype.revert = function ()
 
 CSignatureSettingsFormView.prototype.getParametersForSave = function ()
 {
-	this.signature(this.oHtmlEditor.getNotDefaultText());
+	this.signature(this.oHtmlEditor.getText());
 	
 	var
 		oAccount = AccountList.getEdited(),
 		oParameters = {
 			'AccountID': oAccount ? oAccount.id() : 0,
-			'UseSignature': this.useSignatureRadio() === '1',
+			'UseSignature': this.useSignatureRadio() === Enums.UseSignature.On,
 			'Signature': this.signature()
 		}
 	;
@@ -132,7 +140,7 @@ CSignatureSettingsFormView.prototype.populate = function ()
 	
 	if (oSignature)
 	{
-		this.useSignatureRadio(oSignature.useSignature() ? '1' : '0');
+		this.useSignatureRadio(oSignature.useSignature() ? Enums.UseSignature.On : Enums.UseSignature.Off);
 		this.signature(oSignature.signature());
 		this.oHtmlEditor.setText(this.signature());
 	}

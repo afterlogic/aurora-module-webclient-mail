@@ -86,7 +86,6 @@ function CComposeView()
 	this.saving = ko.observable(false);
 
 	this.oHtmlEditor = new CHtmlEditorView(false, this);
-	this.textFocused = this.oHtmlEditor.textFocused;
 
 	this.visibleBcc = ko.observable(false);
 	this.visibleBcc.subscribe(function () {
@@ -211,8 +210,8 @@ function CComposeView()
 	}, this);
 
 	this.focusedField = ko.observable();
-	this.textFocused.subscribe(function () {
-		if (this.textFocused())
+	this.oHtmlEditor.textFocused.subscribe(function () {
+		if (this.oHtmlEditor.textFocused())
 		{
 			this.focusedField('text');
 		}
@@ -771,9 +770,6 @@ CComposeView.prototype.onHide = function ()
 
 	this.subjectFocused(false);
 	this.focusedField('');
-
-	this.oHtmlEditor.closeAllPopups();
-	this.oHtmlEditor.visibleLinkPopup(false);
 
 	this.messageUploadAttachmentsStarted(false);
 
@@ -1474,7 +1470,7 @@ CComposeView.prototype.getSendSaveParameters = function (bRemoveSignatureAnchor)
 		oParameters = null
 	;
 
-	_.each(this.oHtmlEditor.uploadedImagePathes(), function (oAttach) {
+	_.each(this.oHtmlEditor.getUploadedImagesData(), function (oAttach) {
 		oAttachments[oAttach.TempName] = [oAttach.Name, oAttach.CID, '1', '1'];
 	});
 

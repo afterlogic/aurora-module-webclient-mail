@@ -108,38 +108,15 @@ function CHtmlEditorView(bInsertImageAsBase64, oParent)
 
 	this.visibleInsertImagePopup = ko.observable(false);
 	this.imageUploaderButton = ko.observable(null);
-	this.uploadedImagePathes = ko.observableArray([]);
+	this.aUploadedImagesData = [];
 	this.imagePathFromWeb = ko.observable('');
 
 	this.visibleFontColorPopup = ko.observable(false);
 	this.oFontColorPickerView = new CColorPickerView(TextUtils.i18n('%MODULENAME%/LABEL_TEXT_COLOR'), this.setTextColorFromPopup, this);
 	this.oBackColorPickerView = new CColorPickerView(TextUtils.i18n('%MODULENAME%/LABEL_BACKGROUND_COLOR'), this.setBackColorFromPopup, this);
 
-	this.activitySource = ko.observable('1');
-	this.activitySourceSubscription = null;
 	this.inactive = ko.observable(false);
-	this.inactive.subscribe(function () {
-		var sText = this.removeAllTags(this.getText());
-		
-		if (this.inactive())
-		{
-			if (sText === '' || sText === '&nbsp;')
-			{
-				this.setText('<span style="color: #AAAAAA;">' + TextUtils.i18n('%MODULENAME%/LABEL_ENTER_SIGNATURE_HERE') + '</span>');
-				if (this.oCrea)
-				{
-					this.oCrea.setBlur();
-				}
-			}
-		}
-		else
-		{
-			if (sText === TextUtils.i18n('%MODULENAME%/LABEL_ENTER_SIGNATURE_HERE'))
-			{
-				this.setText('');
-			}
-		}
-	}, this);
+	this.sPlaceholderText = '';
 	
 	this.bAllowChangeInputDirection = UserSettings.IsRTL || Settings.AllowChangeInputDirection;
 	this.disableEdit = ko.observable(false);
@@ -148,6 +125,45 @@ function CHtmlEditorView(bInsertImageAsBase64, oParent)
 }
 
 CHtmlEditorView.prototype.ViewTemplate = '%ModuleName%_HtmlEditorView';
+
+CHtmlEditorView.prototype.setInactive = function (bInactive)
+{
+	this.inactive(bInactive);
+	if (this.inactive())
+	{
+		this.setPlaceholder();
+	}
+	else
+	{
+		this.removePlaceholder();
+	}
+};
+
+CHtmlEditorView.prototype.setPlaceholder = function ()
+{
+	var sText = this.removeAllTags(this.getText());
+	if (sText === '' || sText === '&nbsp;')
+	{
+		this.setText('<span>' + this.sPlaceholderText + '</span>');
+		if (this.oCrea)
+		{
+			this.oCrea.setBlur();
+		}
+	}
+};
+
+CHtmlEditorView.prototype.removePlaceholder = function ()
+{
+	var sText = this.oCrea ? this.removeAllTags(this.oCrea.getText(false)) : '';
+	if (sText === this.sPlaceholderText)
+	{
+		this.setText('');
+		if (this.oCrea)
+		{
+			this.oCrea.setFocus(true);
+		}
+	}
+};
 
 CHtmlEditorView.prototype.hasOpenedPopup = function ()
 {
@@ -344,9 +360,12 @@ CHtmlEditorView.prototype.commit = function ()
  * @param {string} sText
  * @param {boolean} bPlain
  * @param {string} sTabIndex
+ * @param {string} sPlaceholderText
  */
-CHtmlEditorView.prototype.init = function (sText, bPlain, sTabIndex)
+CHtmlEditorView.prototype.init = function (sText, bPlain, sTabIndex, sPlaceholderText)
 {
+	this.sPlaceholderText = sPlaceholderText || '';
+	
 	if (this.oCrea)
 	{
 		this.oCrea.$container = $('#' + this.oCrea.oOptions.creaId);
@@ -390,9 +409,14 @@ CHtmlEditorView.prototype.init = function (sText, bPlain, sTabIndex)
 	this.clearUndoRedo();
 	this.setText(sText, bPlain);
 	this.setFontValuesFromText();
-	this.uploadedImagePathes([]);
+	this.aUploadedImagesData = [];
 	this.selectedFont(this.sDefaultFont);
 	this.selectedSize(this.iDefaultSize);
+};
+
+CHtmlEditorView.prototype.isInitialized = function ()
+{
+	return !!this.oCrea;
 };
 
 CHtmlEditorView.prototype.setFocus = function ()
@@ -452,7 +476,10 @@ CHtmlEditorView.prototype.getPlainText = function ()
  */
 CHtmlEditorView.prototype.getText = function (bRemoveSignatureAnchor)
 {
-	return this.oCrea ? this.oCrea.getText(bRemoveSignatureAnchor) : '';
+	var
+		sText = this.oCrea ? this.oCrea.getText(bRemoveSignatureAnchor) : ''
+	;
+	return this.removeAllTags(sText) === this.sPlaceholderText ? '' : sText;
 };
 
 /**
@@ -471,7 +498,10 @@ CHtmlEditorView.prototype.setText = function (sText, bPlain)
 		{
 			this.oCrea.setText(sText);
 		}
-		this.inactive.valueHasMutated();
+		if (this.inactive() && sText === '')
+		{
+			this.setPlaceholder();
+		}
 	}
 };
 
@@ -497,13 +527,6 @@ CHtmlEditorView.prototype.isEditing = function ()
 	return this.oCrea ? this.oCrea.bEditing : false;
 };
 
-CHtmlEditorView.prototype.getNotDefaultText = function ()
-{
-	var sText = this.getText();
-
-	return this.removeAllTags(sText) !== TextUtils.i18n('%MODULENAME%/LABEL_ENTER_SIGNATURE_HERE') ? sText : '';
-};
-
 /**
  * @param {string} sText
  */
@@ -512,30 +535,11 @@ CHtmlEditorView.prototype.removeAllTags = function (sText)
 	return sText.replace(/<style>.*<\/style>/g, '').replace(/<[^>]*>/g, '');
 };
 
-/**
- * @param {koProperty} koActivitySource
- */
-CHtmlEditorView.prototype.setActivitySource = function (koActivitySource)
-{
-	this.activitySource = koActivitySource;
-	
-	if (this.activitySourceSubscription !== null)
-	{
-		this.activitySourceSubscription.dispose();
-	}
-	this.activitySourceSubscription = this.activitySource.subscribe(function () {
-		this.inactive(this.activitySource() === '0');
-	}, this);
-
-	this.inactive(this.activitySource() === '0');
-};
-
 CHtmlEditorView.prototype.onCreaFocus = function ()
 {
 	if (this.oCrea)
 	{
 		this.closeAllPopups();
-		this.activitySource('1');
 		this.textFocused(true);
 	}
 };
@@ -595,12 +599,9 @@ CHtmlEditorView.prototype.insertHtml = function (sHtml)
 
 CHtmlEditorView.prototype.insertLink = function (oViewModel, oEvent)
 {
-	if (oEvent)
+	if (!this.inactive() && !this.visibleInsertLinkPopup())
 	{
-		this.setActive(oEvent);
-	}
-	if (!this.visibleInsertLinkPopup())
-	{
+		oEvent.stopPropagation();
 		this.linkForInsert(this.oCrea.getSelectedText());
 		this.closeAllPopups();
 		this.visibleInsertLinkPopup(true);
@@ -644,17 +645,16 @@ CHtmlEditorView.prototype.closeInsertLinkPopup = function (oCurrentViewModel, ev
 
 CHtmlEditorView.prototype.textColor = function (oViewModel, oEvent)
 {
-	this.setActive(oEvent);
-	if (this.visibleFontColorPopup())
+	if (!this.inactive())
 	{
 		this.closeAllPopups();
-	}
-	else
-	{
-		this.closeAllPopups();
-		this.visibleFontColorPopup(true);
-		this.oFontColorPickerView.onShow();
-		this.oBackColorPickerView.onShow();
+		if (!this.visibleFontColorPopup())
+		{
+			oEvent.stopPropagation();
+			this.visibleFontColorPopup(true);
+			this.oFontColorPickerView.onShow();
+			this.oBackColorPickerView.onShow();
+		}
 	}
 };
 
@@ -708,9 +708,9 @@ CHtmlEditorView.prototype.setBackColorFromPopup = function (sColor)
 
 CHtmlEditorView.prototype.insertImage = function (oViewModel, oEvent)
 {
-	this.setActive(oEvent);
-	if (Settings.AllowInsertImage && !this.visibleInsertImagePopup())
+	if (!this.inactive() && Settings.AllowInsertImage && !this.visibleInsertImagePopup())
 	{
+		oEvent.stopPropagation();
 		this.imagePathFromWeb('');
 		this.closeAllPopups();
 		this.visibleInsertImagePopup(true);
@@ -760,11 +760,16 @@ CHtmlEditorView.prototype.insertComputerImageFromPopup = function (sUid, oAttach
 			;
 
 			oAttachmentData.CID = sUid;
-			this.uploadedImagePathes.push(oAttachmentData);
+			this.aUploadedImagesData.push(oAttachmentData);
 		}
 	}
 
 	this.closeInsertImagePopup();
+};
+
+CHtmlEditorView.prototype.getUploadedImagesData = function ()
+{
+	return this.aUploadedImagesData;
 };
 
 /**
@@ -1032,10 +1037,107 @@ CHtmlEditorView.prototype.onFileUploadComplete = function (sUid, bResponseReceiv
 	}
 };
 
-CHtmlEditorView.prototype.setActive = function (oEvent)
+CHtmlEditorView.prototype.undo = function ()
 {
-	oEvent.stopPropagation();
-	this.activitySource('1');
+	if (!this.inactive())
+	{
+		this.oCrea.undo();
+	}
+	return false;
+};
+
+CHtmlEditorView.prototype.redo = function ()
+{
+	if (!this.inactive())
+	{
+		this.oCrea.redo();
+	}
+	return false;
+};
+
+CHtmlEditorView.prototype.bold = function ()
+{
+	if (!this.inactive())
+	{
+		this.oCrea.bold();
+		this.isFWBold(!this.isFWBold());
+	}
+	return false;
+};
+
+CHtmlEditorView.prototype.italic = function ()
+{
+	if (!this.inactive())
+	{
+		this.oCrea.italic();
+		this.isFSItalic(!this.isFSItalic());
+	}
+	return false;
+};
+
+CHtmlEditorView.prototype.underline = function ()
+{
+	if (!this.inactive())
+	{
+		this.oCrea.underline();
+		this.isTDUnderline(!this.isTDUnderline());
+	}
+	return false;
+};
+
+CHtmlEditorView.prototype.strikeThrough = function ()
+{
+	if (!this.inactive())
+	{
+		this.oCrea.strikeThrough();
+		this.isTDStrikeThrough(!this.isTDStrikeThrough());
+	}
+	return false;
+};
+
+CHtmlEditorView.prototype.numbering = function ()
+{
+	if (!this.inactive())
+	{
+		this.oCrea.numbering();
+	}
+	return false;
+};
+
+CHtmlEditorView.prototype.bullets = function ()
+{
+	if (!this.inactive())
+	{
+		this.oCrea.bullets();
+	}
+	return false;
+};
+
+CHtmlEditorView.prototype.removeFormat = function ()
+{
+	if (!this.inactive())
+	{
+		this.oCrea.removeFormat();
+	}
+	return false;
+};
+
+CHtmlEditorView.prototype.setRtlDirection = function ()
+{
+	if (!this.inactive())
+	{
+		this.oCrea.setRtlDirection();
+	}
+	return false;
+};
+
+CHtmlEditorView.prototype.setLtrDirection = function ()
+{
+	if (!this.inactive())
+	{
+		this.oCrea.setLtrDirection();
+	}
+	return false;
 };
 
 module.exports = CHtmlEditorView;

@@ -2,7 +2,7 @@
 	<div class="fieldset">
 		<div class="row">
 			<div>
-				<label class="custom_radio" data-bind="css: {'checked': useSignatureRadio() === '0'}">
+				<label class="custom_radio" data-bind="css: {'checked': useSignatureRadio() === Enums.UseSignature.Off}">
 					<span class="icon"></span>
 					<input type="radio" value="0" data-bind="checked: useSignatureRadio, attr: {'id': 'noSignature' + ViewConstructorName}" />
 				</label>
@@ -11,7 +11,7 @@
 		</div>
 			
 		<div class="row editor_row">
-			<label class="custom_radio" data-bind="css: {'checked': useSignatureRadio() === '1'}">
+			<label class="custom_radio" data-bind="css: {'checked': useSignatureRadio() === Enums.UseSignature.On}">
 				<span class="icon"></span>
 				<input type="radio" value="1" data-bind="checked: useSignatureRadio, enable: enabled" />
 			</label>

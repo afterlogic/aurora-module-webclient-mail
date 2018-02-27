@@ -74,6 +74,11 @@ Enums.HtmlEditorImageSizes = {
 	'Original': 'original'
 };
 
+Enums.UseSignature = {
+	'Off': '0',
+	'On': '1'
+};
+
 if (typeof window.Enums === 'undefined')
 {
 	window.Enums = {};
