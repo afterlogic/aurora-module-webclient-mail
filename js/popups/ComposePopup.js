@@ -138,7 +138,6 @@ CComposePopup.prototype.onOpen = function (aParams)
 		}
 		else
 		{
-			CComposeView.prototype.onShow.call(this);
 			this.onRoute(aParams);
 		}
 		this.preventBackspaceOn();

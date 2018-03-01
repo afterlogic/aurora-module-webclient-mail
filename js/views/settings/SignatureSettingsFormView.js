@@ -34,6 +34,12 @@ function CSignatureSettingsFormView()
 	this.signature = ko.observable('');
 
 	this.oHtmlEditor = new CHtmlEditorView(true);
+	this.oHtmlEditor.textFocused.subscribe(function () {
+		if (this.oHtmlEditor.textFocused())
+		{
+			this.useSignatureRadio(Enums.UseSignature.On);
+		}
+	}, this);
 	this.useSignatureRadio.subscribe(function () {
 		this.oHtmlEditor.setInactive(this.useSignatureRadio() === Enums.UseSignature.Off);
 	}, this);
@@ -60,12 +66,6 @@ CSignatureSettingsFormView.prototype.onShow = function (oFetcherOrIdentity)
 CSignatureSettingsFormView.prototype.init = function ()
 {
 	this.oHtmlEditor.init(this.signature(), false, '', TextUtils.i18n('%MODULENAME%/LABEL_ENTER_SIGNATURE_HERE'));
-	this.oHtmlEditor.textFocused.subscribe(function () {
-		if (this.oHtmlEditor.textFocused())
-		{
-			this.useSignatureRadio(Enums.UseSignature.On);
-		}
-	}, this);
 	this.enableImageDragNDrop(this.oHtmlEditor.isDragAndDropSupported() && !Browser.ie10AndAbove);
 };
 

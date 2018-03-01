@@ -541,8 +541,11 @@ CComposeView.prototype.onShow = function ()
 	$(this.splitterDom()).trigger('resize');
 	$(this.bottomPanel()).trigger('resize');
 
-	this.oHtmlEditor.init(this.textBody(), this.plainText(), '7');
-	this.oHtmlEditor.commit();
+	if (!this.oHtmlEditor.isInitialized())
+	{
+		this.oHtmlEditor.init(this.textBody(), this.plainText(), '7');
+		this.oHtmlEditor.commit();
+	}
 
 	this.initUploader();
 

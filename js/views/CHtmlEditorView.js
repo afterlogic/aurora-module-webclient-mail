@@ -369,6 +369,7 @@ CHtmlEditorView.prototype.init = function (sText, bPlain, sTabIndex, sPlaceholde
 	if (this.oCrea)
 	{
 		this.oCrea.$container = $('#' + this.oCrea.oOptions.creaId);
+		// in case if knockoutjs destroyed dom element with html editor
 		if (this.oCrea.$container.children().length === 0)
 		{
 			this.oCrea.start(this.isEnable());
