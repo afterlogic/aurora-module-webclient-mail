@@ -895,11 +895,25 @@ CCrea.prototype.changeSignatureContent = function (sNewSignatureContent, sOldSig
     else
     {
         sFoundOldSignature = sOldSignatureContent;
-        $SignatureContainer = this.$editableArea.find('*:contains("' + sFoundOldSignature + '")');
+		try
+		{
+			$SignatureContainer = this.$editableArea.find('*:contains("' + sFoundOldSignature + '")');
+		}
+		catch (oErr)
+		{
+			$SignatureContainer = $('');
+		}
         if ($SignatureContainer.length === 0 && $OldSignature.length > 0)
         {
             sFoundOldSignature = $OldSignature.html();
-            $SignatureContainer = this.$editableArea.find('*:contains("' + sFoundOldSignature + '")');
+			try
+			{
+				$SignatureContainer = this.$editableArea.find('*:contains("' + sFoundOldSignature + '")');
+			}
+			catch (oErr)
+			{
+				$SignatureContainer = $('');
+			}
         }
 
         if ($SignatureContainer.length > 0)
