@@ -58,11 +58,11 @@
 
 			<span class="separator"></span>
 
-			<a href="javascript:void(0);" class="item slist" data-bind="click: numbering, customTooltip: '%MODULENAME%/ACTION_SET_NUMBERING'">
+			<a href="javascript:void(0);" class="item slist" data-bind="click: numbering, customTooltip: '%MODULENAME%/ACTION_SET_NUMBERING', css: { active: isEnumeration() }">
 				<span class="icon"></span>
 			</a>
 
-			<a href="javascript:void(0);" class="item uslist" data-bind="click: bullets, customTooltip: '%MODULENAME%/ACTION_SET_BULLETS'">
+			<a href="javascript:void(0);" class="item uslist" data-bind="click: bullets, customTooltip: '%MODULENAME%/ACTION_SET_BULLETS', css: { active: isBullets() }">
 				<span class="icon"></span>
 			</a>
 
