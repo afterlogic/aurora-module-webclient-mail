@@ -11,22 +11,28 @@
 	width: 100%;
 	z-index: 2;
 	
-	.transition(transform .4s);
-	
 	&:hover {
 		color: #999999;
 	}
 	
-	.arrow:after {
-		background: white;
-		content: "\e66e";
-		font-family: 'afterlogic';
-		font-size: 18px;
-		line-height: 15px;
-		position: relative;
+	&.compressed .arrow {
+		.transform(rotate(180deg));
 	}
 	
-	&.compressed {
-		.transform(rotate(180deg));
+	.arrow {
+		position: absolute;
+		top: -2px;
+		.transition(transform .4s);
+		
+		&:after {
+			background: white;
+			content: "\e66e";
+			font-family: 'afterlogic';
+			font-size: 18px;
+			line-height: 15px;
+			position: relative;
+			display:inline-block;
+			border-radius: 4px;
+		}
 	}
 }
