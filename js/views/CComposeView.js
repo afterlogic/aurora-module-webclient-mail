@@ -102,7 +102,7 @@ function CComposeView()
 		}, this));
 	}, this);
 
-	this.sendReadingConfirmation = ko.observable(false);
+	this.sendReadingConfirmation = ko.observable(false).extend({'reversible': true});
 
 	this.composeUploaderButton = ko.observable(null);
 	this.composeUploaderButton.subscribe(function () {
@@ -119,7 +119,7 @@ function CComposeView()
 		return this.allowDragNDrop() && this.composeUploaderDragOver();
 	}, this);
 
-	this.selectedImportance = ko.observable(Enums.Importance.Normal);
+	this.selectedImportance = ko.observable(Enums.Importance.Normal).extend({'reversible': true});
 
 	this.senderAccountId = SenderSelector.senderAccountId;
 	this.senderList = SenderSelector.senderList;
@@ -1282,6 +1282,14 @@ CComposeView.prototype.commit = function (bOnlyCurrentWindow)
 	this.ccAddr.commit();
 	this.bccAddr.commit();
 	this.subject.commit();
+	this.selectedImportance.commit();
+	this.sendReadingConfirmation.commit();
+	_.each(this.toolbarControllers(), function (oController) {
+		if (_.isFunction(oController.commit))
+		{
+			oController.commit();
+		}
+	});
 	this.oHtmlEditor.commit();
 	this.attachmentsChanged(false);
 	if (!bOnlyCurrentWindow)
@@ -1293,18 +1301,28 @@ CComposeView.prototype.commit = function (bOnlyCurrentWindow)
 CComposeView.prototype.isChanged = function ()
 {
 	var
-		toAddr = this.toAddr.changed(),
-		ccAddr = this.ccAddr.changed(),
-		bccAddr = this.bccAddr.changed(),
-		subject = this.subject.changed(),
-		bHtmlEditor = this.oHtmlEditor.textChanged(),
-		attachmentsChanged = this.attachmentsChanged(),
-		changedInPreviousWindow = this.changedInPreviousWindow()
+		bToAddrChanged = this.toAddr.changed(),
+		bCcAddrChanged = this.ccAddr.changed(),
+		bBccAddrChanged = this.bccAddr.changed(),
+		bSubjectChanged = this.subject.changed(),
+		bImportanceChanged = this.selectedImportance.changed(),
+		bReadConfChanged = this.sendReadingConfirmation.changed(),
+		bControllersChanged = false,
+		bHtmlChanged = this.oHtmlEditor.textChanged(),
+		bAttachmentsChanged = this.attachmentsChanged(),
+		bChangedInPreviousWindow = this.changedInPreviousWindow()
 	;
-
-	return toAddr || ccAddr || bccAddr ||
-			subject || bHtmlEditor ||
-			attachmentsChanged || changedInPreviousWindow;
+	
+	_.each(this.toolbarControllers(), function (oController) {
+		if (_.isFunction(oController.isChanged))
+		{
+			bControllersChanged = bControllersChanged || oController.isChanged();
+		}
+	});
+	
+	return bToAddrChanged || bCcAddrChanged || bBccAddrChanged || bSubjectChanged || 
+			bImportanceChanged || bReadConfChanged || bControllersChanged || bHtmlChanged ||
+			bAttachmentsChanged || bChangedInPreviousWindow;
 };
 
 CComposeView.prototype.executeBackToList = function ()
