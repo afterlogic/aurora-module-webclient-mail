@@ -177,19 +177,19 @@ Prefetcher.startFolderPrefetch = function (oFolder)
 		iPage = 1,
 		sSearch = '',
 		oParams = {
-			folder: oFolder.fullName(),
+			folder: oFolder ? oFolder.fullName() : '',
 			page: iPage,
 			search: sSearch
 		},
 		oRequestData = null
 	;
 
-	if (!oFolder.hasListBeenRequested(oParams))
+	if (oFolder && !oFolder.hasListBeenRequested(oParams))
 	{
 		oRequestData = MailCache.requestMessageList(oParams.folder, oParams.page, oParams.search, '', false, false);
 	}
 
-	return oRequestData && oRequestData.RequestStarted;
+	return !!oRequestData && oRequestData.RequestStarted;
 };
 
 Prefetcher.startThreadListPrefetch = function ()
