@@ -181,13 +181,13 @@ CAttachmentModel.prototype.viewMessageFile = function ()
  */
 CAttachmentModel.prototype.fillDataAfterUploadComplete = function (oResponse, sFileUid)
 {
-	this.cid(sFileUid);
+	this.cid(Types.pString(sFileUid));
 	if (oResponse && oResponse.Result && oResponse.Result.Attachment)
 	{
-		this.tempName(oResponse.Result.Attachment.TempName);
-		this.mimeType(oResponse.Result.Attachment.MimeType);
-		this.size(oResponse.Result.Attachment.Size);
-		this.hash(oResponse.Result.Attachment.Hash);
+		this.tempName(Types.pString(oResponse.Result.Attachment.TempName));
+		this.mimeType(Types.pString(oResponse.Result.Attachment.MimeType));
+		this.size(Types.pInt(oResponse.Result.Attachment.Size));
+		this.hash(Types.pString(oResponse.Result.Attachment.Hash));
 		this.parseActions(oResponse.Result.Attachment);
 	}
 };
@@ -203,12 +203,12 @@ CAttachmentModel.prototype.parseFromUpload = function (oData, sMessageFolder, sM
 {
 	this.setMessageData(sMessageFolder, sMessageUid);
 
-	this.fileName(oData.Name.toString());
-	this.tempName(oData.TempName ? oData.TempName.toString() : this.fileName());
-	this.mimeType(oData.MimeType.toString());
+	this.fileName(Types.pString(oData.Name));
+	this.tempName(this.fileName());
+	this.mimeType(Types.pString(oData.MimeType));
 	this.size(Types.pInt(oData.Size));
 
-	this.hash(oData.Hash);
+	this.hash(Types.pString(oData.Hash));
 	this.parseActions(oData);
 
 	this.uploadUid(this.hash());
