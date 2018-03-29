@@ -2,6 +2,7 @@
 
 var
 	_ = require('underscore'),
+	$ = require('jquery'),
 	ko = require('knockout'),
 	
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
@@ -122,14 +123,17 @@ CAccountSettingsFormView.prototype.getCurrentValues = function ()
 
 CAccountSettingsFormView.prototype.getParametersForSave = function ()
 {
-	var oAccount = AccountList.getEdited();
+	var
+		oAccount = AccountList.getEdited(),
+		sIncomingPassword = $.trim(this.incomingPassword())
+	;
 	return {
 		'AccountID': oAccount.id(),
 		'UseToAuthorize': this.useToAuthorize(),
 		'FriendlyName': this.friendlyName(),
-		'Email': this.email(),
-		'IncomingLogin': this.incomingLogin(),
-		'IncomingPassword': this.incomingPassword() === this.sFakePass ? '' : this.incomingPassword(),
+		'Email': $.trim(this.email()),
+		'IncomingLogin': $.trim(this.incomingLogin()),
+		'IncomingPassword': sIncomingPassword === this.sFakePass ? '' : sIncomingPassword,
 		'Server': this.oServerPairPropertiesView.getParametersForSave(),
 		'UseThreading': this.useThreading(),
 		'SaveRepliesToCurrFolder': this.saveRepliesToCurrFolder()

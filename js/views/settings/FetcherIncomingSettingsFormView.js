@@ -2,6 +2,7 @@
 
 var
 	_ = require('underscore'),
+	$ = require('jquery'),
 	ko = require('knockout'),
 	
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
@@ -106,6 +107,7 @@ CFetcherIncomingSettingsFormView.prototype.getParametersForSave = function ()
 {
 	if (this.fetcher())
 	{
+		var sIncomingPassword = $.trim(this.incomingPassword());
 		return {
 			'AccountID': AccountList.editedId(),
 			'FetcherID': this.idFetcher(),
@@ -114,7 +116,7 @@ CFetcherIncomingSettingsFormView.prototype.getParametersForSave = function ()
 			'IncomingServer': this.oIncoming.server(),
 			'IncomingPort': this.oIncoming.getIntPort(),
 			'IncomingUseSsl': this.oIncoming.ssl(),
-			'IncomingPassword': (this.incomingPassword() === '') ? '******' : this.incomingPassword(),
+			'IncomingPassword': (sIncomingPassword === '') ? '******' : sIncomingPassword,
 			'LeaveMessagesOnServer': this.leaveMessagesOnServer() ? 1 : 0
 		};
 	}

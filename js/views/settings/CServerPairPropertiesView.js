@@ -2,6 +2,7 @@
 
 var
 	_ = require('underscore'),
+	$ = require('jquery'),
 	ko = require('knockout'),
 	
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
@@ -240,8 +241,8 @@ CServerPairPropertiesView.prototype.getParametersForSave = function ()
 		'OutgoingUseSsl': this.oOutgoing.ssl(),
 		'Domains': this.domains(),
 		'SmtpAuthType': sSmtpAuthType,
-		'SmtpLogin': sSmtpAuthType === window.Enums.SmtpAuthType.UseSpecifiedCredentials ? this.smtpLogin() : '',
-		'SmtpPassword': sSmtpAuthType === window.Enums.SmtpAuthType.UseSpecifiedCredentials ? this.smtpPassword() : '',
+		'SmtpLogin': sSmtpAuthType === window.Enums.SmtpAuthType.UseSpecifiedCredentials ? $.trim(this.smtpLogin()) : '',
+		'SmtpPassword': sSmtpAuthType === window.Enums.SmtpAuthType.UseSpecifiedCredentials ? $.trim(this.smtpPassword()) : '',
 		'EnableSieve': this.enableSieve(),
 		'SievePort': this.sievePort(),
 		'EnableThreading': this.enableThreading()

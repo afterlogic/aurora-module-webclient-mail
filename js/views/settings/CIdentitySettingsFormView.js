@@ -2,6 +2,7 @@
 
 var
 	_ = require('underscore'),
+	$ = require('jquery'),
 	ko = require('knockout'),
 	
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
@@ -81,7 +82,7 @@ CIdentitySettingsFormView.prototype.getParametersForSave = function ()
 		if (!this.identity().bAccountPart)
 		{
 			_.extendOwn(oParameters, {
-				'Email': this.email()
+				'Email': $.trim(this.email())
 			});
 
 			if (!this.bCreate)
@@ -98,7 +99,7 @@ CIdentitySettingsFormView.prototype.getParametersForSave = function ()
 
 CIdentitySettingsFormView.prototype.save = function ()
 {
-	if (this.email() === '')
+	if ($.trim(this.email()) === '')
 	{
 		Screens.showError(Utils.i18n('%MODULENAME%/ERROR_IDENTITY_FIELDS_BLANK'));
 	}

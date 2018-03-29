@@ -2,6 +2,7 @@
 
 var
 	_ = require('underscore'),
+	$ = require('jquery'),
 	ko = require('knockout'),
 	
 	AddressUtils = require('%PathToCoreWebclientModule%/js/utils/Address.js'),
@@ -66,7 +67,7 @@ CAccountForwardSettingsFormView.prototype.getParametersForSave = function ()
 	return {
 		'AccountID': oAccount.id(),
 		'Enable': this.enable(),
-		'Email': this.email()
+		'Email': $.trim(this.email())
 	};
 };
 
@@ -93,18 +94,19 @@ CAccountForwardSettingsFormView.prototype.save = function ()
 			this.updateSavedState();
 
 			Ajax.send('UpdateForward', this.getParametersForSave(), this.onResponse, this);
-		}.bind(this)
+		}.bind(this),
+		sEmail = $.trim(this.email())
 	;
 
-	if (this.enable() && this.email() === '')
+	if (this.enable() && sEmail === '')
 	{
 		this.email.focused(true);
 	}
-	else if (this.enable() && this.email() !== '')
+	else if (this.enable() && sEmail !== '')
 	{
-		if (!AddressUtils.isCorrectEmail(this.email()))
+		if (!AddressUtils.isCorrectEmail(sEmail))
 		{
-			Popups.showPopup(AlertPopup, [TextUtils.i18n('%MODULENAME%/ERROR_INPUT_CORRECT_EMAILS') + ' ' + this.email()]);
+			Popups.showPopup(AlertPopup, [TextUtils.i18n('%MODULENAME%/ERROR_INPUT_CORRECT_EMAILS') + ' ' + sEmail]);
 		}
 		else
 		{

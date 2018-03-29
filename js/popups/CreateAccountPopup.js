@@ -2,6 +2,7 @@
 
 var
 	_ = require('underscore'),
+	$ = require('jquery'),
 	ko = require('knockout'),
 	
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
@@ -38,7 +39,7 @@ function CCreateAccountPopup()
 	this.oServerPairPropertiesView = new CServerPairPropertiesView('acc_create');
 	
 	this.email.focused.subscribe(function () {
-		if (!this.email.focused() && this.incomingLogin() === '')
+		if (!this.email.focused() && $.trim(this.incomingLogin()) === '')
 		{
 			this.incomingLogin(this.email());
 		}
@@ -102,9 +103,9 @@ CCreateAccountPopup.prototype.save = function ()
 		var
 			oParameters = {
 				'FriendlyName': this.friendlyName(),
-				'Email': this.email(),
-				'IncomingLogin': this.incomingLogin(),
-				'IncomingPassword': this.incomingPassword(),
+				'Email': $.trim(this.email()),
+				'IncomingLogin': $.trim(this.incomingLogin()),
+				'IncomingPassword': $.trim(this.incomingPassword()),
 				'Server': this.oServerPairPropertiesView.getParametersForSave()
 			}
 		;

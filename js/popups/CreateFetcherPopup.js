@@ -2,6 +2,7 @@
 
 var
 	_ = require('underscore'),
+	$ = require('jquery'),
 	ko = require('knockout'),
 	
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
@@ -90,16 +91,19 @@ CCreateFetcherPopup.prototype.save = function ()
 	}
 	else
 	{
-		var oParameters = {
-			'AccountID': AccountList.editedId(),
-			'Folder': this.folder(),
-			'IncomingLogin': this.incomingLogin(),
-			'IncomingPassword': (this.incomingPassword() === '') ? '******' : this.incomingPassword(),
-			'IncomingServer': this.oIncoming.server(),
-			'IncomingPort': this.oIncoming.getIntPort(),
-			'IncomingUseSsl': this.oIncoming.ssl(),
-			'LeaveMessagesOnServer': this.leaveMessagesOnServer() ? 1 : 0
-		};
+		var
+			sIncomingPassword = $.trim(this.incomingPassword()),
+			oParameters = {
+				'AccountID': AccountList.editedId(),
+				'Folder': this.folder(),
+				'IncomingLogin': $.trim(this.incomingLogin()),
+				'IncomingPassword': (sIncomingPassword === '') ? '******' : sIncomingPassword,
+				'IncomingServer': this.oIncoming.server(),
+				'IncomingPort': this.oIncoming.getIntPort(),
+				'IncomingUseSsl': this.oIncoming.ssl(),
+				'LeaveMessagesOnServer': this.leaveMessagesOnServer() ? 1 : 0
+			}
+		;
 
 		this.loading(true);
 
@@ -142,10 +146,10 @@ CCreateFetcherPopup.prototype.isEmptyRequiredFields = function ()
 		case this.oIncoming.server():
 			this.oIncoming.server.focused(true);
 			return true;
-		case this.incomingLogin():
+		case $.trim(this.incomingLogin()):
 			this.loginIsSelected(true);
 			return true;
-		case this.incomingPassword():
+		case $.trim(this.incomingPassword()):
 			this.passwordIsSelected(true);
 			return true;
 		default: return false;

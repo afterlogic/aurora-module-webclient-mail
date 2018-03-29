@@ -2,6 +2,7 @@
 
 var
 	_ = require('underscore'),
+	$ = require('jquery'),
 	ko = require('knockout'),
 	
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
@@ -80,7 +81,7 @@ CFetcherOutgoingSettingsFormView.prototype.getParametersForSave = function ()
 		return {
 			'AccountID': AccountList.editedId(),
 			'FetcherID': this.idFetcher(),
-			'Email': this.email(),
+			'Email': $.trim(this.email()),
 			'Name': this.userName(),
 			'IsOutgoingEnabled': this.isOutgoingEnabled() ? 1 : 0,
 			'OutgoingServer': this.oOutgoing.server(),
@@ -159,7 +160,7 @@ CFetcherOutgoingSettingsFormView.prototype.isEmptyRequiredFields = function ()
 		return true;
 	}
 	
-	if (this.outgoingUseAuth() && '' === this.email())
+	if (this.outgoingUseAuth() && '' === $.trim(this.email()))
 	{
 		this.focusEmail(true);
 		return true;
