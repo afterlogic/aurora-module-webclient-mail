@@ -484,7 +484,7 @@ CHtmlEditorView.prototype.getText = function (bRemoveSignatureAnchor)
 	var
 		sText = this.oCrea ? this.oCrea.getText(bRemoveSignatureAnchor) : ''
 	;
-	return this.removeAllTags(sText) === this.sPlaceholderText ? '' : sText;
+	return (this.sPlaceholderText !== '' && this.removeAllTags(sText) === this.sPlaceholderText) ? '' : sText;
 };
 
 /**
