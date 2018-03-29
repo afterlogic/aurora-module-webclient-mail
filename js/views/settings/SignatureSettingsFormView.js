@@ -65,6 +65,7 @@ CSignatureSettingsFormView.prototype.onShow = function (oFetcherOrIdentity)
 
 CSignatureSettingsFormView.prototype.init = function ()
 {
+	this.oHtmlEditor.setInactive(this.useSignatureRadio() === Enums.UseSignature.Off);
 	this.oHtmlEditor.init(this.signature(), false, '', TextUtils.i18n('%MODULENAME%/LABEL_ENTER_SIGNATURE_HERE'));
 	this.enableImageDragNDrop(this.oHtmlEditor.isDragAndDropSupported() && !Browser.ie10AndAbove);
 };

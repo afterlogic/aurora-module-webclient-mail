@@ -332,13 +332,30 @@ CAccountsSettingsPaneView.prototype.changeTab = function (sName)
 	{
 		if (oCurrentTab && _.isFunction(oCurrentTab.view.hide))
 		{
-			oCurrentTab.view.hide(fShowNewTab);
+			oCurrentTab.view.hide(fShowNewTab, _.bind(function () {
+				if (_.isFunction(Routing.stopListening) && _.isFunction(Routing.startListening))
+				{
+					Routing.stopListening();
+				}
+				this.changeRoute(oCurrentTab.name);
+				if (_.isFunction(Routing.startListening))
+				{
+					Routing.startListening();
+				}
+			}, this));
 			bShow = false;
 		}
 	}
 	else if (!oCurrentTab)
 	{
 		oNewTab = this.getAutoselectedTab();
+	}
+	
+	if (!oCurrentTab)
+	{
+		_.delay(_.bind(function () {
+			this.changeRoute(oNewTab.name);
+		}, this));
 	}
 	
 	if (bShow)
