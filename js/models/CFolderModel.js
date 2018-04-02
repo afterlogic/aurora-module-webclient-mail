@@ -945,7 +945,7 @@ CFolderModel.prototype.getCompletelyFilledMessage = function (sUid, fResponseHan
 	var
 		oMessage = this.oMessages[sUid],
 		oParameters = {
-			'AccountID': oMessage.accountId(),
+			'AccountID': oMessage ? oMessage.accountId() : 0,
 			'Folder': this.fullName(),
 			'Uid': sUid
 		}
