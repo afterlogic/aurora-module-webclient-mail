@@ -30,7 +30,7 @@ Ajax.registerAbortRequestHandler(Settings.ServerModuleName, function (oRequest, 
 			return	oOpenedRequest.Method === 'GetRelevantFoldersInformation' || 
 					oOpenedRequest.Method === 'GetMessages' && oOpenedParameters.Folder === oParameters.Folder;
 		case 'GetRelevantFoldersInformation':
-			return oOpenedRequest.Method === 'GetRelevantFoldersInformation';
+			return oOpenedRequest.Method === 'GetRelevantFoldersInformation' && oParameters.AccountID === oOpenedParameters.AccountID;
 		case 'GetMessagesFlags':
 			return oOpenedRequest.Method === 'GetMessagesFlags';
 	}
