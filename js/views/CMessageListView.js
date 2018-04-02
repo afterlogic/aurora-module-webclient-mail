@@ -315,8 +315,8 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 	}, this);
 
 	_.delay(_.bind(function(){
-		this.createDatePickerObject(this.searchDateStartDom());
-		this.createDatePickerObject(this.searchDateEndDom());
+		this.createDatePickerObject(this.searchDateStartDom(), this.searchDateStart);
+		this.createDatePickerObject(this.searchDateEndDom(), this.searchDateEnd);
 	}, this), 1000);
 	
 	this.customMessageItemViewTemplate = ko.observable('');
@@ -332,7 +332,7 @@ CMessageListView.prototype.addNewAccount = function ()
 	App.Api.createMailAccount(AccountList.getEmail());
 };
 
-CMessageListView.prototype.createDatePickerObject = function (oElement)
+CMessageListView.prototype.createDatePickerObject = function (oElement, value)
 {
 	$(oElement).datepicker({
 		showOtherMonths: true,
@@ -343,7 +343,12 @@ CMessageListView.prototype.createDatePickerObject = function (oElement)
 		prevText: '',
 		firstDay: Types.pInt(ModulesManager.run('CalendarWebclient', 'getWeekStartsOn')),
 		showOn: 'focus',
-		dateFormat: this.dateFormatDatePicker
+		dateFormat: this.dateFormatDatePicker,
+		onClose: function (sValue) {
+			if (ko.isObservable(value)) {
+				value(sValue);
+			}
+		}
 	});
 
 	$(oElement).mousedown(function() {
