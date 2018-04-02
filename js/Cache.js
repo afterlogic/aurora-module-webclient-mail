@@ -132,6 +132,14 @@ function CMailCache()
 	this.waitForUnseenMessages = ko.observable(true);
 	
 	this.iSetMessagesSeenCount = 0;
+	
+	App.subscribeEvent('ReceiveAjaxResponse::after', _.bind(function (oParams) {
+		// restart autorefresh after restoring Internet connection
+		if (!this.checkMailStarted() && oParams.Response.Method === 'Ping' && oParams.Response.Module === 'Core' && oParams.Response.Result)
+		{
+			this.setAutocheckmailTimer();
+		}
+	}, this));
 }
 
 CMailCache.prototype.requirePrefetcher = function ()
