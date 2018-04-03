@@ -742,7 +742,7 @@ CComposeView.prototype.beforeHide = function (fContinueScreenChanging)
 			}
 			else
 			{
-				Routing.historyBackWithoutParsing(Settings.HashModuleName + '-compose');
+//				Routing.historyBackWithoutParsing(Settings.HashModuleName + '-compose');
 			}
 		}, this)
 	;
