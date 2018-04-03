@@ -1488,10 +1488,13 @@ CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 			this.uidList(oUidList);
 			if (bCurrentPage && (oUidList.filters() !== Enums.FolderFilter.Unseen || this.waitForUnseenMessages()))
 			{
-				this.setMessagesFromUidList(oUidList, oResult.Offset, oFolder.oMessages, true);
 				this.messagesLoading(false);
 				this.waitForUnseenMessages(false);
-				this.setAutocheckmailTimer();
+				this.setMessagesFromUidList(oUidList, oResult.Offset, oFolder.oMessages, true);
+				if (!this.messagesLoading())
+				{
+					this.setAutocheckmailTimer();
+				}
 			}
 		}
 		

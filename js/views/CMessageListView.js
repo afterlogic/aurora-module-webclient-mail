@@ -272,7 +272,15 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 	this.collection.subscribe(function () {
 		if (this.collection().length > 0)
 		{
-			this.firstCompleteCollection(false);
+			if (Types.isNonEmptyArray(this.aRouteParams))
+			{
+				this.onRoute(this.aRouteParams);
+				this.aRouteParams = [];
+			}
+			else
+			{
+				this.firstCompleteCollection(false);
+			}
 		}
 	}, this);
 	this.listChanged = ko.computed(function () {
@@ -470,7 +478,14 @@ CMessageListView.prototype.onRoute = function (aParams)
 	
 	if (oParams.Page !== this.oPageSwitcher.currentPage())
 	{
-		Routing.replaceHash(LinksUtils.getMailbox(oParams.Folder, this.oPageSwitcher.currentPage(), oParams.Uid, oParams.Search, oParams.Filters));
+		if (this.folderList().iAccountId === 0)
+		{
+			this.aRouteParams = aParams;
+		}
+		else
+		{
+			Routing.replaceHash(LinksUtils.getMailbox(oParams.Folder, this.oPageSwitcher.currentPage(), oParams.Uid, oParams.Search, oParams.Filters));
+		}
 	}
 
 	this.currentPage(this.oPageSwitcher.currentPage());
