@@ -204,7 +204,7 @@ CAttachmentModel.prototype.parseFromUpload = function (oData, sMessageFolder, sM
 	this.setMessageData(sMessageFolder, sMessageUid);
 
 	this.fileName(Types.pString(oData.Name));
-	this.tempName(this.fileName());
+	this.tempName(oData.TempName ? Types.pString(oData.TempName) : this.fileName());
 	this.mimeType(Types.pString(oData.MimeType));
 	this.size(Types.pInt(oData.Size));
 
