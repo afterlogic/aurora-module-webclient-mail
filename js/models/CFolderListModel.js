@@ -172,6 +172,15 @@ CFolderListModel.prototype.getFolderByFullName = function (sFolderFullName)
 	return oFolder ? oFolder : null;
 };
 
+CFolderListModel.prototype.renameFolder = function (sFullName, sNewFullName, sNewFullNameHash)
+{
+	var oFolder = this.oNamedCollection[sFullName];
+	oFolder.fullName(sNewFullName);
+	oFolder.fullNameHash(sNewFullNameHash);
+	this.oNamedCollection[sNewFullName] = oFolder;
+	this.oNamedCollection[sFullName] = undefined;
+};
+
 /**
  * Calls a recursive parsing of the folder tree.
  * 

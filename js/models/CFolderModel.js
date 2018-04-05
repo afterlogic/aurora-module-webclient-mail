@@ -1257,8 +1257,8 @@ CFolderModel.prototype.onResponseFolderRename = function (oResponse, oRequest)
 	}
 	else if (oResponse && oResponse.Result && oResponse.Result.FullName)
 	{
-		this.fullName(Types.pString(oResponse.Result.FullName));
-		this.fullNameHash(Types.pString(oResponse.Result.FullNameHash));
+		var oFolderList = MailCache.editedFolderList();
+		oFolderList.renameFolder(this.fullName(), oResponse.Result.FullName, oResponse.Result.FullNameHash);
 	}
 };
 
