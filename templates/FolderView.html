@@ -1,6 +1,9 @@
-<div data-bind="visible: visible(), attr: {'class': 'item folder-level' + (iLevel + 1) + ' ' + name()},
-	 css: { 'selected': selected, 'canSelect': bSelectable, 'canNotSelect': !bSelectable, 'exists': bExists, 'subscribed': subscribed,
-		'system': isSystem, 'user': !isSystem(), 'virtualEmpty': virtualEmpty, 'accordion': subfolders().length !== 0, 'expanded': expanded(), 'collapsed': !expanded()}">
+<div data-bind="visible: visible(),
+	 css: 'item folder-level' + (iLevel + 1) + ' ' + name() + (selected() ? ' selected' : '') + 
+				(bSelectable ? ' canSelect' : ' canNotSelect') + (bExists ? ' exists' : '') + 
+				(subscribed() ? ' subscribed' : '') + (isSystem() ? ' system' : ' user') + 
+				(virtualEmpty() ? ' virtualEmpty' : '') + (subfolders().length !== 0 ? ' accordion' : '') + 
+				(expanded() ? ' expanded' : ' collapsed')">
 	<a class="title" href="javascript: void(0);" data-bind="
 		css: {'recivedAnim': recivedAnim()},
 		attr: {href: routingHash},
