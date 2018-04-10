@@ -102,3 +102,18 @@
 		<label for="enableThreading" data-bind="i18n: {'key': '%MODULENAME%/LABEL_USE_THREADING'}"></label>
 	</div>	
 </div>
+
+<div class="row" data-bind="visible: bAdminEdit">
+	<div>
+		<span class="label"></span>
+		<label class="custom_checkbox" data-bind="css: {'checked': useFullEmailAddressAsLogin}">
+			<span class="icon"></span>
+			<input type="checkbox" id="useFullEmailAddressAsLogin" data-bind="checked: useFullEmailAddressAsLogin" />
+		</label>
+		<label for="useFullEmailAddressAsLogin" data-bind="i18n: {'key': '%MODULENAME%/LABEL_USE_FULL_EMAIL_ADDRESS_AS_LOGIN'}"></label>
+	</div>	
+</div>
+<div class="row hint" data-bind="visible: bAdminEdit">
+	<span class="label"></span>
+	<span class="value" data-bind="i18n: {'key': '%MODULENAME%/LABEL_HINT_USE_FULL_EMAIL_ADDRESS_AS_LOGIN'}"></span>
+</div>

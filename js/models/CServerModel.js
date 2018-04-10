@@ -21,6 +21,7 @@ function CServerModel(oServer)
 	this.bEnableSieve = oServer ? !!oServer.EnableSieve : false;
 	this.iSievePort = oServer && oServer.SievePort ? Types.pInt(oServer.SievePort) : 4190;
 	this.bEnableThreading = oServer ? !!oServer.EnableThreading : false;
+	this.bUseFullEmailAddressAsLogin = oServer ? !!oServer.UseFullEmailAddressAsLogin : true;
 }
 
 module.exports = CServerModel;
