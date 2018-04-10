@@ -24,7 +24,6 @@ var
 	
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
 	AlertPopup = require('%PathToCoreWebclientModule%/js/popups/AlertPopup.js'),
-	ConfirmPopup = require('%PathToCoreWebclientModule%/js/popups/ConfirmPopup.js'),
 	SelectFilesPopup = ModulesManager.run('FilesWebclient', 'getSelectFilesPopup'),
 	
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
@@ -371,29 +370,16 @@ function CComposeView()
 
 	this.bAllowFiles = !!SelectFilesPopup;
 
-	this.closeBecauseSingleCompose = ko.observable(false);
+	this.ignoreHasUnsavedChanges = ko.observable(false);
 	this.changedInPreviousWindow = ko.observable(false);
 
-	this.hasSomethingToSave = ko.computed(function () {
-		return this.isChanged() && this.isEnableSaving();
+	this.hasUnsavedChanges = ko.computed(function () {
+		return !this.ignoreHasUnsavedChanges() && this.isChanged() && this.isEnableSaving();
 	}, this);
 
 	this.saveAndCloseTooltip = ko.computed(function () {
-		return this.hasSomethingToSave() ? TextUtils.i18n('%MODULENAME%/ACTION_SAVE_CLOSE') : TextUtils.i18n('%MODULENAME%/ACTION_CLOSE');
+		return this.hasUnsavedChanges() ? TextUtils.i18n('%MODULENAME%/ACTION_SAVE_CLOSE') : TextUtils.i18n('%MODULENAME%/ACTION_CLOSE');
 	}, this);
-
-	if (MainTab)
-	{
-		setTimeout(function() {
-			window.onbeforeunload = function () {
-				if (self.hasSomethingToSave())
-				{
-					self.beforeHide(window.close);
-					return '';
-				}
-			};
-		}, 1000);
-	}
 
 	this.splitterDom = ko.observable();
 
@@ -574,6 +560,8 @@ CComposeView.prototype.reset = function ()
 	this.setDataFromMessage(new CMessageModel());
 
 	this.isDraftsCleared(false);
+	
+	this.ignoreHasUnsavedChanges(false);
 };
 
 /**
@@ -728,41 +716,11 @@ CComposeView.prototype.focusAfterFilling = function ()
 };
 
 /**
- * @param {Function} fContinueScreenChanging
- */
-CComposeView.prototype.beforeHide = function (fContinueScreenChanging)
-{
-	var
-		sConfirm = TextUtils.i18n('COREWEBCLIENT/CONFIRM_DISCARD_CHANGES'),
-		fOnConfirm = _.bind(function (bOk) {
-			if (bOk && $.isFunction(fContinueScreenChanging))
-			{
-				this.commit();
-				fContinueScreenChanging();
-			}
-			else
-			{
-//				Routing.historyBackWithoutParsing(Settings.HashModuleName + '-compose');
-			}
-		}, this)
-	;
-
-	if (!this.closeBecauseSingleCompose() && this.hasSomethingToSave())
-	{
-		Popups.showPopup(ConfirmPopup, [sConfirm, fOnConfirm]);
-	}
-	else if ($.isFunction(fContinueScreenChanging))
-	{
-		fContinueScreenChanging();
-	}
-};
-
-/**
  * Executes if view model was hidden.
  */
 CComposeView.prototype.onHide = function ()
 {
-	if (!$.isFunction(this.closePopup) && this.hasSomethingToSave())
+	if (!_.isFunction(this.closePopup) && this.hasUnsavedChanges())
 	{
 		this.executeSave(true);
 	}
@@ -918,7 +876,7 @@ CComposeView.prototype.setDataFromMessage = function (oMessage)
 	this.sendReadingConfirmation(oMessage.readingConfirmationAddressee() !== '');
 	
 	_.each(this.toolbarControllers(), function (oController) {
-		if ($.isFunction(oController.doAfterPopulatingMessage))
+		if (_.isFunction(oController.doAfterPopulatingMessage))
 		{
 			oController.doAfterPopulatingMessage({
 				bDraft: !!oMessage.folderObject() && (oMessage.folderObject().type() === Enums.FolderTypes.Drafts),
@@ -1263,7 +1221,7 @@ CComposeView.prototype.setMessageDataInNewTab = function (oParameters)
 	this.changedInPreviousWindow(oParameters.changedInPreviousWindow);
 
 	_.each(this.toolbarControllers(), function (oController) {
-		if ($.isFunction(oController.doAfterApplyingMainTabParameters))
+		if (_.isFunction(oController.doAfterApplyingMainTabParameters))
 		{
 			oController.doAfterApplyingMainTabParameters(oParameters);
 		}
@@ -1515,7 +1473,7 @@ CComposeView.prototype.getSendSaveParameters = function (bRemoveSignatureAnchor)
 	};
 	
 	_.each(this.toolbarControllers(), function (oController) {
-		if ($.isFunction(oController.doAfterPreparingSendMessageParameters))
+		if (_.isFunction(oController.doAfterPreparingSendMessageParameters))
 		{
 			oController.doAfterPreparingSendMessageParameters(oParameters);
 		}
@@ -1556,7 +1514,7 @@ CComposeView.prototype.onSendOrSaveMessageResponse = function (oResponse, oReque
 			{
 				if (this.backToListOnSendOrSave())
 				{
-					if ($.isFunction(this.closePopup))
+					if (_.isFunction(this.closePopup))
 					{
 						this.closePopup();
 					}
@@ -1613,7 +1571,7 @@ CComposeView.prototype.executeSend = function (mParam)
 	if (this.isEnableSending() && this.verifyDataForSending())
 	{
 		_.each(this.toolbarControllers(), function (oController) {
-			if ($.isFunction(oController.doBeforeSend))
+			if (_.isFunction(oController.doBeforeSend))
 			{
 				bCancelSend = bCancelSend || oController.doBeforeSend(fContinueSending);
 			}
@@ -1665,7 +1623,7 @@ CComposeView.prototype.executeSave = function (bAutosave, bWaitResponse)
 			if (!bAutosave)
 			{
 				_.each(this.toolbarControllers(), function (oController) {
-					if ($.isFunction(oController.doBeforeSave))
+					if (_.isFunction(oController.doBeforeSave))
 					{
 						bCancelSaving = bCancelSaving || oController.doBeforeSave(fSave);
 					}
@@ -1760,7 +1718,7 @@ CComposeView.prototype.getMessageDataForNewTab = function ()
 	};
 	
 	_.each(this.toolbarControllers(), function (oController) {
-		if ($.isFunction(oController.doAfterPreparingMainTabParameters))
+		if (_.isFunction(oController.doAfterPreparingMainTabParameters))
 		{
 			oController.doAfterPreparingMainTabParameters(oParameters);
 		}
@@ -1778,7 +1736,7 @@ CComposeView.prototype.openInNewWindow = function ()
 		sHash = Routing.buildHashFromArray(LinksUtils.getCompose())
 	;
 
-	this.closeBecauseSingleCompose(true);
+	this.ignoreHasUnsavedChanges(true);
 	oMessageParametersFromCompose = this.getMessageDataForNewTab();
 
 	if (this.draftUid().length > 0 && !this.isChanged())
@@ -1802,7 +1760,7 @@ CComposeView.prototype.openInNewWindow = function ()
 
 	this.commit();
 
-	if ($.isFunction(this.closePopup))
+	if (_.isFunction(this.closePopup))
 	{
 		this.closePopup();
 	}
@@ -1869,7 +1827,7 @@ CComposeView.prototype.registerToolbarController = function (oController)
 			var iIndex = _.indexOf(Settings.ComposeToolbarOrder, oContr.sId);
 			return iIndex !== -1 ? iIndex : iLastIndex;
 		}));
-		if ($.isFunction(oController.assignComposeExtInterface))
+		if (_.isFunction(oController.assignComposeExtInterface))
 		{
 			oController.assignComposeExtInterface(this.getExtInterface());
 		}

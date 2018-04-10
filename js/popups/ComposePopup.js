@@ -102,7 +102,7 @@ CComposePopup.prototype.onOpen = function (aParams)
 		{
 			if (aParams.length > 0 && !bOpeningSameDraft)
 			{
-				if (this.hasSomethingToSave())
+				if (this.hasUnsavedChanges())
 				{
 					this.stopAutosaveTimer();
 					Popups.showPopup(ConfirmAnotherMessageComposedPopup, [_.bind(function (sAnswer) {
@@ -112,7 +112,7 @@ CComposePopup.prototype.onOpen = function (aParams)
 								this.onRoute(aParams);
 								break;
 							case Enums.AnotherMessageComposedAnswer.SaveAsDraft:
-								if (this.hasSomethingToSave())
+								if (this.hasUnsavedChanges())
 								{
 									this.executeSave(true, false);
 								}
@@ -158,7 +158,7 @@ CComposePopup.prototype.maximize = function ()
 
 CComposePopup.prototype.saveAndClose = function ()
 {
-	if (this.hasSomethingToSave())
+	if (this.hasUnsavedChanges())
 	{
 		this.saveCommand();
 	}
@@ -168,7 +168,7 @@ CComposePopup.prototype.saveAndClose = function ()
 
 CComposePopup.prototype.cancelPopup = function ()
 {
-	if (this.hasSomethingToSave())
+	if (this.hasUnsavedChanges())
 	{
 		this.minimize();
 	}
