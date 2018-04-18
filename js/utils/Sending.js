@@ -273,13 +273,13 @@ SendingUtils.onSendOrSaveMessageResponse = function (oResponse, oRequest, bRequi
 			}
 			break;
 		case 'SendMessage':
-			if (!bResult && oResponse.ErrorCode !== Enums.Errors.NotSavedInSentItems)
+			if (!bResult && oResponse.ErrorCode !== Enums.MailErrors.CannotSaveMessageToSentItems)
 			{
 				Api.showErrorByCode(oResponse, TextUtils.i18n('%MODULENAME%/ERROR_MESSAGE_SENDING'));
 			}
 			else
 			{
-				if (!bResult && oResponse.ErrorCode === Enums.Errors.NotSavedInSentItems)
+				if (!bResult && oResponse.ErrorCode === Enums.MailErrors.CannotSaveMessageToSentItems)
 				{
 					Screens.showError(TextUtils.i18n('%MODULENAME%/ERROR_SENT_EMAIL_NOT_SAVED'));
 				}
