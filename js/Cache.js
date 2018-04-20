@@ -1555,6 +1555,10 @@ CMailCache.prototype.onMoveMessagesResponse = function (oResponse, oRequest)
 			oToFolder.addMessagesCountsDiff(-oDiffs.PlusDiff, -oDiffs.UnseenPlusDiff);
 			if (oResponse.ErrorCode === Enums.MailErrors.CannotMoveMessageQuota && (bToFolderTrash || bToFolderSpam))
 			{
+				if (Types.isNonEmptyString(oResponse.ErrorMessage))
+				{
+					sConfirm += ' (' + oResponse.ErrorMessage + ')';
+				}
 				Popups.showPopup(ConfirmPopup, [sConfirm, fDeleteMessages]);
 			}
 			else

@@ -80,8 +80,7 @@ Enums.UseSignature = {
 };
 
 Enums.MailErrors = {
-	'CannotMoveMessageQuota': 4008,
-	'CannotSaveMessageToSentItems': 4014
+	'CannotMoveMessageQuota': 4008
 };
 
 if (typeof window.Enums === 'undefined')

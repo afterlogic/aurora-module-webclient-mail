@@ -9,6 +9,7 @@ var
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	
+	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
 	App = require('%PathToCoreWebclientModule%/js/App.js'),
 	Browser = require('%PathToCoreWebclientModule%/js/Browser.js'),
 	CJua = require('%PathToCoreWebclientModule%/js/CJua.js'),
@@ -902,22 +903,15 @@ CMessageListView.prototype.onFileDrop = function (oData)
 
 CMessageListView.prototype.onFileUploadComplete = function (sFileUid, bResponseReceived, oResponse)
 {
-	var bError = !bResponseReceived || !oResponse || oResponse.Error|| oResponse.Result.Error || false;
+	var bSuccess = bResponseReceived && oResponse && !oResponse.ErrorCode;
 
-	if (!bError)
+	if (bSuccess)
 	{
 		MailCache.executeCheckMail(true);
 	}
 	else
 	{
-		if (oResponse.ErrorCode && oResponse.ErrorCode === Enums.Errors.IncorrectFileExtension)
-		{
-			Screens.showError(TextUtils.i18n('%MODULENAME%/ERROR_FILE_NOT_EML'));
-		}
-		else
-		{
-			Screens.showError(TextUtils.i18n('COREWEBCLIENT/ERROR_UPLOAD_FILE'));
-		}
+		Api.showErrorByCode(oResponse, TextUtils.i18n('COREWEBCLIENT/ERROR_UPLOAD_FILE'));
 	}
 };
 
