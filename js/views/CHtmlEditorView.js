@@ -379,8 +379,12 @@ CHtmlEditorView.prototype.init = function (sText, bPlain, sTabIndex, sPlaceholde
 	}
 	else
 	{
-		$(document.body).on('click', _.bind(function () {
-			this.closeAllPopups(true);
+		$(document.body).on('click', _.bind(function (oEvent) {
+			var oParent = $(oEvent.target).parents('span.dropdown_helper');
+			if (oParent.length === 0)
+			{
+				this.closeAllPopups(true);
+			}
 		}, this));
 
 		this.initEditorUploader();
