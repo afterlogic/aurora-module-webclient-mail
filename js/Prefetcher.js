@@ -204,7 +204,7 @@ Prefetcher.startThreadListPrefetch = function ()
 		{
 			_.each(oCacheMess.threadUids(), function (sThreadUid) {
 				var oThreadMess = oCurrFolder.oMessages[sThreadUid];
-				if (!oThreadMess || !oCurrFolder.hasThreadUidBeenRequested(sThreadUid))
+				if (!oThreadMess && !oCurrFolder.hasThreadUidBeenRequested(sThreadUid))
 				{
 					aUidsForLoad.push(sThreadUid);
 				}
