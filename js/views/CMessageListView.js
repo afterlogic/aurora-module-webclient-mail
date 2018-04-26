@@ -210,7 +210,13 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 		_.bind(this.routeForMessage, this),
 		_.bind(this.onDeletePress, this),
 		_.bind(this.onMessageDblClick, this),
-		_.bind(this.onEnterPress, this)
+		_.bind(this.onEnterPress, this),
+		null,
+		false,
+		false,
+		false,
+		false,
+		false // don't select new item before routing executed
 	);
 
 	this.checkedUids = ko.computed(function () {

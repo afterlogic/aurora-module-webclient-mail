@@ -146,6 +146,26 @@ _.extendOwn(CMailView.prototype, CAbstractScreenView.prototype);
 CMailView.prototype.ViewTemplate = '%ModuleName%_MailView';
 CMailView.prototype.ViewConstructorName = 'CMailView';
 
+/**
+ * Checks if there are changes in Mail screen.
+ * @returns {Boolean}
+ */
+CMailView.prototype.hasUnsavedChanges = function ()
+{
+	return this.messagePane() && _.isFunction(this.messagePane().hasUnsavedChanges) && this.messagePane().hasUnsavedChanges();
+};
+
+/**
+ * Discards changes in Mail screen.
+ */
+CMailView.prototype.discardChanges = function ()
+{
+	if (this.messagePane() && _.isFunction(this.messagePane().discardChanges))
+	{
+		this.messagePane().discardChanges();
+	}
+};
+
 CMailView.prototype.setCustomPreviewPane = function (sModuleName, oPreviewPane)
 {
 	if (this.messagePane().__customModuleName !== sModuleName)
