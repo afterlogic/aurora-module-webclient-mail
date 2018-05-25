@@ -36,7 +36,7 @@
 		"bool"
 	],
 	"JoinReplyPrefixes": [
-		false,
+		true,
 		"bool"
 	],
 	"MailsPerPage": [
