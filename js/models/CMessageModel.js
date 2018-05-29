@@ -23,7 +23,8 @@ var
 	MailCache = null,
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	
-	CAttachmentModel = require('modules/%ModuleName%/js/models/CAttachmentModel.js')
+	CAttachmentModel = require('modules/%ModuleName%/js/models/CAttachmentModel.js'),
+	App = require('%PathToCoreWebclientModule%/js/App.js')
 ;
 
 /**
@@ -338,7 +339,7 @@ CMessageModel.prototype.parse = function (oData, iAccountId, bThreadPart, bTrust
 		sHtml = '',
 		sPlain = ''
 	;
-	
+
 	if (bTrustThreadInfo)
 	{
 		this.threadPart(bThreadPart);
@@ -447,8 +448,11 @@ CMessageModel.prototype.parse = function (oData, iAccountId, bThreadPart, bTrust
 			this.sourceHeaders(oData.Headers);
 			
 			this.aExtend = oData.Extend;
-			
 			this.completelyFilled(true);
+
+			App.broadcastEvent('MailWebclient::ParseMessage::after', {
+				msg: this
+			});
 		}
 		
 		this.updateMomentDate();
