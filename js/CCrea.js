@@ -307,8 +307,8 @@ CCrea.prototype.editableSave = function ()
         oLastSaved = _.last(this.aEditableAreaHtml),
         sLastSaved = oLastSaved ? oLastSaved[0] : ''
     ;
-
-    if (sEditableHtml !== sLastSaved)
+	
+    if ($(sEditableHtml).text() !== $(sLastSaved).text())
     {
         this.clearRedo();
         this.aEditableAreaHtml.push([sEditableHtml, this.getCaretPos(this.$editableArea[0])]);
@@ -324,7 +324,7 @@ CCrea.prototype.editableUndo = function ()
         oCurrSaved = this.aEditableAreaHtml[this.iUndoRedoPosition],
         sCurrSaved = oCurrSaved ? oCurrSaved[0] : ''
     ;
-    if (sEditableHtml !== sCurrSaved)
+    if ($(sEditableHtml).text() !== $(sCurrSaved).text())
     {
         this.editableSave();
     }
@@ -747,6 +747,7 @@ CCrea.prototype.setText = function (sText)
         }
 
         this.$editableArea.empty().append(oText).css('white-space', 'normal');
+		this.clearUndoRedo();
         this.editableSave();
     }
 };
