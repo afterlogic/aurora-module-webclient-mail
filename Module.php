@@ -86,7 +86,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 				{
 					$oUser->{$this->GetName().'::AllowChangeInputDirection'} = $Args['AllowChangeInputDirection'];
 				}
-				return $oCoreDecorator->UpdateUserObject($oUser);
+				return !$oCoreDecorator->UpdateUserObject($oUser);
 			}
 			if ($oUser->Role === \Aurora\System\Enums\UserRole::SuperAdmin)
 			{
@@ -98,7 +98,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 				{
 					$this->setConfig('AllowChangeInputDirection', $Args['AllowChangeInputDirection']);
 				}
-				return $this->saveModuleConfig();
+				return !$this->saveModuleConfig();
 			}
 		}
 	}
