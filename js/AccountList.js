@@ -338,11 +338,20 @@ CAccountListModel.prototype.onGetFetchersResponse = function (oResponse, oReques
 	}
 };
 
-CAccountListModel.prototype.populateIdentities = function ()
+/**
+ * @param {function} fAfterPopulateIdentities
+ */
+CAccountListModel.prototype.populateIdentities = function (fAfterPopulateIdentities)
 {
 	if (Settings.AllowIdentities && this.collection().length >= 1)
 	{
-		Ajax.send('GetIdentities', null, this.onGetIdentitiesResponse, this);
+		Ajax.send('GetIdentities', null, function (oResponse, oRequest) {
+			this.onGetIdentitiesResponse(oResponse, oRequest);
+			if (_.isFunction(fAfterPopulateIdentities))
+			{
+				fAfterPopulateIdentities();
+			}
+		}, this);
 	}
 };
 

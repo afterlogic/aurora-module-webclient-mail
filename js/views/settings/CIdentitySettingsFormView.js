@@ -133,7 +133,18 @@ CIdentitySettingsFormView.prototype.onResponse = function (oResponse, oRequest)
 			oAccount = 0 < iAccountId ? AccountList.getAccount(iAccountId) : null
 		;
 		
-		AccountList.populateIdentities();
+		AccountList.populateIdentities(function () {
+			var
+				oCurrAccount = AccountList.getCurrent(),
+				aCurrIdentities = oCurrAccount.identities(),
+				oCreatedIdentity = _.find(aCurrIdentities, function (oIdentity) {
+					return oIdentity.id() === oResponse.Result;
+				})
+			;
+			if (oCreatedIdentity) {
+				ModulesManager.run('SettingsWebclient', 'setAddHash', [['identity', oCreatedIdentity.hash()]]);
+			}
+		});
 		
 		if (this.bCreate && _.isFunction(this.oParent.closePopup))
 		{
