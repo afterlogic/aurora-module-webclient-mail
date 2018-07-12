@@ -11,11 +11,14 @@ var
 	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 	Screens = require('%PathToCoreWebclientModule%/js/Screens.js'),
+	CoreAjax = require('%PathToCoreWebclientModule%/js/Ajax.js'),
+	
+	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
+	ConfirmPopup = require('%PathToCoreWebclientModule%/js/popups/ConfirmPopup.js'),
 	
 	CAbstractSettingsFormView = ModulesManager.run('SettingsWebclient', 'getAbstractSettingsFormViewClass'),
 	
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
-	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
 	MailCache = require('modules/%ModuleName%/js/Cache.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	
@@ -24,10 +27,13 @@ var
 
 /**
  * @constructor
+ * @param {object} oParent
  */
-function CFetcherIncomingSettingsFormView()
+function CFetcherIncomingSettingsFormView(oParent)
 {
 	CAbstractSettingsFormView.call(this, Settings.ServerModuleName);
+	
+	this.oParent = oParent;
 	
 	this.bShown = false;
 	
@@ -37,7 +43,8 @@ function CFetcherIncomingSettingsFormView()
 	this.isEnabled = ko.observable(true);
 
 	this.incomingLogin = ko.observable('');
-	this.incomingPassword = ko.observable('');
+	this.sFakePass = '******';
+	this.incomingPassword = ko.observable(this.sFakePass);
 	this.oIncoming = new CServerPropertiesView(110, 995, 'fetcher_edit_incoming', TextUtils.i18n('%MODULENAME%/LABEL_POP3_SERVER'));
 
 	this.sFetcherFolder = '';
@@ -107,18 +114,23 @@ CFetcherIncomingSettingsFormView.prototype.getParametersForSave = function ()
 {
 	if (this.fetcher())
 	{
-		var sIncomingPassword = $.trim(this.incomingPassword());
-		return {
-			'AccountID': AccountList.editedId(),
-			'FetcherID': this.idFetcher(),
-			'IsEnabled': this.isEnabled() ? 1 : 0,
-			'Folder': this.folder(),
-			'IncomingServer': this.oIncoming.server(),
-			'IncomingPort': this.oIncoming.getIntPort(),
-			'IncomingUseSsl': this.oIncoming.ssl(),
-			'IncomingPassword': (sIncomingPassword === '') ? '******' : sIncomingPassword,
-			'LeaveMessagesOnServer': this.leaveMessagesOnServer() ? 1 : 0
-		};
+		var
+			sIncomingPassword = $.trim(this.incomingPassword()),
+			oParameters = {
+				'FetcherId': this.idFetcher(),
+				'IsEnabled': this.isEnabled(),
+				'Folder': this.folder(),
+				'IncomingServer': this.oIncoming.server(),
+				'IncomingPort': this.oIncoming.getIntPort(),
+				'IncomingUseSsl': this.oIncoming.ssl(),
+				'LeaveMessagesOnServer': this.leaveMessagesOnServer()
+			}
+		;
+		if (sIncomingPassword !== '' && sIncomingPassword !== this.sFakePass)
+		{
+			oParameters['IncomingPassword'] = sIncomingPassword;
+		}
+		return oParameters;
 	}
 	
 	return {};
@@ -136,7 +148,7 @@ CFetcherIncomingSettingsFormView.prototype.save = function ()
 
 		this.updateSavedState();
 
-		Ajax.send('UpdateFetcher', this.getParametersForSave(), this.onResponse, this);
+		CoreAjax.send(Settings.FetchersServerModuleName, 'UpdateFetcher', this.getParametersForSave(), this.onResponse, this);
 	}
 };
 
@@ -175,7 +187,7 @@ CFetcherIncomingSettingsFormView.prototype.populate = function ()
 		this.folder(oFetcher.folder());
 		this.oIncoming.set(oFetcher.incomingServer(), oFetcher.incomingPort(), oFetcher.incomingUseSsl());
 		this.incomingLogin(oFetcher.incomingLogin());
-		this.incomingPassword('******');
+		this.incomingPassword(this.sFakePass);
 		this.leaveMessagesOnServer(oFetcher.leaveMessagesOnServer());
 
 		this.updateSavedState();
@@ -189,7 +201,7 @@ CFetcherIncomingSettingsFormView.prototype.isEmptyRequiredFields = function ()
 		return true;
 	}
 	
-	if (this.incomingPassword() === '')
+	if ($.trim(this.incomingPassword()) === '')
 	{
 		this.passwordIsSelected(true);
 		return true;
@@ -198,4 +210,45 @@ CFetcherIncomingSettingsFormView.prototype.isEmptyRequiredFields = function ()
 	return false;
 };
 
-module.exports = new CFetcherIncomingSettingsFormView();
+CFetcherIncomingSettingsFormView.prototype.remove = function ()
+{
+	var
+		oFetcher = this.fetcher(),
+		fCallBack = function (bOkAnswer) {
+			if (bOkAnswer)
+			{
+				var oParameters = {
+					'FetcherId': oFetcher.id()
+				};
+
+				CoreAjax.send(Settings.FetchersServerModuleName, 'DeleteFetcher', oParameters, this.onAccountDeleteFetcherResponse, this);
+
+				if (this.oParent && _.isFunction(this.oParent.onRemoveFetcher))
+				{
+					this.oParent.onRemoveFetcher();
+				}
+			}
+		}.bind(this)
+	;
+	
+	if (oFetcher)
+	{
+		console.log('oFetcher', oFetcher);
+		Popups.showPopup(ConfirmPopup, [TextUtils.i18n('%MODULENAME%/CONFIRM_REMOVE_FETCHER'), fCallBack, oFetcher.incomingLogin()]);
+	}
+};
+
+/**
+ * @param {Object} oResponse
+ * @param {Object} oRequest
+ */
+CFetcherIncomingSettingsFormView.prototype.onAccountDeleteFetcherResponse = function (oResponse, oRequest)
+{
+	if (!oResponse.Result)
+	{
+		Api.showErrorByCode(oResponse, TextUtils.i18n('%MODULENAME%/ERROR_FETCHER_DELETING'));
+	}
+	AccountList.populateFetchers();
+};
+
+module.exports = CFetcherIncomingSettingsFormView;

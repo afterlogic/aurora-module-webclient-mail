@@ -11,6 +11,7 @@ var
 	Browser = require('%PathToCoreWebclientModule%/js/Browser.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 	Screens = require('%PathToCoreWebclientModule%/js/Screens.js'),
+	CoreAjax = require('%PathToCoreWebclientModule%/js/Ajax.js'),
 	
 	CAbstractSettingsFormView = ModulesManager.run('SettingsWebclient', 'getAbstractSettingsFormViewClass'),
 	
@@ -120,7 +121,11 @@ CSignatureSettingsFormView.prototype.getParametersForSave = function ()
  */
 CSignatureSettingsFormView.prototype.applySavedValues = function (oParameters)
 {
-	if (!oParameters.IdentityId)
+	if (oParameters.FetcherId)
+	{
+		AccountList.populateFetchers();
+	}
+	else if (!oParameters.IdentityId)
 	{
 		var oAccount = AccountList.getEdited();
 		if (oAccount)
@@ -185,7 +190,14 @@ CSignatureSettingsFormView.prototype.save = function ()
 	
 	this.updateSavedState();
 	
-	Ajax.send('UpdateSignature', this.getParametersForSave(), this.onResponse, this);
+	if (this.fetcherOrIdentity() && this.fetcherOrIdentity().FETCHER)
+	{
+		CoreAjax.send(Settings.FetchersServerModuleName, 'UpdateSignature', this.getParametersForSave(), this.onResponse, this);
+	}
+	else
+	{
+		Ajax.send('UpdateSignature', this.getParametersForSave(), this.onResponse, this);
+	}
 };
 
 /**

@@ -10,14 +10,15 @@ var
 	
 	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
 	Screens = require('%PathToCoreWebclientModule%/js/Screens.js'),
+	CoreAjax = require('%PathToCoreWebclientModule%/js/Ajax.js'),
 	
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
 	CAbstractPopup = require('%PathToCoreWebclientModule%/js/popups/CAbstractPopup.js'),
 	CreateFolderPopup = require('modules/%ModuleName%/js/popups/CreateFolderPopup.js'),
 	
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
-	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
 	MailCache = require('modules/%ModuleName%/js/Cache.js'),
+	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	
 	CServerPropertiesView = require('modules/%ModuleName%/js/views/CServerPropertiesView.js')
 ;
@@ -92,22 +93,21 @@ CCreateFetcherPopup.prototype.save = function ()
 	else
 	{
 		var
-			sIncomingPassword = $.trim(this.incomingPassword()),
 			oParameters = {
-				'AccountID': AccountList.editedId(),
+				'AccountId': AccountList.editedId(),
 				'Folder': this.folder(),
-				'IncomingLogin': $.trim(this.incomingLogin()),
-				'IncomingPassword': (sIncomingPassword === '') ? '******' : sIncomingPassword,
 				'IncomingServer': this.oIncoming.server(),
 				'IncomingPort': this.oIncoming.getIntPort(),
 				'IncomingUseSsl': this.oIncoming.ssl(),
-				'LeaveMessagesOnServer': this.leaveMessagesOnServer() ? 1 : 0
+				'IncomingLogin': $.trim(this.incomingLogin()),
+				'IncomingPassword': $.trim(this.incomingPassword()),
+				'LeaveMessagesOnServer': this.leaveMessagesOnServer()
 			}
 		;
 
 		this.loading(true);
-
-		Ajax.send('CreateFetcher', oParameters, this.onCreateFetcherResponse, this);
+		
+		CoreAjax.send(Settings.FetchersServerModuleName, 'CreateFetcher', oParameters, this.onCreateFetcherResponse, this);
 	}
 };
 

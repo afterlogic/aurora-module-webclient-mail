@@ -12,15 +12,11 @@
 
 				<div class="row login">
 					<span class="label required" data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_LOGIN'}"></span>
-					<input class="value input" spellcheck="false" type="text" maxlength="255" data-bind="value: incomingLogin, onEnter: save, hasFocus: loginIsSelected"/>
+					<input class="value input" spellcheck="false" type="text" maxlength="255" data-bind="value: incomingLogin, valueUpdate: 'afterkeydown', onEnter: save, hasFocus: loginIsSelected"/>
 				</div>
 				<div class="row password">
 					<span class="label required" data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_PASSWORD'}"></span>
-					<input class="value input" spellcheck="false" type="password" maxlength="255" data-bind="value: incomingPassword, onEnter: save, hasFocus: passwordIsSelected"/>
-				</div>
-
-				<div class="row hint">
-					<span class="" data-bind="i18n: {'key': '%MODULENAME%/INFO_FETCHER_STORE'}"></span>
+					<input class="value input" spellcheck="false" type="password" maxlength="255" data-bind="value: incomingPassword, valueUpdate: 'afterkeydown', onEnter: save, hasFocus: passwordIsSelected"/>
 				</div>
 
 				<div class="row folder">
@@ -32,6 +28,10 @@
 					"></select>
 
 					<span class="link" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ADD_NEW_FOLDER'}, command: addNewFolderCommand, visible: options().length > 1"></span>
+				</div>
+
+				<div class="row hint">
+					<span class="" data-bind="i18n: {'key': '%MODULENAME%/INFO_FETCHER_STORE'}"></span>
 				</div>
 
 				<div class="row">

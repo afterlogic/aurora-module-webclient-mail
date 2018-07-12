@@ -22,11 +22,7 @@
 		</div>
 		<div class="row password">
 			<span class="label required" data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_PASSWORD'}"></span>
-			<input class="value input" spellcheck="false" type="password" maxlength="255" data-bind="value: incomingPassword, onEnter: save, hasFocus: passwordIsSelected, enable: isEnabled"/>
-		</div>
-
-		<div class="row hint">
-			<span data-bind="i18n: {'key': '%MODULENAME%/INFO_FETCHER_STORE'}"></span>
+			<input class="value input" spellcheck="false" type="password" maxlength="255" data-bind="value: incomingPassword, valueUpdate: 'afterkeydown', onEnter: save, hasFocus: passwordIsSelected, enable: isEnabled"/>
 		</div>
 
 		<div class="row folder">
@@ -36,6 +32,11 @@
 				optionsText: 'translatedDisplayName', optionsValue: 'fullName', optionsAfterRender: defaultOptionsAfterRender, enable: isEnabled">
 			</select>
 		</div>
+
+		<div class="row hint">
+			<span data-bind="i18n: {'key': '%MODULENAME%/INFO_FETCHER_STORE'}"></span>
+		</div>
+		
 		<div class="row">
 			<div>
 				<label class="custom_checkbox" data-bind="css: {'checked': leaveMessagesOnServer}">
@@ -46,7 +47,7 @@
 			</div>
 		</div>
 		<div class="row">
-			<span class="link" data-bind="i18n: {'key': '%MODULENAME%/ACTION_REMOVE_FETCHER'}, click: function () { $parent.onFetcherDeleteClick($data); }"></span>
+			<span class="link" data-bind="i18n: {'key': '%MODULENAME%/ACTION_REMOVE_FETCHER'}, click: remove"></span>
 		</div>
 	</div>
 	<div class="buttons">

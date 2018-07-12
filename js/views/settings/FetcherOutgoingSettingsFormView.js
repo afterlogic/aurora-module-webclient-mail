@@ -10,11 +10,11 @@ var
 	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 	Screens = require('%PathToCoreWebclientModule%/js/Screens.js'),
+	CoreAjax = require('%PathToCoreWebclientModule%/js/Ajax.js'),
 	
 	CAbstractSettingsFormView = ModulesManager.run('SettingsWebclient', 'getAbstractSettingsFormViewClass'),
 	
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
-	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	
 	CServerPropertiesView = require('modules/%ModuleName%/js/views/CServerPropertiesView.js')
@@ -36,15 +36,20 @@ function CFetcherOutgoingSettingsFormView()
 	this.email = ko.observable('');
 	this.userName = ko.observable('');
 	this.isOutgoingEnabled = ko.observable(false);
-	this.isOutgoingEnabled.subscribe(function (bEnabled) {
-		this.oOutgoing.isEnabled(bEnabled);
-	}, this);
 
 	this.focusEmail = ko.observable(false);
 
 	this.oOutgoing = new CServerPropertiesView(25, 465, 'fetcher_edit_outgoing', TextUtils.i18n('%MODULENAME%/LABEL_SMTP_SERVER'));
 	this.outgoingUseAuth = ko.observable(false);
 
+	this.isAllEnabled = ko.computed(function () {
+		return this.isEnabled() && this.isOutgoingEnabled();
+	}, this);
+	this.isAllEnabled.subscribe(function () {
+		this.oOutgoing.isEnabled(this.isAllEnabled());
+	}, this);
+	this.oOutgoing.isEnabled(this.isAllEnabled());
+	
 	this.firstState = null;
 }
 
@@ -79,11 +84,10 @@ CFetcherOutgoingSettingsFormView.prototype.getParametersForSave = function ()
 	if (this.fetcher())
 	{
 		return {
-			'AccountID': AccountList.editedId(),
-			'FetcherID': this.idFetcher(),
+			'FetcherId': this.idFetcher(),
+			'IsOutgoingEnabled': this.isOutgoingEnabled(),
 			'Email': $.trim(this.email()),
 			'Name': this.userName(),
-			'IsOutgoingEnabled': this.isOutgoingEnabled() ? 1 : 0,
 			'OutgoingServer': this.oOutgoing.server(),
 			'OutgoingPort': this.oOutgoing.getIntPort(),
 			'OutgoingUseSsl': this.oOutgoing.ssl(),
@@ -96,17 +100,20 @@ CFetcherOutgoingSettingsFormView.prototype.getParametersForSave = function ()
 
 CFetcherOutgoingSettingsFormView.prototype.save = function ()
 {
-	if (this.isEmptyRequiredFields())
+	if (this.isEnabled())
 	{
-		Screens.showError(TextUtils.i18n('%MODULENAME%/ERROR_REQUIRED_FIELDS_EMPTY'));
-	}
-	else
-	{
-		this.isSaving(true);
+		if (this.isEmptyRequiredFields())
+		{
+			Screens.showError(TextUtils.i18n('%MODULENAME%/ERROR_REQUIRED_FIELDS_EMPTY'));
+		}
+		else
+		{
+			this.isSaving(true);
 
-		this.updateSavedState();
+			this.updateSavedState();
 
-		Ajax.send('UpdateFetcher', this.getParametersForSave(), this.onResponse, this);
+			CoreAjax.send(Settings.FetchersServerModuleName, 'UpdateFetcherSmtpSettings', this.getParametersForSave(), this.onResponse, this);
+		}
 	}
 };
 
@@ -154,16 +161,19 @@ CFetcherOutgoingSettingsFormView.prototype.populate = function ()
 };
 CFetcherOutgoingSettingsFormView.prototype.isEmptyRequiredFields = function ()
 {
-	if (this.outgoingUseAuth() && this.isOutgoingEnabled() && '' === this.oOutgoing.server())
+	if (this.isOutgoingEnabled())
 	{
-		this.oOutgoing.server.focused(true);
-		return true;
-	}
-	
-	if (this.outgoingUseAuth() && '' === $.trim(this.email()))
-	{
-		this.focusEmail(true);
-		return true;
+		if (this.outgoingUseAuth() && this.isOutgoingEnabled() && '' === this.oOutgoing.server())
+		{
+			this.oOutgoing.server.focused(true);
+			return true;
+		}
+
+		if (this.outgoingUseAuth() && '' === $.trim(this.email()))
+		{
+			this.focusEmail(true);
+			return true;
+		}
 	}
 
 	return false;

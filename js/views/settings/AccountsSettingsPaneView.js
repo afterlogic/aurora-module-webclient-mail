@@ -24,7 +24,7 @@ var
 	AccountForwardSettingsFormView = require('modules/%ModuleName%/js/views/settings/AccountForwardSettingsFormView.js'),
 	AccountSettingsFormView = require('modules/%ModuleName%/js/views/settings/AccountSettingsFormView.js'),
 	CIdentitySettingsFormView = require('modules/%ModuleName%/js/views/settings/CIdentitySettingsFormView.js'),
-	FetcherIncomingSettingsFormView = require('modules/%ModuleName%/js/views/settings/FetcherIncomingSettingsFormView.js'),
+	CFetcherIncomingSettingsFormView = require('modules/%ModuleName%/js/views/settings/CFetcherIncomingSettingsFormView.js'),
 	FetcherOutgoingSettingsFormView = require('modules/%ModuleName%/js/views/settings/FetcherOutgoingSettingsFormView.js'),
 	SignatureSettingsFormView = require('modules/%ModuleName%/js/views/settings/SignatureSettingsFormView.js')
 ;
@@ -115,7 +115,7 @@ function CAccountsSettingsPaneView()
 		{
 			name: 'incoming',
 			title: TextUtils.i18n('%MODULENAME%/LABEL_POP3_SETTINGS_TAB'),
-			view: FetcherIncomingSettingsFormView,
+			view: new CFetcherIncomingSettingsFormView(this),
 			visible: ko.observable(true)
 		},
 		{
@@ -387,6 +387,12 @@ CAccountsSettingsPaneView.prototype.onRemoveIdentity = function ()
 {
 	this.editedIdentity(null);
 	this.changeTab(this.currentTab() ? this.currentTab().name : '');
+};
+
+CAccountsSettingsPaneView.prototype.onRemoveFetcher = function ()
+{
+	this.editedFetcher(null);
+	this.changeRoute('');
 };
 
 module.exports = new CAccountsSettingsPaneView();

@@ -12,13 +12,14 @@ var
 module.exports = {
 	ServerModuleName: 'Mail',
 	HashModuleName: 'mail',
+	FetchersServerModuleName: 'MailSuite',
 	
 	// from Mail module
 	AllowAddAccounts: false,
 	AllowAutoresponder: false,
 	AllowAutosaveInDrafts: true,
 	AllowDefaultAccountForUser: true,
-	AllowFetchers: true,
+	AllowFetchers: false,
 	AllowFilters: false,
 	AllowForward: false,
 	AllowIdentities: false,
@@ -53,7 +54,8 @@ module.exports = {
 	{
 		var
 			oAppDataMailSection = oAppData[this.ServerModuleName],
-			oAppDataMailWebclientSection = oAppData['%ModuleName%']
+			oAppDataMailWebclientSection = oAppData['%ModuleName%'],
+			oAppDataFetchersSection = oAppData[this.FetchersServerModuleName]
 		;
 		
 		if (!_.isEmpty(oAppDataMailSection))
@@ -62,7 +64,6 @@ module.exports = {
 			this.AllowAutoresponder = Types.pBool(oAppDataMailSection.AllowAutoresponder, this.AllowAutoresponder);
 			this.AllowAutosaveInDrafts = Types.pBool(oAppDataMailSection.AllowAutosaveInDrafts, this.AllowAutosaveInDrafts);
 			this.AllowDefaultAccountForUser = Types.pBool(oAppDataMailSection.AllowDefaultAccountForUser, this.AllowDefaultAccountForUser);
-			this.AllowFetchers = Types.pBool(oAppDataMailSection.AllowFetchers, this.AllowFetchers);
 			this.AllowFilters = Types.pBool(oAppDataMailSection.AllowFilters, this.AllowFilters);
 			this.AllowForward = Types.pBool(oAppDataMailSection.AllowForward, this.AllowForward);
 			this.AllowIdentities = Types.pBool(oAppDataMailSection.AllowIdentities, this.AllowIdentities);
@@ -87,6 +88,11 @@ module.exports = {
 			this.MailsPerPage = Types.pPositiveInt(oAppDataMailWebclientSection.MailsPerPage, this.MailsPerPage);
 			this.MaxMessagesBodiesSizeToPrefetch = Types.pNonNegativeInt(oAppDataMailWebclientSection.MaxMessagesBodiesSizeToPrefetch, this.MaxMessagesBodiesSizeToPrefetch);
 			this.ShowEmailAsTabName = Types.pBool(oAppDataMailWebclientSection.ShowEmailAsTabName, this.ShowEmailAsTabName);
+		}
+		
+		if (!_.isEmpty(oAppDataFetchersSection))
+		{
+			this.AllowFetchers = Types.pBool(oAppDataFetchersSection.AllowFetchers, this.AllowFetchers);
 		}
 		
 		App.registerUserAccountsCount(this.userMailAccountsCount);

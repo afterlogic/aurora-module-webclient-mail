@@ -48,14 +48,14 @@ function CFetcherModel()
  */
 CFetcherModel.prototype.parse = function (oData)
 {
-	this.id(Types.pInt(oData.IdFetcher));
+	this.id(Types.pInt(oData.EntityId));
 	this.accountId(Types.pInt(oData.IdAccount));
 	this.isEnabled(!!oData.IsEnabled);
 	this.isLocked(!!oData.IsLocked);
 	this.email(Types.pString(oData.Email));
 	this.userName(Types.pString(oData.Name));
 	this.folder(Types.pString(oData.Folder));
-	this.useSignature(!!oData.SignatureOptions);
+	this.useSignature(!!oData.UseSignature);
 	this.signature(Types.pString(oData.Signature));
 	this.incomingServer(Types.pString(oData.IncomingServer));
 	this.incomingPort(Types.pInt(oData.IncomingPort));

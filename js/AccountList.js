@@ -9,6 +9,7 @@ var
 	App = require('%PathToCoreWebclientModule%/js/App.js'),
 	MainTab = App.isNewTab() && window.opener ? window.opener.MainTabMailMethods : null,
 	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
+	CoreAjax = require('%PathToCoreWebclientModule%/js/Ajax.js'),
 	
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
@@ -166,7 +167,7 @@ CAccountListModel.prototype.getFetcherByHash = function(sHash)
 	_.each(this.collection(), function (oAccount) {
 		if (!oFetcher)
 		{
-			oFetcher = _.find(oAccount.fetchers() || [], function (oFtch) {
+			oFetcher = _.find(oAccount.fetchers() && oAccount.fetchers().collection() || [], function (oFtch) {
 				return oFtch.hash() === sHash;
 			});
 		}
@@ -311,7 +312,7 @@ CAccountListModel.prototype.populateFetchers = function ()
 {
 	if (Settings.AllowFetchers)
 	{
-		Ajax.send('GetFetchers', { 'AccountID': this.editedId() }, this.onGetFetchersResponse, this);
+		CoreAjax.send(Settings.FetchersServerModuleName, 'GetFetchers', { 'AccountID': this.editedId() }, this.onGetFetchersResponse, this);
 	}
 };
 
@@ -457,7 +458,7 @@ CAccountListModel.prototype.getAllFullEmails = function ()
 			if (oAccount.fetchers() && Types.isNonEmptyArray(oAccount.fetchers().collection()))
 			{
 				_.each(oAccount.fetchers().collection(), function (oFetcher) {
-					if (oFetcher.isOutgoingEnabled() && oFetcher.fullEmail() !== '')
+					if (oFetcher.isEnabled() && oFetcher.isOutgoingEnabled() && oFetcher.fullEmail() !== '')
 					{
 						aFullEmails.push(oFetcher.fullEmail());
 					}
