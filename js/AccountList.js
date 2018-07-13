@@ -16,7 +16,6 @@ var
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	
 	CAccountModel = require('modules/%ModuleName%/js/models/CAccountModel.js'),
-	CFetcherListModel = require('modules/%ModuleName%/js/models/CFetcherListModel.js'),
 	CFetcherModel = require('modules/%ModuleName%/js/models/CFetcherModel.js'),
 	CIdentityModel = require('modules/%ModuleName%/js/models/CIdentityModel.js')
 ;
