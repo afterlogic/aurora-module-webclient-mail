@@ -308,7 +308,6 @@ CCrea.prototype.editableSave = function ()
         sLastSaved = oLastSaved ? oLastSaved[0] : ''
     ;
 	
-//    if ($(sEditableHtml).text() !== $(sLastSaved).text())
     if (sEditableHtml !== sLastSaved)
     {
         this.clearRedo();
@@ -325,7 +324,6 @@ CCrea.prototype.editableUndo = function ()
         oCurrSaved = this.aEditableAreaHtml[this.iUndoRedoPosition],
         sCurrSaved = oCurrSaved ? oCurrSaved[0] : ''
     ;
-//    if ($(sEditableHtml).text() !== $(sCurrSaved).text())
     if (sEditableHtml !== sCurrSaved)
     {
         this.editableSave();
