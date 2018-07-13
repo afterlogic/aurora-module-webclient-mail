@@ -31,13 +31,10 @@ function CSenderSelector()
 			{
 				if (sId.indexOf('fetcher') === 0)
 				{
-					if (oAccount.fetchers())
-					{
-						sId = sId.replace('fetcher', '');
-						oFetcherOrIdentity = _.find(oAccount.fetchers().collection(), function (oFtchr) {
-							return oFtchr.id() === Types.pInt(sId);
-						});
-					}
+					sId = sId.replace('fetcher', '');
+					oFetcherOrIdentity = _.find(oAccount.fetchers(), function (oFetcher) {
+						return oFetcher.id() === Types.pInt(sId);
+					});
 				}
 				else
 				{
@@ -137,16 +134,13 @@ CSenderSelector.prototype.fillSenderList = function (oFetcherOrIdentity)
 			this.changeSelectedSender(oAccount.getDefaultIdentity());
 		}, this);
 
-		if (oAccount.fetchers())
-		{
-			_.each(oAccount.fetchers().collection(), function (oFetcher) {
-				var sFullEmail = oFetcher.fullEmail();
-				if (oFetcher.isEnabled() && oFetcher.isOutgoingEnabled() && sFullEmail.length > 0)
-				{
-					aSenderList.push({fullEmail: sFullEmail, id: 'fetcher' + oFetcher.id()});
-				}
-			}, this);
-		}
+		_.each(oAccount.fetchers(), function (oFetcher) {
+			var sFullEmail = oFetcher.fullEmail();
+			if (oFetcher.isEnabled() && oFetcher.isOutgoingEnabled() && sFullEmail.length > 0)
+			{
+				aSenderList.push({fullEmail: sFullEmail, id: 'fetcher' + oFetcher.id()});
+			}
+		}, this);
 		
 		if (oAccount.fetchersSubscribtion)
 		{

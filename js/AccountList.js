@@ -17,6 +17,7 @@ var
 	
 	CAccountModel = require('modules/%ModuleName%/js/models/CAccountModel.js'),
 	CFetcherListModel = require('modules/%ModuleName%/js/models/CFetcherListModel.js'),
+	CFetcherModel = require('modules/%ModuleName%/js/models/CFetcherModel.js'),
 	CIdentityModel = require('modules/%ModuleName%/js/models/CIdentityModel.js')
 ;
 
@@ -162,18 +163,18 @@ CAccountListModel.prototype.getIdentityByHash = function(sHash)
  */
 CAccountListModel.prototype.getFetcherByHash = function(sHash)
 {
-	var oFetcher = null;
+	var oFoundFetcher = null;
 	
 	_.each(this.collection(), function (oAccount) {
-		if (!oFetcher)
+		if (!oFoundFetcher)
 		{
-			oFetcher = _.find(oAccount.fetchers() && oAccount.fetchers().collection() || [], function (oFtch) {
-				return oFtch.hash() === sHash;
+			oFoundFetcher = _.find(oAccount.fetchers(), function (oFetcher) {
+				return oFetcher.hash() === sHash;
 			});
 		}
 	}, this);
 	
-	return oFetcher;
+	return oFoundFetcher;
 };
 
 /**
@@ -322,21 +323,26 @@ CAccountListModel.prototype.populateFetchers = function ()
  */
 CAccountListModel.prototype.onGetFetchersResponse = function (oResponse, oRequest)
 {
-	var
-		oFetcherList = null,
-		oEditedAccount = this.getEdited()
-	;
-
+	var oFetchers = {};
+	
 	if (Types.isNonEmptyArray(oResponse.Result))
 	{
-		oFetcherList = new CFetcherListModel();
-		oFetcherList.parse(oResponse.Result);
+		_.each(oResponse.Result, function (oData) {
+			var oFetcher = new CFetcherModel();
+			oFetcher.parse(oData);
+			if (!oFetchers[oFetcher.accountId()])
+			{
+				oFetchers[oFetcher.accountId()] = [];
+			}
+			oFetchers[oFetcher.accountId()].push(oFetcher);
+		});
 	}
 	
-	if (oEditedAccount)
-	{
-		oEditedAccount.fetchers(oFetcherList);
-	}
+	_.each(oFetchers, function (aFetchers, sAccountId) {
+		var oAccount = this.getAccount(Types.pInt(sAccountId));
+		oAccount.fetchers(aFetchers);
+	}.bind(this));
+	
 };
 
 /**
@@ -455,15 +461,12 @@ CAccountListModel.prototype.getAllFullEmails = function ()
 				aFullEmails.push(oAccount.fullEmail());
 			}
 			
-			if (oAccount.fetchers() && Types.isNonEmptyArray(oAccount.fetchers().collection()))
-			{
-				_.each(oAccount.fetchers().collection(), function (oFetcher) {
-					if (oFetcher.isEnabled() && oFetcher.isOutgoingEnabled() && oFetcher.fullEmail() !== '')
-					{
-						aFullEmails.push(oFetcher.fullEmail());
-					}
-				});
-			}
+			_.each(oAccount.fetchers(), function (oFetcher) {
+				if (oFetcher.isEnabled() && oFetcher.isOutgoingEnabled() && oFetcher.fullEmail() !== '')
+				{
+					aFullEmails.push(oFetcher.fullEmail());
+				}
+			});
 		}
 	});
 	
@@ -486,12 +489,9 @@ CAccountListModel.prototype.getCurrentFetchersAndFiltersFolderNames = function (
 			}, this);
 		}
 
-		if (oAccount.fetchers())
-		{
-			_.each(oAccount.fetchers().collection(), function (oFetcher) {
-				aFolders.push(oFetcher.folder());
-			}, this);
-		}
+		_.each(oAccount.fetchers(), function (oFetcher) {
+			aFolders.push(oFetcher.folder());
+		}, this);
 	}
 	
 	return aFolders;

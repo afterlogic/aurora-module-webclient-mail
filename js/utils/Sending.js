@@ -604,17 +604,14 @@ SendingUtils.getAccountFetchersIdentitiesList = function (oAccount)
 	
 	if (oAccount)
 	{
-		if (oAccount.fetchers())
-		{
-			_.each(oAccount.fetchers().collection(), function (oFtch) {
-				aList.push({
-					'email': oFtch.email(),
-					'name': oFtch.userName(),
-					'isDefault': false,
-					'result': oFtch
-				});
+		_.each(oAccount.fetchers(), function (oFetcher) {
+			aList.push({
+				'email': oFetcher.email(),
+				'name': oFetcher.userName(),
+				'isDefault': false,
+				'result': oFetcher
 			});
-		}
+		});
 		
 		_.each(oAccount.identities(), function (oIdnt) {
 			aList.push({

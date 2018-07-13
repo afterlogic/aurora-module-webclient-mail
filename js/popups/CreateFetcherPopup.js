@@ -30,6 +30,8 @@ function CCreateFetcherPopup()
 {
 	CAbstractPopup.call(this);
 	
+	this.iAccountId = 0;
+	
 	this.loading = ko.observable(false);
 	this.newFolderCreating = ko.observable(false);
 
@@ -57,8 +59,9 @@ _.extendOwn(CCreateFetcherPopup.prototype, CAbstractPopup.prototype);
 
 CCreateFetcherPopup.prototype.PopupTemplate = '%ModuleName%_Settings_CreateFetcherPopup';
 
-CCreateFetcherPopup.prototype.onOpen = function ()
+CCreateFetcherPopup.prototype.onOpen = function (iAccountId)
 {
+	this.iAccountId = iAccountId;
 	this.bShown = true;
 	this.populateOptions();
 	
@@ -94,7 +97,7 @@ CCreateFetcherPopup.prototype.save = function ()
 	{
 		var
 			oParameters = {
-				'AccountId': AccountList.editedId(),
+				'AccountId': this.iAccountId,
 				'Folder': this.folder(),
 				'IncomingServer': this.oIncoming.server(),
 				'IncomingPort': this.oIncoming.getIntPort(),

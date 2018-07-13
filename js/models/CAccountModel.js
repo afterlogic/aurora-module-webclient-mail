@@ -60,7 +60,7 @@ function CAccountModel(oData)
 	this.passwordSpecified = ko.observable(true);
 	
 	this.extensions = ko.observableArray([]);
-	this.fetchers = ko.observable(null);
+	this.fetchers = ko.observableArray([]);
 	this.identities = ko.observable(null);
 	this.autoresponder = ko.observable(null);
 	this.forward = ko.observable(null);
@@ -204,12 +204,11 @@ CAccountModel.prototype.getDefaultIdentity = function()
 CAccountModel.prototype.getFetchersIdentitiesEmails = function()
 {
 	var
-		aFetchers = this.fetchers() ? this.fetchers().collection() : [],
 		aIdentities = this.identities() || [],
 		aEmails = []
 	;
 	
-	_.each(aFetchers, function (oFetcher) {
+	_.each(this.fetchers(), function (oFetcher) {
 		aEmails.push(oFetcher.email());
 	});
 	
