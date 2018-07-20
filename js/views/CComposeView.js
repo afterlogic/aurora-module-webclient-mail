@@ -329,11 +329,15 @@ function CComposeView()
 		this.oHtmlEditor.setDisableEdit(bDisableBodyEdit);
 	}, this);
 	
+	this.disableAutosave = ko.observable(false);
+	// Autosave interval is automatically cleared when compose is not shown or message is sending/saving or 
+	// it's disabled by compose screen or one of controllers. After changins these parameters autosave
+	// interval might be started again.
 	if (Settings.AllowAutosaveInDrafts && Settings.AutoSaveIntervalSeconds > 0)
 	{
 		this.iAutosaveInterval = -1;
 		ko.computed(function () {
-			var bAllowAutosave = this.composeShown() && !this.sending() && !this.saving();
+			var bAllowAutosave = this.composeShown() && !this.sending() && !this.saving() && !this.disableAutosave() && !MailCache.disableComposeAutosave();
 			_.each(this.toolbarControllers(), function (oController) {
 				bAllowAutosave = bAllowAutosave && !(!!oController.disableAutosave && oController.disableAutosave());
 			});
@@ -1597,11 +1601,6 @@ CComposeView.prototype.executeSave = function (bAutosave, bWaitResponse)
 {
 	bAutosave = !!bAutosave;
 	bWaitResponse = (bWaitResponse === undefined) ? true : bWaitResponse;
-
-	if (bAutosave && MailCache.disableComposeAutosave())
-	{
-		return;
-	}
 
 	var
 		fOnSaveMessageResponse = bWaitResponse ? this.onSendOrSaveMessageResponse : SendingUtils.onSendOrSaveMessageResponse,

@@ -98,13 +98,13 @@ CComposePopup.prototype.onOpen = function (aParams)
 		;
 		
 		this.maximize();
-		if (this.shown())
+		if (this.shown() || bWasMinimized)
 		{
 			if (aParams.length > 0 && !bOpeningSameDraft)
 			{
 				if (this.hasUnsavedChanges())
 				{
-					this.stopAutosaveTimer();
+					this.disableAutosave(true);
 					Popups.showPopup(ConfirmAnotherMessageComposedPopup, [_.bind(function (sAnswer) {
 						switch (sAnswer)
 						{
@@ -121,7 +121,7 @@ CComposePopup.prototype.onOpen = function (aParams)
 							case Enums.AnotherMessageComposedAnswer.Cancel:
 								break;
 						}
-						this.startAutosaveTimer();
+						this.disableAutosave(false);
 					}, this)]);
 				}
 				else
