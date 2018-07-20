@@ -233,7 +233,6 @@ CFetcherIncomingSettingsFormView.prototype.remove = function ()
 	
 	if (oFetcher)
 	{
-		console.log('oFetcher', oFetcher);
 		Popups.showPopup(ConfirmPopup, [TextUtils.i18n('%MODULENAME%/CONFIRM_REMOVE_FETCHER'), fCallBack, oFetcher.incomingLogin()]);
 	}
 };

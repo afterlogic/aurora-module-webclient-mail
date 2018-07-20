@@ -129,8 +129,9 @@ CCreateFetcherPopup.prototype.onCreateFetcherResponse = function (oResponse, oRe
 	else
 	{
 		AccountList.populateFetchers();
-
 		this.closePopup();
+		
+		CoreAjax.send(Settings.FetchersServerModuleName, 'StartFirstPrefetch', { 'FetcherId': oResponse.Result }, null, null, 1);
 	}
 };
 

@@ -337,11 +337,10 @@ CAccountListModel.prototype.onGetFetchersResponse = function (oResponse, oReques
 		});
 	}
 	
-	_.each(oFetchers, function (aFetchers, sAccountId) {
-		var oAccount = this.getAccount(Types.pInt(sAccountId));
+	_.each(this.collection(), function (oAccount) {
+		var aFetchers = Types.isNonEmptyArray(oFetchers[oAccount.id()]) ? oFetchers[oAccount.id()] : [];
 		oAccount.fetchers(aFetchers);
-	}.bind(this));
-	
+	}, this);
 };
 
 /**
