@@ -219,7 +219,7 @@ SendingUtils.convertAttachmentsForSending = function (aAttachments)
 	_.each(aAttachments, function (oAttach) {
 		oAttachments[oAttach.tempName()] = [
 			oAttach.fileName(),
-			oAttach.cid(),
+			oAttach.linked() ? oAttach.cid() : '',
 			oAttach.inline() ? '1' : '0',
 			oAttach.linked() ? '1' : '0',
 			oAttach.contentLocation()
