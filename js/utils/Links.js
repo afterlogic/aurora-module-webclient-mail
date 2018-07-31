@@ -86,13 +86,15 @@ LinksUtils.getMailbox = function (sFolder, iPage, sUid, sSearch, sFilters, sCust
 };
 
 /**
- * @param {Array} aParams
+ * @param {Array} aParamsToParse
  * 
  * @return {Object}
  */
-LinksUtils.parseMailbox = function (aParams)
+LinksUtils.parseMailbox = function (aParamsToParse)
 {
 	var
+		bMailtoCompose = aParamsToParse.length > 0 && aParamsToParse[0] === 'compose' && aParamsToParse[1] === 'to',
+		aParams = bMailtoCompose ? [] : aParamsToParse,
 		sAccountHash = '',
 		sFolder = 'INBOX',
 		iPage = 1,
@@ -175,6 +177,7 @@ LinksUtils.parseMailbox = function (aParams)
 	}
 	
 	return {
+		'MailtoCompose': bMailtoCompose,
 		'AccountHash': sAccountHash,
 		'Folder': sFolder,
 		'Page': iPage,

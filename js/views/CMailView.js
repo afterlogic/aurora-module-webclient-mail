@@ -315,6 +315,12 @@ CMailView.prototype.onRoute = function (aParams)
 	{
 		this.messagePane().onRoute(aParams, oParams);
 	}
+	
+	if (oParams.MailtoCompose)
+	{
+		ComposeUtils.composeMessageToAddresses(aParams[2]);
+		Routing.replaceHash(LinksUtils.getMailbox());
+	}
 };
 
 CMailView.prototype.onShow = function ()

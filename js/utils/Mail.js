@@ -72,15 +72,15 @@ MailUtils.deleteMessages = function (aUids, fAfterDelete)
 
 MailUtils.registerMailto = function (bRegisterOnce)
 {
-	if (window.navigator && $.isFunction(window.navigator.registerProtocolHandler) && (!bRegisterOnce || Storage.getData('MailtoAsked') !== 1))
+	if (window.navigator && $.isFunction(window.navigator.registerProtocolHandler) && (!bRegisterOnce || Storage.getData('MailtoAsked') !== true))
 	{
 		window.navigator.registerProtocolHandler(
 			'mailto',
-			UrlUtils.getAppPath() + '#compose/to/%s',
+			UrlUtils.getAppPath() + '#mail/compose/to/%s',
 			UserSettings.SiteName !== '' ? UserSettings.SiteName : 'WebMail'
 		);
 
-		Storage.setData('MailtoAsked', 1);
+		Storage.setData('MailtoAsked', true);
 	}
 };
 
