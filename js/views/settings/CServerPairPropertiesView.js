@@ -42,39 +42,11 @@ function CServerPairPropertiesView(sPairId, bAdminEdit)
 			{
 				this.oLastEditableServer = new CServerModel(this.getParametersForSave());
 			}
-			this.name(oSelectedServer.sName);
-			this.oIncoming.set(oSelectedServer.sIncomingServer, oSelectedServer.iIncomingPort, oSelectedServer.bIncomingUseSsl);
-			this.oIncoming.isEnabled(this.bAdminEdit);
-			this.oOutgoing.set(oSelectedServer.sOutgoingServer, oSelectedServer.iOutgoingPort, oSelectedServer.bOutgoingUseSsl);
-			this.oOutgoing.isEnabled(this.bAdminEdit);
-			this.outgoingUseAuth(oSelectedServer.sSmtpAuthType === window.Enums.SmtpAuthType.UseUserCredentials);
-			this.outgoingUseAuth.enable(this.bAdminEdit);
-			this.domains(oSelectedServer.sDomains);
-			this.smtpAuthType(oSelectedServer.sSmtpAuthType);
-			this.smtpLogin(oSelectedServer.sSmtpLogin);
-			this.smtpPassword(oSelectedServer.sSmtpPassword);
-			this.enableSieve(oSelectedServer.bEnableSieve);
-			this.sievePort(oSelectedServer.iSievePort);
-			this.enableThreading(oSelectedServer.bEnableThreading);
-			this.useFullEmailAddressAsLogin(oSelectedServer.bUseFullEmailAddressAsLogin);
+			this.populate(oSelectedServer);
 		}
 		else
 		{
-			this.name(this.oLastEditableServer.sName);
-			this.oIncoming.set(this.oLastEditableServer.sIncomingServer, this.oLastEditableServer.iIncomingPort, this.oLastEditableServer.bIncomingUseSsl);
-			this.oIncoming.isEnabled(true);
-			this.oOutgoing.set(this.oLastEditableServer.sOutgoingServer, this.oLastEditableServer.iOutgoingPort, this.oLastEditableServer.bOutgoingUseSsl);
-			this.oOutgoing.isEnabled(true);
-			this.outgoingUseAuth(this.oLastEditableServer.sSmtpAuthType === window.Enums.SmtpAuthType.UseUserCredentials);
-			this.outgoingUseAuth.enable(true);
-			this.domains('');
-			this.smtpAuthType(window.Enums.SmtpAuthType.UseUserCredentials);
-			this.smtpLogin('');
-			this.smtpPassword('');
-			this.enableSieve(false);
-			this.sievePort(4190);
-			this.enableThreading(true);
-			this.useFullEmailAddressAsLogin(true);
+			this.populate(this.oLastEditableServer);
 		}
 		
 		this.setCurrentValues();
@@ -109,10 +81,53 @@ function CServerPairPropertiesView(sPairId, bAdminEdit)
 	{
 		this.aRequiredFields.unshift(this.name);
 	}
+	
+	this.setExternalAccessServers = ko.observable(false);
+	this.externalAccessImapServer = ko.observable(this.oIncoming.server());
+	this.externalAccessImapPort = ko.observable(this.oIncoming.port());
+	this.externalAccessSmtpServer = ko.observable(this.oOutgoing.server());
+	this.externalAccessSmtpPort = ko.observable(this.oOutgoing.port());
+	ko.computed(function () {
+		if (!this.setExternalAccessServers())
+		{
+			this.externalAccessImapServer(this.oIncoming.server());
+			this.externalAccessImapPort(this.oIncoming.port());
+			this.externalAccessSmtpServer(this.oOutgoing.server());
+			this.externalAccessSmtpPort(this.oOutgoing.port());
+		}
+	}, this);
 }
 
 CServerPairPropertiesView.prototype.ViewTemplate = '%ModuleName%_Settings_ServerPairPropertiesView';
 
+CServerPairPropertiesView.prototype.populate = function (oServer)
+{
+	this.setExternalAccessServers(oServer.bSetExternalAccessServers);
+	if (this.setExternalAccessServers())
+	{
+		this.externalAccessImapServer(oServer.sExternalAccessImapServer);
+		this.externalAccessImapPort(oServer.iExternalAccessImapPort);
+		this.externalAccessSmtpServer(oServer.sExternalAccessSmtpServer);
+		this.externalAccessSmtpPort(oServer.iExternalAccessSmtpPort);
+	}
+
+	this.name(oServer.sName);
+	this.oIncoming.set(oServer.sIncomingServer, oServer.iIncomingPort, oServer.bIncomingUseSsl);
+	this.oIncoming.isEnabled(this.bAdminEdit);
+	this.oOutgoing.set(oServer.sOutgoingServer, oServer.iOutgoingPort, oServer.bOutgoingUseSsl);
+	this.oOutgoing.isEnabled(this.bAdminEdit);
+	this.outgoingUseAuth(oServer.sSmtpAuthType === window.Enums.SmtpAuthType.UseUserCredentials);
+	this.outgoingUseAuth.enable(this.bAdminEdit);
+	this.domains(oServer.sDomains);
+	this.smtpAuthType(oServer.sSmtpAuthType);
+	this.smtpLogin(oServer.sSmtpLogin);
+	this.smtpPassword(oServer.sSmtpPassword);
+	this.enableSieve(oServer.bEnableSieve);
+	this.sievePort(oServer.iSievePort);
+	this.enableThreading(oServer.bEnableThreading);
+	this.useFullEmailAddressAsLogin(oServer.bUseFullEmailAddressAsLogin);
+},
+		
 CServerPairPropertiesView.prototype.init = function (bEmptyServerToEdit)
 {
 	if (!this.serversRetrieved())
@@ -198,7 +213,12 @@ CServerPairPropertiesView.prototype.setCurrentValues = function ()
 			this.enableSieve(),
 			this.sievePort(),
 			this.enableThreading(),
-			this.useFullEmailAddressAsLogin()
+			this.useFullEmailAddressAsLogin(),
+			this.setExternalAccessServers(),
+			this.externalAccessImapServer(),
+			this.externalAccessImapPort(),
+			this.externalAccessSmtpServer(),
+			this.externalAccessSmtpPort()
 		]
 	;
 	
@@ -228,13 +248,14 @@ CServerPairPropertiesView.prototype.getParametersForSave = function ()
 	var
 		iServerId = this.selectedServerId(),
 		iLastEditableServerId = this.oLastEditableServer.iId,
-		sSmtpAuthType = this.getSmtpAuthType()
+		sSmtpAuthType = this.getSmtpAuthType(),
+		oParameters = {}
 	;
 	if (iServerId === 0 && !_.find(this.servers(), function (oServer) { return iLastEditableServerId === oServer.iId; }))
 	{
 		iServerId = iLastEditableServerId;
 	}
-	return {
+	oParameters = {
 		'ServerId': iServerId,
 		'Name': this.bAdminEdit ? this.name() : this.oIncoming.server(),
 		'IncomingServer': this.oIncoming.server(),
@@ -250,8 +271,17 @@ CServerPairPropertiesView.prototype.getParametersForSave = function ()
 		'EnableSieve': this.enableSieve(),
 		'SievePort': this.sievePort(),
 		'EnableThreading': this.enableThreading(),
-		'UseFullEmailAddressAsLogin': this.useFullEmailAddressAsLogin()
+		'UseFullEmailAddressAsLogin': this.useFullEmailAddressAsLogin(),
+		'SetExternalAccessServers': this.setExternalAccessServers()
 	};
+	if (this.setExternalAccessServers())
+	{
+		oParameters['ExternalAccessImapServer'] = this.externalAccessImapServer();
+		oParameters['ExternalAccessImapPort'] = this.externalAccessImapPort();
+		oParameters['ExternalAccessSmtpServer'] = this.externalAccessSmtpServer();
+		oParameters['ExternalAccessSmtpPort'] = this.externalAccessSmtpPort();
+	}
+	return oParameters;
 };
 
 /**

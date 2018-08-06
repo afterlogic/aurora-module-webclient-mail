@@ -22,6 +22,11 @@ function CServerModel(oServer)
 	this.iSievePort = oServer && oServer.SievePort ? Types.pInt(oServer.SievePort) : 4190;
 	this.bEnableThreading = oServer ? !!oServer.EnableThreading : false;
 	this.bUseFullEmailAddressAsLogin = oServer ? !!oServer.UseFullEmailAddressAsLogin : true;
+	this.bSetExternalAccessServers = Types.pBool(oServer && oServer.SetExternalAccessServers, false);
+	this.sExternalAccessImapServer = Types.pString(oServer && oServer.ExternalAccessImapServer, '');
+	this.iExternalAccessImapPort = Types.pInt(oServer && oServer.ExternalAccessImapPort, 143);
+	this.sExternalAccessSmtpServer = Types.pString(oServer && oServer.ExternalAccessSmtpServer, '');
+	this.iExternalAccessSmtpPort = Types.pInt(oServer && oServer.ExternalAccessSmtpPort, 25);
 }
 
 module.exports = CServerModel;

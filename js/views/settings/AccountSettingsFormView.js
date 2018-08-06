@@ -91,6 +91,8 @@ function CAccountSettingsFormView()
 		}
 	}, this);
 	this.isDisableAuthorize = ko.observable(App.userAccountsCount() <= 1);
+	
+	this.oDefaultAccountHostsSettingsView = require('modules/%ModuleName%/js/views/DefaultAccountHostsSettingsView.js');
 }
 
 _.extendOwn(CAccountSettingsFormView.prototype, CAbstractSettingsFormView.prototype);

@@ -234,6 +234,18 @@ CAccountListModel.prototype.getAccount = function (iId)
 /**
  * @return {Object|undefined}
  */
+CAccountListModel.prototype.getDefault = function ()
+{
+	var oAccount = _.find(this.collection(), function (oAcct) {
+		return oAcct.bDefault;
+	}, this);
+	
+	return oAccount;
+};
+
+/**
+ * @return {Object|undefined}
+ */
 CAccountListModel.prototype.getCurrent = function ()
 {
 	return this.getAccount(this.currentId());

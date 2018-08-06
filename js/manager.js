@@ -219,6 +219,9 @@ module.exports = function (oAppData) {
 							item: HeaderItemView,
 							name: Settings.HashModuleName
 						};
+					},
+					getMobileSyncSettingsView: function () {
+						return require('modules/%ModuleName%/js/views/DefaultAccountHostsSettingsView.js');
 					}
 				});
 			}
