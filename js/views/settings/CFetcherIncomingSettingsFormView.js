@@ -59,6 +59,15 @@ function CFetcherIncomingSettingsFormView(oParent)
 	this.passwordIsSelected = ko.observable(false);
 
 	this.defaultOptionsAfterRender = Utils.defaultOptionsAfterRender;
+	
+	this.fetcherIntervalHint = ko.computed(function () {
+		var iCheckIntervalMinutes = this.fetcher() ? this.fetcher().iCheckIntervalMinutes : 0;
+		if (iCheckIntervalMinutes !== 0)
+		{
+			return TextUtils.i18n('%MODULENAME%/INFO_POP3_FETCHER_PLURAL', {'INTERVAL': iCheckIntervalMinutes}, null, iCheckIntervalMinutes);
+		}
+		return '';
+	}, this);
 }
 
 _.extendOwn(CFetcherIncomingSettingsFormView.prototype, CAbstractSettingsFormView.prototype);

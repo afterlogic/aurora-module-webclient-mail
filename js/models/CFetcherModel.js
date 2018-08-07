@@ -38,6 +38,8 @@ function CFetcherModel()
 	this.outgoingUseSsl = ko.observable(false);
 	this.outgoingUseAuth = ko.observable(false);
 	
+	this.iCheckIntervalMinutes = 0;
+	
 	this.fullEmail = ko.computed(function () {
 		return AddressUtils.getFullEmail(this.userName(), this.email());
 	}, this);
@@ -67,6 +69,7 @@ CFetcherModel.prototype.parse = function (oData)
 	this.outgoingPort(Types.pInt(oData.OutgoingPort));
 	this.outgoingUseSsl(!!oData.OutgoingUseSsl);
 	this.outgoingUseAuth(!!oData.OutgoingUseAuth);
+	this.iCheckIntervalMinutes = Types.pInt(oData.CheckInterval, 0);
 };
 
 module.exports = CFetcherModel;
