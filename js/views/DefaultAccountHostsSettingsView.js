@@ -16,13 +16,10 @@ function CDefaultAccountHostsSettingsView()
 {
 	this.defaultAccount = AccountList.getDefault();
 	this.visible = ko.observable(!!this.defaultAccount && this.defaultAccount.oServer.bSetExternalAccessServers);
-	if (this.visible())
-	{
-		this.externalAccessImapServer = ko.observable(this.defaultAccount.oServer.sExternalAccessImapServer);
-		this.externalAccessImapPort = ko.observable(this.defaultAccount.oServer.iExternalAccessImapPort);
-		this.externalAccessSmtpServer = ko.observable(this.defaultAccount.oServer.sExternalAccessSmtpServer);
-		this.externalAccessSmtpPort = ko.observable(this.defaultAccount.oServer.iExternalAccessSmtpPort);
-	}
+	this.externalAccessImapServer = ko.observable(this.visible() ? this.defaultAccount.oServer.sExternalAccessImapServer : '');
+	this.externalAccessImapPort = ko.observable(this.visible() ? this.defaultAccount.oServer.iExternalAccessImapPort : 143);
+	this.externalAccessSmtpServer = ko.observable(this.visible() ? this.defaultAccount.oServer.sExternalAccessSmtpServer : '');
+	this.externalAccessSmtpPort = ko.observable(this.visible() ? this.defaultAccount.oServer.iExternalAccessSmtpPort : 25);
 	this.credentialsHintText = App.mobileCredentialsHintText;
 	this.bDemo = UserSettings.IsDemo;
 }
