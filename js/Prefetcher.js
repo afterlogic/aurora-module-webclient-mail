@@ -12,7 +12,8 @@ var
 	MailCache = require('modules/%ModuleName%/js/Cache.js'),
 	
 	Prefetcher = {},
-	bFetchersIdentitiesPrefetched = false
+	bFetchersIdentitiesPrefetched = false,
+	bStarredMessageListPrefetched = false
 ;
 
 Prefetcher.prefetchFetchersIdentities = function ()
@@ -42,15 +43,23 @@ Prefetcher.prefetchStarredMessageList = function ()
 	var
 		oFolderList = MailCache.folderList(),
 		oInbox = oFolderList ? oFolderList.inboxFolder() : null,
-		oRes = null
+		oRes = null,
+		bRequestStarted = false
 	;
 
-	if (oInbox && !oInbox.hasChanges())
+	if (oInbox)
 	{
+		console.log('Flagged');
 		oRes = MailCache.requestMessageList(oInbox.fullName(), 1, '', Enums.FolderFilter.Flagged, false, false);
+		bRequestStarted = !!oRes && !!oRes.RequestStarted;
+	}
+	
+	if (!bStarredMessageListPrefetched)
+	{
+		bStarredMessageListPrefetched = bRequestStarted;
 	}
 
-	return oRes && oRes.RequestStarted;
+	return bRequestStarted;
 };
 
 Prefetcher.prefetchUnseenMessageList = function ()
@@ -61,7 +70,7 @@ Prefetcher.prefetchUnseenMessageList = function ()
 		oRes = null
 	;
 
-	if (oInbox && !oInbox.hasChanges())
+	if (oInbox && oInbox.hasChanges())
 	{
 		oRes = MailCache.requestMessageList(oInbox.fullName(), 1, '', Enums.FolderFilter.Unseen, false, false);
 	}
@@ -319,7 +328,9 @@ module.exports = {
 			bPrefetchStarted = Prefetcher.prefetchAccountFilters();
 		}
 		
-		if (!bPrefetchStarted)
+		// starred messages should be prefetched once (bStarredMessageListPrefetched flag is used for this)
+		// but prefetchStarredMessageList method can be called from outside and should be executed then
+		if (!bStarredMessageListPrefetched && !bPrefetchStarted)
 		{
 			bPrefetchStarted = Prefetcher.prefetchStarredMessageList();
 		}
@@ -351,7 +362,9 @@ module.exports = {
 			bPrefetchStarted = Prefetcher.startThreadListPrefetch();
 		}
 
-		if (!bPrefetchStarted)
+		// starred messages should be prefetched once (bStarredMessageListPrefetched flag is used for this)
+		// but prefetchStarredMessageList method can be called from outside and should be executed then
+		if (!bStarredMessageListPrefetched && !bPrefetchStarted)
 		{
 			bPrefetchStarted = Prefetcher.prefetchStarredMessageList();
 		}
