@@ -49,7 +49,6 @@ Prefetcher.prefetchStarredMessageList = function ()
 
 	if (oInbox)
 	{
-		console.log('Flagged');
 		oRes = MailCache.requestMessageList(oInbox.fullName(), 1, '', Enums.FolderFilter.Flagged, false, false);
 		bRequestStarted = !!oRes && !!oRes.RequestStarted;
 	}
