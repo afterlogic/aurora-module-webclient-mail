@@ -42,11 +42,51 @@ function CServerPairPropertiesView(sPairId, bAdminEdit)
 			{
 				this.oLastEditableServer = new CServerModel(this.getParametersForSave());
 			}
-			this.populate(oSelectedServer);
+			this.setExternalAccessServers(oSelectedServer.bSetExternalAccessServers);
+			this.externalAccessImapServer(oSelectedServer.sExternalAccessImapServer);
+			this.externalAccessImapPort(oSelectedServer.iExternalAccessImapPort);
+			this.externalAccessSmtpServer(oSelectedServer.sExternalAccessSmtpServer);
+			this.externalAccessSmtpPort(oSelectedServer.iExternalAccessSmtpPort);
+
+			this.name(oSelectedServer.sName);
+			this.oIncoming.set(oSelectedServer.sIncomingServer, oSelectedServer.iIncomingPort, oSelectedServer.bIncomingUseSsl);
+			this.oIncoming.isEnabled(this.bAdminEdit);
+			this.oOutgoing.set(oSelectedServer.sOutgoingServer, oSelectedServer.iOutgoingPort, oSelectedServer.bOutgoingUseSsl);
+			this.oOutgoing.isEnabled(this.bAdminEdit);
+			this.outgoingUseAuth(oSelectedServer.sSmtpAuthType === window.Enums.SmtpAuthType.UseUserCredentials);
+			this.outgoingUseAuth.enable(this.bAdminEdit);
+			this.domains(oSelectedServer.sDomains);
+			this.smtpAuthType(oSelectedServer.sSmtpAuthType);
+			this.smtpLogin(oSelectedServer.sSmtpLogin);
+			this.smtpPassword(oSelectedServer.sSmtpPassword);
+			this.enableSieve(oSelectedServer.bEnableSieve);
+			this.sievePort(oSelectedServer.iSievePort);
+			this.enableThreading(oSelectedServer.bEnableThreading);
+			this.useFullEmailAddressAsLogin(oSelectedServer.bUseFullEmailAddressAsLogin);
 		}
 		else
 		{
-			this.populate(this.oLastEditableServer);
+			this.setExternalAccessServers(this.oLastEditableServer.bSetExternalAccessServers);
+			this.externalAccessImapServer(this.oLastEditableServer.sExternalAccessImapServer);
+			this.externalAccessImapPort(this.oLastEditableServer.iExternalAccessImapPort);
+			this.externalAccessSmtpServer(this.oLastEditableServer.sExternalAccessSmtpServer);
+			this.externalAccessSmtpPort(this.oLastEditableServer.iExternalAccessSmtpPort);
+
+			this.name(this.oLastEditableServer.sName);
+			this.oIncoming.set(this.oLastEditableServer.sIncomingServer, this.oLastEditableServer.iIncomingPort, this.oLastEditableServer.bIncomingUseSsl);
+			this.oIncoming.isEnabled(true);
+			this.oOutgoing.set(this.oLastEditableServer.sOutgoingServer, this.oLastEditableServer.iOutgoingPort, this.oLastEditableServer.bOutgoingUseSsl);
+			this.oOutgoing.isEnabled(true);
+			this.outgoingUseAuth(this.oLastEditableServer.sSmtpAuthType === window.Enums.SmtpAuthType.UseUserCredentials);
+			this.outgoingUseAuth.enable(true);
+			this.domains('');
+			this.smtpAuthType(window.Enums.SmtpAuthType.UseUserCredentials);
+			this.smtpLogin('');
+			this.smtpPassword('');
+			this.enableSieve(false);
+			this.sievePort(4190);
+			this.enableThreading(true);
+			this.useFullEmailAddressAsLogin(true);
 		}
 		
 		this.setCurrentValues();
@@ -100,34 +140,6 @@ function CServerPairPropertiesView(sPairId, bAdminEdit)
 
 CServerPairPropertiesView.prototype.ViewTemplate = '%ModuleName%_Settings_ServerPairPropertiesView';
 
-CServerPairPropertiesView.prototype.populate = function (oServer)
-{
-	this.setExternalAccessServers(oServer.bSetExternalAccessServers);
-	if (this.setExternalAccessServers())
-	{
-		this.externalAccessImapServer(oServer.sExternalAccessImapServer);
-		this.externalAccessImapPort(oServer.iExternalAccessImapPort);
-		this.externalAccessSmtpServer(oServer.sExternalAccessSmtpServer);
-		this.externalAccessSmtpPort(oServer.iExternalAccessSmtpPort);
-	}
-
-	this.name(oServer.sName);
-	this.oIncoming.set(oServer.sIncomingServer, oServer.iIncomingPort, oServer.bIncomingUseSsl);
-	this.oIncoming.isEnabled(this.bAdminEdit);
-	this.oOutgoing.set(oServer.sOutgoingServer, oServer.iOutgoingPort, oServer.bOutgoingUseSsl);
-	this.oOutgoing.isEnabled(this.bAdminEdit);
-	this.outgoingUseAuth(oServer.sSmtpAuthType === window.Enums.SmtpAuthType.UseUserCredentials);
-	this.outgoingUseAuth.enable(this.bAdminEdit);
-	this.domains(oServer.sDomains);
-	this.smtpAuthType(oServer.sSmtpAuthType);
-	this.smtpLogin(oServer.sSmtpLogin);
-	this.smtpPassword(oServer.sSmtpPassword);
-	this.enableSieve(oServer.bEnableSieve);
-	this.sievePort(oServer.iSievePort);
-	this.enableThreading(oServer.bEnableThreading);
-	this.useFullEmailAddressAsLogin(oServer.bUseFullEmailAddressAsLogin);
-},
-		
 CServerPairPropertiesView.prototype.init = function (bEmptyServerToEdit)
 {
 	if (!this.serversRetrieved())
