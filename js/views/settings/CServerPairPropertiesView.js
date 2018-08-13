@@ -56,6 +56,7 @@ function CServerPairPropertiesView(sPairId, bAdminEdit)
 			this.outgoingUseAuth(oSelectedServer.sSmtpAuthType === window.Enums.SmtpAuthType.UseUserCredentials);
 			this.outgoingUseAuth.enable(this.bAdminEdit);
 			this.domains(oSelectedServer.sDomains);
+			this.allowEditDomains(oSelectedServer.bAllowEditDomains);
 			this.smtpAuthType(oSelectedServer.sSmtpAuthType);
 			this.smtpLogin(oSelectedServer.sSmtpLogin);
 			this.smtpPassword(oSelectedServer.sSmtpPassword);
@@ -80,6 +81,7 @@ function CServerPairPropertiesView(sPairId, bAdminEdit)
 			this.outgoingUseAuth(this.oLastEditableServer.sSmtpAuthType === window.Enums.SmtpAuthType.UseUserCredentials);
 			this.outgoingUseAuth.enable(true);
 			this.domains('');
+			this.allowEditDomains(true);
 			this.smtpAuthType(window.Enums.SmtpAuthType.UseUserCredentials);
 			this.smtpLogin('');
 			this.smtpPassword('');
@@ -100,8 +102,9 @@ function CServerPairPropertiesView(sPairId, bAdminEdit)
 	this.outgoingUseAuth = ko.observable(true);
 	this.outgoingUseAuth.enable = ko.observable(true);
 	this.domains = ko.observable('');
+	this.allowEditDomains = ko.observable(true);
 	this.name.focused.subscribe(function () {
-		if (!this.name.focused() && this.domains() === '')
+		if (this.allowEditDomains() && !this.name.focused() && this.domains() === '')
 		{
 			this.domains(this.name());
 		}
@@ -142,10 +145,6 @@ CServerPairPropertiesView.prototype.ViewTemplate = '%ModuleName%_Settings_Server
 
 CServerPairPropertiesView.prototype.init = function (bEmptyServerToEdit)
 {
-	if (!this.serversRetrieved())
-	{
-		this.requestServers();
-	}
 	this.setServer(bEmptyServerToEdit ? new CServerModel() : this.oLastEditableServer);
 };
 

@@ -102,6 +102,11 @@ CServersAdminSettingsPaneView.prototype.onRouteChild = function (aParams)
 	this.revert();
 };
 
+CServersAdminSettingsPaneView.prototype.onShow = function ()
+{
+	this.oServerPairPropertiesView.requestServers();
+};
+
 /**
  * Shows popup to confirm server deletion and sends request to delete on server.
  * @param {number} iId
@@ -121,7 +126,7 @@ CServersAdminSettingsPaneView.prototype.deleteServer = function (iId)
 			return oServer.iId === iId;
 		}, this))
 	;
-	if (oServerToDelete)
+	if (oServerToDelete && oServerToDelete.bAllowToDelete)
 	{
 		Popups.showPopup(ConfirmPopup, [TextUtils.i18n('%MODULENAME%/CONFIRM_REMOVE_SERVER'), fCallBack, oServerToDelete.sName]);
 	}

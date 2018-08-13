@@ -3,9 +3,9 @@
 	<input class="value input" spellcheck="false" type="text" maxlength="255"
 		   data-bind="value: name, hasfocus: name.focused, onEnter: save, valueUpdate: 'afterkeydown'"/>
 </div>
-<div class="row server" data-bind="visible: bAdminEdit" style="margin-bottom: 6px;">
+<div class="row server" data-bind="visible: bAdminEdit, css: {'disabled': !allowEditDomains()}" style="margin-bottom: 6px;">
 	<span class="label required" data-bind="i18n: {'key': '%MODULENAME%/LABEL_DOMAINS'}"></span>
-	<textarea class="input" data-bind="value: domains"></textarea>
+	<textarea class="input" data-bind="value: domains, enable: allowEditDomains"></textarea>
 </div>
 <div class="row hint" data-bind="visible: bAdminEdit">
 	<span class="label"></span>
