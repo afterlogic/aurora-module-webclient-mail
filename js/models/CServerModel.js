@@ -27,8 +27,8 @@ function CServerModel(oServer)
 	this.iExternalAccessImapPort = Types.pInt(oServer && oServer.ExternalAccessImapPort, 143);
 	this.sExternalAccessSmtpServer = Types.pString(oServer && oServer.ExternalAccessSmtpServer, '');
 	this.iExternalAccessSmtpPort = Types.pInt(oServer && oServer.ExternalAccessSmtpPort, 25);
-	this.bAllowToDelete = Types.pBool(oServer && oServer.AllowToDelete, false);
-	this.bAllowEditDomains = Types.pBool(oServer && oServer.AllowEditDomains, false);
+	this.bAllowToDelete = Types.pBool(oServer && oServer.AllowToDelete, true);
+	this.bAllowEditDomains = Types.pBool(oServer && oServer.AllowEditDomains, true);
 }
 
 module.exports = CServerModel;
