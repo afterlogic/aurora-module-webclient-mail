@@ -12,7 +12,7 @@ var
 module.exports = {
 	ServerModuleName: 'Mail',
 	HashModuleName: 'mail',
-	FetchersServerModuleName: 'MailSuite',
+	FetchersServerModuleName: 'MtaConnector',
 	
 	// from Mail module
 	AllowAddAccounts: false,
