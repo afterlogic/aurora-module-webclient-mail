@@ -93,9 +93,10 @@ CSignatureSettingsFormView.prototype.getParametersForSave = function ()
 	this.signature(this.oHtmlEditor.getText());
 	
 	var
-		oAccount = AccountList.getEdited(),
+		oEditAccount = AccountList.getEdited(),
+		iAccountId = this.fetcherOrIdentity() ? this.fetcherOrIdentity().accountId() : (oEditAccount ? oEditAccount.id() : 0),
 		oParameters = {
-			'AccountID': oAccount ? oAccount.id() : 0,
+			'AccountID': iAccountId,
 			'UseSignature': this.useSignatureRadio() === Enums.UseSignature.On,
 			'Signature': this.signature()
 		}
@@ -127,7 +128,7 @@ CSignatureSettingsFormView.prototype.applySavedValues = function (oParameters)
 	}
 	else if (!oParameters.IdentityId)
 	{
-		var oAccount = AccountList.getEdited();
+		var oAccount = AccountList.getAccount(oParameters.AccountID);
 		if (oAccount)
 		{
 			oAccount.useSignature(!!oParameters.UseSignature);
