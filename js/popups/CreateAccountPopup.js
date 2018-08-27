@@ -60,7 +60,7 @@ CCreateAccountPopup.prototype.init = function ()
 	this.incomingLogin.focused(false);
 	this.incomingPassword('');
 
-	this.oServerPairPropertiesView.init(false);
+	this.oServerPairPropertiesView.fullInit();
 };
 
 /**

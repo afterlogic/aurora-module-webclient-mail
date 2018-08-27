@@ -97,7 +97,7 @@ CServersAdminSettingsPaneView.prototype.onRouteChild = function (aParams)
 	this.createMode(bCreate);
 	this.editedServerId(iEditServerId);
 	
-	this.oServerPairPropertiesView.init(bCreate);
+	this.oServerPairPropertiesView.serverInit(bCreate);
 	
 	this.revert();
 };

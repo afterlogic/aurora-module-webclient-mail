@@ -143,9 +143,18 @@ function CServerPairPropertiesView(sPairId, bAdminEdit)
 
 CServerPairPropertiesView.prototype.ViewTemplate = '%ModuleName%_Settings_ServerPairPropertiesView';
 
-CServerPairPropertiesView.prototype.init = function (bEmptyServerToEdit)
+CServerPairPropertiesView.prototype.serverInit = function (bEmptyServerToEdit)
 {
 	this.setServer(bEmptyServerToEdit ? new CServerModel() : this.oLastEditableServer);
+};
+
+CServerPairPropertiesView.prototype.fullInit = function ()
+{
+	this.setServer(this.oLastEditableServer);
+	if (!this.serversRetrieved())
+	{
+		this.requestServers();
+	}
 };
 
 CServerPairPropertiesView.prototype.setServer = function (oServer)

@@ -101,7 +101,7 @@ CAccountSettingsFormView.prototype.ViewTemplate = '%ModuleName%_Settings_Account
 
 CAccountSettingsFormView.prototype.onShow = function ()
 {
-	this.oServerPairPropertiesView.init(false);
+	this.oServerPairPropertiesView.fullInit();
 	this.populate();
 };
 
