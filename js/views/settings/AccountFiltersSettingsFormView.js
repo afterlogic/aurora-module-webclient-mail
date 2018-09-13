@@ -61,7 +61,7 @@ function CAccountFiltersSettingsFormView()
 	
 	this.phaseArray = [''];
 	
-	_.each(TextUtils.i18n('%MODULENAME%/INFO_FILTER').split(/\s/), function (sItem) {
+	_.each(TextUtils.i18n('%MODULENAME%/INFO_FILTER').split(/,{0,1}\s/), function (sItem) {
 		var iIndex = this.phaseArray.length - 1;
 		if (sItem.substr(0,1) === '%' || this.phaseArray[iIndex].substr(-1,1) === '%')
 		{
