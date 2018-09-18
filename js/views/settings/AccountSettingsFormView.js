@@ -81,7 +81,7 @@ function CAccountSettingsFormView()
 		var oAccount = AccountList.getEdited();
 		if (oAccount)
 		{	
-			this.allowChangePassword(!!ChangePasswordPopup && (AccountList.collection().length > 1 || Settings.AllowAddAccounts));
+			this.allowChangePassword(!!ChangePasswordPopup);
 			this.isDefaultAccount(oAccount.bDefault);
 		}
 		else
