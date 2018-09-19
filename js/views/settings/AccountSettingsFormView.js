@@ -80,8 +80,8 @@ function CAccountSettingsFormView()
 	ko.computed(function () {
 		var oAccount = AccountList.getEdited();
 		if (oAccount)
-		{	
-			this.allowChangePassword(!!ChangePasswordPopup);
+		{
+			this.allowChangePassword(ModulesManager.run('ChangePasswordWebclient', 'isChangePasswordButtonAllowed', [AccountList.collection().length, oAccount]));
 			this.isDefaultAccount(oAccount.bDefault);
 		}
 		else
