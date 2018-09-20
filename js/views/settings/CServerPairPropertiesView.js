@@ -9,6 +9,8 @@ var
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	ValidationUtils = require('%PathToCoreWebclientModule%/js/utils/Validation.js'),
 	
+	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
+	
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
 	
 	CServerModel = require('modules/%ModuleName%/js/models/CServerModel.js'),
@@ -203,6 +205,10 @@ CServerPairPropertiesView.prototype.requestServers = function ()
 				this.setServerId(this.iEditedServerId);
 				this.iEditedServerId = 0;
 			}
+		}
+		else
+		{
+			Api.showErrorByCode(oResponse);
 		}
 	}, this);
 };
