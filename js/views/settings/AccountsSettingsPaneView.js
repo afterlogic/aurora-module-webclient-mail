@@ -153,6 +153,28 @@ function CAccountsSettingsPaneView()
 CAccountsSettingsPaneView.prototype.ViewTemplate = '%ModuleName%_Settings_AccountsSettingsPaneView';
 
 /**
+ * Checks if there are changes in accounts settings pane.
+ * @returns {Boolean}
+ */
+CAccountsSettingsPaneView.prototype.hasUnsavedChanges = function ()
+{
+	var oCurrentTab = this.currentTab();
+	return oCurrentTab && oCurrentTab.view && _.isFunction(oCurrentTab.view.hasUnsavedChanges) && oCurrentTab.view.hasUnsavedChanges();
+};
+
+/**
+ * Reverts all changes in accounts settings pane.
+ */
+CAccountsSettingsPaneView.prototype.revert = function ()
+{
+	var oCurrentTab = this.currentTab();
+	if (oCurrentTab && oCurrentTab.view && _.isFunction(oCurrentTab.view.revert))
+	{
+		oCurrentTab.view.revert();
+	}
+};
+
+/**
  * @param {Function} fAfterHideHandler
  * @param {Function} fRevertRouting
  */
