@@ -118,7 +118,7 @@ function CMessagePaneView()
 	this.visibleShowPicturesLink = ko.observable(false);
 	
 	this.visibleConfirmationControl = ko.computed(function () {
-		return (this.currentMessage() && this.currentMessage().readingConfirmationAddressee() !== '');
+		return (this.currentMessage() && this.currentMessage().readingConfirmationAddressee() !== '' && this.currentMessage() && this.currentMessage().readingConfirmationAddressee() !== AccountList.getEmail());
 	}, this);
 	
 	this.isCurrentNotDraftOrSent = ko.computed(function () {
