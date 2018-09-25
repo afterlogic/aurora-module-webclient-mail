@@ -77,6 +77,9 @@ function CAccountModel(oData)
 	this.extensionsRequested = ko.observable(true);
 	
 	this.bDefault = Settings.AllowDefaultAccountForUser && this.email() === App.getUserPublicId();
+	App.subscribeEvent('NeedQuotaRequest', _.bind(function () {
+		this.updateQuotaParams();
+	}, this));
 }
 
 CAccountModel.prototype.threadingIsAvailable = function ()
