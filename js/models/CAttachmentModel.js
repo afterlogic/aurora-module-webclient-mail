@@ -7,7 +7,6 @@ var
 	
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
-	UrlUtils = require('%PathToCoreWebclientModule%/js/utils/Url.js'),
 	
 	App = require('%PathToCoreWebclientModule%/js/App.js'),
 	WindowOpener = require('%PathToCoreWebclientModule%/js/WindowOpener.js'),
@@ -219,6 +218,7 @@ CAttachmentModel.prototype.parseFromUpload = function (oData, sMessageFolder, sM
 
 CAttachmentModel.prototype.parseActions = function (oData)
 {
+	this.thumbUrlInQueue(Types.pString(oData.ThumbnailUrl) !== '' ? Types.pString(oData.ThumbnailUrl) + '/' + Math.random() : '');
 	this.commonParseActions(oData);
 	
 	if (this.isMessageType())
@@ -238,6 +238,10 @@ CAttachmentModel.prototype.parseActions = function (oData)
 		{
 			this.actions(_.without(this.actions(), 'view'));
 		}
+	}
+	else
+	{
+		this.commonExcludeActions();
 	}
 	
 	App.broadcastEvent('%ModuleName%::ParseFile::after', this);
