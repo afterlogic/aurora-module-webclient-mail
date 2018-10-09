@@ -1549,10 +1549,16 @@ CMailCache.prototype.onMoveMessagesResponse = function (oResponse, oRequest)
 	
 	if (oResult === false)
 	{
-		oDiffs = oFolder.revertDeleted(oParameters.Uids.split(','));
+		if (oFolder)
+		{
+			oDiffs = oFolder.revertDeleted(oParameters.Uids.split(','));
+		}
 		if (oToFolder)
 		{
-			oToFolder.addMessagesCountsDiff(-oDiffs.PlusDiff, -oDiffs.UnseenPlusDiff);
+			if (oDiffs)
+			{
+				oToFolder.addMessagesCountsDiff(-oDiffs.PlusDiff, -oDiffs.UnseenPlusDiff);
+			}
 			if (oResponse.ErrorCode === Enums.MailErrors.CannotMoveMessageQuota && (bToFolderTrash || bToFolderSpam))
 			{
 				if (Types.isNonEmptyString(oResponse.ErrorMessage))
@@ -1572,7 +1578,7 @@ CMailCache.prototype.onMoveMessagesResponse = function (oResponse, oRequest)
 		}
 		bFillMessages = true;
 	}
-	else
+	else if (oFolder)
 	{
 		oFolder.commitDeleted(oParameters.Uids.split(','));
 		_.each(oParameters.Uids.split(','), function (sUid) {
@@ -1580,7 +1586,7 @@ CMailCache.prototype.onMoveMessagesResponse = function (oResponse, oRequest)
 		});
 	}
 	
-	if (sCurrFolderFullName === oFolder.fullName() || oToFolder && sCurrFolderFullName === oToFolder.fullName())
+	if (oFolder && sCurrFolderFullName === oFolder.fullName() || oToFolder && sCurrFolderFullName === oToFolder.fullName())
 	{
 		oCurrFolder.markHasChanges();
 		switch (this.uidList().filters())
@@ -1598,7 +1604,7 @@ CMailCache.prototype.onMoveMessagesResponse = function (oResponse, oRequest)
 				break;
 		}
 	}
-	else if (sCurrFolderFullName !== oFolder.fullName())
+	else if (oFolder && sCurrFolderFullName !== oFolder.fullName())
 	{
 		this.requirePrefetcher();
 		Prefetcher.startFolderPrefetch(oFolder);
