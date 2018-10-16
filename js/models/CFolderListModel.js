@@ -107,7 +107,7 @@ CFolderListModel.prototype.getTotalMessageCount = function ()
 CFolderListModel.prototype.getFoldersWithoutCountInfo = function ()
 {
 	var aFolders = _.compact(_.map(this.oNamedCollection, function(oFolder, sFullName) {
-		if (oFolder.bCanBeSelected && !oFolder.hasExtendedInfo())
+		if (oFolder.canBeSelected() && !oFolder.hasExtendedInfo())
 		{
 			return sFullName;
 		}
@@ -128,7 +128,7 @@ CFolderListModel.prototype.setCurrentFolder = function (sFolderFullName, sFilter
 		oFolder = this.getFolderByFullName(sFolderFullName)
 	;
 	
-	if (oFolder === null)
+	if (oFolder === null || !oFolder.canBeSelected())
 	{
 		oFolder = this.inboxFolder();
 	}
@@ -393,7 +393,7 @@ CFolderListModel.prototype.getOptions = function (sFirstItem, bEnableSystem, bHi
 				'fullName': oFolder.fullName(),
 				'displayName': sPrefix + oFolder.name(),
 				'translatedDisplayName': sPrefix + oFolder.displayName(),
-				'disable': !bEnableSystem && oFolder.isSystem() || !bIgnoreCanBeSelected && !oFolder.bCanBeSelected
+				'disable': !bEnableSystem && oFolder.isSystem() || !bIgnoreCanBeSelected && !oFolder.canBeSelected()
 			});
 		}
 	});

@@ -829,22 +829,22 @@ CFolderModel.prototype.initComputedFields = function ()
 	}, this);
 	
 	this.visible = ko.computed(function () {
-		return this.subscribed() || this.isSystem() || (this.hasSubscribedSubfolders() && (!this.bExists || !this.bSelectable));
+		return this.subscribed() || this.isSystem() || this.hasSubscribedSubfolders();
 	}, this);
 
-	this.bCanBeSelected = this.bExists && this.bSelectable;
+	this.canBeSelected = ko.computed(function () {
+		return this.bExists && this.bSelectable && this.subscribed();
+	}, this);
 	
 	this.canSubscribe = ko.computed(function () {
-		return !this.isSystem() && this.bCanBeSelected;
+		return !this.isSystem() && this.bExists && this.bSelectable;
 	}, this);
 	
 	this.canDelete = ko.computed(function () {
 		return (!this.isSystem() && this.hasExtendedInfo() && this.messageCount() === 0 && this.subfolders().length === 0);
 	}, this);
 
-	this.canRename = ko.computed(function () {
-		return (this.bCanBeSelected && !this.isSystem());
-	}, this);
+	this.canRename = this.canSubscribe;
 
 	this.subscribeButtonHint = ko.computed(function () {
 		if (this.canSubscribe())

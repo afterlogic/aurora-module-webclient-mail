@@ -1,14 +1,14 @@
 <!-- ko if: visible -->
 	<div data-bind="visible: visible(),
 		 css: 'item folder-level' + (iLevel + 1) + ' ' + name() + (selected() ? ' selected' : '') + 
-					(bSelectable ? ' canSelect' : ' canNotSelect') + (bExists ? ' exists' : '') + 
+					(canBeSelected() ? ' canSelect' : ' canNotSelect') + (bExists ? ' exists' : '') + 
 					(subscribed() ? ' subscribed' : '') + (isSystem() ? ' system' : ' user') + 
 					(virtualEmpty() ? ' virtualEmpty' : '') + (subfolders().length !== 0 ? ' accordion' : '') + 
 					(expanded() ? ' expanded' : ' collapsed')">
 		<a class="title" href="javascript: void(0);" data-bind="
 			css: {'recivedAnim': recivedAnim()},
 			attr: {href: routingHash},
-			visible: bCanBeSelected,
+			visible: canBeSelected(),
 			droppable: {valueFunc: bVirtual ? false : function (oEvent, oUi) { $root.messagesDrop($data, oEvent, oUi); }, switchObserv: selected}
 		">
 			<span class="count" data-bind="visible: messageCountToShow() > 0, text: messageCountToShow(),
@@ -19,7 +19,7 @@
 				<span class="text animGoal" data-bind="text: displayName"></span>
 			</span>
 		</a>
-		<span class="title" data-bind="visible: !bCanBeSelected">
+		<span class="title" data-bind="visible: !canBeSelected()">
 			<span class="count" data-bind="visible: messageCountToShow() > 0, text: messageCountToShow(),
 			  css: {'unseen': showUnseenMessages}"></span>
 			<span class="name">
