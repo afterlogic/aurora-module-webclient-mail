@@ -220,8 +220,7 @@ function CMessagePaneView()
 		return this.notInlineAttachments().length > 1;
 	}, this);
 	this.visibleExtendedDownload = ko.computed(function () {
-		return !App.isMobile() && (this.visibleDownloadAllAttachmentsSeparately() 
-				|| this.allAttachmentsDownloadMethods().length > 0);
+		return this.visibleDownloadAllAttachmentsSeparately() || this.allAttachmentsDownloadMethods().length > 0;
 	}, this);
 	App.broadcastEvent('%ModuleName%::AddAllAttachmentsDownloadMethod', _.bind(function (oMethod) {
 		this.allAttachmentsDownloadMethods.push(oMethod);
