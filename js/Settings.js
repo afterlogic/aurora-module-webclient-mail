@@ -26,6 +26,7 @@ module.exports = {
 	AllowInsertImage: true,
 	AllowMultiAccounts: false,
 	AutoSaveIntervalSeconds: 60,
+	IgnoreImapSubscription: false,
 	ImageUploadSizeLimit: 0,
 	
 	// from MailWebclient module
@@ -70,6 +71,7 @@ module.exports = {
 			this.AllowInsertImage = Types.pBool(oAppDataMailSection.AllowInsertImage, this.AllowInsertImage);
 			this.AllowMultiAccounts = Types.pBool(oAppDataMailSection.AllowMultiAccounts, this.AllowMultiAccounts);
 			this.AutoSaveIntervalSeconds = Types.pNonNegativeInt(oAppDataMailSection.AutoSaveIntervalSeconds, this.AutoSaveIntervalSeconds);
+			this.IgnoreImapSubscription = Types.pBool(oAppDataMailSection.IgnoreImapSubscription, this.IgnoreImapSubscription);
 			this.ImageUploadSizeLimit = Types.pNonNegativeInt(oAppDataMailSection.ImageUploadSizeLimit, this.ImageUploadSizeLimit);
 			window.Enums.SmtpAuthType = Types.pObject(oAppDataMailSection.SmtpAuthType);
 		}

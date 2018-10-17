@@ -2,7 +2,7 @@
 	 visible: !bVirtual">
 	<span class="title">
 		<span class="controls">
-			<span class="button subscribe" data-bind="customTooltip: subscribeButtonHint(), 
+			<span class="button subscribe" data-bind="customTooltip: subscribeButtonHint(), visible: !bIgnoreImapSubscription,
 				css: {'subscribed': subscribed(), 'disabled': !canSubscribe()}, click: onSubscribeClick"></span>
 			<span class="button disabled" data-bind="customTooltip: deleteButtonHint(), 
 				css: {'delete': !isSystem() && bSelectable, 'disabled': !canDelete()}, click: onDeleteClick"></span>

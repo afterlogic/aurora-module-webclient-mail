@@ -38,6 +38,8 @@ function CFolderModel(iAccountId)
 	this.bNamespace = false;
 	this.iLevel = 0;
 
+	this.bIgnoreImapSubscription = Settings.IgnoreImapSubscription;
+	
 	/** From server **/
 	this.sDelimiter = '';
 	this.bExists = true;
@@ -708,7 +710,7 @@ CFolderModel.prototype.parse = function (oData, sParentFullName, sNamespaceFolde
 		}
 		this.bNamespace = (sNamespaceFolder === this.fullName());
 		
-		this.subscribed(oData.IsSubscribed);
+		this.subscribed(Settings.IgnoreImapSubscription ? true : oData.IsSubscribed);
 		this.bSelectable = oData.IsSelectable;
 		this.bExists = oData.Exists;
 		
@@ -837,7 +839,7 @@ CFolderModel.prototype.initComputedFields = function ()
 	}, this);
 	
 	this.canSubscribe = ko.computed(function () {
-		return !this.isSystem() && this.bExists && this.bSelectable;
+		return !Settings.IgnoreImapSubscription && !this.isSystem() && this.bExists && this.bSelectable;
 	}, this);
 	
 	this.canDelete = ko.computed(function () {
