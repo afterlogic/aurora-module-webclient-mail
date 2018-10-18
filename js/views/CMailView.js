@@ -170,8 +170,18 @@ CMailView.prototype.setCustomPreviewPane = function (sModuleName, oPreviewPane)
 {
 	if (this.messagePane().__customModuleName !== sModuleName)
 	{
+		if (_.isFunction(this.messagePane().onHide))
+		{
+			this.messagePane().onHide();
+		}
+		
 		oPreviewPane.__customModuleName = sModuleName;
 		this.messagePane(oPreviewPane);
+		
+		if (_.isFunction(this.messagePane().onShow))
+		{
+			this.messagePane().onShow();
+		}
 	}
 };
 
@@ -179,7 +189,17 @@ CMailView.prototype.removeCustomPreviewPane = function (sModuleName)
 {
 	if (this.messagePane().__customModuleName === sModuleName)
 	{
+		if (_.isFunction(this.messagePane().onHide))
+		{
+			this.messagePane().onHide();
+		}
+		
 		this.messagePane(this.oBaseMessagePaneView);
+		
+		if (_.isFunction(this.messagePane().onShow))
+		{
+			this.messagePane().onShow();
+		}
 	}
 };
 
