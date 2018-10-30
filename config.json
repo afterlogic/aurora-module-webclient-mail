@@ -1,6 +1,6 @@
 {
 	"AllowAppRegisterMailto": [
-		false,
+		true,
 		"bool"
 	],
 	"AllowChangeInputDirection": [
