@@ -24,6 +24,7 @@ Enums.FolderTypes = {
 	'Trash': 5,
 	'Virus': 6,
 	'Starred': 7,
+	'Template': 8,
 	'System': 9,
 	'User': 10
 };

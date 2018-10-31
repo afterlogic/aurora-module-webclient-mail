@@ -39,6 +39,8 @@ function CFolderModel(iAccountId)
 	this.iLevel = 0;
 
 	this.bIgnoreImapSubscription = Settings.IgnoreImapSubscription;
+	this.bAllowTemplateFolders = Settings.AllowTemplateFolders;
+	this.isTemplateStorage = ko.observable();
 	
 	/** From server **/
 	this.sDelimiter = '';
@@ -704,10 +706,15 @@ CFolderModel.prototype.parse = function (oData, sParentFullName, sNamespaceFolde
 		this.sDelimiter = oData.Delimiter;
 		
 		iType = Types.pInt(oData.Type);
+		if (!Settings.AllowTemplateFolders && iType === Enums.FolderTypes.Template)
+		{
+			iType = Enums.FolderTypes.User;
+		}
 		if (Settings.AllowSpamFolder || iType !== Enums.FolderTypes.Spam)
 		{
-			this.type(oData.Type);
+			this.type(iType);
 		}
+		this.isTemplateStorage(this.type() === Enums.FolderTypes.Template);
 		this.bNamespace = (sNamespaceFolder === this.fullName());
 		
 		this.subscribed(Settings.IgnoreImapSubscription ? true : oData.IsSubscribed);
@@ -848,6 +855,18 @@ CFolderModel.prototype.initComputedFields = function ()
 
 	this.canRename = this.canSubscribe;
 
+	this.visibleTemplateTrigger = ko.computed(function () {
+		return Settings.AllowTemplateFolders && (this.bSelectable && !this.isSystem() || this.isTemplateStorage());
+	}, this);
+
+	this.templateButtonHint = ko.computed(function () {
+		if (Settings.AllowTemplateFolders)
+		{
+			return this.isTemplateStorage() ? TextUtils.i18n('%MODULENAME%/ACTION_TURN_TEMPLATE_FOLDER_OFF') : TextUtils.i18n('%MODULENAME%/ACTION_TURN_TEMPLATE_FOLDER_ON');
+		}
+		return '';
+	}, this);
+	
 	this.subscribeButtonHint = ko.computed(function () {
 		if (this.canSubscribe())
 		{
@@ -1261,6 +1280,42 @@ CFolderModel.prototype.onResponseFolderRename = function (oResponse, oRequest)
 	{
 		var oFolderList = MailCache.editedFolderList();
 		oFolderList.renameFolder(this.fullName(), oResponse.Result.FullName, oResponse.Result.FullNameHash);
+	}
+};
+
+CFolderModel.prototype.triggerTemplateState = function ()
+{
+	if (Settings.AllowTemplateFolders)
+	{
+		if (this.isTemplateStorage())
+		{
+			this.type(Enums.FolderTypes.User);
+			this.isTemplateStorage(false);
+		}
+		else
+		{
+			this.type(Enums.FolderTypes.Template);
+			this.isTemplateStorage(true);
+		}
+		MailCache.changeTemplateFolder(this.fullName(), this.isTemplateStorage());
+
+		var
+			oParameters = {
+				'FolderFullName': this.fullName(),
+				'SetTemplate': this.isTemplateStorage()
+			}
+		;
+
+		Ajax.send('SetTemplateFolderType', oParameters, this.onSetTemplateFolderType, this);
+	}
+};
+
+CFolderModel.prototype.onSetTemplateFolderType = function (oResponse)
+{
+	if (!oResponse.Result)
+	{
+		Api.showErrorByCode(oResponse, TextUtils.i18n('%MODULENAME%/ERROR_SETUP_SPECIAL_FOLDERS'));
+		MailCache.getFolderList(AccountList.editedId());
 	}
 };
 

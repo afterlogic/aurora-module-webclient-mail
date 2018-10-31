@@ -223,6 +223,9 @@ function CComposeView()
 		}
 	}, this);
 
+    this.templateUid = ko.observable('');
+	this.templateFolderName = ko.observable(MailCache.getTemplateFolder());
+	
 	this.draftUid = ko.observable('');
 	this.draftUid.subscribe(function () {
 		MailCache.editedDraftUid(this.draftUid());
@@ -354,6 +357,7 @@ function CComposeView()
 	this.backToListCommand = Utils.createCommand(this, this.executeBackToList);
 	this.sendCommand = Utils.createCommand(this, this.executeSend, this.isEnableSending);
 	this.saveCommand = Utils.createCommand(this, this.executeSaveCommand, this.isEnableSaving);
+	this.saveTemplateCommand = Utils.createCommand(this, this.executeTemplateSaveCommand, this.isEnableSaving);
 
 	this.messageFields = ko.observable(null);
 	this.bottomPanel = ko.observable(null);
@@ -559,6 +563,8 @@ CComposeView.prototype.reset = function ()
 	window.clearTimeout(this.iUploadAttachmentsTimer);
 	this.messageUploadAttachmentsStarted(false);
 
+	this.templateUid('');
+	this.templateFolderName(MailCache.getTemplateFolder());
 	this.draftUid('');
 	this.draftInfo.removeAll();
 	this.setDataFromMessage(new CMessageModel());
@@ -824,7 +830,15 @@ CComposeView.prototype.onMessageResponse = function (oMessage)
 				break;
 
 			case 'drafts':
-				this.draftUid(oMessage.uid());
+				if (-1 !== $.inArray(oMessage.folder(), App.MailCache.getCurrentTemplateFolders()))
+				{
+					this.templateUid(oMessage.uid());
+					this.templateFolderName(oMessage.folder());
+				}
+				else
+				{
+	                this.draftUid(oMessage.uid());
+				}
 				this.setDataFromMessage(oMessage);
 				break;
 		}
@@ -1205,6 +1219,8 @@ CComposeView.prototype.setAttachTepmNameByHash = function (sHash, sTempName)
  */
 CComposeView.prototype.setMessageDataInNewTab = function (oParameters)
 {
+	this.templateUid(oParameters.templateUid);
+	this.templateFolderName(oParameters.templateFolderName);
 	this.draftInfo(oParameters.draftInfo);
 	this.draftUid(oParameters.draftUid);
 	this.inReplyTo(oParameters.inReplyTo);
@@ -1445,8 +1461,9 @@ CComposeView.prototype.initUploader = function ()
 
 /**
  * @param {boolean} bRemoveSignatureAnchor
+ * @param {boolean} bSaveTemplate
  */
-CComposeView.prototype.getSendSaveParameters = function (bRemoveSignatureAnchor)
+CComposeView.prototype.getSendSaveParameters = function (bRemoveSignatureAnchor, bSaveTemplate)
 {
 	var
 		oAttachments = SendingUtils.convertAttachmentsForSending(this.attachments()),
@@ -1483,6 +1500,12 @@ CComposeView.prototype.getSendSaveParameters = function (bRemoveSignatureAnchor)
 		}
 	});
 	
+	if (this.templateFolderName() !== '' && bSaveTemplate)
+	{
+		oParameters.DraftFolder = this.templateFolderName();
+		oParameters.DraftUid = this.templateUid();
+	}
+	
 	return oParameters;
 };
 
@@ -1502,10 +1525,17 @@ CComposeView.prototype.onSendOrSaveMessageResponse = function (oResponse, oReque
 	switch (oResData.Method)
 	{
 		case 'SaveMessage':
-			if (oResData.Result && oParameters.DraftUid === this.draftUid())
+            if (oResData.Result && oRequest.DraftUid === this.templateUid() && oRequest.DraftFolder === this.templateFolderName())
+            {
+				this.templateUid(Types.pString(oResData.NewUid));
+                if (this instanceof CComposeView)// it is screen, not popup
+                {
+					Routing.replaceHashDirectly(LinksUtils.getComposeFromMessage('drafts', oParameters.DraftFolder, this.templateUid()));
+                }
+            }
+			else if (oResData.Result && oParameters.DraftUid === this.draftUid())
 			{
 				this.draftUid(Types.pString(oResData.NewUid));
-				
 				if (this instanceof CComposeView)// it is screen, not popup
 				{
 					Routing.replaceHashDirectly(LinksUtils.getComposeFromMessage('drafts', oParameters.DraftFolder, this.draftUid()));
@@ -1593,14 +1623,21 @@ CComposeView.prototype.executeSaveCommand = function ()
 	this.executeSave(false);
 };
 
+CComposeView.prototype.executeTemplateSaveCommand = function ()
+{
+    this.executeSave(false, true, true);
+};
+
 /**
  * @param {boolean=} bAutosave = false
  * @param {boolean=} bWaitResponse = true
+ * @param {boolean=} bSaveTemplate = false
  */
-CComposeView.prototype.executeSave = function (bAutosave, bWaitResponse)
+CComposeView.prototype.executeSave = function (bAutosave, bWaitResponse, bSaveTemplate)
 {
 	bAutosave = !!bAutosave;
 	bWaitResponse = (bWaitResponse === undefined) ? true : bWaitResponse;
+	bSaveTemplate = !!bSaveTemplate;
 
 	var
 		fOnSaveMessageResponse = bWaitResponse ? this.onSendOrSaveMessageResponse : SendingUtils.onSendOrSaveMessageResponse,
@@ -1609,7 +1646,7 @@ CComposeView.prototype.executeSave = function (bAutosave, bWaitResponse)
 			if (bSave)
 			{
 				this.saving(bWaitResponse);
-				SendingUtils.send('SaveMessage', this.getSendSaveParameters(false), !bAutosave, fOnSaveMessageResponse, oContext);
+				SendingUtils.send('SaveMessage', this.getSendSaveParameters(false, bSaveTemplate), !bAutosave, fOnSaveMessageResponse, oContext);
 			}
 		}, this),
 		bCancelSaving = false
@@ -1697,6 +1734,8 @@ CComposeView.prototype.getMessageDataForNewTab = function ()
 
 	oParameters = {
 		accountId: this.senderAccountId(),
+        templateUid: this.templateUid(),
+		templateFolderName: this.templateFolderName(),
 		draftInfo: this.draftInfo(),
 		draftUid: this.draftUid(),
 		inReplyTo: this.inReplyTo(),
@@ -1743,6 +1782,11 @@ CComposeView.prototype.openInNewWindow = function ()
 		sHash = Routing.buildHashFromArray(LinksUtils.getComposeFromMessage('drafts', MailCache.folderList().draftsFolderFullName(), this.draftUid(), true));
 		oWin = WindowOpener.openTab('?message-newtab' + sHash);
 	}
+    else if (this.templateUid().length > 0 && !this.isChanged())
+    {
+		sHash = Routing.buildHashFromArray(LinksUtils.getComposeFromMessage('drafts', this.templateFolderName(), this.templateUid(), true));
+		oWin = WindowOpener.openTab('?message-newtab' + sHash);
+    }
 	else if (!this.isChanged())
 	{
 		if (this.routeParams().length > 0)
@@ -1796,6 +1840,12 @@ CComposeView.prototype.registerOwnToolbarControllers = function ()
 		sId: 'save',
 		bAllowMobile: true,
 		saveCommand: this.saveCommand
+	});
+	this.registerToolbarController({
+		ViewTemplate: '%ModuleName%_Compose_SaveTemplateButtonView',
+		sId: 'save-template',
+		bAllowMobile: false,
+		saveTemplateCommand: this.saveTemplateCommand
 	});
 	this.registerToolbarController({
 		ViewTemplate: '%ModuleName%_Compose_ImportanceDropdownView',

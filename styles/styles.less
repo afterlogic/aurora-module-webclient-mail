@@ -6,3 +6,21 @@
 @import "./desktop/settings.less";
 @import "./desktop/buttons.less";
 @import "./desktop/table-compressor.less";
+
+.settings .folders .controls .button {
+	&.template {
+		&:before {
+			content: "\e630";
+		}
+
+		&.turned-on {
+			&:before {
+				content: "\e62f";
+			}
+		}
+	}
+}
+
+.folders .item .icon.type8:before {
+	content: "\e62f";
+}

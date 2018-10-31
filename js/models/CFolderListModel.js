@@ -61,6 +61,7 @@ function CFolderListModel()
 	this.draftsFolder = ko.observable(null);
 	this.spamFolder = ko.observable(null);
 	this.trashFolder = ko.observable(null);
+	this.aTemplateFolders = [];
 	
 	this.countsCompletelyFilled = ko.observable(false);
 
@@ -181,6 +182,21 @@ CFolderListModel.prototype.renameFolder = function (sFullName, sNewFullName, sNe
 	this.oNamedCollection[sFullName] = undefined;
 };
 
+CFolderListModel.prototype.changeTemplateFolder = function (sFolderName, bTemplate)
+{
+	if (Settings.AllowTemplateFolders)
+	{
+		if (bTemplate)
+		{
+			this.aTemplateFolders.push(sFolderName);
+		}
+		else
+		{
+			this.aTemplateFolders = _.without(this.aTemplateFolders, sFolderName);
+		}
+	}
+};
+
 /**
  * Calls a recursive parsing of the folder tree.
  * 
@@ -282,6 +298,9 @@ CFolderListModel.prototype.parseRecursively = function (aRawCollection, oNamedFo
 					break;
 				case Enums.FolderTypes.Spam:
 					this.spamFolder(oFolder);
+					break;
+				case Enums.FolderTypes.Template:
+					this.aTemplateFolders.push(oFolder.fullName());
 					break;
 			}
 

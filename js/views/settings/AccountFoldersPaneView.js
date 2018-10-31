@@ -17,7 +17,8 @@ var
 	
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
-	MailCache = require('modules/%ModuleName%/js/Cache.js')
+	MailCache = require('modules/%ModuleName%/js/Cache.js'),
+	Settings = require('modules/%ModuleName%/js/Settings.js')
 ;
 
 require('modules/%ModuleName%/js/vendors/knockout-sortable.js');
@@ -27,6 +28,8 @@ require('modules/%ModuleName%/js/vendors/knockout-sortable.js');
  */ 
 function CAccountFoldersPaneView()
 {
+	this.bAllowTemplateFolders = Settings.AllowTemplateFolders;
+	
 	this.highlighted = ko.observable(false).extend({'autoResetToFalse': 500});
 
 	this.collection = ko.observableArray(MailCache.editedFolderList().collection());

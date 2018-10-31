@@ -1742,6 +1742,43 @@ CMailCache.prototype.clearMessagesCache = function (iAccountId)
 	}
 };
 
+
+CMailCache.prototype.getTemplateFolder = function ()
+{
+	var
+		oFolderList = this.folderList(),
+		sFolder = '',
+		sCurrentFolder = oFolderList.currentFolder() ? oFolderList.currentFolder().fullName() : ''
+	;
+	if (Types.isNonEmptyArray(this.getCurrentTemplateFolders()))
+	{
+		if (-1 !== $.inArray(sCurrentFolder, this.getCurrentTemplateFolders()))
+		{
+			sFolder = sCurrentFolder;
+		}
+		else
+		{
+			sFolder = _.find(this.getCurrentTemplateFolders(), function (sTempFolder) {
+				return !!oFolderList.oNamedCollection[sTempFolder];
+			});
+		}
+	}
+	return typeof(sFolder) === 'string' ? sFolder : '';
+};
+
+CMailCache.prototype.getCurrentTemplateFolders = function ()
+{
+	return Settings.AllowTemplateFolders ? this.folderList().aTemplateFolders : [];
+};
+
+CMailCache.prototype.changeTemplateFolder = function (sFolderName, bTemplate)
+{
+	if (Settings.AllowTemplateFolders)
+	{
+		this.folderList().changeTemplateFolder(sFolderName, bTemplate);
+	}
+};
+
 var MailCache = new CMailCache();
 
 Pulse.registerDayOfMonthFunction(_.bind(MailCache.changeDatesInMessages, MailCache));
