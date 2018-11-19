@@ -21,14 +21,15 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 	 * 
 	 * @ignore
 	 */
-	public function init() {
-		$this->extendObject(
-			'Aurora\Modules\Core\Classes\User', 
-			array(
+	public function init() 
+	{
+		\Aurora\Modules\Core\Classes\User::extend(
+			self::GetName(),
+			[
 				'AllowChangeInputDirection'	=> array('bool', $this->getConfig('AllowChangeInputDirection', false)),
 				'MailsPerPage'				=> array('int', $this->getConfig('MailsPerPage', 20)),
-			)
-		);
+			]
+		);		
 		
 		$this->subscribeEvent('Mail::UpdateSettings::after', array($this, 'onAfterUpdateSettings'));
 	}
@@ -55,13 +56,13 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 		$oUser = \Aurora\System\Api::getAuthenticatedUser();
 		if ($oUser && $oUser->Role === \Aurora\System\Enums\UserRole::NormalUser)
 		{
-			if (isset($oUser->{$this->GetName().'::AllowChangeInputDirection'}))
+			if (isset($oUser->{self::GetName().'::AllowChangeInputDirection'}))
 			{
-				$aSettings['AllowChangeInputDirection'] = $oUser->{$this->GetName().'::AllowChangeInputDirection'};
+				$aSettings['AllowChangeInputDirection'] = $oUser->{self::GetName().'::AllowChangeInputDirection'};
 			}
-			if (isset($oUser->{$this->GetName().'::MailsPerPage'}))
+			if (isset($oUser->{self::GetName().'::MailsPerPage'}))
 			{
-				$aSettings['MailsPerPage'] = $oUser->{$this->GetName().'::MailsPerPage'};
+				$aSettings['MailsPerPage'] = $oUser->{self::GetName().'::MailsPerPage'};
 			}
 		}
 		
@@ -80,11 +81,11 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 				$oCoreDecorator = \Aurora\Modules\Core\Module::Decorator();
 				if (isset($Args['MailsPerPage']))
 				{
-					$oUser->{$this->GetName().'::MailsPerPage'} = $Args['MailsPerPage'];
+					$oUser->{self::GetName().'::MailsPerPage'} = $Args['MailsPerPage'];
 				}
 				if (isset($Args['AllowChangeInputDirection']))
 				{
-					$oUser->{$this->GetName().'::AllowChangeInputDirection'} = $Args['AllowChangeInputDirection'];
+					$oUser->{self::GetName().'::AllowChangeInputDirection'} = $Args['AllowChangeInputDirection'];
 				}
 				return $oCoreDecorator->UpdateUserObject($oUser);
 			}
