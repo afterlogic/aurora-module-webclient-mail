@@ -92,7 +92,10 @@ SendingUtils.send = function (sMethod, oParameters, bShowLoading, fSendMessageRe
 			break;
 		case 'SaveMessage':
 			sLoadingMessage = TextUtils.i18n('%MODULENAME%/INFO_SAVING');
-			oParameters.DraftFolder = sDraftFolder;
+			if (typeof oParameters.DraftFolder === 'undefined')
+			{
+				oParameters.DraftFolder = sDraftFolder;
+			}
 			MailCache.savingDraftUid(oParameters.DraftUid);
 			if (MainTab)
 			{
@@ -256,14 +259,28 @@ SendingUtils.onSendOrSaveMessageResponse = function (oResponse, oRequest, bRequi
 			{
 				if (oParameters.ShowReport)
 				{
-					Api.showErrorByCode(oResponse, TextUtils.i18n('%MODULENAME%/ERROR_MESSAGE_SAVING'));
+					if (-1 !== $.inArray(oRequest.Parameters.DraftFolder, MailCache.getCurrentTemplateFolders()))
+					{
+						Api.showErrorByCode(oResponse, TextUtils.i18n('%MODULENAME%/ERROR_TEMPLATE_SAVING'));
+					}
+					else
+					{
+						Api.showErrorByCode(oResponse, TextUtils.i18n('%MODULENAME%/ERROR_MESSAGE_SAVING'));
+					}
 				}
 			}
 			else
 			{
 				if (oParameters.ShowReport && !bRequiresPostponedSending)
 				{
-					Screens.showReport(TextUtils.i18n('%MODULENAME%/REPORT_MESSAGE_SAVED'));
+					if (-1 !== $.inArray(oRequest.Parameters.DraftFolder, MailCache.getCurrentTemplateFolders()))
+					{
+						Screens.showReport(TextUtils.i18n('%MODULENAME%/REPORT_TEMPLATE_SAVED'));
+					}
+					else
+					{
+						Screens.showReport(TextUtils.i18n('%MODULENAME%/REPORT_MESSAGE_SAVED'));
+					}
 				}
 
 				if (!oResponse.Result.NewUid)

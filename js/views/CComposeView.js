@@ -357,6 +357,7 @@ function CComposeView()
 	this.backToListCommand = Utils.createCommand(this, this.executeBackToList);
 	this.sendCommand = Utils.createCommand(this, this.executeSend, this.isEnableSending);
 	this.saveCommand = Utils.createCommand(this, this.executeSaveCommand, this.isEnableSaving);
+	this.visibleSaveTemplateControl = ko.observable(false);
 	this.saveTemplateCommand = Utils.createCommand(this, this.executeTemplateSaveCommand, this.isEnableSaving);
 
 	this.messageFields = ko.observable(null);
@@ -553,6 +554,8 @@ CComposeView.prototype.onShow = function ()
 	{
 		this.oJua.setDragAndDropEnabledStatus(true);
 	}
+	
+	this.visibleSaveTemplateControl(MailCache.getCurrentTemplateFolders().length > 0);
 };
 
 CComposeView.prototype.reset = function ()
@@ -830,7 +833,7 @@ CComposeView.prototype.onMessageResponse = function (oMessage)
 				break;
 
 			case 'drafts':
-				if (-1 !== $.inArray(oMessage.folder(), App.MailCache.getCurrentTemplateFolders()))
+				if (-1 !== $.inArray(oMessage.folder(), MailCache.getCurrentTemplateFolders()))
 				{
 					this.templateUid(oMessage.uid());
 					this.templateFolderName(oMessage.folder());
@@ -1845,6 +1848,7 @@ CComposeView.prototype.registerOwnToolbarControllers = function ()
 		ViewTemplate: '%ModuleName%_Compose_SaveTemplateButtonView',
 		sId: 'save-template',
 		bAllowMobile: false,
+		visible: this.visibleSaveTemplateControl,
 		saveTemplateCommand: this.saveTemplateCommand
 	});
 	this.registerToolbarController({

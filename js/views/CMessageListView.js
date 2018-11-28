@@ -405,6 +405,7 @@ CMessageListView.prototype.onMessageDblClick = function (oMessage)
 	{
 		var
 			oFolder = this.folderList().getFolderByFullName(oMessage.folder()),
+			bTemplateFolder = -1 !== $.inArray(oMessage.folder(), MailCache.getCurrentTemplateFolders()),
 			oParams = { Message: oMessage, Cancel: false }
 		;
 		
@@ -412,7 +413,7 @@ CMessageListView.prototype.onMessageDblClick = function (oMessage)
 
 		if (!oParams.Cancel)
 		{
-			if (oFolder.type() === Enums.FolderTypes.Drafts)
+			if (oFolder.type() === Enums.FolderTypes.Drafts || bTemplateFolder)
 			{
 				ComposeUtils.composeMessageFromDrafts(oMessage.folder(), oMessage.uid());
 			}
