@@ -1082,11 +1082,15 @@ CMailCache.prototype.setCurrentMessage = function (sUid, sFolder)
 /**
  * @param {Object} oMessage
  * @param {string} sUid
+ * @param {Object} oResponse
  */
-CMailCache.prototype.onCurrentMessageResponse = function (oMessage, sUid)
+CMailCache.prototype.onCurrentMessageResponse = function (oMessage, sUid, oResponse)
 {
 	var sCurrentUid = this.currentMessage() ? this.currentMessage().uid() : '';
-	
+	if (oMessage === null && MainTab && oResponse)
+	{
+		Api.showErrorByCode(oResponse, '', true);
+	}
 	if (oMessage === null && sCurrentUid === sUid)
 	{
 		this.currentMessage(null);

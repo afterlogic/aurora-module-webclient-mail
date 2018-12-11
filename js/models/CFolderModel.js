@@ -930,7 +930,8 @@ CFolderModel.prototype.onGetMessageResponse = function (oResponse, oRequest)
 		oHand = null,
 		sUid = oResult ? oResult.Uid.toString() : oParameters.Uid.toString(),
 		oMessage = this.oMessages[sUid],
-		bSelected = oMessage ? oMessage.selected() : false
+		bSelected = oMessage ? oMessage.selected() : false,
+		bPassResponse = false
 	;
 	
 	if (!oResult)
@@ -942,6 +943,7 @@ CFolderModel.prototype.onGetMessageResponse = function (oResponse, oRequest)
 		}
 		
 		oMessage = null;
+		bPassResponse = true;
 	}
 	else
 	{
@@ -951,7 +953,7 @@ CFolderModel.prototype.onGetMessageResponse = function (oResponse, oRequest)
 	oHand = this.aResponseHandlers[sUid];
 	if (oHand)
 	{
-		oHand.handler.call(oHand.context, oMessage, sUid);
+		oHand.handler.call(oHand.context, oMessage, sUid, bPassResponse ? oResponse : null);
 		delete this.aResponseHandlers[sUid];
 	}
 };
