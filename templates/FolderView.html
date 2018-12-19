@@ -11,8 +11,12 @@
 			visible: canBeSelected(),
 			droppable: {valueFunc: bVirtual ? false : function (oEvent, oUi) { $root.messagesDrop($data, oEvent, oUi); }, switchObserv: selected}
 		">
-			<span class="count" data-bind="visible: messageCountToShow() > 0, text: messageCountToShow(),
-				  css: {'unseen': showUnseenMessages}, click: executeUnseenFilter, customTooltip: unseenMessagesTitle()"></span>
+			<!-- ko if: showMessagesCount -->
+				<!-- .count:first-child css selector is used here so this span should not always be rendered -->
+				<span class="count total" data-bind="text: messageCount"></span>
+			<!-- /ko -->
+			<span class="count unseen" data-bind="visible: showUnseenMessagesCount, text: unseenMessagesCountToShow,
+				  click: executeUnseenFilter, customTooltip: '%MODULENAME%/ACTION_SHOW_UNREAD_MESSAGES'"></span>
 			<span class="name">
 				<span class="icon" data-bind="css: 'type' + type() + ' ' + name()"></span>
 				<span class="collapse_handler" data-bind="visible: canExpand, css: {'expanded': expanded(), 'collapsed': !expanded()}, click: onAccordion"></span>
@@ -20,8 +24,10 @@
 			</span>
 		</a>
 		<span class="title" data-bind="visible: !canBeSelected()">
-			<span class="count" data-bind="visible: messageCountToShow() > 0, text: messageCountToShow(),
-			  css: {'unseen': showUnseenMessages}"></span>
+			<!-- ko if: showMessagesCount -->
+			<span class="count total" data-bind="text: messageCount"></span>
+			<!-- /ko -->
+			<span class="count unseen" data-bind="visible: showUnseenMessagesCount, text: unseenMessagesCountToShow"></span>
 			<span class="name">
 				<span class="icon" data-bind="css: 'type' + type()"></span>
 				<span class="collapse_handler" data-bind="visible: canExpand, css: {'expanded': expanded(), 'collapsed': !expanded()}, click: onAccordion"></span>

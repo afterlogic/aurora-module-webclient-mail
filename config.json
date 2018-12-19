@@ -50,5 +50,9 @@
 	"ShowEmailAsTabName": [
 		true,
 		"bool"
+	],
+	"AllowShowMessagesCountInFolderList": [
+		false,
+		"bool"
 	]
 }

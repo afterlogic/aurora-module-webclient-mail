@@ -797,10 +797,6 @@ CFolderModel.prototype.initComputedFields = function ()
 		return this.type() !== Enums.FolderTypes.User;
 	}, this);
 
-	this.showUnseenMessages = ko.computed(function () {
-		return this.type() !== Enums.FolderTypes.Drafts;
-	}, this);
-	
 	this.withoutThreads = ko.computed(function () {
 		return	this.type() === Enums.FolderTypes.Drafts || 
 				this.type() === Enums.FolderTypes.Spam ||
@@ -829,15 +825,16 @@ CFolderModel.prototype.initComputedFields = function ()
 		return !this.bNamespace && this.hasSubscribedSubfolders();
 	}, this);
 	
-	this.messageCountToShow = ko.computed(function () {
-		if (!App.isMobile() && this.canExpand())
-		{
-			return (this.showUnseenMessages()) ? this.unseenMessageCount() + this.subfoldersMessagesCount() : this.messageCount();
-		}
-		else
-		{
-			return (this.showUnseenMessages()) ? this.unseenMessageCount() : this.messageCount();
-		}
+	this.unseenMessagesCountToShow = ko.computed(function () {
+		return (!App.isMobile() && this.canExpand()) ? this.unseenMessageCount() + this.subfoldersMessagesCount() : this.unseenMessageCount();
+	}, this);
+	
+	this.showUnseenMessagesCount = ko.computed(function () {
+		return this.unseenMessagesCountToShow() > 0 && this.type() !== Enums.FolderTypes.Drafts;
+	}, this);
+	
+	this.showMessagesCount = ko.computed(function () {
+		return this.messageCount() > 0 && (this.type() === Enums.FolderTypes.Drafts || Settings.AllowShowMessagesCountInFolderList && Settings.showMessagesCountInFolderList());
 	}, this);
 	
 	this.visible = ko.computed(function () {
@@ -926,10 +923,6 @@ CFolderModel.prototype.initComputedFields = function ()
 				return TextUtils.i18n('%MODULENAME%/LABEL_FOLDER_SPAM');
 		}
 		return this.name();
-	}, this);
-	
-	this.unseenMessagesTitle = ko.computed(function () {
-		return this.showUnseenMessages() ? TextUtils.i18n('%MODULENAME%/ACTION_SHOW_UNREAD_MESSAGES') : '';
 	}, this);
 };
 
@@ -1148,12 +1141,12 @@ CFolderModel.prototype.executeUnseenFilter = function ()
 {
 	var bNotChanged = false;
 	
-	if (this.messageCountToShow() > this.unseenMessageCount())
+	if (this.unseenMessagesCountToShow() > this.unseenMessageCount())
 	{
 		this.onAccordion();
 	}
 	
-	if (this.showUnseenMessages() && this.unseenMessageCount() > 0)
+	if (this.unseenMessageCount() > 0)
 	{
 		this.requireMailCache();
 		MailCache.waitForUnseenMessages(true);

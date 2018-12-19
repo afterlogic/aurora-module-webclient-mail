@@ -26,8 +26,9 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 		\Aurora\Modules\Core\Classes\User::extend(
 			self::GetName(),
 			[
-				'AllowChangeInputDirection'	=> array('bool', $this->getConfig('AllowChangeInputDirection', false)),
-				'MailsPerPage'				=> array('int', $this->getConfig('MailsPerPage', 20)),
+				'AllowChangeInputDirection'		=> array('bool', $this->getConfig('AllowChangeInputDirection', false)),
+				'MailsPerPage'					=> array('int', $this->getConfig('MailsPerPage', 20)),
+				'ShowMessagesCountInFolderList'	=> array('bool', $this->getConfig('ShowMessagesCountInFolderList', false)),
 			]
 		);		
 		
@@ -50,7 +51,8 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			'JoinReplyPrefixes' => $this->getConfig('JoinReplyPrefixes', false),
 			'MailsPerPage' => $this->getConfig('MailsPerPage', 20),
 			'MaxMessagesBodiesSizeToPrefetch' => $this->getConfig('MaxMessagesBodiesSizeToPrefetch', 50000),
-			'ShowEmailAsTabName' => $this->getConfig('ShowEmailAsTabName', true)
+			'ShowEmailAsTabName' => $this->getConfig('ShowEmailAsTabName', true),
+			'AllowShowMessagesCountInFolderList' => $this->getConfig('AllowShowMessagesCountInFolderList', false),
 		);
 		
 		$oUser = \Aurora\System\Api::getAuthenticatedUser();
@@ -63,6 +65,10 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			if (isset($oUser->{self::GetName().'::MailsPerPage'}))
 			{
 				$aSettings['MailsPerPage'] = $oUser->{self::GetName().'::MailsPerPage'};
+			}
+			if (isset($oUser->{self::GetName().'::ShowMessagesCountInFolderList'}))
+			{
+				$aSettings['ShowMessagesCountInFolderList'] = $oUser->{self::GetName().'::ShowMessagesCountInFolderList'};
 			}
 		}
 		
@@ -86,6 +92,10 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 				if (isset($Args['AllowChangeInputDirection']))
 				{
 					$oUser->{self::GetName().'::AllowChangeInputDirection'} = $Args['AllowChangeInputDirection'];
+				}
+				if (isset($Args['ShowMessagesCountInFolderList']))
+				{
+					$oUser->{self::GetName().'::ShowMessagesCountInFolderList'} = $Args['ShowMessagesCountInFolderList'];
 				}
 				return $oCoreDecorator->UpdateUserObject($oUser);
 			}

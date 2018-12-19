@@ -44,6 +44,8 @@ module.exports = {
 	MailsPerPage: 20,
 	MaxMessagesBodiesSizeToPrefetch: 50000,
 	ShowEmailAsTabName: true,
+	AllowShowMessagesCountInFolderList: false,
+	showMessagesCountInFolderList: ko.observable(false),
 	
 	userMailAccountsCount: ko.observable(0),
 	mailAccountsEmails: ko.observableArray([]),
@@ -94,6 +96,8 @@ module.exports = {
 			this.MailsPerPage = Types.pPositiveInt(oAppDataMailWebclientSection.MailsPerPage, this.MailsPerPage);
 			this.MaxMessagesBodiesSizeToPrefetch = Types.pNonNegativeInt(oAppDataMailWebclientSection.MaxMessagesBodiesSizeToPrefetch, this.MaxMessagesBodiesSizeToPrefetch);
 			this.ShowEmailAsTabName = Types.pBool(oAppDataMailWebclientSection.ShowEmailAsTabName, this.ShowEmailAsTabName);
+			this.AllowShowMessagesCountInFolderList = Types.pBool(oAppDataMailWebclientSection.AllowShowMessagesCountInFolderList, this.AllowShowMessagesCountInFolderList);
+			this.showMessagesCountInFolderList(Types.pBool(oAppDataMailWebclientSection.ShowMessagesCountInFolderList, this.showMessagesCountInFolderList()));
 		}
 		
 		if (!_.isEmpty(oAppDataFetchersSection))
@@ -111,12 +115,14 @@ module.exports = {
 	 * @param {number} iMailsPerPage
 	 * @param {boolean} bAllowAutosaveInDrafts
 	 * @param {boolean} bAllowChangeInputDirection
+	 * @param {boolean} bShowMessagesCountInFolderList
 	 */
-	update: function (iMailsPerPage, bAllowAutosaveInDrafts, bAllowChangeInputDirection)
+	update: function (iMailsPerPage, bAllowAutosaveInDrafts, bAllowChangeInputDirection, bShowMessagesCountInFolderList)
 	{
 		this.AllowAutosaveInDrafts = Types.pBool(bAllowAutosaveInDrafts, this.AllowAutosaveInDrafts);
 		
 		this.AllowChangeInputDirection = Types.pBool(bAllowChangeInputDirection, this.AllowChangeInputDirection);
 		this.MailsPerPage = Types.pPositiveInt(iMailsPerPage, this.MailsPerPage);
+		this.showMessagesCountInFolderList(Types.pBool(bShowMessagesCountInFolderList, this.showMessagesCountInFolderList()));
 	}
 };

@@ -24,12 +24,14 @@ function CMailSettingsFormView()
 
 	this.bRtl = UserSettings.IsRTL;
 	this.bAllowMailto = Settings.AllowAppRegisterMailto && (Browser.firefox || Browser.chrome);
+	this.bAllowShowMessagesCountInFolderList = Settings.AllowShowMessagesCountInFolderList;
 	
 	this.mailsPerPageValues = ko.observableArray(Types.getAdaptedPerPageList(Settings.MailsPerPage));
 	
 	this.mailsPerPage = ko.observable(Settings.MailsPerPage);
 	this.allowAutosaveInDrafts = ko.observable(Settings.AllowAutosaveInDrafts);
 	this.allowChangeInputDirection = ko.observable(Settings.AllowChangeInputDirection);
+	this.showMessagesCountInFolderList = ko.observable(Settings.showMessagesCountInFolderList());
 }
 
 _.extendOwn(CMailSettingsFormView.prototype, CAbstractSettingsFormView.prototype);
@@ -46,7 +48,8 @@ CMailSettingsFormView.prototype.getCurrentValues = function ()
 	return [
 		this.mailsPerPage(),
 		this.allowAutosaveInDrafts(),
-		this.allowChangeInputDirection()
+		this.allowChangeInputDirection(),
+		this.showMessagesCountInFolderList()
 	];
 };
 
@@ -55,6 +58,7 @@ CMailSettingsFormView.prototype.revertGlobalValues = function ()
 	this.mailsPerPage(Settings.MailsPerPage);
 	this.allowAutosaveInDrafts(Settings.AllowAutosaveInDrafts);
 	this.allowChangeInputDirection(Settings.AllowChangeInputDirection);
+	this.showMessagesCountInFolderList(Settings.showMessagesCountInFolderList());
 };
 
 CMailSettingsFormView.prototype.getParametersForSave = function ()
@@ -62,13 +66,14 @@ CMailSettingsFormView.prototype.getParametersForSave = function ()
 	return {
 		'MailsPerPage': this.mailsPerPage(),
 		'AllowAutosaveInDrafts': this.allowAutosaveInDrafts(),
-		'AllowChangeInputDirection': this.allowChangeInputDirection()
+		'AllowChangeInputDirection': this.allowChangeInputDirection(),
+		'ShowMessagesCountInFolderList': this.showMessagesCountInFolderList()
 	};
 };
 
 CMailSettingsFormView.prototype.applySavedValues = function (oParameters)
 {
-	Settings.update(oParameters.MailsPerPage, oParameters.AllowAutosaveInDrafts, oParameters.AllowChangeInputDirection);
+	Settings.update(oParameters.MailsPerPage, oParameters.AllowAutosaveInDrafts, oParameters.AllowChangeInputDirection, oParameters.ShowMessagesCountInFolderList);
 };
 
 CMailSettingsFormView.prototype.setAccessLevel = function (sEntityType, iEntityId)

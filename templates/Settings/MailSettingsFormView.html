@@ -17,6 +17,15 @@
 					<label for="allowAutosaveInDrafts" data-bind="i18n: {'key': '%MODULENAME%/LABEL_ALLOW_AUTOSAVE'}"></label>
 				</span>
 			</div>
+			<div class="row" data-bind="visible: bAllowShowMessagesCountInFolderList">
+				<span class="value offset">
+					<label class="custom_checkbox" data-bind="css: {'checked': showMessagesCountInFolderList}">
+						<span class="icon"></span>
+						<input type="checkbox" id="showMessagesCountInFolderList" data-bind="checked: showMessagesCountInFolderList" />
+					</label>
+					<label for="showMessagesCountInFolderList" data-bind="i18n: {'key': '%MODULENAME%/LABEL_SHOW_MESSAGES_COUNT_IN_FOLDER_LIST'}"></label>
+				</span>
+			</div>
 			<div class="row" data-bind="visible: bRtl">
 				<span class="value offset">
 					<label class="custom_checkbox" data-bind="css: {'checked': allowChangeInputDirection}">
