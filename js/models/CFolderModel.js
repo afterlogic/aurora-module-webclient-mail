@@ -1344,6 +1344,7 @@ CFolderModel.prototype.triggerAlwaysRefreshState = function ()
 
 		var
 			oParameters = {
+				'AccountID': this.iAccountId,
 				'FolderFullName': this.fullName(),
 				'AlwaysRefresh': this.isAlwaysRefresh()
 			}
