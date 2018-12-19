@@ -40,7 +40,9 @@ function CFolderModel(iAccountId)
 
 	this.bIgnoreImapSubscription = Settings.IgnoreImapSubscription;
 	this.bAllowTemplateFolders = Settings.AllowTemplateFolders;
-	this.isTemplateStorage = ko.observable();
+	this.isTemplateStorage = ko.observable(false);
+	this.bAllowAlwaysRefreshFolders = Settings.AllowAlwaysRefreshFolders;
+	this.isAlwaysRefresh = ko.observable(false);
 	
 	/** From server **/
 	this.sDelimiter = '';
@@ -716,6 +718,7 @@ CFolderModel.prototype.parse = function (oData, sParentFullName, sNamespaceFolde
 		}
 		this.isTemplateStorage(this.type() === Enums.FolderTypes.Template);
 		this.bNamespace = (sNamespaceFolder === this.fullName());
+		this.isAlwaysRefresh(!!oData.AlwaysRefresh);
 		
 		this.subscribed(Settings.IgnoreImapSubscription ? true : oData.IsSubscribed);
 		this.bSelectable = oData.IsSelectable;
@@ -863,6 +866,18 @@ CFolderModel.prototype.initComputedFields = function ()
 		if (Settings.AllowTemplateFolders)
 		{
 			return this.isTemplateStorage() ? TextUtils.i18n('%MODULENAME%/ACTION_TURN_TEMPLATE_FOLDER_OFF') : TextUtils.i18n('%MODULENAME%/ACTION_TURN_TEMPLATE_FOLDER_ON');
+		}
+		return '';
+	}, this);
+	
+	this.visibleAlwaysRefreshTrigger = ko.computed(function () {
+		return Settings.AllowAlwaysRefreshFolders && (this.bSelectable && !this.isSystem() || this.isAlwaysRefresh());
+	}, this);
+
+	this.alwaysRefreshButtonHint = ko.computed(function () {
+		if (Settings.AllowAlwaysRefreshFolders)
+		{
+			return this.isAlwaysRefresh() ? TextUtils.i18n('%MODULENAME%/ACTION_TURN_ALWAYS_REFRESH_OFF') : TextUtils.i18n('%MODULENAME%/ACTION_TURN_ALWAYS_REFRESH_ON');
 		}
 		return '';
 	}, this);
@@ -1317,6 +1332,39 @@ CFolderModel.prototype.onSetTemplateFolderType = function (oResponse)
 	if (!oResponse.Result)
 	{
 		Api.showErrorByCode(oResponse, TextUtils.i18n('%MODULENAME%/ERROR_SETUP_SPECIAL_FOLDERS'));
+		MailCache.getFolderList(AccountList.editedId());
+	}
+};
+
+CFolderModel.prototype.triggerAlwaysRefreshState = function ()
+{
+	if (Settings.AllowAlwaysRefreshFolders)
+	{
+		if (this.isAlwaysRefresh())
+		{
+			this.isAlwaysRefresh(false);
+		}
+		else
+		{
+			this.isAlwaysRefresh(true);
+		}
+
+		var
+			oParameters = {
+				'FolderFullName': this.fullName(),
+				'AlwaysRefresh': this.isAlwaysRefresh()
+			}
+		;
+
+		Ajax.send('SetAlwaysRefreshFolder', oParameters, this.onSetAlwaysRefreshFolder, this);
+	}
+};
+
+CFolderModel.prototype.onSetAlwaysRefreshFolder = function (oResponse)
+{
+	if (!oResponse.Result)
+	{
+		Api.showErrorByCode(oResponse);
 		MailCache.getFolderList(AccountList.editedId());
 	}
 };

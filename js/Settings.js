@@ -27,6 +27,7 @@ module.exports = {
 	AllowMultiAccounts: false,
 	AutoSaveIntervalSeconds: 60,
 	AllowTemplateFolders: false,
+	AllowAlwaysRefreshFolders: false,
 	IgnoreImapSubscription: false,
 	ImageUploadSizeLimit: 0,
 	
@@ -73,6 +74,7 @@ module.exports = {
 			this.AllowMultiAccounts = Types.pBool(oAppDataMailSection.AllowMultiAccounts, this.AllowMultiAccounts);
 			this.AutoSaveIntervalSeconds = Types.pNonNegativeInt(oAppDataMailSection.AutoSaveIntervalSeconds, this.AutoSaveIntervalSeconds);
 			this.AllowTemplateFolders = Types.pBool(oAppDataMailSection.AllowTemplateFolders, this.AllowTemplateFolders);
+			this.AllowAlwaysRefreshFolders = Types.pBool(oAppDataMailSection.AllowAlwaysRefreshFolders, this.AllowAlwaysRefreshFolders);
 			this.IgnoreImapSubscription = Types.pBool(oAppDataMailSection.IgnoreImapSubscription, this.IgnoreImapSubscription);
 			this.ImageUploadSizeLimit = Types.pNonNegativeInt(oAppDataMailSection.ImageUploadSizeLimit, this.ImageUploadSizeLimit);
 			window.Enums.SmtpAuthType = Types.pObject(oAppDataMailSection.SmtpAuthType);

@@ -119,6 +119,20 @@ CFolderListModel.prototype.getFoldersWithoutCountInfo = function ()
 	return aFolders;
 };
 
+CFolderListModel.prototype.getNamesOfFoldersToRefresh = function ()
+{
+	var aFolders = [this.inboxFolderFullName(), this.spamFolderFullName(), this.currentFolderFullName()];
+	
+	_.each(this.oNamedCollection, function (oFolder) {
+		if (oFolder.isAlwaysRefresh())
+		{
+			aFolders.push(oFolder.fullName());
+		}
+	});
+	
+	return _.uniq(aFolders);
+};
+
 /**
  * @param {string} sFolderFullName
  * @param {string} sFilters

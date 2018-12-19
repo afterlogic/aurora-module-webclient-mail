@@ -505,23 +505,33 @@ CMailCache.prototype.setMessagesFromUidList = function (oUidList, iOffset, oMess
 	return aUids;
 };
 
+CMailCache.prototype.getNamesOfFoldersToRefresh = function ()
+{
+	var
+		oFolderList = this.oFolderListItems[this.currentAccountId()],
+		aFolders = oFolderList ? oFolderList.getNamesOfFoldersToRefresh() : [],
+		aFoldersFromAccount = AccountList.getCurrentFetchersAndFiltersFolderNames()
+	;
+	
+	aFolders = _.uniq(_.compact(_.union(aFolders, aFoldersFromAccount)));
+	
+	return aFolders;
+};
+
 /**
  * @param {boolean} bAbortPrevious
  */
 CMailCache.prototype.executeCheckMail = function (bAbortPrevious)
 {
 	var
-		oFolderList = this.oFolderListItems[this.currentAccountId()],
-		aFoldersFromAccount = AccountList.getCurrentFetchersAndFiltersFolderNames(),
-		aFolders = oFolderList ? [oFolderList.inboxFolderFullName(), oFolderList.spamFolderFullName(), oFolderList.currentFolderFullName()] : [],
-		iAccountID = oFolderList ? oFolderList.iAccountId : 0,
+		iAccountID = this.currentAccountId(),
+		aFolders = this.getNamesOfFoldersToRefresh(),
 		bCurrentAccountCheckmailStarted = this.checkMailStarted() && (this.checkMailStartedAccountId() === iAccountID),
 		oParameters = null
 	;
 	
 	if (App.getUserRole() !== Enums.UserRole.Anonymous && (bAbortPrevious || !Ajax.hasOpenedRequests('GetRelevantFoldersInformation') || !bCurrentAccountCheckmailStarted) && (aFolders.length > 0))
 	{
-		aFolders = _.uniq(_.compact(_.union(aFolders, aFoldersFromAccount)));
 		oParameters = {
 			'Folders': aFolders,
 			'AccountID': iAccountID

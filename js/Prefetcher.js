@@ -139,9 +139,9 @@ Prefetcher.startOtherFoldersPrefetch = function ()
 	var
 		oFolderList = MailCache.folderList(),
 		sCurrFolder = oFolderList.currentFolderFullName(),
-		aFoldersFromAccount = AccountList.getCurrentFetchersAndFiltersFolderNames(),
+		aFoldersFromAccount = MailCache.getNamesOfFoldersToRefresh(),
 		aSystemFolders = oFolderList ? [oFolderList.inboxFolderFullName(), oFolderList.sentFolderFullName(), oFolderList.draftsFolderFullName(), oFolderList.spamFolderFullName()] : [],
-		aOtherFolders = (aFoldersFromAccount.length < 3) ? this.getOtherFolderNames(3 - aFoldersFromAccount.length) : [],
+		aOtherFolders = (aFoldersFromAccount.length < 5) ? this.getOtherFolderNames(5 - aFoldersFromAccount.length) : [],
 		aFolders = _.uniq(_.compact(_.union(aSystemFolders, aFoldersFromAccount, aOtherFolders))),
 		bPrefetchStarted = false
 	;
