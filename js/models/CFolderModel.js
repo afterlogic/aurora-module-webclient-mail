@@ -860,7 +860,7 @@ CFolderModel.prototype.initComputedFields = function ()
 	}, this);
 
 	this.templateButtonHint = ko.computed(function () {
-		if (Settings.AllowTemplateFolders)
+		if (this.visibleTemplateTrigger())
 		{
 			return this.isTemplateStorage() ? TextUtils.i18n('%MODULENAME%/ACTION_TURN_TEMPLATE_FOLDER_OFF') : TextUtils.i18n('%MODULENAME%/ACTION_TURN_TEMPLATE_FOLDER_ON');
 		}
@@ -1291,7 +1291,7 @@ CFolderModel.prototype.onResponseFolderRename = function (oResponse, oRequest)
 
 CFolderModel.prototype.triggerTemplateState = function ()
 {
-	if (Settings.AllowTemplateFolders)
+	if (this.visibleTemplateTrigger())
 	{
 		if (this.isTemplateStorage())
 		{
