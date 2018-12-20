@@ -1713,6 +1713,7 @@ CCrea.prototype.removeCurrentImage = function ()
         this.bInImage = false;
         this.oOptions.onImageBlur();
     }
+	this.setFocus(true);
 };
 
 CCrea.prototype.changeCurrentImage = function (aParams)
@@ -1724,6 +1725,7 @@ CCrea.prototype.changeCurrentImage = function (aParams)
             image.css(key, value);
         });
     }
+	this.setFocus(true);
 };
 
 CCrea.prototype.showImageTooltip = function (aParams)
