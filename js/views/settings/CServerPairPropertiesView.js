@@ -186,8 +186,9 @@ CServerPairPropertiesView.prototype.setServerId = function (iServerId)
 
 CServerPairPropertiesView.prototype.requestServers = function ()
 {
+	var iTenantId = _.isFunction(App.getTenantId) ? App.getTenantId() : 0;
 	this.serversRetrieved(false);
-	Ajax.send('GetServers', { 'TenantId': App.getTenantId()}, function (oResponse) {
+	Ajax.send('GetServers', { 'TenantId': iTenantId}, function (oResponse) {
 		if (_.isArray(oResponse.Result))
 		{
 			var aServerOptions = [{ 'Name': TextUtils.i18n('%MODULENAME%/LABEL_CONFIGURE_SERVER_MANUALLY'), 'Id': 0 }];
