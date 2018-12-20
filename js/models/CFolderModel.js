@@ -718,7 +718,7 @@ CFolderModel.prototype.parse = function (oData, sParentFullName, sNamespaceFolde
 		}
 		this.isTemplateStorage(this.type() === Enums.FolderTypes.Template);
 		this.bNamespace = (sNamespaceFolder === this.fullName());
-		this.isAlwaysRefresh(!!oData.AlwaysRefresh);
+		this.isAlwaysRefresh(Settings.AllowAlwaysRefreshFolders && !!oData.AlwaysRefresh);
 		
 		this.subscribed(Settings.IgnoreImapSubscription ? true : oData.IsSubscribed);
 		this.bSelectable = oData.IsSelectable;
@@ -867,10 +867,6 @@ CFolderModel.prototype.initComputedFields = function ()
 		return '';
 	}, this);
 	
-	this.visibleAlwaysRefreshTrigger = ko.computed(function () {
-		return Settings.AllowAlwaysRefreshFolders && (this.bSelectable && !this.isSystem() || this.isAlwaysRefresh());
-	}, this);
-
 	this.alwaysRefreshButtonHint = ko.computed(function () {
 		if (Settings.AllowAlwaysRefreshFolders)
 		{
@@ -1333,14 +1329,7 @@ CFolderModel.prototype.triggerAlwaysRefreshState = function ()
 {
 	if (Settings.AllowAlwaysRefreshFolders)
 	{
-		if (this.isAlwaysRefresh())
-		{
-			this.isAlwaysRefresh(false);
-		}
-		else
-		{
-			this.isAlwaysRefresh(true);
-		}
+		this.isAlwaysRefresh(!this.isAlwaysRefresh());
 
 		var
 			oParameters = {
