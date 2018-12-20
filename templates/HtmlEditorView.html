@@ -135,7 +135,7 @@
 		 text: tooltipText"></div>
 	
 	<div class="inline_popup" data-bind="visible: visibleLinkPopup, initDom: linkPopupDom">
-		<a target="_blank" data-bind="text: linkHref, attr: {'href': linkHref}"></a>
+		<a target="_blank" data-bind="text: linkHref, attr: {'href': linkHref}, click: function () { hideLinkPopup(); return true; }"></a>
 		<span class="button" data-bind="i18n: {'key': '%MODULENAME%/ACTION_CHANGE_URL'}, click: showChangeLink"></span>
 		<span class="button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_REMOVE'}, click: function () { oCrea.removeCurrentLink(); }"></span>
 	</div>
