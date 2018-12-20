@@ -54,5 +54,13 @@
 	"AllowShowMessagesCountInFolderList": [
 		false,
 		"bool"
+	],
+	"AllowSearchMessagesBySubject": [
+		false,
+		"bool"
+	],
+	"PrefixesToRemoveBeforeSearchMessagesBySubject": [
+		["Re", "Fwd"],
+		"array"
 	]
 }

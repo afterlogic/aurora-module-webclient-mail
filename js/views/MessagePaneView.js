@@ -45,6 +45,8 @@ function CMessagePaneView()
 	
 	this.bNewTab = App.isNewTab();
 	this.isLoading = ko.observable(false);
+	
+	this.bAllowSearchMessagesBySubject = Settings.AllowSearchMessagesBySubject;
 
 	MailCache.folderList.subscribe(this.onFolderListSubscribe, this);
 	this.messages = MailCache.messages;
@@ -1079,6 +1081,53 @@ CMessagePaneView.prototype.doAfterPopulatingMessage = function ()
 	}, this));
 	
 	ModulesManager.run('ContactsWebclient', 'applyContactsCards', [this.$MailViewDom.find('span.address')]);
+};
+
+CMessagePaneView.prototype.searchBySubject = function ()
+{
+	if (Settings.AllowSearchMessagesBySubject)
+	{
+		var
+			sFolder = this.currentMessage().folder(),
+			iPage = 1,
+			sUid = this.currentMessage().uid(),
+			sSearch = '',
+			sFilters = '',
+
+			sSubject = this.currentMessage().subject(),
+			aSubject = sSubject.split(':'),
+			aPrefixes = Settings.PrefixesToRemoveBeforeSearchMessagesBySubject,
+			aSearch = []
+		;
+
+		if (aPrefixes.length === 0)
+		{
+			sSearch = aSubject;
+		}
+		else
+		{
+			_.each(aSubject, function (sSubjPart) {
+				if (aSearch.length > 0)
+				{
+					aSearch.push(sSubjPart);
+				}
+				else
+				{
+					var hasPrefix = false;
+					_.each(aPrefixes, function (sPref) {
+						var re = new RegExp(sPref + '(\[\d\]){0,1}', 'gi');
+						hasPrefix = hasPrefix || re.test(sSubjPart);
+					});
+					if (!hasPrefix) {
+						aSearch.push(sSubjPart);
+					}
+				}
+			});
+			sSearch = $.trim(aSearch.join(':'));
+		}
+
+		Routing.setHash(LinksUtils.getMailbox(sFolder, iPage, sUid, sSearch, sFilters));
+	}
 };
 
 module.exports = new CMessagePaneView();

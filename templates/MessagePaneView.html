@@ -89,7 +89,9 @@
 		<div class="header_row" data-bind="css: {'nosubject': emptySubject()}">
 			<span class="date" data-bind="text: midDate, visible: !detailsVisible()"></span>
 			<span class="icon importance" data-bind="visible: importance() === Enums.Importance.High"></span>
-			<h2 class="subject" data-bind="text: subjectForDisplay"></h2>
+			<h2 class="subject" data-bind="text: subjectForDisplay, visible: !bAllowSearchMessagesBySubject"></h2>
+			<h2 class="subject" style="cursor: pointer;" data-bind="text: subjectForDisplay, 
+				click: searchBySubject, visible: bAllowSearchMessagesBySubject, customTooltip: '%MODULENAME%/ACTION_SEARCH_MESSAGES_CONTAINING_SUBJECT'"></h2>
 		</div>
 	</div>
 

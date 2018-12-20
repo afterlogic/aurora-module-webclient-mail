@@ -46,6 +46,8 @@ module.exports = {
 	ShowEmailAsTabName: true,
 	AllowShowMessagesCountInFolderList: false,
 	showMessagesCountInFolderList: ko.observable(false),
+	AllowSearchMessagesBySubject: false,
+	PrefixesToRemoveBeforeSearchMessagesBySubject: [],
 	
 	userMailAccountsCount: ko.observable(0),
 	mailAccountsEmails: ko.observableArray([]),
@@ -98,6 +100,8 @@ module.exports = {
 			this.ShowEmailAsTabName = Types.pBool(oAppDataMailWebclientSection.ShowEmailAsTabName, this.ShowEmailAsTabName);
 			this.AllowShowMessagesCountInFolderList = Types.pBool(oAppDataMailWebclientSection.AllowShowMessagesCountInFolderList, this.AllowShowMessagesCountInFolderList);
 			this.showMessagesCountInFolderList(Types.pBool(oAppDataMailWebclientSection.ShowMessagesCountInFolderList, this.showMessagesCountInFolderList()));
+			this.AllowSearchMessagesBySubject = Types.pBool(oAppDataMailWebclientSection.AllowSearchMessagesBySubject, this.AllowSearchMessagesBySubject);
+			this.PrefixesToRemoveBeforeSearchMessagesBySubject = Types.pArray(oAppDataMailWebclientSection.PrefixesToRemoveBeforeSearchMessagesBySubject, this.PrefixesToRemoveBeforeSearchMessagesBySubject);
 		}
 		
 		if (!_.isEmpty(oAppDataFetchersSection))

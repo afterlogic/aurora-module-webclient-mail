@@ -53,6 +53,8 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			'MaxMessagesBodiesSizeToPrefetch' => $this->getConfig('MaxMessagesBodiesSizeToPrefetch', 50000),
 			'ShowEmailAsTabName' => $this->getConfig('ShowEmailAsTabName', true),
 			'AllowShowMessagesCountInFolderList' => $this->getConfig('AllowShowMessagesCountInFolderList', false),
+			'AllowSearchMessagesBySubject' => $this->getConfig('AllowSearchMessagesBySubject', false),
+			'PrefixesToRemoveBeforeSearchMessagesBySubject' => $this->getConfig('PrefixesToRemoveBeforeSearchMessagesBySubject', []),
 		);
 		
 		$oUser = \Aurora\System\Api::getAuthenticatedUser();
