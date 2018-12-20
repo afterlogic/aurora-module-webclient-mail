@@ -10,6 +10,7 @@ var
 	ValidationUtils = require('%PathToCoreWebclientModule%/js/utils/Validation.js'),
 	
 	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
+	App = require('%PathToCoreWebclientModule%/js/App.js'),
 	
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
 	
@@ -186,7 +187,7 @@ CServerPairPropertiesView.prototype.setServerId = function (iServerId)
 CServerPairPropertiesView.prototype.requestServers = function ()
 {
 	this.serversRetrieved(false);
-	Ajax.send('GetServers', {}, function (oResponse) {
+	Ajax.send('GetServers', { 'TenantId': App.getTenantId()}, function (oResponse) {
 		if (_.isArray(oResponse.Result))
 		{
 			var aServerOptions = [{ 'Name': TextUtils.i18n('%MODULENAME%/LABEL_CONFIGURE_SERVER_MANUALLY'), 'Id': 0 }];
