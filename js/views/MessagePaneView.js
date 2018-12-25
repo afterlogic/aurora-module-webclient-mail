@@ -1114,9 +1114,10 @@ CMessagePaneView.prototype.searchBySubject = function ()
 				else
 				{
 					var hasPrefix = false;
+					var sTrimSubjPart = $.trim(sSubjPart);
 					_.each(aPrefixes, function (sPref) {
-						var re = new RegExp(sPref + '(\[\d\]){0,1}', 'gi');
-						hasPrefix = hasPrefix || re.test(sSubjPart);
+						var re = new RegExp('^' + sPref + '(\\[\\d*\\]){0,1}$', 'i');
+						hasPrefix = hasPrefix || re.test(sTrimSubjPart);
 					});
 					if (!hasPrefix) {
 						aSearch.push(sSubjPart);
