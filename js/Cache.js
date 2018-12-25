@@ -161,6 +161,11 @@ CMailCache.prototype.init = function ()
 				MailCache.folderListLoading.removeAll();
 			}
 		}, 10);
+		if (!Ajax.hasOpenedRequests())
+		{
+			// All messages can not be selected from message list if message saving is done
+			MailCache.savingDraftUid('');
+		}
 	});
 	
 	if (MainTab)

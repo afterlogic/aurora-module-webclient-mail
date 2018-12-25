@@ -96,6 +96,8 @@ SendingUtils.send = function (sMethod, oParameters, bShowLoading, fSendMessageRe
 			{
 				oParameters.DraftFolder = sDraftFolder;
 			}
+			
+			// Message with this uid will not be selected from message list
 			MailCache.savingDraftUid(oParameters.DraftUid);
 			if (MainTab)
 			{
@@ -255,6 +257,8 @@ SendingUtils.onSendOrSaveMessageResponse = function (oResponse, oRequest, bRequi
 	switch (oRequest.Method)
 	{
 		case 'SaveMessage':
+			// All messages can not be selected from message list if message saving is done
+			MailCache.savingDraftUid('');
 			if (!bResult)
 			{
 				if (oParameters.ShowReport)
