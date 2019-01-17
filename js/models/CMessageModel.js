@@ -184,7 +184,6 @@ function CMessageModel()
 	this.isExternalsAlwaysShown = ko.observable(false);
 	this.foundCids = ko.observableArray([]);
 	this.attachments = ko.observableArray([]);
-	this.usesAttachmentString = false;
 	this.safety = ko.observable(false);
 	this.sourceHeaders = ko.observable('');
 

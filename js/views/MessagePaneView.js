@@ -205,16 +205,15 @@ function CMessagePaneView()
 	this.sQuickReplyViewTemplate = App.isMobile() ? '' : '%ModuleName%_Message_QuickReplyView';
 	
 	this.attachments = ko.observableArray([]);
-	this.usesAttachmentString = true;
-	this.attachmentsInString = ko.computed(function () {
-		return _.map(this.attachments(), function (oAttachment) {
-			return oAttachment.fileName();
-		}, this).join(', ');
-	}, this);
 	this.notInlineAttachments = ko.computed(function () {
 		return _.filter(this.attachments(), function (oAttach) {
 			return !oAttach.linked();
 		});
+	}, this);
+	this.notInlineAttachmentsInString = ko.computed(function () {
+		return _.map(this.notInlineAttachments(), function (oAttachment) {
+			return oAttachment.fileName();
+		}, this).join(', ');
 	}, this);
 	
 	this.allAttachmentsDownloadMethods = ko.observableArray([]);

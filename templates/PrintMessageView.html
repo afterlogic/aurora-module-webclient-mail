@@ -82,17 +82,24 @@
 					</td>
 					<td class="wm_print_value" data-bind="text: subject" colspan="2"></td>
 				</tr>
+				<!-- ko if: $data.notInlineAttachments -->
+				<!-- View is used for message print in message pane. -->
+				<tr data-bind="visible: notInlineAttachments().length > 0">
+					<td class="wm_print_title">
+						<span data-bind="i18n: {'key': '%MODULENAME%/LABEL_ATTACHMENTS'}"></span>: 
+					</td>
+					<td class="wm_print_value" colspan="2">
+						<span data-bind="text: notInlineAttachmentsInString"></span>
+					</td>
+				</tr>
+				<!-- /ko -->
+				<!-- ko if: !$data.notInlineAttachments -->
+				<!-- View is used for displaying of EML attachment from attachments list. -->
 				<tr data-bind="visible: attachments().length > 0">
 					<td class="wm_print_title">
 						<span data-bind="i18n: {'key': '%MODULENAME%/LABEL_ATTACHMENTS'}"></span>: 
 					</td>
-					<!-- ko if: usesAttachmentString -->
-					<td class="wm_print_value">
-						<span data-bind="text: attachmentsInString"></span>
-					</td>
-					<!-- /ko -->
-					<!-- ko if: !usesAttachmentString -->
-					<td class="wm_print_value">
+					<td class="wm_print_value" colspan="2">
 						<!-- ko foreach: attachments -->
 							<span class="comma">, </span>
 							<a href="javascript: void(0);" data-bind="text: fileName, 
@@ -105,8 +112,8 @@
 							<!-- /ko -->
 						<!-- /ko -->
 					</td>
-					<!-- /ko -->
 				</tr>
+				<!-- /ko -->
 				<tr>
 					<td class="wm_print_body" colspan="3">
 						<div data-bind="html: textBodyForNewWindow"></div>
