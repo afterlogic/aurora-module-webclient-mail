@@ -31,6 +31,9 @@
 			<span class="button" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ADD_NEW_FOLDER'}, command: addNewFolderCommand"></span>
 			<span class="button" data-bind="i18n: {'key': '%MODULENAME%/ACTION_SETUP_SPECIAL_FOLDERS'}, command: setSystemFoldersCommand"></span>
 		</div>
+		<div class="buttons">
+			<span class="button" data-bind="i18n: {'key': 'IMPORTEXPORTMAILPLUGIN/IMPORT_EXPORT_BUTTON'}, click: importExport, visible: allowImportExport"></span>
+		</div>
 		{%INCLUDE-START/Account-Folders-After-Buttons/INCLUDE-END%}
 	</div>
 </div>

@@ -10,10 +10,12 @@ var
 	
 	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
 	App = require('%PathToCoreWebclientModule%/js/App.js'),
+	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 	
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
 	CreateFolderPopup = require('modules/%ModuleName%/js/popups/CreateFolderPopup.js'),
 	SetSystemFoldersPopup = require('modules/%ModuleName%/js/popups/SetSystemFoldersPopup.js'),
+	ImportExportPopup = ModulesManager.run('ImportExportMailPlugin', 'getImportExportPopup'),
 	
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
@@ -57,7 +59,7 @@ function CAccountFoldersPaneView()
 	this.showMovedWithMouseItem = ko.computed(function () {
 		return !App.isMobile();
 	}, this);
-	
+	this.allowImportExport = ko.observable(ModulesManager.isModuleEnabled('ImportExportMailPlugin'));
 	App.subscribeEvent('%ModuleName%::AttemptDeleteNonemptyFolder', _.bind(function () {
 		this.highlighted(true);
 	}, this));
@@ -148,6 +150,15 @@ CAccountFoldersPaneView.prototype.addNewFolder = function ()
 CAccountFoldersPaneView.prototype.setSystemFolders = function ()
 {
 	Popups.showPopup(SetSystemFoldersPopup);
+};
+
+CAccountFoldersPaneView.prototype.importExport = function ()
+{
+	if (this.allowImportExport())
+	{
+		Popups.showPopup(ImportExportPopup, [{
+		}]);
+	}
 };
 
 module.exports = new CAccountFoldersPaneView();
