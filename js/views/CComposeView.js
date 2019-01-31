@@ -1829,7 +1829,6 @@ CComposeView.prototype.registerOwnToolbarControllers = function ()
 	this.registerToolbarController({
 		ViewTemplate: '%ModuleName%_Compose_BackButtonView',
 		sId: 'back',
-		bOnlyMobile: true,
 		backToListCommand: this.backToListCommand
 	});
 	this.registerToolbarController({
@@ -1869,7 +1868,7 @@ CComposeView.prototype.registerOwnToolbarControllers = function ()
 CComposeView.prototype.registerToolbarController = function (oController)
 {
 	var
-		bAllowRegister = App.isMobile() ? (oController.bOnlyMobile || oController.bAllowMobile) : (!oController.bOnlyMobile),
+		bAllowRegister = App.isMobile() ? oController.bAllowMobile : !oController.bOnlyMobile,
 		iLastIndex = Settings.ComposeToolbarOrder.length
 	;
 	
