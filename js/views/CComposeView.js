@@ -651,11 +651,6 @@ CComposeView.prototype.fillDefault = function (oParams)
 		}
 	}
 
-	if (this.routeType() === 'vcard' && oParams.Object)
-	{
-		this.addContactAsAttachment(oParams.Object);
-	}
-
 	if (this.routeType() === Enums.ReplyType.ForwardAsAttach && oParams.Object)
 	{
 		this.addMessageAsAttachment(oParams.Object);
@@ -1084,36 +1079,6 @@ CComposeView.prototype.onSaveMessageAsTempFile = function (oResponse, oRequest)
 		{
 			oAttach.errorFromUpload();
 		}
-	}
-};
-
-/**
- * @param {Object} oContact
- */
-CComposeView.prototype.addContactAsAttachment = function (oContact)
-{
-	var
-		oAttach = new CAttachmentModel(),
-		oParameters = null
-	;
-
-	if (oContact)
-	{
-		oAttach.fileName('contact-' + oContact.idContact() + '.vcf');
-		oAttach.uploadStarted(true);
-
-		this.attachments.push(oAttach);
-
-		oParameters = {
-			'ContactId': oContact.idContact(),
-			'Global': oContact.global() ? '1' : '0',
-			'Name': oAttach.fileName(),
-			'SharedWithAll': oContact.sharedToAll() ? '1' : '0'
-		};
-
-		this.messageUploadAttachmentsStarted(true);
-
-		Ajax.send('ContactVCardUpload', oParameters, this.onContactVCardUpload, this);
 	}
 };
 

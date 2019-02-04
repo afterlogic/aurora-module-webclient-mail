@@ -52,15 +52,6 @@ PopupComposeUtils.composeMessageToAddresses = function (sToAddresses)
 };
 
 /**
- * @param {Object} oVcard
- */
-PopupComposeUtils.composeMessageWithVcard = function (oVcard)
-{
-	var aParams = ['vcard', oVcard];
-	Popups.showPopup(GetComposePopup(), [aParams]);
-};
-
-/**
  * @param {Object} oMessage
  */
 PopupComposeUtils.composeMessageWithEml = function (oMessage)

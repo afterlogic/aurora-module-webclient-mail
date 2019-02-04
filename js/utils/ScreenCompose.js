@@ -44,15 +44,6 @@ ScreenComposeUtils.composeMessageToAddresses = function (sToAddresses)
 };
 
 /**
- * @param {Object} oVcard
- */
-ScreenComposeUtils.composeMessageWithVcard = function (oVcard)
-{
-	var aParams = ['vcard', oVcard];
-	Routing.goDirectly(LinksUtils.getCompose(), aParams);
-};
-
-/**
  * @param {Object} oMessage
  */
 ScreenComposeUtils.composeMessageWithEml = function (oMessage)
@@ -69,6 +60,8 @@ ScreenComposeUtils.composeMessageWithEml = function (oMessage)
 ScreenComposeUtils.composeMessageWithAttachments = function (aFileItems)
 {
 	var aParams = LinksUtils.getComposeWithObject('attachments', aFileItems);
+	aParams.shift();
+	aParams.shift();
 	Routing.goDirectly(LinksUtils.getCompose(), aParams);
 };
 
