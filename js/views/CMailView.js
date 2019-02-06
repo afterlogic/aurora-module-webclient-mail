@@ -138,12 +138,17 @@ function CMailView()
 
 	this.jqPanelHelper = null;
 	
+	if (Settings.HorizontalLayout)
+	{
+		$('html').addClass('layout-horiz-split');
+	}
+	
 	App.broadcastEvent('%ModuleName%::ConstructView::after', {'Name': this.ViewConstructorName, 'View': this});
 }
 
 _.extendOwn(CMailView.prototype, CAbstractScreenView.prototype);
 
-CMailView.prototype.ViewTemplate = '%ModuleName%_MailView';
+CMailView.prototype.ViewTemplate = Settings.HorizontalLayout ? '%ModuleName%_MailHorizontalLayoutView' : '%ModuleName%_MailView';
 CMailView.prototype.ViewConstructorName = 'CMailView';
 
 /**

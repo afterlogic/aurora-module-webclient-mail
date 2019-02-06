@@ -29,6 +29,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 				'AllowChangeInputDirection'		=> array('bool', $this->getConfig('AllowChangeInputDirection', false)),
 				'MailsPerPage'					=> array('int', $this->getConfig('MailsPerPage', 20)),
 				'ShowMessagesCountInFolderList'	=> array('bool', $this->getConfig('ShowMessagesCountInFolderList', false)),
+				'HorizontalLayout'				=> array('bool', $this->getConfig('HorizontalLayout', false)),
 			]
 		);		
 		
@@ -55,6 +56,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			'AllowShowMessagesCountInFolderList' => $this->getConfig('AllowShowMessagesCountInFolderList', false),
 			'AllowSearchMessagesBySubject' => $this->getConfig('AllowSearchMessagesBySubject', false),
 			'PrefixesToRemoveBeforeSearchMessagesBySubject' => $this->getConfig('PrefixesToRemoveBeforeSearchMessagesBySubject', []),
+			'AllowHorizontalLayout' => $this->getConfig('AllowHorizontalLayout', false),
 		);
 		
 		$oUser = \Aurora\System\Api::getAuthenticatedUser();
@@ -71,6 +73,10 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			if (isset($oUser->{self::GetName().'::ShowMessagesCountInFolderList'}))
 			{
 				$aSettings['ShowMessagesCountInFolderList'] = $oUser->{self::GetName().'::ShowMessagesCountInFolderList'};
+			}
+			if ($this->getConfig('AllowHorizontalLayout', false) && isset($oUser->{self::GetName().'::HorizontalLayout'}))
+			{
+				$aSettings['HorizontalLayout'] = $oUser->{self::GetName().'::HorizontalLayout'};
 			}
 		}
 		
@@ -98,6 +104,10 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 				if (isset($Args['ShowMessagesCountInFolderList']))
 				{
 					$oUser->{self::GetName().'::ShowMessagesCountInFolderList'} = $Args['ShowMessagesCountInFolderList'];
+				}
+				if ($this->getConfig('AllowHorizontalLayout', false) && isset($Args['HorizontalLayout']))
+				{
+					$oUser->{self::GetName().'::HorizontalLayout'} = $Args['HorizontalLayout'];
 				}
 				return $oCoreDecorator->UpdateUserObject($oUser);
 			}

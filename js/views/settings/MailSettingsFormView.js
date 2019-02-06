@@ -4,6 +4,7 @@ var
 	_ = require('underscore'),
 	ko = require('knockout'),
 	
+	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	
 	Browser = require('%PathToCoreWebclientModule%/js/Browser.js'),
@@ -25,13 +26,19 @@ function CMailSettingsFormView()
 	this.bRtl = UserSettings.IsRTL;
 	this.bAllowMailto = Settings.AllowAppRegisterMailto && (Browser.firefox || Browser.chrome);
 	this.bAllowShowMessagesCountInFolderList = Settings.AllowShowMessagesCountInFolderList;
+	this.bAllowHorizontalLayout = Settings.AllowHorizontalLayout;
 	
 	this.mailsPerPageValues = ko.observableArray(Types.getAdaptedPerPageList(Settings.MailsPerPage));
+	this.aLayoutValues = [
+		{ text: TextUtils.i18n('%MODULENAME%/LABEL_VERT_SPLIT_LAYOUT'), value: false },
+		{ text: TextUtils.i18n('%MODULENAME%/LABEL_HORIZ_SPLIT_LAYOUT'), value: true }
+	];
 	
 	this.mailsPerPage = ko.observable(Settings.MailsPerPage);
 	this.allowAutosaveInDrafts = ko.observable(Settings.AllowAutosaveInDrafts);
 	this.allowChangeInputDirection = ko.observable(Settings.AllowChangeInputDirection);
 	this.showMessagesCountInFolderList = ko.observable(Settings.showMessagesCountInFolderList());
+	this.horizontalLayout = ko.observable(Settings.HorizontalLayout);
 }
 
 _.extendOwn(CMailSettingsFormView.prototype, CAbstractSettingsFormView.prototype);
@@ -49,7 +56,8 @@ CMailSettingsFormView.prototype.getCurrentValues = function ()
 		this.mailsPerPage(),
 		this.allowAutosaveInDrafts(),
 		this.allowChangeInputDirection(),
-		this.showMessagesCountInFolderList()
+		this.showMessagesCountInFolderList(),
+		this.horizontalLayout()
 	];
 };
 
@@ -59,6 +67,7 @@ CMailSettingsFormView.prototype.revertGlobalValues = function ()
 	this.allowAutosaveInDrafts(Settings.AllowAutosaveInDrafts);
 	this.allowChangeInputDirection(Settings.AllowChangeInputDirection);
 	this.showMessagesCountInFolderList(Settings.showMessagesCountInFolderList());
+	this.horizontalLayout(Settings.HorizontalLayout);
 };
 
 CMailSettingsFormView.prototype.getParametersForSave = function ()
@@ -67,12 +76,17 @@ CMailSettingsFormView.prototype.getParametersForSave = function ()
 		'MailsPerPage': this.mailsPerPage(),
 		'AllowAutosaveInDrafts': this.allowAutosaveInDrafts(),
 		'AllowChangeInputDirection': this.allowChangeInputDirection(),
-		'ShowMessagesCountInFolderList': this.showMessagesCountInFolderList()
+		'ShowMessagesCountInFolderList': this.showMessagesCountInFolderList(),
+		'HorizontalLayout': this.horizontalLayout()
 	};
 };
 
 CMailSettingsFormView.prototype.applySavedValues = function (oParameters)
 {
+	if (oParameters.HorizontalLayout !== Settings.HorizontalLayout)
+	{
+		window.location.reload();
+	}
 	Settings.update(oParameters.MailsPerPage, oParameters.AllowAutosaveInDrafts, oParameters.AllowChangeInputDirection, oParameters.ShowMessagesCountInFolderList);
 };
 

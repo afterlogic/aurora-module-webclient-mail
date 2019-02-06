@@ -48,6 +48,8 @@ module.exports = {
 	showMessagesCountInFolderList: ko.observable(false),
 	AllowSearchMessagesBySubject: false,
 	PrefixesToRemoveBeforeSearchMessagesBySubject: [],
+	AllowHorizontalLayout: false,
+	HorizontalLayout: false,
 	
 	userMailAccountsCount: ko.observable(0),
 	mailAccountsEmails: ko.observableArray([]),
@@ -102,6 +104,8 @@ module.exports = {
 			this.showMessagesCountInFolderList(Types.pBool(oAppDataMailWebclientSection.ShowMessagesCountInFolderList, this.showMessagesCountInFolderList()));
 			this.AllowSearchMessagesBySubject = Types.pBool(oAppDataMailWebclientSection.AllowSearchMessagesBySubject, this.AllowSearchMessagesBySubject);
 			this.PrefixesToRemoveBeforeSearchMessagesBySubject = Types.pArray(oAppDataMailWebclientSection.PrefixesToRemoveBeforeSearchMessagesBySubject, this.PrefixesToRemoveBeforeSearchMessagesBySubject);
+			this.AllowHorizontalLayout = Types.pBool(oAppDataMailWebclientSection.AllowHorizontalLayout, this.AllowHorizontalLayout);
+			this.HorizontalLayout = this.AllowHorizontalLayout && Types.pBool(oAppDataMailWebclientSection.HorizontalLayout, this.HorizontalLayout);
 		}
 		
 		if (!_.isEmpty(oAppDataFetchersSection))

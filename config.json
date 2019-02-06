@@ -62,5 +62,9 @@
 	"PrefixesToRemoveBeforeSearchMessagesBySubject": [
 		["Re", "Fwd"],
 		"array"
+	],
+	"AllowHorizontalLayout": [
+		false,
+		"bool"
 	]
 }
