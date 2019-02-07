@@ -697,6 +697,7 @@ CCrea.prototype.setPlainText = function (sText)
 
     if (this.$editableArea)
     {
+        this.editableSave();
         this.$editableArea.empty().text(sText).css('white-space', 'pre');
         this.editableSave();
     }
