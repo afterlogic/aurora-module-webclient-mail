@@ -35,6 +35,8 @@ function CAttachmentModel()
 	
 	CAbstractFileModel.call(this);
 	
+	this.content = ko.observable('');
+	
 	this.isMessageType = ko.computed(function () {
 		this.mimeType();
 		this.mimePartIndex();
@@ -85,12 +87,15 @@ CAttachmentModel.prototype.copyProperties = function (oSource)
  */
 CAttachmentModel.prototype.additionalParse = function (oData)
 {
+	this.content(Types.pString(oData.Content));
 	this.mimePartIndex(Types.pString(oData.MimePartIndex));
 
 	this.cid(Types.pString(oData.CID));
 	this.contentLocation(Types.pString(oData.ContentLocation));
 	this.inline(!!oData.IsInline);
 	this.linked(!!oData.IsLinked);
+
+	App.broadcastEvent('%ModuleName%::ParseFile::after', this);
 };
 
 /**
@@ -243,8 +248,6 @@ CAttachmentModel.prototype.parseActions = function (oData)
 	{
 		this.commonExcludeActions();
 	}
-	
-	App.broadcastEvent('%ModuleName%::ParseFile::after', this);
 };
 
 CAttachmentModel.prototype.errorFromUpload = function ()
