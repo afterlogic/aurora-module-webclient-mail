@@ -50,6 +50,7 @@ module.exports = {
 	PrefixesToRemoveBeforeSearchMessagesBySubject: [],
 	AllowHorizontalLayout: false,
 	HorizontalLayout: false,
+	HorizontalLayoutByDefault: false,
 	
 	userMailAccountsCount: ko.observable(0),
 	mailAccountsEmails: ko.observableArray([]),
@@ -106,6 +107,7 @@ module.exports = {
 			this.PrefixesToRemoveBeforeSearchMessagesBySubject = Types.pArray(oAppDataMailWebclientSection.PrefixesToRemoveBeforeSearchMessagesBySubject, this.PrefixesToRemoveBeforeSearchMessagesBySubject);
 			this.AllowHorizontalLayout = Types.pBool(oAppDataMailWebclientSection.AllowHorizontalLayout, this.AllowHorizontalLayout);
 			this.HorizontalLayout = this.AllowHorizontalLayout && Types.pBool(oAppDataMailWebclientSection.HorizontalLayout, this.HorizontalLayout);
+			this.HorizontalLayoutByDefault = this.AllowHorizontalLayout && Types.pBool(oAppDataMailWebclientSection.HorizontalLayoutByDefault, this.HorizontalLayoutByDefault);
 		}
 		
 		if (!_.isEmpty(oAppDataFetchersSection))
@@ -132,5 +134,15 @@ module.exports = {
 		this.AllowChangeInputDirection = Types.pBool(bAllowChangeInputDirection, this.AllowChangeInputDirection);
 		this.MailsPerPage = Types.pPositiveInt(iMailsPerPage, this.MailsPerPage);
 		this.showMessagesCountInFolderList(Types.pBool(bShowMessagesCountInFolderList, this.showMessagesCountInFolderList()));
+	},
+	
+	/**
+	 * Updates new admin settings values after saving on server.
+	 * 
+	 * @param {boolean} bHorizontalLayoutByDefault
+	 */
+	updateAdmin: function (bHorizontalLayoutByDefault)
+	{
+		this.HorizontalLayoutByDefault = Types.pBool(bHorizontalLayoutByDefault, this.AllowAutosaveInDrafts);
 	}
 };

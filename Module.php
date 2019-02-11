@@ -29,7 +29,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 				'AllowChangeInputDirection'		=> array('bool', $this->getConfig('AllowChangeInputDirection', false)),
 				'MailsPerPage'					=> array('int', $this->getConfig('MailsPerPage', 20)),
 				'ShowMessagesCountInFolderList'	=> array('bool', $this->getConfig('ShowMessagesCountInFolderList', false)),
-				'HorizontalLayout'				=> array('bool', $this->getConfig('HorizontalLayout', false)),
+				'HorizontalLayout'				=> array('bool', $this->getConfig('HorizontalLayoutByDefault', false)),
 			]
 		);		
 		
@@ -57,6 +57,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			'AllowSearchMessagesBySubject' => $this->getConfig('AllowSearchMessagesBySubject', false),
 			'PrefixesToRemoveBeforeSearchMessagesBySubject' => $this->getConfig('PrefixesToRemoveBeforeSearchMessagesBySubject', []),
 			'AllowHorizontalLayout' => $this->getConfig('AllowHorizontalLayout', false),
+			'HorizontalLayoutByDefault' => $this->getConfig('HorizontalLayoutByDefault', false),
 		);
 		
 		$oUser = \Aurora\System\Api::getAuthenticatedUser();
@@ -120,6 +121,10 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 				if (isset($Args['AllowChangeInputDirection']))
 				{
 					$this->setConfig('AllowChangeInputDirection', $Args['AllowChangeInputDirection']);
+				}
+				if ($this->getConfig('AllowHorizontalLayout', false) && isset($Args['HorizontalLayoutByDefault']))
+				{
+					$this->setConfig('HorizontalLayoutByDefault', $Args['HorizontalLayoutByDefault']);
 				}
 				return $this->saveModuleConfig();
 			}

@@ -41,6 +41,22 @@ module.exports = function (oAppData) {
 					Settings.HashModuleName + '-servers',
 					TextUtils.i18n('%MODULENAME%/LABEL_SERVERS_SETTINGS_TAB')
 				]);
+				if (Settings.AllowHorizontalLayout)
+				{
+					ModulesManager.run('AdminPanelWebclient', 'registerAdminPanelTab', [
+						function(resolve) {
+							require.ensure(
+								['modules/%ModuleName%/js/views/settings/MailAdminSettingsFormView.js'],
+								function() {
+									resolve(require('modules/%ModuleName%/js/views/settings/MailAdminSettingsFormView.js'));
+								},
+								"admin-bundle"
+							);
+						},
+						Settings.HashModuleName,
+						TextUtils.i18n('%MODULENAME%/LABEL_SETTINGS_TAB')
+					]);
+				}
 			},
 			getAccountList: function () {
 				return AccountList;

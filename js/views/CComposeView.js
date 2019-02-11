@@ -336,7 +336,7 @@ function CComposeView()
 	// Autosave interval is automatically cleared when compose is not shown or message is sending/saving or 
 	// it's disabled by compose screen or one of controllers. After changins these parameters autosave
 	// interval might be started again.
-	if (Settings.AllowAutosaveInDrafts && Settings.AutoSaveIntervalSeconds > 0)
+	if (Settings.AllowAutosaveInDrafts && Settings.AutoSaveIntervalSeconds > 0 && MailCache.folderList().draftsFolder())
 	{
 		this.iAutosaveInterval = -1;
 		ko.computed(function () {

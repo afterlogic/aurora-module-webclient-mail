@@ -66,5 +66,9 @@
 	"AllowHorizontalLayout": [
 		false,
 		"bool"
+	],
+	"HorizontalLayoutByDefault": [
+		false,
+		"bool"
 	]
 }
