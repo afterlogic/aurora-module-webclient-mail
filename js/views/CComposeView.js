@@ -332,19 +332,22 @@ function CComposeView()
 		this.oHtmlEditor.setDisableEdit(bDisableBodyEdit);
 	}, this);
 	
+	this.draftFolderIsAvailable = ko.computed(function () {
+		return !!MailCache.folderList().draftsFolder();
+	}, this);
 	this.disableAutosave = ko.observable(false);
 	// Autosave interval is automatically cleared when compose is not shown or message is sending/saving or 
 	// it's disabled by compose screen or one of controllers. After changins these parameters autosave
 	// interval might be started again.
-	if (Settings.AllowAutosaveInDrafts && Settings.AutoSaveIntervalSeconds > 0 && MailCache.folderList().draftsFolder())
+	if (Settings.AllowAutosaveInDrafts && Settings.AutoSaveIntervalSeconds > 0)
 	{
 		this.iAutosaveInterval = -1;
 		ko.computed(function () {
-			var bAllowAutosave = this.composeShown() && !this.sending() && !this.saving() && !this.disableAutosave() && !MailCache.disableComposeAutosave();
+			var bAllowAutosave = this.draftFolderIsAvailable() && this.composeShown() && !this.sending() && !this.saving() && !this.disableAutosave() && !MailCache.disableComposeAutosave();
 			_.each(this.toolbarControllers(), function (oController) {
 				bAllowAutosave = bAllowAutosave && !(!!oController.disableAutosave && oController.disableAutosave());
 			});
-
+			
 			window.clearInterval(this.iAutosaveInterval);
 			
 			if (bAllowAutosave)
@@ -367,14 +370,14 @@ function CComposeView()
 	this.sPopupButtonsViewTemplate = !App.isNewTab() ? '%ModuleName%_Compose_PopupButtonsView' : '';
 
 	this.aHotkeys = [
-		{ value: 'Ctrl+Enter', action: TextUtils.i18n('%MODULENAME%/LABEL_SEND_HOTKEY') },
-		{ value: 'Ctrl+S', action: TextUtils.i18n('%MODULENAME%/LABEL_SAVE_HOTKEY') },
-		{ value: 'Ctrl+Z', action: TextUtils.i18n('%MODULENAME%/LABEL_UNDO_HOTKEY') },
-		{ value: 'Ctrl+Y', action: TextUtils.i18n('%MODULENAME%/LABEL_REDO_HOTKEY') },
-		{ value: 'Ctrl+K', action: TextUtils.i18n('%MODULENAME%/LABEL_LINK_HOTKEY') },
-		{ value: 'Ctrl+B', action: TextUtils.i18n('%MODULENAME%/LABEL_BOLD_HOTKEY') },
-		{ value: 'Ctrl+I', action: TextUtils.i18n('%MODULENAME%/LABEL_ITALIC_HOTKEY') },
-		{ value: 'Ctrl+U', action: TextUtils.i18n('%MODULENAME%/LABEL_UNDERLINE_HOTKEY') }
+		{ value: 'Ctrl+Enter', action: TextUtils.i18n('%MODULENAME%/LABEL_SEND_HOTKEY'), visible: ko.observable(true) },
+		{ value: 'Ctrl+S', action: TextUtils.i18n('%MODULENAME%/LABEL_SAVE_HOTKEY'), visible: this.draftFolderIsAvailable },
+		{ value: 'Ctrl+Z', action: TextUtils.i18n('%MODULENAME%/LABEL_UNDO_HOTKEY'), visible: ko.observable(true) },
+		{ value: 'Ctrl+Y', action: TextUtils.i18n('%MODULENAME%/LABEL_REDO_HOTKEY'), visible: ko.observable(true) },
+		{ value: 'Ctrl+K', action: TextUtils.i18n('%MODULENAME%/LABEL_LINK_HOTKEY'), visible: ko.observable(true) },
+		{ value: 'Ctrl+B', action: TextUtils.i18n('%MODULENAME%/LABEL_BOLD_HOTKEY'), visible: ko.observable(true) },
+		{ value: 'Ctrl+I', action: TextUtils.i18n('%MODULENAME%/LABEL_ITALIC_HOTKEY'), visible: ko.observable(true) },
+		{ value: 'Ctrl+U', action: TextUtils.i18n('%MODULENAME%/LABEL_UNDERLINE_HOTKEY'), visible: ko.observable(true) }
 	];
 
 	this.bAllowFiles = !!SelectFilesPopup;
@@ -387,7 +390,7 @@ function CComposeView()
 	}, this);
 
 	this.saveAndCloseTooltip = ko.computed(function () {
-		return this.hasUnsavedChanges() ? TextUtils.i18n('%MODULENAME%/ACTION_SAVE_CLOSE') : TextUtils.i18n('%MODULENAME%/ACTION_CLOSE');
+		return this.draftFolderIsAvailable() && this.hasUnsavedChanges() ? TextUtils.i18n('%MODULENAME%/ACTION_SAVE_CLOSE') : TextUtils.i18n('%MODULENAME%/ACTION_CLOSE');
 	}, this);
 
 	this.splitterDom = ko.observable();
@@ -1588,7 +1591,10 @@ CComposeView.prototype.executeSend = function (mParam)
 
 CComposeView.prototype.executeSaveCommand = function ()
 {
-	this.executeSave(false);
+	if (this.draftFolderIsAvailable())
+	{
+		this.executeSave(false);
+	}
 };
 
 CComposeView.prototype.executeTemplateSaveCommand = function ()
@@ -1806,6 +1812,7 @@ CComposeView.prototype.registerOwnToolbarControllers = function ()
 		ViewTemplate: '%ModuleName%_Compose_SaveButtonView',
 		sId: 'save',
 		bAllowMobile: true,
+		visible: this.draftFolderIsAvailable,
 		saveCommand: this.saveCommand
 	});
 	this.registerToolbarController({
