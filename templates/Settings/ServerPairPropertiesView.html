@@ -1,15 +1,17 @@
-<div class="row" data-bind="visible: bAdminEdit">
-	<span class="label required" data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_NAME'}"></span>
+<div class="row" data-bind="visible: bAdminEdit" style="margin-bottom: 6px;">
+	<span class="label required" data-bind="i18n: {'key': '%MODULENAME%/LABEL_DISPLAY_NAME'}"></span>
 	<input class="value input" spellcheck="false" type="text" maxlength="255"
 		   data-bind="value: name, hasfocus: name.focused, onEnter: save, valueUpdate: 'afterkeydown'"/>
+</div>
+<div class="row hint" data-bind="visible: bAdminEdit">
+	<span class="value" data-bind="i18n: {'key': '%MODULENAME%/LABEL_HINT_DISPLAY_NAME'}" style="margin-left: 150px; display: block;"></span>
 </div>
 <div class="row server" data-bind="visible: bAdminEdit, css: {'disabled': !allowEditDomains()}" style="margin-bottom: 6px;">
 	<span class="label required" data-bind="i18n: {'key': '%MODULENAME%/LABEL_DOMAINS'}"></span>
 	<textarea class="input" data-bind="value: domains, enable: allowEditDomains"></textarea>
 </div>
 <div class="row hint" data-bind="visible: bAdminEdit">
-	<span class="label"></span>
-	<span class="value" data-bind="i18n: {'key': '%MODULENAME%/LABEL_HINT_DOMAINS'}"></span>
+	<span class="value" data-bind="i18n: {'key': '%MODULENAME%/LABEL_HINT_DOMAINS'}" style="margin-left: 150px; display: block;"></span>
 </div>
 
 <div class="row server" data-bind="visible: !bAdminEdit">
