@@ -737,6 +737,8 @@ CFolderModel.prototype.parse = function (oData, sParentFullName, sNamespaceFolde
 
 		this.initSubscriptions(sParentFullName);
 		this.initComputedFields();
+	
+		App.broadcastEvent('%ModuleName%::ParseFolder::after', this);
 		
 		return oData.SubFolders;
 	}
