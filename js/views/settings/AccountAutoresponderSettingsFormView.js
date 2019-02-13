@@ -81,7 +81,7 @@ CAccountAutoresponderSettingsFormView.prototype.applySavedValues = function (oPa
 
 	if (oAutoresponder)
 	{
-		oAutoresponder.enable = oParameters.Enable === '1';
+		oAutoresponder.enable = oParameters.Enable;
 		oAutoresponder.subject = oParameters.Subject;
 		oAutoresponder.message = oParameters.Message;
 	}

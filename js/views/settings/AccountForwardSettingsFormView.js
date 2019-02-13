@@ -80,7 +80,7 @@ CAccountForwardSettingsFormView.prototype.applySavedValues = function (oParamete
 	
 	if (oForward)
 	{
-		oForward.enable = oParameters.Enable === '1';
+		oForward.enable = oParameters.Enable;
 		oForward.email = oParameters.Email;
 	}
 };
