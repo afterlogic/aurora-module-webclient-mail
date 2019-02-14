@@ -38,6 +38,12 @@
 			padding-top: 8px;
 		}
 	}
+	.horiz_split_panel {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		overflow: hidden;
+	}
 	.messages_panel {
 		border-bottom-left-radius: 0;
 		border-bottom-right-radius: 0;
@@ -115,11 +121,15 @@
 				}
 			}
 		}
-		.panel_bottom {
-			position: absolute;
-			right: 0;
-			background: none;
-			padding: 5px;
+		.middle_bar {
+			position: relative;
+			.panel_bottom {
+				position: absolute;
+				right: 0;
+				background: none;
+				padding: 5px;
+				top: 0;
+			}
 		}
 	}
 	
