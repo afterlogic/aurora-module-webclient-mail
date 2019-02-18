@@ -11,11 +11,11 @@
 		</div>
 		<div class="row">
 			<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_YOUR_NAME'}"></span>
-			<input class="value input" spellcheck="false" type="text" data-bind="value: friendlyName, onEnter: save, hasFocus: friendlyNameHasFocus"/>
+			<input class="value input" spellcheck="false" type="text" data-bind="value: friendlyName, valueUpdate: 'afterkeydown', onEnter: save, hasFocus: friendlyNameHasFocus"/>
 		</div>
 		<div class="row">
 			<span class="label" data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_EMAIL'}"></span>
-			<input class="value input" spellcheck="false" type="text" data-bind="value: email, onEnter: save, disable: accountPart"/>
+			<input class="value input" spellcheck="false" type="text" data-bind="value: email, valueUpdate: 'afterkeydown', onEnter: save, disable: accountPart"/>
 		</div>
 		<div class="row remove_account" data-bind="visible: !bCreate && !accountPart()">
 			<span class="link" data-bind="i18n: {'key': '%MODULENAME%/ACTION_REMOVE_IDENTITY'}, click: remove"></span>
