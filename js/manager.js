@@ -7,8 +7,10 @@ module.exports = function (oAppData) {
 		_ = require('underscore'),
 		ko = require('knockout'),
 
-		App = require('%PathToCoreWebclientModule%/js/App.js'),
 		TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
+		
+		App = require('%PathToCoreWebclientModule%/js/App.js'),
+		ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 
 		Settings = require('modules/%ModuleName%/js/Settings.js'),
 
@@ -22,6 +24,12 @@ module.exports = function (oAppData) {
 	;
 	
 	Settings.init(oAppData);
+	
+	if (!ModulesManager.isModuleAvailable(Settings.ServerModuleName))
+	{
+		return null;
+	}
+	
 	AccountList = require('modules/MailWebclient/js/AccountList.js');
 	
 	if (bAdminUser)
