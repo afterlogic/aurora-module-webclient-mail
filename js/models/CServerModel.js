@@ -7,6 +7,7 @@ var
 function CServerModel(oServer)
 {
 	this.iId = oServer ? Types.pInt(oServer.EntityId) || Types.pInt(oServer.ServerId) : 0;
+	this.iTenantId = oServer ? Types.pInt(oServer.TenantId) : 0;
 	this.sName = oServer ? Types.pString(oServer.Name) : '';
 	this.sIncomingServer = oServer ? Types.pString(oServer.IncomingServer) : '';
 	this.iIncomingPort = oServer ? Types.pInt(oServer.IncomingPort) : 143;

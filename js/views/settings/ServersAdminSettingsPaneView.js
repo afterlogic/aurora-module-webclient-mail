@@ -8,6 +8,7 @@ var
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
+	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 	CAbstractSettingsFormView = ModulesManager.run('AdminPanelWebclient', 'getAbstractSettingsFormViewClass'),
 	
@@ -30,12 +31,24 @@ function CServersAdminSettingsPaneView()
 	
 	this.oServerPairPropertiesView = new CServerPairPropertiesView('server_edit', true);
 	
+	this.tenants = ModulesManager.run('AdminPanelWebclient', 'getTenantsObservable'),
+	
 	this.servers = this.oServerPairPropertiesView.servers;
 	this.servers.subscribe(function () {
-		var oEditedServer = _.find(this.servers(), _.bind(function (oServer) {
-			return oServer.iId === this.editedServerId();
-		}, this));
-		if (!oEditedServer)
+		_.each(this.servers(), function (oServer) {
+			if (oServer.iTenantId === 0)
+			{
+				oServer.sTenantHint = '';
+			}
+			else
+			{
+				var oTenant = _.find(this.tenants(), function (oTmpTenant) {
+					return oTmpTenant.Id === oServer.iTenantId;
+				});
+				oServer.sTenantHint = oTenant ? ' ' + TextUtils.i18n('%MODULENAME%/LABEL_SERVERS_TENANTNAME_HINT', {'TENANTNAME': oTenant.Name}) : '';
+			}
+		}.bind(this));
+		if (!this.editedServer())
 		{
 			this.routeServerList();
 		}
@@ -47,6 +60,11 @@ function CServersAdminSettingsPaneView()
 	this.serversRetrieved = this.oServerPairPropertiesView.serversRetrieved;
 	this.createMode = ko.observable(false);
 	this.editedServerId = ko.observable(0);
+	this.editedServer = ko.computed(function () {
+		return _.find(this.servers(), _.bind(function (oServer) {
+			return oServer.iId === this.editedServerId();
+		}, this));
+	}, this);
 	
 	this.updateSavedState();
 	this.oServerPairPropertiesView.currentValues.subscribe(function () {
@@ -117,7 +135,11 @@ CServersAdminSettingsPaneView.prototype.deleteServer = function (iId)
 		fCallBack = _.bind(function (bDelete) {
 			if (bDelete)
 			{
-				Ajax.send('DeleteServer', { 'ServerId': iId }, function (oResponse) {
+				Ajax.send('DeleteServer', { 'ServerId': iId, 'TenantId': oServerToDelete.iTenantId }, function (oResponse) {
+					if (!oResponse.Result)
+					{
+						Api.showErrorByCode(oResponse, TextUtils.i18n('%MODULENAME%/ERROR_DELETE_MAIL_SERVER'));
+					}
 					this.oServerPairPropertiesView.requestServers();
 				}, this);
 			}
@@ -177,7 +199,20 @@ CServersAdminSettingsPaneView.prototype.revertGlobalValues = function ()
  */
 CServersAdminSettingsPaneView.prototype.getParametersForSave = function ()
 {
-	return this.oServerPairPropertiesView.getParametersForSave();
+	var oParameters = this.oServerPairPropertiesView.getParametersForSave();
+	if (this.createMode())
+	{
+		var koSelectedTenantId = ModulesManager.run('AdminPanelWebclient', 'getKoSelectedTenantId');
+		if (_.isFunction(koSelectedTenantId))
+		{
+			oParameters.TenantId = koSelectedTenantId();
+		}
+	}
+	else
+	{
+		oParameters.TenantId = this.editedServer().iTenantId;
+	}
+	return oParameters;
 };
 
 /**
