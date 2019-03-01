@@ -6,12 +6,17 @@
 <div class="row hint" data-bind="visible: bAdminEdit">
 	<span class="value" data-bind="i18n: {'key': '%MODULENAME%/LABEL_HINT_DISPLAY_NAME'}" style="margin-left: 150px; display: block;"></span>
 </div>
-<div class="row server" data-bind="visible: bAdminEdit, css: {'disabled': !allowEditDomains()}" style="margin-bottom: 6px;">
+<div class="row server" data-bind="visible: bAdminEdit && (bAllowEditDomains || selectedServerId() !== 0)" style="margin-bottom: 6px;">
 	<span class="label required" data-bind="i18n: {'key': '%MODULENAME%/LABEL_DOMAINS'}"></span>
-	<textarea class="input" data-bind="value: domains, enable: allowEditDomains"></textarea>
+	<textarea class="input" data-bind="css: {'disabled': !bAllowEditDomains}, value: domains, enable: bAllowEditDomains"></textarea>
+	<span class="buttons" data-bind="visible: !bAllowEditDomains && tenantId() === 0">
+		<span class="button" data-bind="text: wildcardButtonText, click: triggerWildCard"></span>
+	</span>
 </div>
-<div class="row hint" data-bind="visible: bAdminEdit">
-	<span class="value" data-bind="i18n: {'key': '%MODULENAME%/LABEL_HINT_DOMAINS'}" style="margin-left: 150px; display: block;"></span>
+<div class="row hint" data-bind="visible: bAdminEdit && (bAllowEditDomains || selectedServerId() !== 0)">
+	<span class="value" data-bind="i18n: {'key': '%MODULENAME%/LABEL_HINT_DOMAINS'}, visible: bAllowEditDomains" style="margin-left: 150px; display: block;"></span>
+	<span class="value" data-bind="i18n: {'key': '%MODULENAME%/LABEL_HINT_DOMAINS_CANNOT_EDIT'}, visible: !bAllowEditDomains" style="margin-left: 150px; display: block;"></span>
+	<span class="value" data-bind="i18n: {'key': '%MODULENAME%/LABEL_HINT_WILDCARD_BUTTON'}, visible: !bAllowEditDomains && tenantId() === 0" style="margin-left: 150px; display: block;"></span>
 </div>
 
 <div class="row server" data-bind="visible: !bAdminEdit">

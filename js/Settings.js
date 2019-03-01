@@ -19,6 +19,7 @@ module.exports = {
 	AllowAutoresponder: false,
 	AllowAutosaveInDrafts: true,
 	AllowDefaultAccountForUser: true,
+	AllowEditDomainsInServer: true,
 	AllowFetchers: false,
 	AllowFilters: false,
 	AllowForward: false,
@@ -74,6 +75,7 @@ module.exports = {
 			this.AllowAutoresponder = Types.pBool(oAppDataMailSection.AllowAutoresponder, this.AllowAutoresponder);
 			this.AllowAutosaveInDrafts = Types.pBool(oAppDataMailSection.AllowAutosaveInDrafts, this.AllowAutosaveInDrafts);
 			this.AllowDefaultAccountForUser = Types.pBool(oAppDataMailSection.AllowDefaultAccountForUser, this.AllowDefaultAccountForUser);
+			this.AllowEditDomainsInServer = Types.pBool(oAppDataMailSection.AllowEditDomainsInServer, this.AllowEditDomainsInServer);
 			this.AllowFilters = Types.pBool(oAppDataMailSection.AllowFilters, this.AllowFilters);
 			this.AllowForward = Types.pBool(oAppDataMailSection.AllowForward, this.AllowForward);
 			this.AllowIdentities = Types.pBool(oAppDataMailSection.AllowIdentities, this.AllowIdentities);
@@ -144,5 +146,10 @@ module.exports = {
 	updateAdmin: function (bHorizontalLayoutByDefault)
 	{
 		this.HorizontalLayoutByDefault = Types.pBool(bHorizontalLayoutByDefault, this.AllowAutosaveInDrafts);
+	},
+	
+	disableEditDomainsInServer: function ()
+	{
+		this.AllowEditDomainsInServer = false;
 	}
 };

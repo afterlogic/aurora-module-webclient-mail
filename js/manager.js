@@ -68,6 +68,9 @@ module.exports = function (oAppData) {
 			},
 			getAccountList: function () {
 				return AccountList;
+			},
+			disableEditDomainsInServer: function () {
+				Settings.disableEditDomainsInServer();
 			}
 		};
 	}
