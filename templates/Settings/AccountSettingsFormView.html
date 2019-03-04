@@ -22,7 +22,7 @@
             </div>
             <div class="row">
                 <span class="label required" data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_PASSWORD'}"></span>
-                <input class="value input" spellcheck="false" type="password" maxlength="255" data-bind="value: incomingPassword, valueUpdate: 'afterkeydown', onEnter: save"/>
+                <input class="value input" spellcheck="false" autocomplete="new-password" type="password" maxlength="255" data-bind="value: incomingPassword, valueUpdate: 'afterkeydown', onEnter: save"/>
             </div>
 			
 			<!-- ko template: {name: oServerPairPropertiesView.ViewTemplate, data: oServerPairPropertiesView} --><!-- /ko -->

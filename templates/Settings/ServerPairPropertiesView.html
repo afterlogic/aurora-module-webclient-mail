@@ -66,7 +66,7 @@
 		<label data-bind="i18n: {'key': '%MODULENAME%/LABEL_USE_SPECIFIED_CREDENTIALS'}" for="use_specified_credentials"></label>
 		<input type="text" class="input" data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_LOGIN', 'type': 'placeholder'}, 
 				value: smtpLogin, enable: smtpAuthType() === '1'" />
-		<input type="password" class="input" data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_PASSWORD', 'type': 'placeholder'}, 
+		<input autocomplete="new-password" type="password" class="input" data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_PASSWORD', 'type': 'placeholder'}, 
 				value: smtpPassword, enable: smtpAuthType() === '1'" />
 	</div>
 </div>
