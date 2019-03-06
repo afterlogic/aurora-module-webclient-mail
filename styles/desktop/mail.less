@@ -416,7 +416,7 @@
 	}
 	
 	.notice {
-		background: #ffffc5;
+		background: @theme-mail-viewer-notice-background;
 		border-bottom: 1px solid #eae7ca;
 		color: #b5ad94;
 		font-size: 8pt;
@@ -427,7 +427,7 @@
 		}
 
 		.link {
-			color: #7e9baf;
+			color: @theme-mail-viewer-notice-link-color;
 		}
 	}
 	
@@ -453,8 +453,8 @@
 	}
 	
 	.appointment {
-		background: #dff6eb;
-		border-bottom: 1px solid darken(#dff6eb, 10%);
+		background: @theme-mail-viewer-appointment-background;
+		border-bottom: @theme-mail-viewer-appointment-border-bottom;
 		padding: 15px;
 
 		.row.fluid {
