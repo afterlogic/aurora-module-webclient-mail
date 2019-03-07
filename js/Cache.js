@@ -1562,7 +1562,7 @@ CMailCache.prototype.onMoveMessagesResponse = function (oResponse, oRequest)
 			}
 		}, this),
 		oCurrFolder = this.folderList().currentFolder(),
-		sCurrFolderFullName = oCurrFolder.fullName(),
+		sCurrFolderFullName = oCurrFolder ? oCurrFolder.fullName() : '',
 		bFillMessages = false
 	;
 	
