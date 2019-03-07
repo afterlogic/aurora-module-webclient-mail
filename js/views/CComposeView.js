@@ -1800,6 +1800,7 @@ CComposeView.prototype.registerOwnToolbarControllers = function ()
 	this.registerToolbarController({
 		ViewTemplate: '%ModuleName%_Compose_BackButtonView',
 		sId: 'back',
+		bOnlyMobile: true,
 		backToListCommand: this.backToListCommand
 	});
 	this.registerToolbarController({
