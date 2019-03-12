@@ -344,4 +344,15 @@ CServerPairPropertiesView.prototype.validateBeforeSave = function ()
 	return ValidationUtils.checkIfFieldsEmpty(this.aRequiredFields, TextUtils.i18n('%MODULENAME%/ERROR_REQUIRED_FIELDS_EMPTY'));
 };
 
+CServerPairPropertiesView.prototype.onDomainsClick = function ()
+{
+	if (!this.bAllowEditDomains)
+	{
+		$('.tabsbar .item.admin.domain').removeClass('recivedAnim');
+		setTimeout(function () {
+			$('.tabsbar .item.admin.domain').addClass('recivedAnim');
+		});
+	}
+};
+
 module.exports = CServerPairPropertiesView;

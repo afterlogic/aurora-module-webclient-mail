@@ -7,17 +7,18 @@ var
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	
-	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
 	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
+	Screens = require('%PathToCoreWebclientModule%/js/Screens.js'),
+	
 	CAbstractSettingsFormView = ModulesManager.run('AdminPanelWebclient', 'getAbstractSettingsFormViewClass'),
 	
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
 	ConfirmPopup = require('%PathToCoreWebclientModule%/js/popups/ConfirmPopup.js'),
 	
-	Settings = require('modules/%ModuleName%/js/Settings.js'),
-	
-	CServerPairPropertiesView = require('modules/%ModuleName%/js/views/settings/CServerPairPropertiesView.js')
+	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
+	CServerPairPropertiesView = require('modules/%ModuleName%/js/views/settings/CServerPairPropertiesView.js'),
+	Settings = require('modules/%ModuleName%/js/Settings.js')
 ;
 
 /**
@@ -32,7 +33,17 @@ function CServersAdminSettingsPaneView()
 	this.oServerPairPropertiesView = new CServerPairPropertiesView('server_edit', true);
 	
 	this.tenants = ModulesManager.run('AdminPanelWebclient', 'getTenantsObservable'),
+	this.selectedTenantId = ModulesManager.run('AdminPanelWebclient', 'getKoSelectedTenantId'),
 	
+	this.serverCreateTenantHint = ko.computed(function () {
+		var
+			iSelectedTenantId = this.selectedTenantId(),
+			oSelectedTenant = this.tenants().length > 1 ? _.find(this.tenants(), function (oTenant) {
+				return oTenant.Id === iSelectedTenantId;
+			}) : null
+		;
+		return oSelectedTenant ? TextUtils.i18n('%MODULENAME%/LABEL_SERVER_CREATE_TENANTNAME_HINT', {'TENANTNAME': oSelectedTenant.Name}) : '';
+	}, this);
 	this.servers = this.oServerPairPropertiesView.servers;
 	this.servers.subscribe(function () {
 		_.each(this.servers(), function (oServer) {
@@ -171,6 +182,17 @@ CServersAdminSettingsPaneView.prototype.save = function ()
 			if (this.createMode())
 			{
 				this.routeServerList();
+			}
+			else
+			{
+				if (oResponse.Result)
+				{
+					Screens.showReport(TextUtils.i18n('COREWEBCLIENT/REPORT_SETTINGS_UPDATE_SUCCESS'));
+				}
+				else
+				{
+					Api.showErrorByCode(oResponse, TextUtils.i18n('COREWEBCLIENT/ERROR_SAVING_SETTINGS_FAILED'));
+				}
 			}
 		}, this);
 	}
