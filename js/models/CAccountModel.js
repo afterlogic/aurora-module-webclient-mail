@@ -59,7 +59,6 @@ function CAccountModel(oData)
 	}, this);
 	this.passwordSpecified = ko.observable(true);
 	
-	this.extensions = ko.observableArray([]);
 	this.fetchers = ko.observableArray([]);
 	this.identities = ko.observable(null);
 	this.autoresponder = ko.observable(null);
@@ -74,9 +73,9 @@ function CAccountModel(oData)
 		return AddressUtils.getFullEmail(this.friendlyName(), this.email());
 	}, this);
 	
-	this.extensionsRequested = ko.observable(true);
-	
 	this.bDefault = Settings.AllowDefaultAccountForUser && this.email() === App.getUserPublicId();
+	
+	this.aExtend = Types.pObject(oData.Extend);
 }
 
 CAccountModel.prototype.threadingIsAvailable = function ()
@@ -136,45 +135,6 @@ CAccountModel.prototype.updateQuotaParams = function ()
 	{
 		Ajax.send('GetQuota', { 'AccountID': this.id() }, this.onGetQuotaResponse, this);
 	}
-};
-
-/**
- * @param {Object} oResult
- * @param {Object} oRequest
- */
-CAccountModel.prototype.onGetExtensionsResponse = function (oResult, oRequest)
-{
-	var
-		bResult = !!oResult.Result,
-		aExtensions = bResult ? oResult.Result.Extensions : []
-	;
-	
-	if (bResult)
-	{
-		this.setExtensions(aExtensions);
-		this.extensionsRequested(true);
-	}
-};
-
-/**
- * @param {Array} aExtensions
- */
-CAccountModel.prototype.setExtensions = function(aExtensions)
-{
-	if (_.isArray(aExtensions))
-	{
-		this.extensions(aExtensions);
-	}
-};
-
-/**
- * @param {string} sExtension
- * 
- * return {boolean}
- */
-CAccountModel.prototype.extensionExists = function(sExtension)
-{
-	return (_.indexOf(this.extensions(), sExtension) === -1) ? false : true;
 };
 
 /**
