@@ -465,16 +465,19 @@ CMessageListView.prototype.onHide = function (aParams)
 CMessageListView.prototype.onRoute = function (aParams)
 {
 	var
-		oParams = LinksUtils.parseMailbox(aParams),
+		oInbox = this.folderList().inboxFolder(),
+		sInboxFullName = oInbox ? oInbox.fullName() : '',
+		oParams = LinksUtils.parseMailbox(aParams, sInboxFullName),
+		sCurrentFolder = this.folderFullName() === '' ? sInboxFullName : this.folderFullName(),
 		bRouteChanged = this.currentPage() !== oParams.Page ||
-			this.folderFullName() !== oParams.Folder ||
+			sCurrentFolder !== oParams.Folder ||
 			this.filters() !== oParams.Filters || (oParams.Filters === Enums.FolderFilter.Unseen && MailCache.waitForUnseenMessages()) ||
 			this.search() !== oParams.Search,
 		bMailsPerPageChanged = Settings.MailsPerPage !== this.oPageSwitcher.perPage()
 	;
 	
 	this.pageSwitcherLocked(true);
-	if (this.folderFullName() !== oParams.Folder || this.search() !== oParams.Search || this.filters() !== oParams.Filters)
+	if (sCurrentFolder !== oParams.Folder || this.search() !== oParams.Search || this.filters() !== oParams.Filters)
 	{
 		this.oPageSwitcher.clear();
 	}
