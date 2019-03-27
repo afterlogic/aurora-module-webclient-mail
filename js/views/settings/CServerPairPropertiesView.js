@@ -61,7 +61,6 @@ function CServerPairPropertiesView(sPairId, bAdminEdit)
 			this.outgoingUseAuth(oSelectedServer.sSmtpAuthType === window.Enums.SmtpAuthType.UseUserCredentials);
 			this.outgoingUseAuth.enable(this.bAdminEdit);
 			this.domains(oSelectedServer.sDomains);
-			this.wildCardAdded(this.domains().indexOf('*') !== -1);
 			this.smtpAuthType(oSelectedServer.sSmtpAuthType);
 			this.smtpLogin(oSelectedServer.sSmtpLogin);
 			this.smtpPassword(oSelectedServer.sSmtpPassword);
@@ -87,7 +86,6 @@ function CServerPairPropertiesView(sPairId, bAdminEdit)
 			this.outgoingUseAuth(this.oLastEditableServer.sSmtpAuthType === window.Enums.SmtpAuthType.UseUserCredentials);
 			this.outgoingUseAuth.enable(true);
 			this.domains('');
-			this.wildCardAdded(false);
 			this.smtpAuthType(window.Enums.SmtpAuthType.UseUserCredentials);
 			this.smtpLogin('');
 			this.smtpPassword('');
@@ -146,28 +144,9 @@ function CServerPairPropertiesView(sPairId, bAdminEdit)
 			this.externalAccessSmtpPort(this.oOutgoing.port());
 		}
 	}, this);
-	
-	this.wildCardAdded = ko.observable(false);
-	this.wildcardButtonText = ko.computed(function () {
-		return this.wildCardAdded() ? TextUtils.i18n('%MODULENAME%/LABEL_REMOVE_WILDCARD_DOMAIN') : TextUtils.i18n('%MODULENAME%/LABEL_ADD_WILDCARD_DOMAIN');
-	}, this);
 }
 
 CServerPairPropertiesView.prototype.ViewTemplate = '%ModuleName%_Settings_ServerPairPropertiesView';
-
-CServerPairPropertiesView.prototype.triggerWildCard = function () {
-	if (this.wildCardAdded())
-	{
-		var aDomains = _.without(this.domains().split('\r\n'), '*');
-		this.domains(aDomains.join('\r\n'));
-		this.wildCardAdded(false);
-	}
-	else
-	{
-		this.domains('*\r\n' + this.domains());
-		this.wildCardAdded(true);
-	}
-};
 
 CServerPairPropertiesView.prototype.serverInit = function (bEmptyServerToEdit)
 {

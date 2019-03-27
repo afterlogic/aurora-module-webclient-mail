@@ -10,20 +10,12 @@
 <div class="row server" data-bind="visible: bAdminEdit && (bAllowEditDomains || selectedServerId() !== 0)" style="margin-bottom: 6px;">
 	<span class="label required" data-bind="i18n: {'key': '%MODULENAME%/LABEL_DOMAINS'}"></span>
 	<span data-bind="click: onDomainsClick">
-		<textarea class="input" data-bind="css: {'disabled': !bAllowEditDomains}, value: domains, enable: bAllowEditDomains" style="height: 58px;"></textarea>
+		<textarea class="input" data-bind="css: {'disabled': !bAllowEditDomains}, value: domains, enable: bAllowEditDomains"></textarea>
 	</span>
-	<table data-bind="style: { 'display': !bAllowEditDomains && tenantId() === 0 ? 'inline' : 'none' }">
-		<tr class="buttons" style="text-align: left;">
-			<td class="button" data-bind="text: wildcardButtonText, click: function () { triggerWildCard(); $parent.save(); }"></td>
-		</tr>
-		<tr>
-			<td style="padding-top: 4px; width: 300px;" class="hint" data-bind="i18n: {'key': '%MODULENAME%/LABEL_HINT_WILDCARD_BUTTON'}"></td>
-		</tr>
-	</table>
 </div>
 <div class="row hint" data-bind="visible: bAdminEdit && (bAllowEditDomains || selectedServerId() !== 0)">
-	<span class="value" data-bind="i18n: {'key': '%MODULENAME%/LABEL_HINT_DOMAINS'}, visible: bAllowEditDomains" style="margin-left: 150px; display: block;"></span>
-	<span class="value" data-bind="i18n: {'key': '%MODULENAME%/LABEL_HINT_DOMAINS_CANNOT_EDIT'}, visible: !bAllowEditDomains" style="margin-left: 150px; display: block; width: 300px;"></span>
+	<span class="value" data-bind="i18n: {'key': '%MODULENAME%/LABEL_HINT_DOMAINS'}, visible: bAllowEditDomains" style="margin-left: 150px;"></span>
+	<span class="value" data-bind="i18n: {'key': '%MODULENAME%/LABEL_HINT_DOMAINS_CANNOT_EDIT'}, visible: !bAllowEditDomains" style="margin-left: 150px;"></span>
 </div>
 
 <div class="row server" data-bind="visible: !bAdminEdit">
