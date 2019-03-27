@@ -1,4 +1,7 @@
-<h2 class="subheading" data-bind="text: $parent.serverCreateTenantHint, visible: bAdminEdit && selectedServerId() === 0"></h2>
+<div class="row" data-bind="visible: bAdminEdit && selectedServerId() === 0" style="margin-bottom: 6px;">
+	<span class="label required" data-bind="i18n: {'key': '%MODULENAME%/LABEL_TENANT'}"></span>
+	<select class="input" data-bind="value: $parent.selectedTenantId, options: $parent.tenantOptions, optionsText: 'Name', optionsValue: 'Id'"></select>
+</div>
 <div class="row" data-bind="visible: bAdminEdit" style="margin-bottom: 6px;">
 	<span class="label required" data-bind="i18n: {'key': '%MODULENAME%/LABEL_DISPLAY_NAME'}"></span>
 	<input class="value input" spellcheck="false" type="text" maxlength="255"

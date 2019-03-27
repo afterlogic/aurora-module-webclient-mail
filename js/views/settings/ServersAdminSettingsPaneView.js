@@ -32,18 +32,15 @@ function CServersAdminSettingsPaneView()
 	
 	this.oServerPairPropertiesView = new CServerPairPropertiesView('server_edit', true);
 	
-	this.tenants = ModulesManager.run('AdminPanelWebclient', 'getTenantsObservable'),
-	this.selectedTenantId = ModulesManager.run('AdminPanelWebclient', 'getKoSelectedTenantId'),
-	
-	this.serverCreateTenantHint = ko.computed(function () {
-		var
-			iSelectedTenantId = this.selectedTenantId(),
-			oSelectedTenant = this.tenants().length > 1 ? _.find(this.tenants(), function (oTenant) {
-				return oTenant.Id === iSelectedTenantId;
-			}) : null
-		;
-		return oSelectedTenant ? TextUtils.i18n('%MODULENAME%/LABEL_SERVER_CREATE_TENANTNAME_HINT', {'TENANTNAME': oSelectedTenant.Name}) : '';
+	this.tenants = ModulesManager.run('AdminPanelWebclient', 'getTenantsObservable');
+	this.tenantOptions = ko.computed(function () {
+		return _.union([{Name: 'system-wide', Id: 0}], this.tenants());
 	}, this);
+	this.selectedTenantId = ko.observable((function () {
+		var koSelectedId = ModulesManager.run('AdminPanelWebclient', 'getKoSelectedTenantId');
+		return _.isFunction(koSelectedId) ? koSelectedId() : 0;
+	})());
+	
 	this.servers = this.oServerPairPropertiesView.servers;
 	this.servers.subscribe(function () {
 		_.each(this.servers(), function (oServer) {
@@ -224,11 +221,7 @@ CServersAdminSettingsPaneView.prototype.getParametersForSave = function ()
 	var oParameters = this.oServerPairPropertiesView.getParametersForSave();
 	if (this.createMode())
 	{
-		var koSelectedTenantId = ModulesManager.run('AdminPanelWebclient', 'getKoSelectedTenantId');
-		if (_.isFunction(koSelectedTenantId))
-		{
-			oParameters.TenantId = koSelectedTenantId();
-		}
+		oParameters.TenantId = this.selectedTenantId();
 	}
 	else
 	{

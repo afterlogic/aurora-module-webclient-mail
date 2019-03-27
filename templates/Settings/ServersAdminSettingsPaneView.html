@@ -1,5 +1,5 @@
 <div class="panel_top">
-	<div class="buttons">
+	<div class="buttons" data-bind="visible: !createMode()">
 		<span class="button add_account_button" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ADD_NEW_SERVER'}, click: routeCreateServer"></span>
 	</div>
 	<h2 class="settings_heading" data-bind="i18n: {'key': '%MODULENAME%/HEADING_SERVERS_SETTINGS'}"></h2>
