@@ -36,10 +36,7 @@ function CServersAdminSettingsPaneView()
 	this.tenantOptions = ko.computed(function () {
 		return _.union([{Name: 'system-wide', Id: 0}], this.tenants());
 	}, this);
-	this.selectedTenantId = ko.observable((function () {
-		var koSelectedId = ModulesManager.run('AdminPanelWebclient', 'getKoSelectedTenantId');
-		return _.isFunction(koSelectedId) ? koSelectedId() : 0;
-	})());
+	this.selectedTenantId = ko.observable(this.getSelectedTenantId());
 	
 	this.servers = this.oServerPairPropertiesView.servers;
 	this.servers.subscribe(function () {
@@ -83,6 +80,16 @@ function CServersAdminSettingsPaneView()
 _.extendOwn(CServersAdminSettingsPaneView.prototype, CAbstractSettingsFormView.prototype);
 
 CServersAdminSettingsPaneView.prototype.ViewTemplate = '%ModuleName%_Settings_ServersAdminSettingsPaneView';
+
+CServersAdminSettingsPaneView.prototype.getSelectedTenantId = function ()
+{
+	if (this.tenants().length < 2)
+	{
+		return 0;
+	}
+	var koSelectedId = ModulesManager.run('AdminPanelWebclient', 'getKoSelectedTenantId');
+	return _.isFunction(koSelectedId) ? koSelectedId() : 0;
+};
 
 /**
  * Sets routing to create server mode.
@@ -130,6 +137,7 @@ CServersAdminSettingsPaneView.prototype.onRouteChild = function (aParams)
 
 CServersAdminSettingsPaneView.prototype.onShow = function ()
 {
+	this.selectedTenantId(this.getSelectedTenantId());
 	this.oServerPairPropertiesView.requestServers();
 };
 
