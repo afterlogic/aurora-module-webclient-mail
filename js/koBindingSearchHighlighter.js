@@ -8,31 +8,38 @@ var
 
 function getCaretOffset(oElement)
 {
-	var
-		caretOffset = 0,
-		range,
-		preCaretRange,
-		textRange,
-		preCaretTextRange
-	;
+    var
+        oSel = null,
+        oRange = {},
+        oPreSelectionRange = {},
+        iStart = 0
+    ;
 
-	if (typeof window.getSelection !== "undefined")
-	{
-		range = window.getSelection().getRangeAt(0);
-		preCaretRange = range.cloneRange();
-		preCaretRange.selectNodeContents(oElement);
-		preCaretRange.setEnd(range.endContainer, range.endOffset);
-		caretOffset = preCaretRange.toString().length;
-	}
-	else if (typeof document.selection !== "undefined" && document.selection.type !== "Control")
-	{
-		textRange = document.selection.createRange();
-		preCaretTextRange = document.body.createTextRange();
-		preCaretTextRange.moveToElementText(oElement);
-		preCaretTextRange.setEndPoint("EndToEnd", textRange);
-		caretOffset = preCaretTextRange.text.length;
-	}
-	return caretOffset;
+    if (window.getSelection && document.createRange)
+    {
+        oSel = window.getSelection();
+        if (oSel.rangeCount > 0)
+        {
+            oRange = oSel.getRangeAt(0);
+            oPreSelectionRange = oRange.cloneRange();
+            oPreSelectionRange.selectNodeContents(oElement);
+            oPreSelectionRange.setEnd(oRange.startContainer, oRange.startOffset);
+            iStart = oPreSelectionRange.toString().length;
+        }
+    }
+    else if (document.selection && document.body.createTextRange)
+    {
+        oRange = document.selection.createRange();
+        oPreSelectionRange = document.body.createTextRange();
+        oPreSelectionRange.moveToElementText(oElement);
+        if (typeof(oPreSelectionRange.setEndPoint) === 'function')
+        {
+            oPreSelectionRange.setEndPoint('EndToStart', oRange);
+        }
+        iStart = oPreSelectionRange.text.length;
+    }
+
+    return iStart;
 }
 
 function setCursor(oElement, iCaretPos)
@@ -176,16 +183,10 @@ ko.bindingHandlers.highlighter = {
 						});
 					}
 				});
-				if (bNotRestoreSel)
-				{
-					jqEl.empty().append(aDividedContent);
-				}
-				else
-				{
-					iCaretPos = getCaretOffset(oElement);
-					jqEl.empty().append(aDividedContent);
-					setCursor(oElement, iCaretPos);
-				}
+				
+				iCaretPos = getCaretOffset(oElement);
+				jqEl.empty().append(aDividedContent);
+				setCursor(oElement, iCaretPos);
 			}
 		}
 
@@ -198,7 +199,14 @@ ko.bindingHandlers.highlighter = {
 		}, this);
 
 		oHighlighterValueObserver.subscribe(function () {
-			jqEl.text(oValueObserver());
+			var
+				sElemText = jqEl.text(),
+				sValue = oValueObserver()
+			;
+			if (sElemText.replace('\u00A0', ' ') !== sValue.replace('\u00A0', ' '))
+			{
+				jqEl.text(sValue);
+			}
 		}, this);
 	}
 };
