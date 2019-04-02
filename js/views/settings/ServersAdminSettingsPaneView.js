@@ -41,7 +41,7 @@ function CServersAdminSettingsPaneView()
 	this.servers = this.oServerPairPropertiesView.servers;
 	this.servers.subscribe(function () {
 		_.each(this.servers(), function (oServer) {
-			if (oServer.iTenantId === 0)
+			if (oServer.iTenantId === 0 || !Settings.EnableMultiTenant)
 			{
 				oServer.sTenantHint = '';
 			}

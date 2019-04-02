@@ -14,6 +14,9 @@ module.exports = {
 	HashModuleName: 'mail',
 	FetchersServerModuleName: 'MtaConnector',
 	
+	// from Core module
+	EnableMultiTenant: false,
+	
 	// from Mail module
 	AllowAddAccounts: false,
 	AllowAutoresponder: false,
@@ -64,10 +67,16 @@ module.exports = {
 	init: function (oAppData)
 	{
 		var
+			oCoreDataSection = oAppData['Core'],
 			oAppDataMailSection = oAppData[this.ServerModuleName],
 			oAppDataMailWebclientSection = oAppData['%ModuleName%'],
 			oAppDataFetchersSection = oAppData[this.FetchersServerModuleName]
 		;
+		
+		if (!_.isEmpty(oCoreDataSection))
+		{
+			this.EnableMultiTenant = Types.pBool(oCoreDataSection.EnableMultiTenant, this.EnableMultiTenant);
+		}
 		
 		if (!_.isEmpty(oAppDataMailSection))
 		{
