@@ -25,6 +25,10 @@ function getCaretOffset(oElement)
             oPreSelectionRange.selectNodeContents(oElement);
             oPreSelectionRange.setEnd(oRange.startContainer, oRange.startOffset);
             iStart = oPreSelectionRange.toString().length;
+			if ($(oElement).html().length < iStart)
+			{
+				iStart = 0;
+			}
         }
     }
     else if (document.selection && document.body.createTextRange)
@@ -138,11 +142,35 @@ ko.bindingHandlers.highlighter = {
 				return true;
 			})
 			.on('paste', function (oEvent) {
+				
+				if (document.queryCommandSupported('insertText'))
+				{
+					// cancel paste
+					oEvent.preventDefault();
+
+					// get text representation of clipboard
+					var sText = '';
+					if (oEvent.clipboardData || oEvent.originalEvent.clipboardData)
+					{
+						sText = (oEvent.originalEvent || oEvent).clipboardData.getData('text/plain');
+					}
+					else if (window.clipboardData)
+					{
+						sText = window.clipboardData.getData('Text');
+					}
+					
+					// insert text manually
+					document.execCommand('insertText', false, sText);
+					
+					// insertText command doesn't work in IE
+					// paste command causes looping in IE
+					// so there is no clearing text in IE for now
+				}
+				
 				setTimeout(function () {
 					oValueObserver(fClear(jqEl.text()));
 					highlight(false);
 				}, 0);
-				return true;
 			});
 
 		// highlight on init
