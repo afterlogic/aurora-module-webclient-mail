@@ -125,6 +125,7 @@ ko.bindingHandlers.highlighter = {
 				
 				if (!(
 						oEvent.keyCode === Enums.Key.Shift					||
+						oEvent.keyCode === Enums.Key.Alt					||
 						oEvent.keyCode === Enums.Key.Ctrl					||
 						// for international english -------------------------
 						oEvent.keyCode === Enums.Key.Dash					||
