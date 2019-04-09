@@ -921,7 +921,7 @@ CMessageListView.prototype.onFileUploadComplete = function (sFileUid, bResponseR
 	}
 	else
 	{
-		Api.showErrorByCode(oResponse, TextUtils.i18n('COREWEBCLIENT/ERROR_UPLOAD_FILE'));
+		Api.showErrorByCode(oResponse || {}, TextUtils.i18n('COREWEBCLIENT/ERROR_UPLOAD_FILE'));
 	}
 };
 
