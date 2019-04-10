@@ -531,7 +531,7 @@ CMailCache.prototype.getUseListStatusIfPossibleValue = function (iFoldersToReque
 {
 	var
 		oFolderList = this.oFolderListItems[this.currentAccountId()],
-		iFoldersCount = oFolderList.getFoldersCount()
+		iFoldersCount = oFolderList ? oFolderList.getFoldersCount() : 0
 	;
 	return iFoldersCount < 100 || iFoldersToRequestCount > 50;
 };
