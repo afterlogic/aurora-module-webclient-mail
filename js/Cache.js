@@ -524,6 +524,19 @@ CMailCache.prototype.getNamesOfFoldersToRefresh = function ()
 };
 
 /**
+ * Checks if LIST-STATUS command should be used if it's supported by IMAP server.
+ * @param {int} iFoldersToRequestCount
+ */
+CMailCache.prototype.getUseListStatusIfPossibleValue = function (iFoldersToRequestCount)
+{
+	var
+		oFolderList = this.oFolderListItems[this.currentAccountId()],
+		iFoldersCount = oFolderList.getFoldersCount()
+	;
+	return iFoldersCount < 100 || iFoldersToRequestCount > 50;
+};
+
+/**
  * @param {boolean} bAbortPrevious
  */
 CMailCache.prototype.executeCheckMail = function (bAbortPrevious)
@@ -538,8 +551,9 @@ CMailCache.prototype.executeCheckMail = function (bAbortPrevious)
 	if (App.getUserRole() !== Enums.UserRole.Anonymous && (bAbortPrevious || !Ajax.hasOpenedRequests('GetRelevantFoldersInformation') || !bCurrentAccountCheckmailStarted) && (aFolders.length > 0))
 	{
 		oParameters = {
+			'AccountID': iAccountID,
 			'Folders': aFolders,
-			'AccountID': iAccountID
+			'UseListStatusIfPossible': this.getUseListStatusIfPossibleValue(aFolders.length)
 		};
 		
 		this.checkMailStarted(true);
@@ -1290,8 +1304,9 @@ CMailCache.prototype.getAllFoldersRelevantInformation = function (iAccountId)
 		oFolderList = this.oFolderListItems[iAccountId],
 		aFolders = oFolderList ? oFolderList.getFoldersWithoutCountInfo() : [],
 		oParameters = {
+			'AccountID': iAccountId,
 			'Folders': aFolders,
-			'AccountID': iAccountId
+			'UseListStatusIfPossible': this.getUseListStatusIfPossibleValue(aFolders.length)
 		}
 	;
 	

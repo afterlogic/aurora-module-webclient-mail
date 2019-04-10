@@ -91,6 +91,11 @@ function CFolderListModel()
 	this.sDelimiter = '';
 }
 
+CFolderListModel.prototype.getFoldersCount = function ()
+{
+	return this.aLinedCollection.length;
+};
+
 CFolderListModel.prototype.getTotalMessageCount = function ()
 {
 	var iCount = 0;
