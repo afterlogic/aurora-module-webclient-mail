@@ -976,13 +976,14 @@ CFolderModel.prototype.getCompletelyFilledMessage = function (sUid, fResponseHan
 		oParameters = {
 			'AccountID': oMessage ? oMessage.accountId() : 0,
 			'Folder': this.fullName(),
-			'Uid': sUid
+			'Uid': sUid,
+			'MessageBodyTruncationThreshold': Settings.MessageBodyTruncationThreshold
 		}
 	;
 
 	if (sUid.length > 0)
 	{
-		if (!oMessage || !oMessage.completelyFilled() || oMessage.trimmed())
+		if (!oMessage || !oMessage.completelyFilled() || oMessage.truncated())
 		{
 			if (fResponseHandler && oContext)
 			{

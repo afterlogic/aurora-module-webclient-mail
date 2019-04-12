@@ -495,10 +495,10 @@ CMessagePaneView.prototype.onCurrentMessageSubscribe = function ()
 			this.attachments(oMessage.attachments());
 		}
 
-		if (!oMessage.completelyFilled() || oMessage.trimmed())
+		if (!oMessage.completelyFilled() || oMessage.truncated())
 		{
 			/*jshint onevar: false*/
-			var oSubscribedField = !oMessage.completelyFilled() ? oMessage.completelyFilled : oMessage.trimmed;
+			var oSubscribedField = !oMessage.completelyFilled() ? oMessage.completelyFilled : oMessage.truncated;
 			/*jshint onevar: true*/
 			if (App.isNewTab())
 			{

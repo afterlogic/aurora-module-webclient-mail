@@ -52,6 +52,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			'JoinReplyPrefixes' => $this->getConfig('JoinReplyPrefixes', false),
 			'MailsPerPage' => $this->getConfig('MailsPerPage', 20),
 			'MaxMessagesBodiesSizeToPrefetch' => $this->getConfig('MaxMessagesBodiesSizeToPrefetch', 50000),
+			'MessageBodyTruncationThreshold' => $this->getConfig('MessageBodyTruncationThreshold', 650000), // in bytes
 			'ShowEmailAsTabName' => $this->getConfig('ShowEmailAsTabName', true),
 			'AllowShowMessagesCountInFolderList' => $this->getConfig('AllowShowMessagesCountInFolderList', false),
 			'AllowSearchMessagesBySubject' => $this->getConfig('AllowSearchMessagesBySubject', false),

@@ -247,13 +247,14 @@ Prefetcher.startMessagesPrefetch = function ()
 				bUidNotAdded = !_.find(aUids, function (sUid) {
 					return sUid === oMsg.uid();
 				}, this),
-				bHasNotBeenRequested = !oCurrFolder.hasUidBeenRequested(oMsg.uid())
+				bHasNotBeenRequested = !oCurrFolder.hasUidBeenRequested(oMsg.uid()),
+				iTextSize = oMsg.textSize() < Settings.MessageBodyTruncationThreshold ? oMsg.textSize() : Settings.MessageBodyTruncationThreshold
 			;
 
 			if (iTotalSize < iMaxSize && bNotFilled && bUidNotAdded && bHasNotBeenRequested)
 			{
 				aUids.push(oMsg.uid());
-				iTotalSize += oMsg.trimmedTextSize() + iJsonSizeOf1Message;
+				iTotalSize += iTextSize + iJsonSizeOf1Message;
 			}
 		}
 	;
@@ -270,7 +271,8 @@ Prefetcher.startMessagesPrefetch = function ()
 			oParameters = {
 				'AccountID': iAccountId,
 				'Folder': oCurrFolder.fullName(),
-				'Uids': aUids
+				'Uids': aUids,
+				'MessageBodyTruncationThreshold': Settings.MessageBodyTruncationThreshold
 			};
 
 			Ajax.send('GetMessagesBodies', oParameters, this.onGetMessagesBodiesResponse, this);

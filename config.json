@@ -47,6 +47,10 @@
 		50000,
 		"int"
 	],
+	"MessageBodyTruncationThreshold": [
+		650000,
+		"int"
+	],
 	"ShowEmailAsTabName": [
 		true,
 		"bool"

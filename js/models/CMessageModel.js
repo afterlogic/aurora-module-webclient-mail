@@ -168,8 +168,7 @@ function CMessageModel()
 	this.selected = ko.observable(false);
 	this.deleted = ko.observable(false); // temporary removal until it was confirmation from the server to delete
 
-	this.trimmed = ko.observable(false);
-	this.trimmedTextSize = ko.observable(0);
+	this.truncated = ko.observable(false);
 	this.inReplyTo = ko.observable('');
 	this.references = ko.observable('');
 	this.readingConfirmationAddressee = ko.observable('');
@@ -418,8 +417,7 @@ CMessageModel.prototype.parse = function (oData, iAccountId, bThreadPart, bTrust
 		
 		if (oData['@Object'] === 'Object/Message')
 		{
-			this.trimmed(oData.Trimmed);
-			this.trimmedTextSize(oData.TrimmedTextSize);
+			this.truncated(oData.Truncated);
 			this.inReplyTo(oData.InReplyTo);
 			this.references(oData.References);
 			this.readingConfirmationAddressee(Types.pString(oData.ReadingConfirmationAddressee));
