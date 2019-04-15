@@ -17,8 +17,8 @@
 	</span>
 </div>
 <div class="row hint" data-bind="visible: bAdminEdit && (bAllowEditDomains || selectedServerId() !== 0)">
-	<span class="value" data-bind="i18n: {'key': '%MODULENAME%/LABEL_HINT_DOMAINS'}, visible: bAllowEditDomains" style="margin-left: 150px;"></span>
-	<span class="value" data-bind="i18n: {'key': '%MODULENAME%/LABEL_HINT_DOMAINS_CANNOT_EDIT'}, visible: !bAllowEditDomains" style="margin-left: 150px;"></span>
+	<span class="value" data-bind="i18n: {'key': '%MODULENAME%/LABEL_HINT_DOMAINS'}, visible: bAllowEditDomains" style="margin-left: 150px; display: block;"></span>
+	<span class="value" data-bind="i18n: {'key': '%MODULENAME%/LABEL_HINT_DOMAINS_CANNOT_EDIT', 'type': 'html'}, visible: !bAllowEditDomains" style="margin-left: 150px; display: block;"></span>
 </div>
 
 <div class="row server" data-bind="visible: !bAdminEdit">
