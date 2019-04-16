@@ -50,7 +50,7 @@ function CServersAdminSettingsPaneView()
 				var oTenant = _.find(this.tenants(), function (oTmpTenant) {
 					return oTmpTenant.Id === oServer.iTenantId;
 				});
-				oServer.sTenantHint = oTenant ? ' ' + TextUtils.i18n('%MODULENAME%/LABEL_SERVERS_TENANTNAME_HINT', {'TENANTNAME': oTenant.Name}) : '';
+				oServer.sTenantHint = oTenant ? ' ' + TextUtils.i18n('%MODULENAME%/LABEL_HINT_SERVERS_TENANTNAME', {'TENANTNAME': oTenant.Name}) : '';
 			}
 		}.bind(this));
 		if (!this.editedServer())
