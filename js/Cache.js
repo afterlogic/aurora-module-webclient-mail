@@ -918,18 +918,6 @@ CMailCache.prototype.copyMessagesToFolder = function (sToFolderFullName, aUids)
 			oToFolder.markHasChanges();
 
 			Ajax.send('CopyMessages', oParameters, this.onCopyMessagesResponse, this);
-
-//			if (oToFolder && oToFolder.type() === Enums.FolderTypes.Trash)
-//			{
-//				AfterLogicApi.runPluginHook('copy-messages-to-trash',
-//					[AccountList.currentId(), oParameters.Folder, aUids]);
-//			}
-//
-//			if (oToFolder && oToFolder.type() === Enums.FolderTypes.Spam)
-//			{
-//				AfterLogicApi.runPluginHook('copy-messages-to-spam',
-//					[AccountList.currentId(), oParameters.Folder, aUids]);
-//			}
 		}
 	}
 };
@@ -1036,9 +1024,6 @@ CMailCache.prototype.deleteMessagesFromFolder = function (oFolder, aUids)
 	this.excludeDeletedMessages();
 
 	Ajax.send('DeleteMessages', oParameters, this.onMoveMessagesResponse, this);
-	
-//	AfterLogicApi.runPluginHook('delete-messages', 
-//		[AccountList.currentId(), oParameters.Folder, aUids]);
 };
 
 /**
@@ -1514,9 +1499,6 @@ CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 			aNewFolderMessages.push(oFolderMessage);
 		}, this);
 		
-//		AfterLogicApi.runPluginHook('response-custom-messages', 
-//			[oParameters.AccountID, oFolder.fullName(), aNewFolderMessages]);
-
 		if (bCurrentList)
 		{
 			this.uidList(oUidList);
