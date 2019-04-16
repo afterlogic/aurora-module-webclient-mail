@@ -32,6 +32,7 @@ module.exports = {
 	AutoSaveIntervalSeconds: 60,
 	AllowTemplateFolders: false,
 	AllowAlwaysRefreshFolders: false,
+	AutocreateMailAccountOnNewUserFirstLogin: false,
 	IgnoreImapSubscription: false,
 	ImageUploadSizeLimit: 0,
 	
@@ -94,6 +95,7 @@ module.exports = {
 			this.AutoSaveIntervalSeconds = Types.pNonNegativeInt(oAppDataMailSection.AutoSaveIntervalSeconds, this.AutoSaveIntervalSeconds);
 			this.AllowTemplateFolders = Types.pBool(oAppDataMailSection.AllowTemplateFolders, this.AllowTemplateFolders);
 			this.AllowAlwaysRefreshFolders = Types.pBool(oAppDataMailSection.AllowAlwaysRefreshFolders, this.AllowAlwaysRefreshFolders);
+			this.AutocreateMailAccountOnNewUserFirstLogin = Types.pBool(oAppDataMailSection.AutocreateMailAccountOnNewUserFirstLogin, this.AutocreateMailAccountOnNewUserFirstLogin);
 			this.IgnoreImapSubscription = Types.pBool(oAppDataMailSection.IgnoreImapSubscription, this.IgnoreImapSubscription);
 			this.ImageUploadSizeLimit = Types.pNonNegativeInt(oAppDataMailSection.ImageUploadSizeLimit, this.ImageUploadSizeLimit);
 			window.Enums.SmtpAuthType = Types.pObject(oAppDataMailSection.SmtpAuthType);
@@ -152,11 +154,15 @@ module.exports = {
 	/**
 	 * Updates new admin settings values after saving on server.
 	 * 
+	 * @param {boolean} bAutocreateMailAccountOnNewUserFirstLogin
+	 * @param {boolean} bAllowAddAccounts
 	 * @param {boolean} bHorizontalLayoutByDefault
 	 */
-	updateAdmin: function (bHorizontalLayoutByDefault)
+	updateAdmin: function (bAutocreateMailAccountOnNewUserFirstLogin, bAllowAddAccounts, bHorizontalLayoutByDefault)
 	{
-		this.HorizontalLayoutByDefault = Types.pBool(bHorizontalLayoutByDefault, this.AllowAutosaveInDrafts);
+		this.AutocreateMailAccountOnNewUserFirstLogin = Types.pBool(bAutocreateMailAccountOnNewUserFirstLogin, this.AutocreateMailAccountOnNewUserFirstLogin);
+		this.AllowAddAccounts = Types.pBool(bAllowAddAccounts, this.AllowAddAccounts);
+		this.HorizontalLayoutByDefault = Types.pBool(bHorizontalLayoutByDefault, this.HorizontalLayoutByDefault);
 	},
 	
 	disableEditDomainsInServer: function ()

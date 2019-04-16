@@ -30,6 +30,8 @@ function CMailAdminSettingsFormView()
 		{ text: TextUtils.i18n('%MODULENAME%/LABEL_HORIZ_SPLIT_LAYOUT'), value: true }
 	];
 	
+	this.autocreateMailAccountOnNewUserFirstLogin = ko.observable(Settings.AutocreateMailAccountOnNewUserFirstLogin);
+	this.allowAddAccounts = ko.observable(Settings.AllowAddAccounts);
 	this.horizontalLayoutByDefault = ko.observable(Settings.HorizontalLayoutByDefault);
 }
 
@@ -45,25 +47,31 @@ CMailAdminSettingsFormView.prototype.registerMailto = function ()
 CMailAdminSettingsFormView.prototype.getCurrentValues = function ()
 {
 	return [
+		this.autocreateMailAccountOnNewUserFirstLogin,
+		this.allowAddAccounts,
 		this.horizontalLayoutByDefault()
 	];
 };
 
 CMailAdminSettingsFormView.prototype.revertGlobalValues = function ()
 {
+	this.autocreateMailAccountOnNewUserFirstLogin(Settings.AutocreateMailAccountOnNewUserFirstLogin);
+	this.allowAddAccounts(Settings.AllowAddAccounts);
 	this.horizontalLayoutByDefault(Settings.HorizontalLayoutByDefault);
 };
 
 CMailAdminSettingsFormView.prototype.getParametersForSave = function ()
 {
 	return {
+		'AutocreateMailAccountOnNewUserFirstLogin': this.autocreateMailAccountOnNewUserFirstLogin(),
+		'AllowAddAccounts': this.allowAddAccounts(),
 		'HorizontalLayoutByDefault': this.horizontalLayoutByDefault()
 	};
 };
 
 CMailAdminSettingsFormView.prototype.applySavedValues = function (oParameters)
 {
-	Settings.updateAdmin(oParameters.HorizontalLayoutByDefault);
+	Settings.updateAdmin(oParameters.AutocreateMailAccountOnNewUserFirstLogin, oParameters.AllowAddAccounts, oParameters.HorizontalLayoutByDefault);
 };
 
 CMailAdminSettingsFormView.prototype.setAccessLevel = function (sEntityType, iEntityId)
