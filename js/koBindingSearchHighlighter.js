@@ -213,9 +213,18 @@ ko.bindingHandlers.highlighter = {
 					}
 				});
 				
-				iCaretPos = getCaretOffset(oElement);
-				jqEl.empty().append(aDividedContent);
-				setCursor(oElement, iCaretPos);
+				if (!jqEl.is(':focus'))
+				{
+					// Don't set focus if the field wasn't focused before.
+					// It may affect on viewing messages in the list using the up and down buttons.
+					jqEl.empty().append(aDividedContent);
+				}
+				else
+				{
+					iCaretPos = getCaretOffset(oElement);
+					jqEl.empty().append(aDividedContent);
+					setCursor(oElement, iCaretPos);
+				}
 			}
 		}
 
