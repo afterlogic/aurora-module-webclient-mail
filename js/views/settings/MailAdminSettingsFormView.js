@@ -30,6 +30,8 @@ function CMailAdminSettingsFormView()
 		{ text: TextUtils.i18n('%MODULENAME%/LABEL_HORIZ_SPLIT_LAYOUT'), value: true }
 	];
 	
+	this.bAllowMultiAccounts = Settings.AllowMultiAccounts;
+	
 	this.autocreateMailAccountOnNewUserFirstLogin = ko.observable(Settings.AutocreateMailAccountOnNewUserFirstLogin);
 	this.allowAddAccounts = ko.observable(Settings.AllowAddAccounts);
 	this.horizontalLayoutByDefault = ko.observable(Settings.HorizontalLayoutByDefault);
