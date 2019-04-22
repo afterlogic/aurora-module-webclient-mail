@@ -1247,7 +1247,7 @@ CFolderModel.prototype.onSubscribeClick = function ()
 CFolderModel.prototype.afterMove = function (aParents)
 {
 	_.each(aParents, function (oParent) {
-		if (oParent.constructor.name === 'CAccountFoldersPaneView')
+		if (_.isFunction(oParent.afterMove))
 		{
 			oParent.afterMove();
 		}
