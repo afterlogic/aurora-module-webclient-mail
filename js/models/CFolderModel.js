@@ -279,10 +279,8 @@ CFolderModel.prototype.computeThreadData = function (oMessage)
  */
 CFolderModel.prototype.addThreadUidsToUidLists = function (sUid, aThreadUids)
 {
-	_.each(this.oUids, function (oUidSearchList) {
-		_.each(oUidSearchList, function (oUidList) {
-			oUidList.addThreadUids(sUid, aThreadUids);
-		});
+	_.each(this.oUids, function (oUidList) {
+		oUidList.addThreadUids(sUid, aThreadUids);
 	});
 };
 
@@ -477,16 +475,22 @@ CFolderModel.prototype.removeAllMessageListsFromCacheIfHasChanges = function ()
 
 CFolderModel.prototype.removeFlaggedMessageListsFromCache = function ()
 {
-	_.each(this.oUids, function (oSearchUids, sSearch) {
-		delete this.oUids[sSearch][Enums.FolderFilter.Flagged];
-	}, this);
+	_.each(this.oUids, function (oUidList, sIndex) {
+		if (oUidList.filters() === Enums.FolderFilter.Flagged)
+		{
+			delete this.oUids[sIndex];
+		}
+	}.bind(this));
 };
 
 CFolderModel.prototype.removeUnseenMessageListsFromCache = function ()
 {
-	_.each(this.oUids, function (oSearchUids, sSearch) {
-		delete this.oUids[sSearch][Enums.FolderFilter.Unseen];
-	}, this);
+	_.each(this.oUids, function (oUidList, sIndex) {
+		if (oUidList.filters() === Enums.FolderFilter.Unseen)
+		{
+			delete this.oUids[sIndex];
+		}
+	}.bind(this));
 };
 
 /**
@@ -636,10 +640,8 @@ CFolderModel.prototype.commitDeleted = function (aUids)
 		delete this.oMessages[sUid];
 	}, this));
 	
-	_.each(this.oUids, function (oUidSearchList) {
-		_.each(oUidSearchList, function (oUidList) {
-			oUidList.deleteUids(aUids);
-		});
+	_.each(this.oUids, function (oUidList) {
+		oUidList.deleteUids(aUids);
 	});
 };
 
@@ -650,23 +652,19 @@ CFolderModel.prototype.commitDeleted = function (aUids)
 CFolderModel.prototype.getUidList = function (sSearch, sFilters)
 {
 	var
+		sIndex = JSON.stringify([sSearch, sFilters]),
 		oUidList = null
 	;
 	
-	if (this.oUids[sSearch] === undefined)
-	{
-		this.oUids[sSearch] = {};
-	}
-	
-	if (this.oUids[sSearch][sFilters] === undefined)
+	if (this.oUids[sIndex] === undefined)
 	{
 		oUidList = new CUidListModel();
 		oUidList.search(sSearch);
 		oUidList.filters(sFilters);
-		this.oUids[sSearch][sFilters] = oUidList;
+		this.oUids[sIndex] = oUidList;
 	}
 	
-	return this.oUids[sSearch][sFilters];
+	return this.oUids[sIndex];
 };
 
 /**
