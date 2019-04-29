@@ -637,6 +637,14 @@ CFolderModel.prototype.revertDeleted = function (aUids)
 CFolderModel.prototype.commitDeleted = function (aUids)
 {
 	_.each(aUids, _.bind(function (sUid) {
+		
+		// Attempt to reduce amount of used memory.
+		// Messages are not removed from memory for some reason (perhaps there are references somehwere in closures).
+		for (var mKey in this.oMessages[sUid])
+		{
+			delete this.oMessages[sUid][mKey];
+		}
+		
 		delete this.oMessages[sUid];
 	}, this));
 	
