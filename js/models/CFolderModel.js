@@ -6,6 +6,7 @@ var
 	ko = require('knockout'),
 	moment = require('moment'),
 	
+	Utils = require('%PathToCoreWebclientModule%/js/utils/Common.js'),
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	
@@ -478,7 +479,7 @@ CFolderModel.prototype.removeFlaggedMessageListsFromCache = function ()
 	_.each(this.oUids, function (oUidList, sIndex) {
 		if (oUidList.filters() === Enums.FolderFilter.Flagged)
 		{
-			delete this.oUids[sIndex];
+			Utils.destroyObjectWithObservables(this.oUids, sIndex);
 		}
 	}.bind(this));
 };
@@ -488,7 +489,7 @@ CFolderModel.prototype.removeUnseenMessageListsFromCache = function ()
 	_.each(this.oUids, function (oUidList, sIndex) {
 		if (oUidList.filters() === Enums.FolderFilter.Unseen)
 		{
-			delete this.oUids[sIndex];
+			Utils.destroyObjectWithObservables(this.oUids, sIndex);
 		}
 	}.bind(this));
 };
@@ -637,15 +638,7 @@ CFolderModel.prototype.revertDeleted = function (aUids)
 CFolderModel.prototype.commitDeleted = function (aUids)
 {
 	_.each(aUids, _.bind(function (sUid) {
-		
-		// Attempt to reduce amount of used memory.
-		// Messages are not removed from memory for some reason (perhaps there are references somehwere in closures).
-		for (var mKey in this.oMessages[sUid])
-		{
-			delete this.oMessages[sUid][mKey];
-		}
-		
-		delete this.oMessages[sUid];
+		Utils.destroyObjectWithObservables(this.oMessages, sUid);
 	}, this));
 	
 	_.each(this.oUids, function (oUidList) {

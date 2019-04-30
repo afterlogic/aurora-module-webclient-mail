@@ -1263,7 +1263,16 @@ CMailCache.prototype.onGetFoldersResponse = function (oResponse, oRequest)
 		{
 			oFolderList.oStarredFolder.messageCount(oFolderListOld.oStarredFolder.messageCount());
 		}
+		
+		this.__oldFolderList = this.oFolderListItems[iAccountId];
 		this.oFolderListItems[iAccountId] = oFolderList;
+		
+		// Destroy the old folder list to free up used memory.
+		if (this.__oldFolderList)
+		{
+			this.__oldFolderList.destroyFolders();
+			Utils.destroyObjectWithObservables(this, '__oldFolderList');
+		}
 
 		setTimeout(_.bind(this.getAllFoldersRelevantInformation, this, iAccountId), 2000);
 

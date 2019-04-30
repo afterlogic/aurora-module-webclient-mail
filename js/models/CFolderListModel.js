@@ -5,6 +5,7 @@ var
 	ko = require('knockout'),
 	
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
+	Utils = require('%PathToCoreWebclientModule%/js/utils/Common.js'),
 	
 	Storage = require('%PathToCoreWebclientModule%/js/Storage.js'),
 	
@@ -249,6 +250,20 @@ CFolderListModel.prototype.parse = function (iAccountId, oData, oNamedFolderList
 };
 
 /**
+ * Destroys all the remaining folders before the list will be destroyed itself.
+ */
+CFolderListModel.prototype.destroyFolders = function ()
+{
+	Utils.destroyObjectWithObservables(this, 'oStarredFolder');
+	this.collection.removeAll();
+	this.aLinedCollection = [];
+	for (var sKey in this.oNamedCollection)
+	{
+		Utils.destroyObjectWithObservables(this.oNamedCollection, sKey);
+	}
+};
+
+/**
  * Recursively parses the folder tree.
  * 
  * @param {Array} aRawCollection
@@ -284,13 +299,13 @@ CFolderListModel.prototype.parseRecursively = function (aRawCollection, oNamedFo
 		{
 			sFolderFullName = Types.pString(aRawCollection[iIndex].FullNameRaw);
 			oFolderOld = oNamedFolderListOld[sFolderFullName];
-			oFolder = new CFolderModel(this.iAccountId);
+			
+			// Do not create a new folder object if possible. A new object will use memory that is difficult to free.
+			oFolder = oFolderOld ? oFolderOld : new CFolderModel(this.iAccountId);
 			oSubFolders = oFolder.parse(aRawCollection[iIndex], sParentFullName, this.sNamespaceFolder);
-			if (oFolderOld && oFolderOld.hasExtendedInfo() && !oFolder.hasExtendedInfo())
-			{
-				oFolder.setRelevantInformation(oFolderOld.sUidNext, oFolderOld.sHash, 
-					oFolderOld.messageCount(), oFolderOld.unseenMessageCount(), false);
-			}
+			
+			// Remove from the old folder list reference to the folder. The remaining folders will be destroyed.
+			delete oNamedFolderListOld[sFolderFullName];
 
 			if (this.bExpandFolders && oSubFolders !== null)
 			{
