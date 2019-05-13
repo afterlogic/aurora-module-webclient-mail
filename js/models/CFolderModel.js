@@ -450,7 +450,11 @@ CFolderModel.prototype.markMessageReplied = function (sUid, sReplyType)
 
 CFolderModel.prototype.removeAllMessages = function ()
 {
-	var oUidList = null;
+	var
+		oUidListsToRemove = this.oUids,
+		oMessagesToRemove = this.oMessages,
+		oUidList = null
+	;
 	
 	this.oMessages = {};
 	this.oUids = {};
@@ -461,6 +465,18 @@ CFolderModel.prototype.removeAllMessages = function ()
 	
 	oUidList = this.getUidList('', '');
 	oUidList.resultCount(0);
+	
+	_.delay(function () {
+		_.each(oMessagesToRemove, function (oMessage, sUid) {
+			Utils.destroyObjectWithObservables(oMessagesToRemove, sUid);
+		});
+		oMessagesToRemove = null;
+		
+		_.each(oUidListsToRemove, function (oUidList, sIndex) {
+			Utils.destroyObjectWithObservables(oUidListsToRemove, sIndex);
+		});
+		oUidListsToRemove = null;
+	});
 };
 
 CFolderModel.prototype.removeAllMessageListsFromCacheIfHasChanges = function ()
