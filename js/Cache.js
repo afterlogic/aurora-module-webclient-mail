@@ -24,6 +24,7 @@ var
 	
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
+	MessagesDictionary = require('modules/%ModuleName%/js/MessagesDictionary.js'),
 	Prefetcher = null,
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	
@@ -476,15 +477,14 @@ CMailCache.prototype.getMessagesWithThreads = function (sFolderFullName, oUidLis
 /**
  * @param {Object} oUidList
  * @param {number} iOffset
- * @param {Object} oMessages
  * @param {boolean} bFillMessages
  */
-CMailCache.prototype.setMessagesFromUidList = function (oUidList, iOffset, oMessages, bFillMessages)
+CMailCache.prototype.setMessagesFromUidList = function (oUidList, iOffset, bFillMessages)
 {
 	var
-		aUids = oUidList.getUidsForOffset(iOffset, oMessages),
+		aUids = oUidList.getUidsForOffset(iOffset),
 		aMessages = _.map(aUids, function (sUid) {
-			return oMessages[sUid];
+			return MessagesDictionary.get([oUidList.iAccountId, oUidList.sFullName, sUid]);
 		}, this),
 		iMessagesCount = aMessages.length
 	;
@@ -722,7 +722,7 @@ CMailCache.prototype.requestMessageList = function (sFolder, iPage, sSearch, sFi
 	}
 	if (oUidList)
 	{
-		aUids = this.setMessagesFromUidList(oUidList, iOffset, oFolder.oMessages, bFillMessages);
+		aUids = this.setMessagesFromUidList(oUidList, iOffset, bFillMessages);
 	}
 	
 	if (oUidList)
@@ -925,14 +925,8 @@ CMailCache.prototype.copyMessagesToFolder = function (sToFolderFullName, aUids)
 CMailCache.prototype.excludeDeletedMessages = function ()
 {
 	_.delay(_.bind(function () {
-		
-		var
-			oCurrFolder = this.folderList().currentFolder(),
-			iOffset = (this.page() - 1) * Settings.MailsPerPage
-		;
-		
-		this.setMessagesFromUidList(this.uidList(), iOffset, oCurrFolder.oMessages, true);
-		
+		var iOffset = (this.page() - 1) * Settings.MailsPerPage;
+		this.setMessagesFromUidList(this.uidList(), iOffset, true);
 	}, this), 500);
 };
 
@@ -1071,7 +1065,7 @@ CMailCache.prototype.setCurrentMessage = function (sUid, sFolder)
 	
 	if (oCurrFolder && sUid)
 	{
-		oMessage = oCurrFolder.oMessages[sUid];
+		oMessage = MessagesDictionary.get([oCurrFolder.iAccountId, oCurrFolder.fullName(), sUid]);
 	}
 	
 	if (oMessage && !oMessage.deleted())
@@ -1206,7 +1200,7 @@ CMailCache.prototype.executeGroupOperation = function (sMethod, aUids, sField, b
 		
 		if (this.uidList().filters() !== Enums.FolderFilter.Unseen || this.waitForUnseenMessages())
 		{
-			this.setMessagesFromUidList(this.uidList(), iOffset, oCurrFolder.oMessages, true);
+			this.setMessagesFromUidList(this.uidList(), iOffset, true);
 		}
 	}
 };
@@ -1515,7 +1509,7 @@ CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 			{
 				this.messagesLoading(false);
 				this.waitForUnseenMessages(false);
-				this.setMessagesFromUidList(oUidList, oResult.Offset, oFolder.oMessages, true);
+				this.setMessagesFromUidList(oUidList, oResult.Offset, true);
 				if (!this.messagesLoading())
 				{
 					this.setAutocheckmailTimer();
@@ -1739,13 +1733,7 @@ CMailCache.prototype.countMessages = function (oCountedFolder)
 };
 
 CMailCache.prototype.changeDatesInMessages = function () {
-	_.each(this.oFolderListItems, function (oFolderList) {
-		_.each(oFolderList.oNamedCollection, function (oFolder) {
-			_.each(oFolder.oMessages, function (oMessage) {
-				oMessage.updateMomentDate();
-			}, this);
-		});
-	});
+	MessagesDictionary.updateMomentDates();
 };
 
 /**

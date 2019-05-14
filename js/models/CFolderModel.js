@@ -23,6 +23,7 @@ var
 	
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	MailCache = null,
+	MessagesDictionary = require('modules/%ModuleName%/js/MessagesDictionary.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	
 	CMessageModel = require('modules/%ModuleName%/js/models/CMessageModel.js'),
@@ -75,7 +76,7 @@ function CFolderModel(iAccountId)
 
 	this.edited = ko.observable(false); // Indicates if the folder name is edited now on settings screen.
 
-	this.oMessages = {};
+	this.aMessagesDictionaryUids = [];
 	
 	this.oUids = {};
 
@@ -112,7 +113,7 @@ CFolderModel.prototype.setLevel = function (iLevel)
  */
 CFolderModel.prototype.getMessageByUid = function (sUid)
 {
-	return this.oMessages[sUid];
+	return MessagesDictionary.get([this.iAccountId, this.fullName(), sUid]);
 };
 
 /**
@@ -121,12 +122,13 @@ CFolderModel.prototype.getMessageByUid = function (sUid)
 CFolderModel.prototype.getFlaggedMessageUids = function ()
 {
 	var aUids = [];
-	_.each(this.oMessages, function (oMessage) {
-		if (oMessage.flagged())
+	_.each(this.aMessagesDictionaryUids, function (sUid) {
+		var oMessage = this.getMessageByUid(sUid);
+		if (oMessage && oMessage.flagged())
 		{
 			aUids.push(oMessage.uid());
 		}
-	});
+	}, this);
 	return aUids;
 };
 
@@ -135,7 +137,7 @@ CFolderModel.prototype.getFlaggedMessageUids = function ()
  */
 CFolderModel.prototype.setMessageUnflaggedByUid = function (sUid)
 {
-	var oMessage = this.oMessages[sUid];
+	var oMessage = this.getMessageByUid(sUid);
 	if (oMessage)
 	{
 		oMessage.flagged(false);
@@ -148,16 +150,16 @@ CFolderModel.prototype.setMessageUnflaggedByUid = function (sUid)
 CFolderModel.prototype.hideThreadMessages = function (oMessage)
 {
 	_.each(oMessage.threadUids(), function (sThreadUid) {
-		var oMess = this.oMessages[sThreadUid];
-		if (oMess)
+		var oThreadMessage = this.getMessageByUid(sThreadUid);
+		if (oThreadMessage)
 		{
-			if (!oMess.deleted())
+			if (!oThreadMessage.deleted())
 			{
-				oMess.threadShowAnimation(false);
-				oMess.threadHideAnimation(true);
+				oThreadMessage.threadShowAnimation(false);
+				oThreadMessage.threadHideAnimation(true);
 				
 				setTimeout(function () {
-					oMess.threadHideAnimation(false);
+					oThreadMessage.threadHideAnimation(false);
 				}, 1000);
 			}
 		}
@@ -181,16 +183,16 @@ CFolderModel.prototype.getThreadMessages = function (oMessage)
 	_.each(oMessage.threadUids(), function (sThreadUid) {
 		if (iCount < oMessage.threadCountForLoad())
 		{
-			var oMess = this.oMessages[sThreadUid];
-			if (oMess)
+			var oThreadMessage = this.getMessageByUid(sThreadUid);
+			if (oThreadMessage)
 			{
-				if (!oMess.deleted())
+				if (!oThreadMessage.deleted())
 				{
-					oMess.markAsThreadPart(iShowThrottle, oMessage.uid());
-					aLoadedMessages.push(oMess);
-					aChangedThreadUids.push(oMess.uid());
+					oThreadMessage.markAsThreadPart(iShowThrottle, oMessage.uid());
+					aLoadedMessages.push(oThreadMessage);
+					aChangedThreadUids.push(oThreadMessage.uid());
 					iCount++;
-					oLastMessage = oMess;
+					oLastMessage = oThreadMessage;
 				}
 			}
 			else
@@ -238,7 +240,7 @@ CFolderModel.prototype.computeThreadData = function (oMessage)
 	
 	_.each(oMessage.threadUids(), function (sThreadUid) {
 		var
-			oThreadMessage = this.oMessages[sThreadUid],
+			oThreadMessage = this.getMessageByUid(sThreadUid),
 			sThreadEmail = ''
 		;
 		
@@ -315,7 +317,7 @@ CFolderModel.prototype.getThreadCheckedUidsFromList = function (aMessages)
 		if (oMessage.threadCount() > 0 && !oMessage.threadOpened())
 		{
 			_.each(oMessage.threadUids(), function (sUid) {
-				var oThreadMessage = oFolder.oMessages[sUid];
+				var oThreadMessage = oFolder.getMessageByUid(sUid);
 				if (oThreadMessage && !oThreadMessage.deleted() && oThreadMessage.checked())
 				{
 					aThreadUids.push(sUid);
@@ -336,8 +338,8 @@ CFolderModel.prototype.parseAndCacheMessage = function (oRawMessage, bThreadPart
 {
 	var
 		sUid = oRawMessage.Uid.toString(),
-		bNewMessage = !this.oMessages[sUid],
-		oMessage = bNewMessage ? new CMessageModel() : this.oMessages[sUid]
+		bNewMessage = !this.getMessageByUid(sUid),
+		oMessage = bNewMessage ? new CMessageModel() : this.getMessageByUid(sUid)
 	;
 	
 	oMessage.parse(oRawMessage, this.iAccountId, bThreadPart, bTrustThreadInfo);
@@ -347,7 +349,8 @@ CFolderModel.prototype.parseAndCacheMessage = function (oRawMessage, bThreadPart
 		MailCache.increaseStarredCount();
 	}
 	
-	this.oMessages[oMessage.uid()] = oMessage;
+	MessagesDictionary.set([this.iAccountId, this.fullName(), sUid], oMessage);
+	this.aMessagesDictionaryUids.push(sUid);
 	
 	return oMessage;
 };
@@ -430,19 +433,19 @@ CFolderModel.prototype.hasListBeenRequested = function (oParams)
  */
 CFolderModel.prototype.markMessageReplied = function (sUid, sReplyType)
 {
-	var oMsg = this.oMessages[sUid];
+	var oMessage = this.getMessageByUid(sUid);
 	
-	if (oMsg)
+	if (oMessage)
 	{
 		switch (sReplyType)
 		{
 			case Enums.ReplyType.Reply:
 			case Enums.ReplyType.ReplyAll:
-				oMsg.answered(true);
+				oMessage.answered(true);
 				break;
 			case Enums.ReplyType.Forward:
 			case Enums.ReplyType.ForwardAsAttach:
-				oMsg.forwarded(true);
+				oMessage.forwarded(true);
 				break;
 		}
 	}
@@ -451,12 +454,14 @@ CFolderModel.prototype.markMessageReplied = function (sUid, sReplyType)
 CFolderModel.prototype.removeAllMessages = function ()
 {
 	var
+		iAccountId = this.iAccountId,
+		sFullName = this.fullName(),
 		oUidListsToRemove = this.oUids,
-		oMessagesToRemove = this.oMessages,
+		aMessagesUidsToRemove = this.aMessagesDictionaryUids,
 		oUidList = null
 	;
 	
-	this.oMessages = {};
+	this.aMessagesDictionaryUids = [];
 	this.oUids = {};
 
 	this.messageCount(0);
@@ -467,10 +472,10 @@ CFolderModel.prototype.removeAllMessages = function ()
 	oUidList.resultCount(0);
 	
 	_.delay(function () {
-		_.each(oMessagesToRemove, function (oMessage, sUid) {
-			Utils.destroyObjectWithObservables(oMessagesToRemove, sUid);
+		_.each(aMessagesUidsToRemove, function (sUid) {
+			MessagesDictionary.remove([iAccountId, sFullName, sUid]);
 		});
-		oMessagesToRemove = null;
+		aMessagesUidsToRemove = null;
 		
 		_.each(oUidListsToRemove, function (oUidList, sIndex) {
 			Utils.destroyObjectWithObservables(oUidListsToRemove, sIndex);
@@ -497,7 +502,7 @@ CFolderModel.prototype.removeFlaggedMessageListsFromCache = function ()
 		{
 			Utils.destroyObjectWithObservables(this.oUids, sIndex);
 		}
-	}.bind(this));
+	}, this);
 };
 
 CFolderModel.prototype.removeUnseenMessageListsFromCache = function ()
@@ -507,7 +512,7 @@ CFolderModel.prototype.removeUnseenMessageListsFromCache = function ()
 		{
 			Utils.destroyObjectWithObservables(this.oUids, sIndex);
 		}
-	}.bind(this));
+	}, this);
 };
 
 /**
@@ -596,9 +601,8 @@ CFolderModel.prototype.markDeletedByUids = function (aUids)
 		iUnseenMinusDiff = 0
 	;
 
-	_.each(aUids, function (sUid)
-	{
-		var oMessage = this.oMessages[sUid];
+	_.each(aUids, function (sUid) {
+		var oMessage = this.getMessageByUid(sUid);
 
 		if (oMessage)
 		{
@@ -627,9 +631,8 @@ CFolderModel.prototype.revertDeleted = function (aUids)
 		iUnseenPlusDiff = 0
 	;
 
-	_.each(aUids, function (sUid)
-	{
-		var oMessage = this.oMessages[sUid];
+	_.each(aUids, function (sUid) {
+		var oMessage = this.getMessageByUid(sUid);
 
 		if (oMessage && oMessage.deleted())
 		{
@@ -654,7 +657,8 @@ CFolderModel.prototype.revertDeleted = function (aUids)
 CFolderModel.prototype.commitDeleted = function (aUids)
 {
 	_.each(aUids, _.bind(function (sUid) {
-		Utils.destroyObjectWithObservables(this.oMessages, sUid);
+		MessagesDictionary.remove([this.iAccountId, this.fullName(), sUid]);
+		this.aMessagesDictionaryUids = _.without(this.aMessagesDictionaryUids, sUid);
 	}, this));
 	
 	_.each(this.oUids, function (oUidList) {
@@ -676,6 +680,8 @@ CFolderModel.prototype.getUidList = function (sSearch, sFilters)
 	if (this.oUids[sIndex] === undefined)
 	{
 		oUidList = new CUidListModel();
+		oUidList.iAccountId = this.iAccountId;
+		oUidList.sFullName = this.fullName();
 		oUidList.search(sSearch);
 		oUidList.filters(sFilters);
 		this.oUids[sIndex] = oUidList;
@@ -950,7 +956,7 @@ CFolderModel.prototype.onGetMessageResponse = function (oResponse, oRequest)
 		oParameters = oRequest.Parameters,
 		oHand = null,
 		sUid = oResult ? oResult.Uid.toString() : oParameters.Uid.toString(),
-		oMessage = this.oMessages[sUid],
+		oMessage = this.getMessageByUid(sUid),
 		bSelected = oMessage ? oMessage.selected() : false,
 		bPassResponse = false
 	;
@@ -987,7 +993,7 @@ CFolderModel.prototype.onGetMessageResponse = function (oResponse, oRequest)
 CFolderModel.prototype.getCompletelyFilledMessage = function (sUid, fResponseHandler, oContext)
 {
 	var
-		oMessage = this.oMessages[sUid],
+		oMessage = this.getMessageByUid(sUid),
 		oParameters = {
 			'AccountID': oMessage ? oMessage.accountId() : 0,
 			'Folder': this.fullName(),
@@ -1009,6 +1015,7 @@ CFolderModel.prototype.getCompletelyFilledMessage = function (sUid, fResponseHan
 		}
 		else if (fResponseHandler && oContext)
 		{
+			oMessage.setLastAccessTime();
 			fResponseHandler.call(oContext, oMessage, sUid);
 		}
 	}
@@ -1019,7 +1026,7 @@ CFolderModel.prototype.getCompletelyFilledMessage = function (sUid, fResponseHan
  */
 CFolderModel.prototype.showExternalPictures = function (sUid)
 {
-	var oMessage = this.oMessages[sUid];
+	var oMessage = this.getMessageByUid(sUid);
 
 	if (oMessage !== undefined)
 	{
@@ -1032,8 +1039,8 @@ CFolderModel.prototype.showExternalPictures = function (sUid)
  */
 CFolderModel.prototype.alwaysShowExternalPicturesForSender = function (sEmail)
 {
-	_.each(this.oMessages, function (oMessage)
-	{
+	_.each(this.aMessagesDictionaryUids, function (sUid) {
+		var oMessage = this.getMessageByUid(sUid);
 		var aFrom = oMessage.oFrom.aCollection;
 		if (aFrom.length > 0 && aFrom[0].sEmail === sEmail)
 		{
@@ -1051,12 +1058,11 @@ CFolderModel.prototype.executeGroupOperation = function (sField, aUids, bSetActi
 {
 	var iUnseenDiff = 0;
 
-	_.each(this.oMessages, function (oMessage)
-	{
+	_.each(this.aMessagesDictionaryUids, function (sUidInDict) {
+		var oMessage = this.getMessageByUid(sUidInDict);
 		if (aUids.length > 0)
 		{
-			_.each(aUids, function (sUid)
-			{
+			_.each(aUids, function (sUid) {
 				if (oMessage && oMessage.uid() === sUid && oMessage[sField]() !== bSetAction)
 				{
 					oMessage[sField](bSetAction);
@@ -1068,7 +1074,7 @@ CFolderModel.prototype.executeGroupOperation = function (sField, aUids, bSetActi
 		{
 			oMessage[sField](bSetAction);
 		}
-	});
+	}, this);
 
 	if (aUids.length === 0)
 	{

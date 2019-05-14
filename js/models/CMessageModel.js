@@ -6,12 +6,11 @@ var
 	ko = require('knockout'),
 	moment = require('moment'),
 	
-	FilesUtils = require('%PathToCoreWebclientModule%/js/utils/Files.js'),
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	UrlUtils = require('%PathToCoreWebclientModule%/js/utils/Url.js'),
 	
-	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
+	App = require('%PathToCoreWebclientModule%/js/App.js'),
 	Screens = require('%PathToCoreWebclientModule%/js/Screens.js'),
 	
 	CAddressListModel = require('%PathToCoreWebclientModule%/js/models/CAddressListModel.js'),
@@ -21,10 +20,9 @@ var
 	
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	MailCache = null,
-	Settings = require('modules/%ModuleName%/js/Settings.js'),
+	MessagesDictionary = require('modules/%ModuleName%/js/MessagesDictionary.js'),
 	
-	CAttachmentModel = require('modules/%ModuleName%/js/models/CAttachmentModel.js'),
-	App = require('%PathToCoreWebclientModule%/js/App.js')
+	CAttachmentModel = require('modules/%ModuleName%/js/models/CAttachmentModel.js')
 ;
 
 /**
@@ -147,6 +145,7 @@ function CMessageModel()
 	this.sDownloadAsEmlUrl = '';
 
 	this.completelyFilled = ko.observable(false);
+	this.iLastAccessTime = 0;
 
 	this.checked = ko.observable(false);
 	this.checked.subscribe(function (bChecked) {
@@ -157,7 +156,7 @@ function CMessageModel()
 				oFolder = MailCache.folderList().getFolderByFullName(this.folder())
 			;
 			_.each(this.threadUids(), function (sUid) {
-				var oMessage = oFolder.oMessages[sUid];
+				var oMessage = MessagesDictionary.get([oFolder.iAccountId, oFolder.fullName(), sUid]);
 				if (oMessage)
 				{
 					oMessage.checked(bChecked);
@@ -201,6 +200,11 @@ CMessageModel.prototype.requireMailCache = function ()
 	{
 		MailCache = require('modules/%ModuleName%/js/Cache.js');
 	}
+};
+
+CMessageModel.prototype.setLastAccessTime = function ()
+{
+	this.iLastAccessTime = moment().unix();
 };
 
 /**
@@ -446,6 +450,7 @@ CMessageModel.prototype.parse = function (oData, iAccountId, bThreadPart, bTrust
 			
 			this.aExtend = oData.Extend;
 			this.completelyFilled(true);
+			this.setLastAccessTime();
 
 			App.broadcastEvent('MailWebclient::ParseMessage::after', {
 				msg: this

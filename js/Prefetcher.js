@@ -10,6 +10,7 @@ var
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	MailCache = require('modules/%ModuleName%/js/Cache.js'),
+	MessagesDictionary = require('modules/%ModuleName%/js/MessagesDictionary.js'),
 	
 	Prefetcher = {},
 	bFetchersIdentitiesPrefetched = false,
@@ -211,7 +212,7 @@ Prefetcher.startThreadListPrefetch = function ()
 		if (oCacheMess.threadCount() > 0)
 		{
 			_.each(oCacheMess.threadUids(), function (sThreadUid) {
-				var oThreadMess = oCurrFolder.oMessages[sThreadUid];
+				var oThreadMess = MessagesDictionary.get([oCurrFolder.iAccountId, oCurrFolder.fullName(), sThreadUid]);
 				if (!oThreadMess && !oCurrFolder.hasThreadUidBeenRequested(sThreadUid))
 				{
 					aUidsForLoad.push(sThreadUid);
@@ -236,6 +237,7 @@ Prefetcher.startMessagesPrefetch = function ()
 	var
 		iAccountId = MailCache.currentAccountId(),
 		oCurrFolder = MailCache.getCurrentFolder(),
+		sCurrFolderFullName = oCurrFolder ? oCurrFolder.fullName() : '',
 		iTotalSize = 0,
 		iMaxSize = Settings.MaxMessagesBodiesSizeToPrefetch,
 		aUids = [],
@@ -256,13 +258,20 @@ Prefetcher.startMessagesPrefetch = function ()
 				aUids.push(oMsg.uid());
 				iTotalSize += iTextSize + iJsonSizeOf1Message;
 			}
+			else if (oMsg.completelyFilled())
+			{
+				oMsg.setLastAccessTime();
+			}
 		}
 	;
 
 	if (oCurrFolder && oCurrFolder.selected())
 	{
 		_.each(MailCache.messages(), fFillUids);
-		_.each(oCurrFolder.oMessages, fFillUids);
+		_.each(oCurrFolder.aMessagesDictionaryUids, function (sUid) {
+			var oMsg = MessagesDictionary.get([iAccountId, sCurrFolderFullName, sUid]);
+			fFillUids(oMsg);
+		});
 
 		if (aUids.length > 0)
 		{
@@ -270,7 +279,7 @@ Prefetcher.startMessagesPrefetch = function ()
 
 			oParameters = {
 				'AccountID': iAccountId,
-				'Folder': oCurrFolder.fullName(),
+				'Folder': sCurrFolderFullName,
 				'Uids': aUids,
 				'MessageBodyTruncationThreshold': Settings.MessageBodyTruncationThreshold
 			};

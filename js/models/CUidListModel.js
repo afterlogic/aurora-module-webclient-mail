@@ -4,6 +4,7 @@ var
 	_ = require('underscore'),
 	ko = require('knockout'),
 	
+	MessagesDictionary = require('modules/%ModuleName%/js/MessagesDictionary.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js')
 ;
 
@@ -16,6 +17,8 @@ var
  */
 function CUidListModel()
 {
+	this.iAccountId = 0;
+	this.sFullName = '';
 	this.resultCount = ko.observable(-1);
 	
 	this.search = ko.observable('');
@@ -57,9 +60,8 @@ CUidListModel.prototype.setUidsAndCount = function (oResult)
 
 /**
  * @param {number} iOffset
- * @param {Object} oMessages
  */
-CUidListModel.prototype.getUidsForOffset = function (iOffset, oMessages)
+CUidListModel.prototype.getUidsForOffset = function (iOffset)
 {
 	var
 		iIndex = 0,
@@ -72,9 +74,10 @@ CUidListModel.prototype.getUidsForOffset = function (iOffset, oMessages)
 	
 	for(; iIndex < iLen; iIndex++)
 	{
-		if (iIndex >= iOffset && iExistsCount < Settings.MailsPerPage) {
+		if (iIndex >= iOffset && iExistsCount < Settings.MailsPerPage)
+		{
 			sUid = this.collection()[iIndex];
-			oMsg = oMessages[sUid];
+			oMsg = MessagesDictionary.get([this.iAccountId, this.sFullName, sUid]);
 
 			if (oMsg && !oMsg.deleted() || sUid === undefined)
 			{
