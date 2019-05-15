@@ -15,7 +15,6 @@ module.exports = function (oAppData) {
 		Settings = require('modules/%ModuleName%/js/Settings.js'),
 
 		bAdminUser = App.getUserRole() === Enums.UserRole.SuperAdmin,
-		bNormalUser = App.getUserRole() === Enums.UserRole.NormalUser,
 
 		AccountList = null,
 		ComposeView = null,
@@ -43,7 +42,7 @@ module.exports = function (oAppData) {
 							function() {
 								resolve(require('modules/%ModuleName%/js/views/settings/ServersAdminSettingsPaneView.js'));
 							},
-							"admin-bundle"
+							'admin-bundle'
 						);
 					},
 					Settings.HashModuleName + '-servers',
@@ -56,7 +55,7 @@ module.exports = function (oAppData) {
 							function() {
 								resolve(require('modules/%ModuleName%/js/views/settings/MailAdminSettingsFormView.js'));
 							},
-							"admin-bundle"
+							'admin-bundle'
 						);
 					},
 					Settings.HashModuleName,
@@ -71,7 +70,7 @@ module.exports = function (oAppData) {
 			}
 		};
 	}
-	else if (bNormalUser)
+	else if (App.isUserNormalOrTenant())
 	{
 		var Cache = require('modules/%ModuleName%/js/Cache.js');
 		Cache.init();
