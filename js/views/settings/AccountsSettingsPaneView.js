@@ -393,9 +393,9 @@ CAccountsSettingsPaneView.prototype.populate = function ()
 	if (oAccount)
 	{
 		this.allowFolders(true);
-		this.allowForward(!!Settings.AllowForward && oAccount.oServer.bEnableSieve);
-		this.allowAutoresponder(!!Settings.AllowAutoresponder && oAccount.oServer.bEnableSieve);
-		this.allowFilters(!!Settings.AllowFilters && oAccount.oServer.bEnableSieve);
+		this.allowForward(!!Settings.AllowForward);
+		this.allowAutoresponder(!!Settings.AllowAutoresponder);
+		this.allowFilters(!!Settings.AllowFilters);
 		this.allowSignature(!Settings.AllowIdentities);
 		
 		if (!this.currentTab() || !this.currentTab().visible())
