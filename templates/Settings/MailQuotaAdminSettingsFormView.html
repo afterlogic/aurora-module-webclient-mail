@@ -1,0 +1,35 @@
+<div class="panel_top">
+	<h2 class="settings_heading" data-bind="i18n: {'key': '%MODULENAME%/HEADING_SETTINGS_TAB'}"></h2>
+</div>
+<div class="panel_center">
+	<div class="fields">
+		<div class="fieldset" data-bind="visible: iUserId !== 0">
+			<div class="row">
+				<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_USER_QUOTA'}"></span>
+				<input class="value input" spellcheck="false" type="text" data-bind="value: userQuotaMb, valueUpdate: 'afterkeydown', onEnter: save"/>
+			</div>
+		</div>
+		<div class="fieldset" data-bind="visible: iTenantId !== 0">
+			<div class="row" data-bind="visible: allowGlobalTenantQuota">
+				<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_GLOBAL_TENANT_QUOTA'}"></span>
+				<input class="value input" spellcheck="false" type="text" data-bind="visible: !bTenantAdmin, value: globalTenantQuotaMb, valueUpdate: 'afterkeydown', onEnter: save"/>
+				<span class="value" data-bind="visible: bTenantAdmin, text: globalTenantQuotaMb"></span>
+			</div>
+			<div class="row hint" data-bind="visible: allowGlobalTenantQuota() && !bTenantAdmin">
+				<span class="value" style="margin-left: 150px; display: block;" data-bind="i18n: {'key': '%MODULENAME%/HINT_GLOBAL_TENANT_QUOTA'}"></span>
+			</div>
+			<div class="row">
+				<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_ALLOCATED_TENANT_SPACE'}"></span>
+				<span class="value" data-bind="text: allocatedTenantSpaceMb"></span>
+			</div>
+		</div>
+		<div class="buttons" data-bind="visible: allowGlobalTenantQuota() || iUserId !== 0">
+			<span class="button" data-bind="click: save, visible: !isSaving()">
+				<span data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_SAVE'}"></span>
+			</span>
+			<span class="button" data-bind="visible: isSaving()">
+				<span data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_SAVE_IN_PROGRESS'}"></span>
+			</span>
+		</div>
+	</div>
+</div>

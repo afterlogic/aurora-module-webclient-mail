@@ -5,14 +5,11 @@ var
 	ko = require('knockout'),
 	
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
-	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	
 	Ajax = require('%PathToCoreWebclientModule%/js/Ajax.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
-	UserSettings = require('%PathToCoreWebclientModule%/js/Settings.js'),
 	CAbstractSettingsFormView = ModulesManager.run('AdminPanelWebclient', 'getAbstractSettingsFormViewClass'),
 	
-	MailUtils = require('modules/%ModuleName%/js/utils/Mail.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js')
 ;
 
@@ -49,11 +46,6 @@ CMailAdminSettingsFormView.prototype.onRouteChild = function ()
 			this.allowMultiAccounts(oResponse.Result.AllowMultiAccounts);
 		}
 	}, this);
-};
-
-CMailAdminSettingsFormView.prototype.registerMailto = function ()
-{
-	MailUtils.registerMailto();
 };
 
 CMailAdminSettingsFormView.prototype.getCurrentValues = function ()

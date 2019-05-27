@@ -1,5 +1,22 @@
 'use strict';
 
+function AddQuotaSettingsView(Settings, ModulesManager, TextUtils)
+{
+	ModulesManager.run('AdminPanelWebclient', 'registerAdminPanelTab', [
+		function(resolve) {
+			require.ensure(
+				['modules/%ModuleName%/js/views/settings/MailQuotaAdminSettingsFormView.js'],
+				function() {
+					resolve(require('modules/%ModuleName%/js/views/settings/MailQuotaAdminSettingsFormView.js'));
+				},
+				'admin-bundle'
+			);
+		},
+		Settings.HashModuleName + '-quota',
+		TextUtils.i18n('%MODULENAME%/LABEL_SETTINGS_TAB')
+	]);
+}
+
 module.exports = function (oAppData) {
 	require('modules/%ModuleName%/js/enums.js');
 	
@@ -61,6 +78,7 @@ module.exports = function (oAppData) {
 					Settings.HashModuleName,
 					TextUtils.i18n('%MODULENAME%/LABEL_SETTINGS_TAB')
 				]);
+				AddQuotaSettingsView(Settings, ModulesManager, TextUtils);
 			},
 			getAccountList: function () {
 				return AccountList;
@@ -223,6 +241,11 @@ module.exports = function (oAppData) {
 							Settings.userMailAccountsCount(aAuthAcconts.length);
 							Settings.mailAccountsEmails(aAuthAccountsEmails);
 						}, this);
+						
+						if (App.getUserRole() === Enums.UserRole.TenantAdmin)
+						{
+							AddQuotaSettingsView(Settings, ModulesManager, TextUtils);
+						}
 					},
 					getScreens: function () {
 						var oScreens = {};
