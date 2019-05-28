@@ -39,7 +39,7 @@ module.exports = {
 	// from MailWebclient module
 	AllowAppRegisterMailto: false,
 	AllowChangeInputDirection: true,
-	AllowExpandFolders: false,
+	FoldersExpandedByDefault: false,
 	AllowSpamFolder: true,
 	AllowAddNewFolderOnMainScreen: false,
 	ComposeToolbarOrder: ['back', 'send', 'save', 'importance', 'MailSensitivity', 'confirmation', 'OpenPgp'],
@@ -105,7 +105,7 @@ module.exports = {
 		{
 			this.AllowAppRegisterMailto = Types.pBool(oAppDataMailWebclientSection.AllowAppRegisterMailto, this.AllowAppRegisterMailto);
 			this.AllowChangeInputDirection = Types.pBool(oAppDataMailWebclientSection.AllowChangeInputDirection, this.AllowChangeInputDirection);
-			this.AllowExpandFolders = Types.pBool(oAppDataMailWebclientSection.AllowExpandFolders, this.AllowExpandFolders);
+			this.FoldersExpandedByDefault = Types.pBool(oAppDataMailWebclientSection.FoldersExpandedByDefault, this.FoldersExpandedByDefault);
 			this.AllowSpamFolder = Types.pBool(oAppDataMailWebclientSection.AllowSpamFolder, this.AllowSpamFolder);
 			this.AllowAddNewFolderOnMainScreen = Types.pBool(oAppDataMailWebclientSection.AllowAddNewFolderOnMainScreen, this.AllowAddNewFolderOnMainScreen);
 			this.ComposeToolbarOrder = Types.pArray(oAppDataMailWebclientSection.ComposeToolbarOrder, this.ComposeToolbarOrder);

@@ -43,7 +43,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 		$aSettings = array(
 			'AllowAppRegisterMailto' => $this->getConfig('AllowAppRegisterMailto', false),
 			'AllowChangeInputDirection' => $this->getConfig('AllowChangeInputDirection', false),
-			'AllowExpandFolders' => $this->getConfig('AllowExpandFolders', false),
+			'FoldersExpandedByDefault' => $this->getConfig('FoldersExpandedByDefault', false),
 			'AllowSpamFolder' => $this->getConfig('AllowSpamFolder', true),
 			'AllowAddNewFolderOnMainScreen' => $this->getConfig('AllowAddNewFolderOnMainScreen', false),
 			'ComposeToolbarOrder' => $this->getConfig('ComposeToolbarOrder', array()),

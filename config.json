@@ -7,7 +7,7 @@
 		false,
 		"bool"
 	],
-	"AllowExpandFolders": [
+	"FoldersExpandedByDefault": [
 		false,
 		"bool"
 	],

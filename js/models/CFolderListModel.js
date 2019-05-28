@@ -238,7 +238,7 @@ CFolderListModel.prototype.parse = function (iAccountId, oData, oNamedFolderList
 	this.iAccountId = iAccountId;
 	this.initialized(true);
 
-	this.bExpandFolders = Settings.AllowExpandFolders && !Storage.hasData('folderAccordion');
+	this.bExpandFolders = Settings.FoldersExpandedByDefault && !Storage.hasData('folderAccordion');
 	if (!Storage.hasData('folderAccordion'))
 	{
 		Storage.setData('folderAccordion', []);
