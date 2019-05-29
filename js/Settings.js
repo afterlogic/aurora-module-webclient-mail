@@ -21,6 +21,7 @@ module.exports = {
 	AllowAddAccounts: false,
 	AllowAutoresponder: false,
 	AllowAutosaveInDrafts: true,
+	AllowChangeMailQuotaOnMailServer: false,
 	AllowDefaultAccountForUser: true,
 	AllowEditDomainsInServer: true,
 	AllowFetchers: false,
@@ -85,6 +86,7 @@ module.exports = {
 			this.AllowAddAccounts = Types.pBool(oAppDataMailSection.AllowAddAccounts, this.AllowAddAccounts);
 			this.AllowAutoresponder = Types.pBool(oAppDataMailSection.AllowAutoresponder, this.AllowAutoresponder);
 			this.AllowAutosaveInDrafts = Types.pBool(oAppDataMailSection.AllowAutosaveInDrafts, this.AllowAutosaveInDrafts);
+			this.AllowChangeMailQuotaOnMailServer = Types.pBool(oAppDataMailSection.AllowChangeMailQuotaOnMailServer, this.AllowChangeMailQuotaOnMailServer);
 			this.AllowDefaultAccountForUser = Types.pBool(oAppDataMailSection.AllowDefaultAccountForUser, this.AllowDefaultAccountForUser);
 			this.AllowEditDomainsInServer = Types.pBool(oAppDataMailSection.AllowEditDomainsInServer, this.AllowEditDomainsInServer);
 			this.AllowFilters = Types.pBool(oAppDataMailSection.AllowFilters, this.AllowFilters);

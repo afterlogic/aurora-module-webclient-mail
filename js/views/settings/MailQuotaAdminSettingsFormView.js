@@ -9,6 +9,7 @@ var
 	Ajax = require('%PathToCoreWebclientModule%/js/Ajax.js'),
 	App = require('%PathToCoreWebclientModule%/js/App.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
+	
 	CAbstractSettingsFormView = ModulesManager.run('AdminPanelWebclient', 'getAbstractSettingsFormViewClass'),
 	
 	Settings = require('modules/%ModuleName%/js/Settings.js')
@@ -19,17 +20,17 @@ var
  */
 function CMailQuotaAdminSettingsFormView()
 {
-	CAbstractSettingsFormView.call(this, Settings.ServerModuleName, 'UpdateEntityQuota');
+	CAbstractSettingsFormView.call(this, Settings.ServerModuleName, 'UpdateEntitySpaceLimits');
 	
 	this.bTenantAdmin = App.getUserRole() === Enums.UserRole.TenantAdmin;
 
-	this.iTenantId = 0;
-	this.allowGlobalTenantQuota = ko.observable(false);
-	this.globalTenantQuotaMb = ko.observable(0);
-	this.allocatedTenantSpaceMb = ko.observable(0);
+	this.sEntityType = '';
+	this.iEntityId = 0;
 	
-	this.iUserId = 0;
-	this.userQuotaMb = ko.observable(0);
+	this.tenantSpaceLimitMb = ko.observable('');
+	this.userSpaceLimitMb = ko.observable('');
+	this.allowChangeUserSpaceLimit = ko.observable('');
+	this.allocatedTenantSpaceMb = ko.observable('');
 }
 
 _.extendOwn(CMailQuotaAdminSettingsFormView.prototype, CAbstractSettingsFormView.prototype);
@@ -38,93 +39,73 @@ CMailQuotaAdminSettingsFormView.prototype.ViewTemplate = '%ModuleName%_Settings_
 
 CMailQuotaAdminSettingsFormView.prototype.onRouteChild = function ()
 {
+	this.tenantSpaceLimitMb('');
+	this.userSpaceLimitMb('');
+	this.allowChangeUserSpaceLimit(false);
+	this.allocatedTenantSpaceMb('');
+	this.updateSavedState();
+	
 	this.requestPerTenantSettings();
 	this.requestPerUserSettings();
 };
 
 CMailQuotaAdminSettingsFormView.prototype.requestPerTenantSettings = function ()
 {
-	if (Types.isPositiveNumber(this.iTenantId))
+	if (this.sEntityType === 'Tenant' && Types.isPositiveNumber(this.iEntityId))
 	{
-		this.globalTenantQuotaMb('');
-		Ajax.send(Settings.ServerModuleName, 'GetEntityQuota', { 'Type': 'Tenant', 'TenantId': this.iTenantId }, function (oResponse) {
-			if (oResponse.Result)
+		Ajax.send(Settings.ServerModuleName, 'GetEntitySpaceLimits', { 'Type': this.sEntityType, 'TenantId': this.iEntityId }, function (oResponse, oRequest) {
+			if (oResponse.Result && oRequest.Parameters.TenantId === this.iEntityId)
 			{
-				this.allowGlobalTenantQuota(Types.pBool(oResponse.Result.AllowGlobalQuota));
-				this.globalTenantQuotaMb(Types.pInt(oResponse.Result.GlobalQuotaMb));
+				this.tenantSpaceLimitMb(Types.pInt(oResponse.Result.TenantSpaceLimitMb));
+				this.userSpaceLimitMb(Types.pInt(oResponse.Result.UserSpaceLimitMb));
+				this.allowChangeUserSpaceLimit(Types.pBool(oResponse.Result.AllowChangeUserSpaceLimit));
 				this.allocatedTenantSpaceMb(Types.pInt(oResponse.Result.AllocatedSpaceMb));
+				this.updateSavedState();
 			}
-			else
-			{
-				this.globalTenantQuotaMb(0);
-			}
-			this.updateSavedState();
 		}, this);
-	}
-	else
-	{
-		this.globalTenantQuotaMb(0);
-		this.updateSavedState();
 	}
 };
 
 CMailQuotaAdminSettingsFormView.prototype.requestPerUserSettings = function ()
 {
-	if (Types.isPositiveNumber(this.iUserId))
+	if (this.sEntityType === 'User' && Types.isPositiveNumber(this.iEntityId))
 	{
-		this.userQuotaMb('');
-		Ajax.send(Settings.ServerModuleName, 'GetEntityQuota', { 'Type': 'User', 'UserId': this.iUserId }, function (oResponse) {
-			if (oResponse.Result)
+		Ajax.send(Settings.ServerModuleName, 'GetEntitySpaceLimits', { 'Type': this.sEntityType, 'UserId': this.iEntityId }, function (oResponse, oRequest) {
+			if (oResponse.Result && oRequest.Parameters.UserId === this.iEntityId)
 			{
-				this.userQuotaMb(Types.pInt(oResponse.Result.UserQuotaMb));
+				this.userSpaceLimitMb(Types.pInt(oResponse.Result.UserSpaceLimitMb));
+				this.allowChangeUserSpaceLimit(Types.pBool(oResponse.Result.AllowChangeUserSpaceLimit));
+				this.updateSavedState();
 			}
-			else
-			{
-				this.userQuotaMb(0);
-			}
-			this.updateSavedState();
 		}, this);
-	}
-	else
-	{
-		this.userQuotaMb(0);
-		this.updateSavedState();
 	}
 };
 
 CMailQuotaAdminSettingsFormView.prototype.getCurrentValues = function ()
 {
-	if (Types.isPositiveNumber(this.iUserId))
-	{
-		return [
-			this.userQuotaMb()
-		];
-	}
-	if (Types.isPositiveNumber(this.iTenantId))
-	{
-		return [
-			this.globalTenantQuotaMb()
-		];
-	}
-	return [];
+	return [
+		this.tenantSpaceLimitMb(),
+		this.userSpaceLimitMb()
+	];
 };
 
 CMailQuotaAdminSettingsFormView.prototype.getParametersForSave = function ()
 {
-	if (Types.isPositiveNumber(this.iUserId))
+	if (this.sEntityType === 'User')
 	{
 		return {
 			'Type': 'User',
-			'UserId': this.iUserId,
-			'QuotaMb': Types.pInt(this.userQuotaMb())
+			'UserId': this.iEntityId,
+			'UserSpaceLimitMb': Types.pInt(this.userSpaceLimitMb())
 		};
 	}
-	if (this.allowGlobalTenantQuota() && Types.isPositiveNumber(this.iTenantId))
+	if (this.sEntityType === 'Tenant')
 	{
 		return {
 			'Type': 'Tenant',
-			'TenantId': this.iTenantId,
-			'QuotaMb': Types.pInt(this.globalTenantQuotaMb())
+			'TenantId': this.iEntityId,
+			'TenantSpaceLimitMb': Types.pInt(this.tenantSpaceLimitMb()),
+			'UserSpaceLimitMb': Types.pInt(this.userSpaceLimitMb())
 		};
 	}
 	return {};
@@ -133,8 +114,8 @@ CMailQuotaAdminSettingsFormView.prototype.getParametersForSave = function ()
 CMailQuotaAdminSettingsFormView.prototype.setAccessLevel = function (sEntityType, iEntityId)
 {
 	this.visible(sEntityType === 'User' || sEntityType === 'Tenant');
-	this.iUserId = sEntityType === 'User' ? iEntityId : 0;
-	this.iTenantId = sEntityType === 'Tenant' ? iEntityId : 0;
+	this.sEntityType = sEntityType;
+	this.iEntityId = iEntityId;
 };
 
 module.exports = new CMailQuotaAdminSettingsFormView();

@@ -2,19 +2,22 @@
 
 function AddQuotaSettingsView(Settings, ModulesManager, TextUtils)
 {
-	ModulesManager.run('AdminPanelWebclient', 'registerAdminPanelTab', [
-		function(resolve) {
-			require.ensure(
-				['modules/%ModuleName%/js/views/settings/MailQuotaAdminSettingsFormView.js'],
-				function() {
-					resolve(require('modules/%ModuleName%/js/views/settings/MailQuotaAdminSettingsFormView.js'));
-				},
-				'admin-bundle'
-			);
-		},
-		Settings.HashModuleName + '-quota',
-		TextUtils.i18n('%MODULENAME%/LABEL_SETTINGS_TAB')
-	]);
+	if (Settings.AllowChangeMailQuotaOnMailServer)
+	{
+		ModulesManager.run('AdminPanelWebclient', 'registerAdminPanelTab', [
+			function(resolve) {
+				require.ensure(
+					['modules/%ModuleName%/js/views/settings/MailQuotaAdminSettingsFormView.js'],
+					function() {
+						resolve(require('modules/%ModuleName%/js/views/settings/MailQuotaAdminSettingsFormView.js'));
+					},
+					'admin-bundle'
+				);
+			},
+			Settings.HashModuleName + '-quota',
+			TextUtils.i18n('%MODULENAME%/LABEL_SETTINGS_TAB')
+		]);
+	}
 }
 
 module.exports = function (oAppData) {
