@@ -53,6 +53,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			'MailsPerPage' => $this->getConfig('MailsPerPage', 20),
 			'MaxMessagesBodiesSizeToPrefetch' => $this->getConfig('MaxMessagesBodiesSizeToPrefetch', 50000),
 			'MessageBodyTruncationThreshold' => $this->getConfig('MessageBodyTruncationThreshold', 650000), // in bytes
+			'MessagesSortBy' => $this->getConfig('MessagesSortBy', []),
 			'ShowEmailAsTabName' => $this->getConfig('ShowEmailAsTabName', true),
 			'AllowShowMessagesCountInFolderList' => $this->getConfig('AllowShowMessagesCountInFolderList', false),
 			'AllowSearchMessagesBySubject' => $this->getConfig('AllowSearchMessagesBySubject', false),

@@ -50,7 +50,7 @@ Prefetcher.prefetchStarredMessageList = function ()
 
 	if (oInbox)
 	{
-		oRes = MailCache.requestMessageList(oInbox.fullName(), 1, '', Enums.FolderFilter.Flagged, false, false);
+		oRes = MailCache.requestMessageList(oInbox.fullName(), 1, '', Enums.FolderFilter.Flagged, Settings.MessagesSortBy.DefaultSortBy, Settings.MessagesSortBy.DefaultSortOrder, false, false);
 		bRequestStarted = !!oRes && !!oRes.RequestStarted;
 	}
 	
@@ -72,7 +72,7 @@ Prefetcher.prefetchUnseenMessageList = function ()
 
 	if (oInbox && oInbox.hasChanges())
 	{
-		oRes = MailCache.requestMessageList(oInbox.fullName(), 1, '', Enums.FolderFilter.Unseen, false, false);
+		oRes = MailCache.requestMessageList(oInbox.fullName(), 1, '', Enums.FolderFilter.Unseen, Settings.MessagesSortBy.DefaultSortBy, Settings.MessagesSortBy.DefaultSortOrder, false, false);
 	}
 
 	return oRes && oRes.RequestStarted;
@@ -128,7 +128,7 @@ Prefetcher.startPagePrefetch = function (iPage)
 		
 		if (!oCurrFolder.hasListBeenRequested(oParams))
 		{
-			oRequestData = MailCache.requestMessageList(oParams.folder, oParams.page, oParams.search, '', false, false);
+			oRequestData = MailCache.requestMessageList(oParams.folder, oParams.page, oParams.search, '', Settings.MessagesSortBy.DefaultSortBy, Settings.MessagesSortBy.DefaultSortOrder, false, false);
 		}
 	}
 	
@@ -195,7 +195,7 @@ Prefetcher.startFolderPrefetch = function (oFolder)
 
 	if (oFolder && !oFolder.hasListBeenRequested(oParams))
 	{
-		oRequestData = MailCache.requestMessageList(oParams.folder, oParams.page, oParams.search, '', false, false);
+		oRequestData = MailCache.requestMessageList(oParams.folder, oParams.page, oParams.search, '', Settings.MessagesSortBy.DefaultSortBy, Settings.MessagesSortBy.DefaultSortOrder, false, false);
 	}
 
 	return !!oRequestData && oRequestData.RequestStarted;

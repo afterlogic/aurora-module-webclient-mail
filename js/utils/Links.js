@@ -36,10 +36,12 @@ function IsMsgParam(sTemp)
  * @param {string=} sUid = ''
  * @param {string=} sSearch = ''
  * @param {string=} sFilters = ''
+ * @param {string=} sSortBy = ''
+ * @param {string=} iSortOrder = 0
  * @param {string=} sCustom = ''
  * @return {Array}
  */
-LinksUtils.getMailbox = function (sFolder, iPage, sUid, sSearch, sFilters, sCustom)
+LinksUtils.getMailbox = function (sFolder, iPage, sUid, sSearch, sFilters, sSortBy, iSortOrder, sCustom)
 {
 	var
 		AccountList = require('modules/%ModuleName%/js/AccountList.js'),
@@ -51,6 +53,8 @@ LinksUtils.getMailbox = function (sFolder, iPage, sUid, sSearch, sFilters, sCust
 	sUid = Types.pString(sUid);
 	sSearch = Types.pString(sSearch);
 	sFilters = Types.pString(sFilters);
+	sSortBy = Types.pString(sSortBy);
+	iSortOrder = Types.pInt(iSortOrder);
 
 	if (sFolder && '' !== sFolder)
 	{
@@ -60,6 +64,16 @@ LinksUtils.getMailbox = function (sFolder, iPage, sUid, sSearch, sFilters, sCust
 	if (sFilters && '' !== sFilters)
 	{
 		aResult.push('filter:' + sFilters);
+	}
+	
+	if (sSortBy && '' !== sSortBy && Settings.MessagesSortBy.DefaultSortBy !== sSortBy)
+	{
+		aResult.push('sortby:' + sSortBy);
+	}
+	
+	if (iSortOrder && Settings.MessagesSortBy.DefaultSortOrder !== iSortOrder)
+	{
+		aResult.push('sortorder:' + iSortOrder);
 	}
 	
 	if (1 < iPage)
@@ -102,6 +116,8 @@ LinksUtils.parseMailbox = function (aParamsToParse, sInboxFullName)
 		sUid = '',
 		sSearch = '',
 		sFilters = '',
+		sSortBy = Settings.MessagesSortBy.DefaultSortBy,
+		iSortOrder = Settings.MessagesSortBy.DefaultSortOrder,
 		sCustom = '',
 		sTemp = '',
 		iIndex = 0
@@ -129,6 +145,26 @@ LinksUtils.parseMailbox = function (aParamsToParse, sInboxFullName)
 			if (sTemp === 'filter:' + Enums.FolderFilter.Unseen)
 			{
 				sFilters = Enums.FolderFilter.Unseen;
+				iIndex++;
+			}
+		}
+
+		if (aParams.length > iIndex)
+		{
+			sTemp = Types.pString(aParams[iIndex]);
+			if (sTemp.substr(0, 7) === 'sortby:')
+			{
+				sSortBy = sTemp.substr(7);
+				iIndex++;
+			}
+		}
+
+		if (aParams.length > iIndex)
+		{
+			sTemp = Types.pString(aParams[iIndex]);
+			if (sTemp.substr(0, 10) === 'sortorder:')
+			{
+				iSortOrder = Types.pInt(sTemp.substr(10));
 				iIndex++;
 			}
 		}
@@ -185,6 +221,8 @@ LinksUtils.parseMailbox = function (aParamsToParse, sInboxFullName)
 		'Uid': sUid,
 		'Search': sSearch,
 		'Filters': sFilters,
+		'SortBy': sSortBy,
+		'SortOrder': iSortOrder,
 		'Custom': sCustom
 	};
 };

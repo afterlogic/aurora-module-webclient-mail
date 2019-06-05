@@ -468,7 +468,7 @@ CFolderModel.prototype.removeAllMessages = function ()
 	this.unseenMessageCount(0);
 	this.sRealUnseenMessageCount = 0;
 	
-	oUidList = this.getUidList('', '');
+	oUidList = this.getUidList('', '', Settings.MessagesSortBy.DefaultSortBy, Settings.MessagesSortBy.DefaultSortOrder);
 	oUidList.resultCount(0);
 	
 	_.delay(function () {
@@ -669,11 +669,13 @@ CFolderModel.prototype.commitDeleted = function (aUids)
 /**
  * @param {string} sSearch
  * @param {string} sFilters
+ * @param {string} sSortBy
+ * @param {number} iSortOrder
  */
-CFolderModel.prototype.getUidList = function (sSearch, sFilters)
+CFolderModel.prototype.getUidList = function (sSearch, sFilters, sSortBy, iSortOrder)
 {
 	var
-		sIndex = JSON.stringify([sSearch, sFilters]),
+		sIndex = JSON.stringify([sSearch, sFilters, sSortBy, iSortOrder]),
 		oUidList = null
 	;
 	
@@ -684,6 +686,8 @@ CFolderModel.prototype.getUidList = function (sSearch, sFilters)
 		oUidList.sFullName = this.fullName();
 		oUidList.search(sSearch);
 		oUidList.filters(sFilters);
+		oUidList.sortBy(sSortBy);
+		oUidList.sortOrder(iSortOrder);
 		this.oUids[sIndex] = oUidList;
 	}
 	

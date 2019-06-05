@@ -29,6 +29,11 @@ Enums.FolderTypes = {
 	'User': 10
 };
 
+Enums.SortOrder = {
+	'Asc': 0,
+	'Desc': 1
+};
+
 /**
  * @enum {number}
  */

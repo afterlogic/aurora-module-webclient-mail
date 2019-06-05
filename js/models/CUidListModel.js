@@ -23,6 +23,8 @@ function CUidListModel()
 	
 	this.search = ko.observable('');
 	this.filters = ko.observable('');
+	this.sortBy = ko.observable(Settings.MessagesSortBy.DefaultSortBy);
+	this.sortOrder = ko.observable(Settings.MessagesSortBy.DefaultSortOrder);
 	
 	this.collection = ko.observableArray([]);
 	
