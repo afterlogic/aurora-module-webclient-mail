@@ -74,27 +74,5 @@
 	"HorizontalLayoutByDefault": [
 		false,
 		"bool"
-	],
-	"MessagesSortBy": [
-		{
-			"Allow": false,
-			"List": [
-				{
-					"SortBy": "date",
-					"LangConst": "LABEL_SORT_BY_DATE"
-				},
-				{
-					"SortBy": "from",
-					"LangConst": "LABEL_SORT_BY_FROM"
-				},
-				{
-					"SortBy": "to",
-					"LangConst": "LABEL_SORT_BY_TO"
-				}
-			],
-			"DefaultSortBy": "date",
-			"DefaultSortOrder": "asc"
-		},
-		"array"
 	]
 }

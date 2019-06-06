@@ -102,6 +102,16 @@ module.exports = {
 			this.IgnoreImapSubscription = Types.pBool(oAppDataMailSection.IgnoreImapSubscription, this.IgnoreImapSubscription);
 			this.ImageUploadSizeLimit = Types.pNonNegativeInt(oAppDataMailSection.ImageUploadSizeLimit, this.ImageUploadSizeLimit);
 			window.Enums.SmtpAuthType = Types.pObject(oAppDataMailSection.SmtpAuthType);
+
+			this.MessagesSortBy = Types.pObject(oAppDataMailSection.MessagesSortBy, this.MessagesSortBy);
+			this.MessagesSortBy.Allow = Types.pBool(this.MessagesSortBy.Allow, false);
+			this.MessagesSortBy.List = Types.pArray(this.MessagesSortBy.List, [{
+				SortBy: 'date',
+				LangConst: 'LABEL_SORT_BY_DATE'
+			}]);
+			this.MessagesSortBy.DefaultSortBy = Types.pString(this.MessagesSortBy.DefaultSortBy, 'date');
+			var sOrder = Types.pString(this.MessagesSortBy.DefaultSortOrder, 'asc');
+			this.MessagesSortBy.DefaultSortOrder = sOrder === 'asc' ? Enums.SortOrder.Asc : Enums.SortOrder.Desc;
 		}
 			
 		if (!_.isEmpty(oAppDataMailWebclientSection))
@@ -118,16 +128,6 @@ module.exports = {
 			this.MailsPerPage = Types.pPositiveInt(oAppDataMailWebclientSection.MailsPerPage, this.MailsPerPage);
 			this.MaxMessagesBodiesSizeToPrefetch = Types.pNonNegativeInt(oAppDataMailWebclientSection.MaxMessagesBodiesSizeToPrefetch, this.MaxMessagesBodiesSizeToPrefetch);
 			this.MessageBodyTruncationThreshold = Types.pNonNegativeInt(oAppDataMailWebclientSection.MessageBodyTruncationThreshold, this.MessageBodyTruncationThreshold);
-			
-			this.MessagesSortBy = Types.pObject(oAppDataMailWebclientSection.MessagesSortBy, this.MessagesSortBy);
-			this.MessagesSortBy.Allow = Types.pBool(this.MessagesSortBy.Allow, false);
-			this.MessagesSortBy.List = Types.pArray(this.MessagesSortBy.List, [{
-				SortBy: 'date',
-				LangConst: 'LABEL_SORT_BY_DATE'
-			}]);
-			this.MessagesSortBy.DefaultSortBy = Types.pString(this.MessagesSortBy.DefaultSortBy, 'date');
-			var sOrder = Types.pString(this.MessagesSortBy.DefaultSortOrder, 'asc');
-			this.MessagesSortBy.DefaultSortOrder = sOrder === 'asc' ? Enums.SortOrder.Asc : Enums.SortOrder.Desc;
 			
 			this.ShowEmailAsTabName = Types.pBool(oAppDataMailWebclientSection.ShowEmailAsTabName, this.ShowEmailAsTabName);
 			this.AllowShowMessagesCountInFolderList = Types.pBool(oAppDataMailWebclientSection.AllowShowMessagesCountInFolderList, this.AllowShowMessagesCountInFolderList);
