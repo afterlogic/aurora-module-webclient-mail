@@ -724,7 +724,10 @@ CMailCache.prototype.requestMessageList = function (sFolder, iPage, sSearch, sFi
 		oParameters['InboxUidnext'] = '';
 	}
 	
-	if (bCacheIsEmpty && oUidList.search() === this.uidList().search() && oUidList.filters() === this.uidList().filters())
+	if (bCacheIsEmpty && oUidList.search() === this.uidList().search() 
+			&& oUidList.filters() === this.uidList().filters() 
+			&& oUidList.sortBy() === this.uidList().sortBy() 
+			&& oUidList.sortOrder() === this.uidList().sortOrder())
 	{
 		oUidList = this.uidList();
 	}

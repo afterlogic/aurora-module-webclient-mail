@@ -55,23 +55,24 @@ LinksUtils.getMailbox = function (sFolder, iPage, sUid, sSearch, sFilters, sSort
 	sFilters = Types.pString(sFilters);
 	sSortBy = Types.pString(sSortBy);
 	iSortOrder = Types.pInt(iSortOrder);
+	sCustom = Types.pString(sCustom);
 
-	if (sFolder && '' !== sFolder)
+	if (Types.isNonEmptyString(sFolder))
 	{
 		aResult.push(sFolder);
 	}
 	
-	if (sFilters && '' !== sFilters)
+	if ('' !== sFilters)
 	{
 		aResult.push('filter:' + sFilters);
 	}
 	
-	if (sSortBy && '' !== sSortBy && Settings.MessagesSortBy.DefaultSortBy !== sSortBy)
+	if ('' !== sSortBy && Settings.MessagesSortBy.DefaultSortBy !== sSortBy)
 	{
 		aResult.push('sortby:' + sSortBy);
 	}
 	
-	if (iSortOrder && Settings.MessagesSortBy.DefaultSortOrder !== iSortOrder)
+	if (Settings.MessagesSortBy.DefaultSortOrder !== iSortOrder)
 	{
 		aResult.push('sortorder:' + iSortOrder);
 	}
@@ -81,17 +82,17 @@ LinksUtils.getMailbox = function (sFolder, iPage, sUid, sSearch, sFilters, sSort
 		aResult.push('p' + iPage);
 	}
 
-	if (sUid && '' !== sUid)
+	if ('' !== sUid)
 	{
 		aResult.push('msg' + sUid);
 	}
 
-	if (sSearch && '' !== sSearch)
+	if ('' !== sSearch)
 	{
 		aResult.push(sSearch);
 	}
 	
-	if (sCustom && '' !== sCustom)
+	if ('' !== sCustom)
 	{
 		aResult.push('custom:' + sCustom);
 	}
@@ -154,7 +155,10 @@ LinksUtils.parseMailbox = function (aParamsToParse, sInboxFullName)
 			sTemp = Types.pString(aParams[iIndex]);
 			if (sTemp.substr(0, 7) === 'sortby:')
 			{
-				sSortBy = sTemp.substr(7);
+				if (Settings.MessagesSortBy.Allow)
+				{
+					sSortBy = sTemp.substr(7);
+				}
 				iIndex++;
 			}
 		}
@@ -164,7 +168,10 @@ LinksUtils.parseMailbox = function (aParamsToParse, sInboxFullName)
 			sTemp = Types.pString(aParams[iIndex]);
 			if (sTemp.substr(0, 10) === 'sortorder:')
 			{
-				iSortOrder = Types.pInt(sTemp.substr(10));
+				if (Settings.MessagesSortBy.Allow)
+				{
+					iSortOrder = Types.pInt(sTemp.substr(10));
+				}
 				iIndex++;
 			}
 		}

@@ -105,13 +105,10 @@ module.exports = {
 
 			this.MessagesSortBy = Types.pObject(oAppDataMailSection.MessagesSortBy, this.MessagesSortBy);
 			this.MessagesSortBy.Allow = Types.pBool(this.MessagesSortBy.Allow, false);
-			this.MessagesSortBy.List = Types.pArray(this.MessagesSortBy.List, [{
-				SortBy: 'date',
-				LangConst: 'LABEL_SORT_BY_DATE'
-			}]);
-			this.MessagesSortBy.DefaultSortBy = Types.pString(this.MessagesSortBy.DefaultSortBy, 'date');
-			var sOrder = Types.pString(this.MessagesSortBy.DefaultSortOrder, 'asc');
-			this.MessagesSortBy.DefaultSortOrder = sOrder === 'asc' ? Enums.SortOrder.Asc : Enums.SortOrder.Desc;
+			this.MessagesSortBy.List = Types.pArray(this.MessagesSortBy.List, []);
+			this.MessagesSortBy.DefaultSortBy = Types.pString(this.MessagesSortBy.DefaultSortBy, 'arrival');
+			var sOrder = Types.pString(this.MessagesSortBy.DefaultSortOrder, 'desc');
+			this.MessagesSortBy.DefaultSortOrder = sOrder === 'desc' ? Enums.SortOrder.Desc : Enums.SortOrder.Asc;
 		}
 			
 		if (!_.isEmpty(oAppDataMailWebclientSection))
