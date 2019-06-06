@@ -641,6 +641,8 @@ CMailCache.prototype.onGetMessagesFlagsResponse = function (oResponse, oRequest)
  * @param {number} iPage
  * @param {string} sSearch
  * @param {string=} sFilter
+ * @param {string} sSortBy
+ * @param {int} iSortOrder
  */
 CMailCache.prototype.changeCurrentMessageList = function (sFolder, iPage, sSearch, sFilter, sSortBy, iSortOrder)
 {
@@ -651,8 +653,10 @@ CMailCache.prototype.changeCurrentMessageList = function (sFolder, iPage, sSearc
  * @param {string} sFolder
  * @param {number} iPage
  * @param {string} sSearch
- * @param {string=} sFilter
- * @param {boolean=} bFillMessages
+ * @param {string} sFilter
+ * @param {string} sSortBy
+ * @param {int} iSortOrder
+ * @param {boolean} bFillMessages
  */
 CMailCache.prototype.requestCurrentMessageList = function (sFolder, iPage, sSearch, sFilter, sSortBy, iSortOrder, bFillMessages)
 {
@@ -679,6 +683,8 @@ CMailCache.prototype.requestCurrentMessageList = function (sFolder, iPage, sSear
  * @param {number} iPage
  * @param {string} sSearch
  * @param {string} sFilters
+ * @param {string} sSortBy
+ * @param {int} iSortOrder
  * @param {boolean} bCurrent
  * @param {boolean} bFillMessages
  */

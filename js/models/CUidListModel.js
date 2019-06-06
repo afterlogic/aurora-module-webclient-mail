@@ -19,15 +19,13 @@ function CUidListModel()
 {
 	this.iAccountId = 0;
 	this.sFullName = '';
-	this.resultCount = ko.observable(-1);
-	
 	this.search = ko.observable('');
 	this.filters = ko.observable('');
 	this.sortBy = ko.observable(Settings.MessagesSortBy.DefaultSortBy);
 	this.sortOrder = ko.observable(Settings.MessagesSortBy.DefaultSortOrder);
 	
+	this.resultCount = ko.observable(-1);
 	this.collection = ko.observableArray([]);
-	
 	this.threadUids = {};
 }
 
@@ -123,6 +121,16 @@ CUidListModel.prototype.deleteUids = function (aUids)
 	
 	this.collection(aNewCollection);
 	this.resultCount(this.resultCount() - iDiff);
+};
+
+/**
+ * Clears data when cache should be cleared.
+ */
+CUidListModel.prototype.clearData = function ()
+{
+	this.resultCount(-1);
+	this.collection([]);
+	this.threadUids = {};
 };
 
 module.exports = CUidListModel;

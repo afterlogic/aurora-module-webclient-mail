@@ -122,9 +122,9 @@ module.exports = {
 			this.MessagesSortBy = Types.pObject(oAppDataMailWebclientSection.MessagesSortBy, this.MessagesSortBy);
 			this.MessagesSortBy.Allow = Types.pBool(this.MessagesSortBy.Allow, false);
 			this.MessagesSortBy.List = Types.pArray(this.MessagesSortBy.List, [{
-					"SortBy": "date",
-					"LangConst": "LABEL_SORT_BY_DATE"
-				}]);
+				SortBy: 'date',
+				LangConst: 'LABEL_SORT_BY_DATE'
+			}]);
 			this.MessagesSortBy.DefaultSortBy = Types.pString(this.MessagesSortBy.DefaultSortBy, 'date');
 			var sOrder = Types.pString(this.MessagesSortBy.DefaultSortOrder, 'asc');
 			this.MessagesSortBy.DefaultSortOrder = sOrder === 'asc' ? Enums.SortOrder.Asc : Enums.SortOrder.Desc;

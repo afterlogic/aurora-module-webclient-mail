@@ -471,17 +471,18 @@ CFolderModel.prototype.removeAllMessages = function ()
 	oUidList = this.getUidList('', '', Settings.MessagesSortBy.DefaultSortBy, Settings.MessagesSortBy.DefaultSortOrder);
 	oUidList.resultCount(0);
 	
-	_.delay(function () {
-		_.each(aMessagesUidsToRemove, function (sUid) {
-			MessagesDictionary.remove([iAccountId, sFullName, sUid]);
-		});
-		aMessagesUidsToRemove = null;
-		
-		_.each(oUidListsToRemove, function (oUidList, sIndex) {
-			Utils.destroyObjectWithObservables(oUidListsToRemove, sIndex);
-		});
-		oUidListsToRemove = null;
+	_.each(aMessagesUidsToRemove, function (sUid) {
+		MessagesDictionary.remove([iAccountId, sFullName, sUid]);
 	});
+	aMessagesUidsToRemove = null;
+
+	_.each(oUidListsToRemove, function (oUidList) {
+		// clear the UID list because it is outdated
+		// Do not remove it from the cache to prevent the creation of a new oUidList object
+		// because the old oUidList object will remain in the browser's memory
+		oUidList.clearData();
+	});
+	oUidListsToRemove = null;
 };
 
 CFolderModel.prototype.removeAllMessageListsFromCacheIfHasChanges = function ()
@@ -497,20 +498,26 @@ CFolderModel.prototype.removeAllMessageListsFromCacheIfHasChanges = function ()
 
 CFolderModel.prototype.removeFlaggedMessageListsFromCache = function ()
 {
-	_.each(this.oUids, function (oUidList, sIndex) {
+	_.each(this.oUids, function (oUidList) {
 		if (oUidList.filters() === Enums.FolderFilter.Flagged)
 		{
-			Utils.destroyObjectWithObservables(this.oUids, sIndex);
+			// clear the UID list because it is outdated
+			// Do not remove it from the cache to prevent the creation of a new oUidList object
+			// because the old oUidList object will remain in the browser's memory
+			oUidList.clearData();
 		}
 	}, this);
 };
 
 CFolderModel.prototype.removeUnseenMessageListsFromCache = function ()
 {
-	_.each(this.oUids, function (oUidList, sIndex) {
+	_.each(this.oUids, function (oUidList) {
 		if (oUidList.filters() === Enums.FolderFilter.Unseen)
 		{
-			Utils.destroyObjectWithObservables(this.oUids, sIndex);
+			// clear the UID list because it is outdated
+			// Do not remove it from the cache to prevent the creation of a new oUidList object
+			// because the old oUidList object will remain in the browser's memory
+			oUidList.clearData();
 		}
 	}, this);
 };
@@ -1178,7 +1185,7 @@ CFolderModel.prototype.executeUnseenFilter = function ()
 
 		if (bNotChanged)
 		{
-			MailCache.changeCurrentMessageList(this.fullName(), 1, '', Enums.FolderFilter.Unseen);
+			MailCache.changeCurrentMessageList(this.fullName(), 1, '', Enums.FolderFilter.Unseen, Settings.MessagesSortBy.DefaultSortBy, Settings.MessagesSortBy.DefaultSortOrder);
 		}
 		return false;
 	}
