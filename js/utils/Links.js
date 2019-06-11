@@ -53,8 +53,8 @@ LinksUtils.getMailbox = function (sFolder, iPage, sUid, sSearch, sFilters, sSort
 	sUid = Types.pString(sUid);
 	sSearch = Types.pString(sSearch);
 	sFilters = Types.pString(sFilters);
-	sSortBy = Types.pString(sSortBy);
-	iSortOrder = Types.pInt(iSortOrder);
+	sSortBy = Types.pString(sSortBy, Settings.MessagesSortBy.DefaultSortBy);
+	iSortOrder = Types.pInt(iSortOrder, Settings.MessagesSortBy.DefaultSortOrder);
 	sCustom = Types.pString(sCustom);
 
 	if (Types.isNonEmptyString(sFolder))
