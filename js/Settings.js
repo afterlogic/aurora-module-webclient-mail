@@ -97,7 +97,7 @@ module.exports = {
 			this.ImageUploadSizeLimit = Types.pNonNegativeInt(oAppDataMailSection.ImageUploadSizeLimit, this.ImageUploadSizeLimit);
 			window.Enums.SmtpAuthType = Types.pObject(oAppDataMailSection.SmtpAuthType);
 
-			this.MessagesSortBy = Types.pObject(oAppDataMailSection.MessagesSortBy, this.MessagesSortBy);
+			this.MessagesSortBy = _.clone(Types.pObject(oAppDataMailSection.MessagesSortBy, this.MessagesSortBy));
 			this.MessagesSortBy.Allow = Types.pBool(this.MessagesSortBy.Allow, false);
 			this.MessagesSortBy.List = Types.pArray(this.MessagesSortBy.List, []);
 			this.MessagesSortBy.DefaultSortBy = Types.pString(this.MessagesSortBy.DefaultSortBy, 'arrival');
