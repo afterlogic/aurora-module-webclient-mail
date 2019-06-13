@@ -33,7 +33,7 @@ Prefetcher.prefetchAccountFilters = function ()
 {
 	var oAccount = AccountList.getCurrent();
 	
-	if (oAccount && !oAccount.filters() && Settings.AllowFilters)
+	if (oAccount && oAccount.allowFilters() && !oAccount.filters())
 	{
 		oAccount.requestFilters();
 	}

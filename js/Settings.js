@@ -19,14 +19,11 @@ module.exports = {
 	
 	// from Mail module
 	AllowAddAccounts: false,
-	AllowAutoresponder: false,
 	AllowAutosaveInDrafts: true,
 	AllowChangeMailQuotaOnMailServer: false,
 	AllowDefaultAccountForUser: true,
 	AllowEditDomainsInServer: true,
 	AllowFetchers: false,
-	AllowFilters: false,
-	AllowForward: false,
 	AllowIdentities: false,
 	AllowInsertImage: true,
 	AllowMultiAccounts: false,
@@ -85,13 +82,10 @@ module.exports = {
 		if (!_.isEmpty(oAppDataMailSection))
 		{
 			this.AllowAddAccounts = Types.pBool(oAppDataMailSection.AllowAddAccounts, this.AllowAddAccounts);
-			this.AllowAutoresponder = Types.pBool(oAppDataMailSection.AllowAutoresponder, this.AllowAutoresponder);
 			this.AllowAutosaveInDrafts = Types.pBool(oAppDataMailSection.AllowAutosaveInDrafts, this.AllowAutosaveInDrafts);
 			this.AllowChangeMailQuotaOnMailServer = Types.pBool(oAppDataMailSection.AllowChangeMailQuotaOnMailServer, this.AllowChangeMailQuotaOnMailServer);
 			this.AllowDefaultAccountForUser = Types.pBool(oAppDataMailSection.AllowDefaultAccountForUser, this.AllowDefaultAccountForUser);
 			this.AllowEditDomainsInServer = Types.pBool(oAppDataMailSection.AllowEditDomainsInServer, this.AllowEditDomainsInServer);
-			this.AllowFilters = Types.pBool(oAppDataMailSection.AllowFilters, this.AllowFilters);
-			this.AllowForward = Types.pBool(oAppDataMailSection.AllowForward, this.AllowForward);
 			this.AllowIdentities = Types.pBool(oAppDataMailSection.AllowIdentities, this.AllowIdentities);
 			this.AllowInsertImage = Types.pBool(oAppDataMailSection.AllowInsertImage, this.AllowInsertImage);
 			this.AllowMultiAccounts = Types.pBool(oAppDataMailSection.AllowMultiAccounts, this.AllowMultiAccounts);

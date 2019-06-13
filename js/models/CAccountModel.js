@@ -61,8 +61,12 @@ function CAccountModel(oData)
 	
 	this.fetchers = ko.observableArray([]);
 	this.identities = ko.observable(null);
+	
+	this.allowAutoresponder = ko.observable(Types.pBool(oData.AllowAutoresponder, false));
 	this.autoresponder = ko.observable(null);
+	this.allowForward = ko.observable(Types.pBool(oData.AllowForward, false));
 	this.forward = ko.observable(null);
+	this.allowFilters = ko.observable(Types.pBool(oData.AllowFilters, false));
 	this.filters = ko.observable(null);
 
 	this.quota = ko.observable(0);
