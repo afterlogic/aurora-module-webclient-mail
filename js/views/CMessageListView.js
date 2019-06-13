@@ -248,7 +248,7 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 	
 	this.checkedOrSelectedUids = ko.computed(function () {
 		var aChecked = this.checkedUids();
-		if (aChecked.length === 0 && MailCache.currentMessage() && !MailCache.currentMessage().deleted())
+		if (aChecked.length === 0 && MailCache.currentMessage() && _.isFunction(MailCache.currentMessage().deleted) && !MailCache.currentMessage().deleted())
 		{
 			aChecked = [MailCache.currentMessage().uid()];
 		}
