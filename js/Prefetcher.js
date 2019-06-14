@@ -14,7 +14,8 @@ var
 	
 	Prefetcher = {},
 	bFetchersIdentitiesPrefetched = false,
-	bStarredMessageListPrefetched = false
+	bStarredMessageListPrefetched = false,
+	bMessagesPrefetchDisabled = true
 ;
 
 Prefetcher.prefetchFetchersIdentities = function ()
@@ -328,6 +329,12 @@ Prefetcher.prefetchAccountQuota = function ()
 };
 
 module.exports = {
+	disableMessagesPrefetch: function () {
+		bMessagesPrefetchDisabled = true;
+	},
+	enableMessagesPrefetch: function () {
+		bMessagesPrefetchDisabled = false;
+	},
 	startMin: function () {
 		var bPrefetchStarted = false;
 		
@@ -362,36 +369,39 @@ module.exports = {
 			bPrefetchStarted = Prefetcher.prefetchAccountFilters();
 		}
 		
-		if (!bPrefetchStarted)
+		if (!bMessagesPrefetchDisabled)
 		{
-			bPrefetchStarted = Prefetcher.startMessagesPrefetch();
-		}
+			if (!bPrefetchStarted)
+			{
+				bPrefetchStarted = Prefetcher.startMessagesPrefetch();
+			}
 
-		if (!bPrefetchStarted)
-		{
-			bPrefetchStarted = Prefetcher.startThreadListPrefetch();
-		}
+			if (!bPrefetchStarted)
+			{
+				bPrefetchStarted = Prefetcher.startThreadListPrefetch();
+			}
 
-		// starred messages should be prefetched once (bStarredMessageListPrefetched flag is used for this)
-		// but prefetchStarredMessageList method can be called from outside and should be executed then
-		if (!bStarredMessageListPrefetched && !bPrefetchStarted)
-		{
-			bPrefetchStarted = Prefetcher.prefetchStarredMessageList();
-		}
+			// starred messages should be prefetched once (bStarredMessageListPrefetched flag is used for this)
+			// but prefetchStarredMessageList method can be called from outside and should be executed then
+			if (!bStarredMessageListPrefetched && !bPrefetchStarted)
+			{
+				bPrefetchStarted = Prefetcher.prefetchStarredMessageList();
+			}
 
-		if (!bPrefetchStarted)
-		{
-			bPrefetchStarted = Prefetcher.startPagePrefetch(MailCache.page() + 1);
-		}
+			if (!bPrefetchStarted)
+			{
+				bPrefetchStarted = Prefetcher.startPagePrefetch(MailCache.page() + 1);
+			}
 
-		if (!bPrefetchStarted)
-		{
-			bPrefetchStarted = Prefetcher.startPagePrefetch(MailCache.page() - 1);
-		}
+			if (!bPrefetchStarted)
+			{
+				bPrefetchStarted = Prefetcher.startPagePrefetch(MailCache.page() - 1);
+			}
 
-		if (!bPrefetchStarted)
-		{
-			bPrefetchStarted = Prefetcher.prefetchUnseenMessageList();
+			if (!bPrefetchStarted)
+			{
+				bPrefetchStarted = Prefetcher.prefetchUnseenMessageList();
+			}
 		}
 
 		if (!bPrefetchStarted)

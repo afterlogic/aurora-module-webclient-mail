@@ -1471,6 +1471,11 @@ CMailCache.prototype.onGetMessagesResponse = function (oResponse, oRequest)
 	{
 		this.parseMessageList(oResponse, oRequest);
 	}
+	else
+	{
+		this.requirePrefetcher();
+		Prefetcher.disableMessagesPrefetch();
+	}
 };
 
 /**
@@ -1479,6 +1484,9 @@ CMailCache.prototype.onGetMessagesResponse = function (oResponse, oRequest)
  */
 CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 {
+	this.requirePrefetcher();
+	Prefetcher.enableMessagesPrefetch();
+	
 	var
 		oResult = oResponse.Result,
 		oParameters = oRequest.Parameters,
