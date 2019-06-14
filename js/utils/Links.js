@@ -170,10 +170,16 @@ LinksUtils.parseMailbox = function (aParamsToParse, sInboxFullName)
 			{
 				if (Settings.MessagesSortBy.Allow)
 				{
-					iSortOrder = Types.pInt(sTemp.substr(10));
+					iSortOrder = Types.pEnum(Types.pInt(sTemp.substr(10)), Enums.SortOrder, Settings.MessagesSortBy.DefaultSortOrder);
 				}
 				iIndex++;
 			}
+		}
+		
+		if (!_.find(Settings.MessagesSortBy.List, function(oSortData) { return oSortData.SortBy === sSortBy; }))
+		{
+			sSortBy = Settings.MessagesSortBy.DefaultSortBy;
+			iSortOrder = Settings.MessagesSortBy.DefaultSortOrder;
 		}
 
 		if (aParams.length > iIndex)
