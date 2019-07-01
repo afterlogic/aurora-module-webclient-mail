@@ -190,7 +190,7 @@ module.exports = function (oAppData) {
 						Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
 						LinksUtils = require('modules/%ModuleName%/js/utils/Links.js')
 					;
-					Routing.setHash(LinksUtils.getMailbox(sFolder, iPage, sUid, sSearch, sFilters, sCustom));
+					Routing.setHash(LinksUtils.getMailbox(sFolder, iPage, sUid, sSearch, sFilters, Settings.MessagesSortBy.DefaultSortBy, Settings.MessagesSortBy.DefaultSortOrder, sCustom));
 				}
 			};
 
