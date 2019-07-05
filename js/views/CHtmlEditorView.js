@@ -605,12 +605,14 @@ CHtmlEditorView.prototype.insertHtml = function (sHtml)
  * @param {Object} oViewModel
  * @param {Object} oEvent
  */
-
 CHtmlEditorView.prototype.insertLink = function (oViewModel, oEvent)
 {
 	if (!this.inactive() && !this.visibleInsertLinkPopup())
 	{
-		oEvent.stopPropagation();
+		if (oEvent && _.isFunction(oEvent.stopPropagation))
+		{
+			oEvent.stopPropagation();
+		}
 		this.linkForInsert(this.oCrea.getSelectedText());
 		this.closeAllPopups();
 		this.visibleInsertLinkPopup(true);
