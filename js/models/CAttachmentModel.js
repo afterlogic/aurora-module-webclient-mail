@@ -89,7 +89,11 @@ CAttachmentModel.prototype.additionalParse = function (oData)
 {
 	this.content(Types.pString(oData.Content));
 	this.mimePartIndex(Types.pString(oData.MimePartIndex));
-
+	if (this.isMessageType() && this.mimePartIndex() === '')
+	{
+		this.actions(_.without(this.actions(), 'view'));
+	}
+	
 	this.cid(Types.pString(oData.CID));
 	this.contentLocation(Types.pString(oData.ContentLocation));
 	this.inline(!!oData.IsInline);
