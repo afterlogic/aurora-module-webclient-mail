@@ -350,7 +350,10 @@ CFolderModel.prototype.parseAndCacheMessage = function (oRawMessage, bThreadPart
 	}
 	
 	MessagesDictionary.set([this.iAccountId, this.fullName(), sUid], oMessage);
-	this.aMessagesDictionaryUids.push(sUid);
+	if (bNewMessage)
+	{
+		this.aMessagesDictionaryUids.push(sUid);
+	}
 	
 	return oMessage;
 };
