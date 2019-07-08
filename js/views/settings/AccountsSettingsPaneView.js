@@ -11,7 +11,7 @@ var
 	Screens = require('%PathToCoreWebclientModule%/js/Screens.js'),
 	
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
-	CreateAccountPopup = require('modules/%ModuleName%/js/popups/CreateAccountPopup.js'),
+	CreateAccountShortFormPopup = require('modules/%ModuleName%/js/popups/CreateAccountShortFormPopup.js'),
 	CreateIdentityPopup = require('modules/%ModuleName%/js/popups/CreateIdentityPopup.js'),
 	CreateFetcherPopup = require('modules/%ModuleName%/js/popups/CreateFetcherPopup.js'),
 	
@@ -254,7 +254,7 @@ CAccountsSettingsPaneView.prototype.getAutoselectedTab = function ()
 
 CAccountsSettingsPaneView.prototype.addAccount = function ()
 {
-	Popups.showPopup(CreateAccountPopup, [_.bind(function (iAccountId) {
+	Popups.showPopup(CreateAccountShortFormPopup, [_.bind(function (iAccountId) {
 		var oAccount = AccountList.getAccount(iAccountId);
 		if (oAccount)
 		{
