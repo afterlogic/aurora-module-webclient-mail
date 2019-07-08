@@ -809,7 +809,7 @@ CMailCache.prototype.getOpenedDraftUids = function ()
 	var
 		aOpenedWins = WindowOpener.getOpenedWindows(),
 		aDraftUids = _.map(aOpenedWins, function (oWin) {
-			return (oWin.SlaveTabMailMethods && (window.location.origin === oWin.location.origin)) ? oWin.SlaveTabMailMethods.getEditedDraftUid() : '';
+			return oWin.SlaveTabMailMethods ? oWin.SlaveTabMailMethods.getEditedDraftUid() : '';
 		})
 	;
 
@@ -829,7 +829,7 @@ CMailCache.prototype.closeComposesWithDraftUids = function (aUids)
 	var aOpenedWins = WindowOpener.getOpenedWindows();
 	
 	_.each(aOpenedWins, function (oWin) {
-		if (oWin.SlaveTabMailMethods && (window.location.origin === oWin.location.origin) && -1 !== $.inArray(oWin.SlaveTabMailMethods.getEditedDraftUid(), aUids))
+		if (oWin.SlaveTabMailMethods && -1 !== $.inArray(oWin.SlaveTabMailMethods.getEditedDraftUid(), aUids))
 		{
 			oWin.close();
 		}
