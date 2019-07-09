@@ -39,6 +39,7 @@ function CAccountSettingsFormView()
 	this.useToAuthorize = ko.observable(false);
 	this.canBeUsedToAuthorize = ko.observable(false);
 	this.isDefaultAccount = ko.observable(false);
+	this.isServerOwner = ko.observable(false);
 	this.friendlyName = ko.observable('');
 	this.email = ko.observable('');
 	this.incomingLogin = ko.observable('');
@@ -83,6 +84,7 @@ function CAccountSettingsFormView()
 		{
 			this.allowChangePassword(ModulesManager.run('ChangePasswordWebclient', 'isChangePasswordButtonAllowed', [AccountList.collection().length, oAccount]));
 			this.isDefaultAccount(oAccount.bDefault);
+			this.isServerOwner(oAccount.oServer.sOwnerType === Enums.ServerOwnerType.Account);
 		}
 		else
 		{

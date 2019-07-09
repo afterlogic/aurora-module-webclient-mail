@@ -30,6 +30,7 @@ function CServerModel(oServer)
 	this.iExternalAccessSmtpPort = Types.pInt(oServer && oServer.ExternalAccessSmtpPort, 25);
 	this.bAllowToDelete = Types.pBool(oServer && oServer.AllowToDelete, true);
 	this.bAllowEditDomains = Types.pBool(oServer && oServer.AllowEditDomains, true);
+	this.sOwnerType = oServer ? Types.pString(oServer.OwnerType) : '';
 }
 
 module.exports = CServerModel;

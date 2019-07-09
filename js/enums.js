@@ -89,6 +89,15 @@ Enums.MailErrors = {
 	'CannotMoveMessageQuota': 4008
 };
 
+/**
+ * @enum {string}
+ */
+Enums.ServerOwnerType = {
+	'Account': 'account',
+	'Tenant': 'tenant',
+	'SuperAdmin': 'superadmin'
+};
+
 if (typeof window.Enums === 'undefined')
 {
 	window.Enums = {};
