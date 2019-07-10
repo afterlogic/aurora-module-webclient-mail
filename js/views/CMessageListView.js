@@ -406,7 +406,14 @@ CMessageListView.prototype.changeRoutingForMessageList = function (sFolder, iPag
  */
 CMessageListView.prototype.onEnterPress = function (oMessage)
 {
-	oMessage.openThread();
+	if (oMessage.threadNextLoadingVisible())
+	{
+		oMessage.loadNextMessages();
+	}
+	else
+	{
+		oMessage.openThread();
+	}
 };
 
 /**
@@ -826,14 +833,37 @@ CMessageListView.prototype.executeCopyToFolder = function (sToFolder)
  */
 CMessageListView.prototype.onDeletePress = function (aMessages)
 {
-	var aUids = _.map(aMessages, function (oMessage)
+	var
+		sUidToOpenAfter = '',
+		oMessageToOpenAfter = null,
+		aUids = _.map(aMessages, function (oMessage) {
+			return oMessage.uid();
+		})
+	;
+	
+	if (aMessages.length === 1 && aMessages[0].selected())
 	{
-		return oMessage.uid();
-	});
-
+		sUidToOpenAfter = MailCache.prevMessageUid();
+		if (sUidToOpenAfter === '')
+		{
+			sUidToOpenAfter = MailCache.nextMessageUid();
+		}
+	}
+	
 	if (aUids.length > 0)
 	{
 		MailUtils.deleteMessages(aUids);
+	}
+	
+	if (sUidToOpenAfter !== '')
+	{
+		oMessageToOpenAfter = _.find(this.collection(), function (oMessage) {
+			return oMessage.uid() === sUidToOpenAfter;
+		});
+		if (oMessageToOpenAfter)
+		{
+			this.routeForMessage(oMessageToOpenAfter);
+		}
 	}
 };
 

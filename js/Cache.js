@@ -197,6 +197,7 @@ CMailCache.prototype.init = function ()
 	else
 	{
 		this.currentAccountId.valueHasMutated();
+		this.initPrevNextSubscribes();
 	}
 };
 
@@ -228,7 +229,7 @@ CMailCache.prototype.calcNextMessageUid = function ()
 		sCurrentUid = this.currentMessage().uid();
 		if (this.bInThreadLevel || bThreadLevel)
 		{
-			this.bInThreadLevel = true;
+			this.bInThreadLevel = !!MainTab;
 			if (bThreadLevel)
 			{
 				oParentMessage = oFolder.getMessageByUid(this.currentMessage().threadParentUid());
