@@ -88,7 +88,8 @@ CreateAccountShortFormPopup.prototype.save = function ()
 	{
 		var
 			oParameters = {
-				'sDomain': $.trim(this.email()).split('@')[1]
+				'Domain': $.trim(this.email()).split('@')[1],
+				'AllowWildcardDomain': true
 			}
 		;
 
@@ -108,7 +109,50 @@ CreateAccountShortFormPopup.prototype.save = function ()
  */
 CreateAccountShortFormPopup.prototype.onGetMailServerByDomain = function (oResponse, oRequest)
 {
-	if (!oResponse.Result)
+	var oServer = null;
+
+	if (oResponse.Result
+		&& typeof oResponse.Result.Server !== 'undefined'
+		&& typeof oResponse.Result.FoundWithWildcard !== 'undefined'
+	)
+	{
+		if (oResponse.Result.FoundWithWildcard)
+		{
+			var
+				sNewAccountDomain = $.trim(this.email()).split('@')[1],
+				sMainAccountEmail = AccountList.getDefault().email(),
+				sMainAccountDomain = $.trim(sMainAccountEmail).split('@')[1],
+				bDomainsMatches = sNewAccountDomain === sMainAccountDomain
+			;
+
+			if (bDomainsMatches)
+			{
+				oServer = new CServerModel(oResponse.Result.Server);
+			}
+		}
+		else
+		{
+			oServer = new CServerModel(oResponse.Result.Server);
+		}
+	}
+
+	if (oServer)
+	{
+		var
+			oParameters = {
+				'FriendlyName': this.friendlyName(),
+				'Email': $.trim(this.email()),
+				'IncomingLogin': $.trim(this.email()),
+				'IncomingPassword': $.trim(this.password()),
+				'Server': {
+					'ServerId': oServer.iId
+				}
+			}
+		;
+
+		Ajax.send('CreateAccount', oParameters, this.onAccountCreateResponse, this);
+	}
+	else
 	{
 		//second stage
 		this.loading(false);
@@ -125,23 +169,6 @@ CreateAccountShortFormPopup.prototype.onGetMailServerByDomain = function (oRespo
 			$.trim(this.password())
 		]);
 		this.closePopup();
-	}
-	else
-	{
-		var
-			oServer = new CServerModel(oResponse.Result),
-			oParameters = {
-				'FriendlyName': this.friendlyName(),
-				'Email': $.trim(this.email()),
-				'IncomingLogin': $.trim(this.email()),
-				'IncomingPassword': $.trim(this.password()),
-				'Server': {
-					'ServerId': oServer.iId
-				}
-			}
-		;
-
-		Ajax.send('CreateAccount', oParameters, this.onAccountCreateResponse, this);
 	}
 };
 
