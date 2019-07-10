@@ -20,11 +20,11 @@
 				<span class="label required" data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_LOGIN'}"></span>
 				<input class="value input" spellcheck="false" type="text" maxlength="255" data-bind="value: incomingLogin, hasfocus: incLoginFocused, valueUpdate: 'afterkeydown', onEnter: save"/>
 			</div>-->
-			<div class="row" data-bind="visible: allowSpecifyPassword">
+			<div class="row" data-bind="visible: !isDisableAuthorize() && allowSpecifyPassword()">
 				<span class="label required" data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_PASSWORD'}"></span>
 				<input class="value input" spellcheck="false" autocomplete="new-password" type="password" maxlength="255" data-bind="value: incomingPassword, valueUpdate: 'afterkeydown', onEnter: save"/>
 			</div>
-			<div class="row hint" style="color: red;" data-bind="visible: allowSpecifyPassword">
+			<div class="row hint" style="color: red;" data-bind="visible: !isDisableAuthorize() && allowSpecifyPassword()">
 				<span class="value" data-bind="i18n: {'key': '%MODULENAME%/LABEL_HINT_SPECIFY_PASSWORD'}"></span>
 			</div>
 			<div class="row" style="display: none;"></div>
