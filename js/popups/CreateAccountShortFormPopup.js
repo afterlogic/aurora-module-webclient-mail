@@ -120,7 +120,7 @@ CreateAccountShortFormPopup.prototype.onGetMailServerByDomain = function (oRespo
 		{
 			var
 				sNewAccountDomain = $.trim(this.email()).split('@')[1],
-				sMainAccountEmail = AccountList.getDefault().email(),
+				sMainAccountEmail = AccountList.getDefault() ? AccountList.getDefault().email() : '',
 				sMainAccountDomain = $.trim(sMainAccountEmail).split('@')[1],
 				bDomainsMatches = sNewAccountDomain === sMainAccountDomain
 			;
