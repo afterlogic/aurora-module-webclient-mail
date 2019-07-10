@@ -38,6 +38,14 @@ function CAccountModel(oData)
 	this.email = ko.observable(Types.pString(oData.Email));
 	this.friendlyName = ko.observable(Types.pString(oData.FriendlyName));
 	this.incomingLogin = ko.observable(Types.pString(oData.IncomingLogin));
+	this.passwordMightBeIncorrect = ko.observable(false);
+	this.passwordMightBeIncorrect.subscribe(function () {
+		if (!this.passwordMightBeIncorrect())
+		{
+			this.requireCache();
+			Cache.getFolderList(this.id());
+		}
+	}, this);
 	this.signature = ko.observable(Types.pString(oData.Signature));
 	this.useSignature = ko.observable(!!oData.UseSignature);
 	this.serverId = ko.observable(Types.pInt(oData.ServerId));
@@ -57,7 +65,6 @@ function CAccountModel(oData)
 	this.hash = ko.computed(function () {
 		return Utils.getHash(this.id() + this.email());
 	}, this);
-	this.passwordSpecified = ko.observable(true);
 	
 	this.fetchers = ko.observableArray([]);
 	this.identities = ko.observable(null);

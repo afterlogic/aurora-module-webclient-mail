@@ -79,10 +79,13 @@ function CMailCache()
 		{
 			this.editedFolderList(oFolderList);
 		}
-		else if (this.currentAccountId() !== iEditedAccountId)
+		else
 		{
 			this.editedFolderList(new CFolderListModel());
-			this.getFolderList(iEditedAccountId);
+			if (this.currentAccountId() !== iEditedAccountId)
+			{
+				this.getFolderList(iEditedAccountId);
+			}
 		}
 	}, this);
 	

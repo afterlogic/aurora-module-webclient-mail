@@ -1,6 +1,8 @@
 'use strict';
 
 var
+	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
+	
 	Ajax = require('%PathToCoreWebclientModule%/js/Ajax.js'),
 	
 	Settings = require('modules/%ModuleName%/js/Settings.js')
@@ -49,12 +51,24 @@ module.exports = {
 	send: function (sMethod, oParameters, fResponseHandler, oContext) {
 		var
 			MailCache = require('modules/%ModuleName%/js/Cache.js'),
-			iTimeout = (sMethod === 'GetMessagesBodies') ? 100000 : undefined
+			iTimeout = (sMethod === 'GetMessagesBodies') ? 100000 : undefined,
+			fBaseResponseHandler = function (oResponse, oRequest) {
+				if (!oResponse.Result && oResponse.ErrorCode === 4002)
+				{
+					var
+						AccountList = require('modules/%ModuleName%/js/AccountList.js'),
+						iAccountId = Types.pInt(oRequest.Parameters.AccountID),
+						oAccount = AccountList.getAccount(iAccountId)
+					;
+					oAccount.passwordMightBeIncorrect(true);
+				}
+				fResponseHandler.apply(oContext, [oResponse, oRequest]);
+			}
 		;
 		if (oParameters && !oParameters.AccountID)
 		{
 			oParameters.AccountID = MailCache.currentAccountId();
 		}
-		Ajax.send(Settings.ServerModuleName, sMethod, oParameters, fResponseHandler, oContext, iTimeout);
+		Ajax.send(Settings.ServerModuleName, sMethod, oParameters, fBaseResponseHandler, null, iTimeout);
 	}
 };
