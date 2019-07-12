@@ -181,18 +181,18 @@ CHtmlEditorView.prototype.correctFontFromSettings = function ()
 {
 	var
 		sDefaultFont = this.sDefaultFont,
-		bFinded = false
+		bFound = false
 	;
 	
 	_.each(this.aFonts, function (sFont) {
 		if (sFont.toLowerCase() === sDefaultFont.toLowerCase())
 		{
 			sDefaultFont = sFont;
-			bFinded = true;
+			bFound = true;
 		}
 	});
 	
-	if (bFinded)
+	if (bFound)
 	{
 		this.sDefaultFont = sDefaultFont;
 	}

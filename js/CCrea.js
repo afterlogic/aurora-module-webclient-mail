@@ -1451,7 +1451,7 @@ CCrea.prototype.getFontName = function ()
         var
             sFontName = window.document.queryCommandValue('FontName'),
             sValidFontName = this.sBasicFontName,
-            sFindedFontName = ''
+            sFoundFontName = ''
         ;
 
         if (typeof sFontName === 'string')
@@ -1460,13 +1460,13 @@ CCrea.prototype.getFontName = function ()
             $.each(this.oOptions.fontNameArray, function (iIndex, sFont) {
                 if (sFontName.indexOf(sFont) > -1 || sFontName.indexOf(sFont.toLowerCase()) > -1)
                 {
-                    sFindedFontName = sFont;
+                    sFoundFontName = sFont;
                 }
             });
 
-            if (sFindedFontName !== '')
+            if (sFoundFontName !== '')
             {
-                sValidFontName = sFindedFontName;
+                sValidFontName = sFoundFontName;
             }
         }
     }
