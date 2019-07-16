@@ -1131,10 +1131,11 @@ CFolderModel.prototype.clearFolder = function (bOkAnswer)
 	{
 		Ajax.send('ClearFolder', { 'Folder': this.fullName() });
 
-		this.removeAllMessages();
-
 		this.requireMailCache();
 		MailCache.onClearFolder(this);
+		
+		// remove all messages from cache should be done after clearing current message in MailCache
+		this.removeAllMessages();
 	}
 };
 

@@ -962,6 +962,10 @@ CMailCache.prototype.removeOneMessageFromCacheForFolder = function (iAccountID, 
 	
 	if (oFolder && oFolder.type() === Enums.FolderTypes.Drafts)
 	{
+		if (this.currentMessage() && this.currentMessage().folder() === sFolderFullName && this.currentMessage().uid() === sDraftUid)
+		{
+			this.currentMessage(null);
+		}
 		oFolder.markDeletedByUids([sDraftUid]);
 		oFolder.commitDeleted([sDraftUid]);
 	}
@@ -1573,6 +1577,7 @@ CMailCache.prototype.onMoveMessagesResponse = function (oResponse, oRequest)
 	var
 		oResult = oResponse.Result,
 		oParameters = oRequest.Parameters,
+		aUids = oParameters.Uids.split(','),
 		oFolder = this.folderList().getFolderByFullName(oParameters.Folder),
 		oToFolder = this.folderList().getFolderByFullName(oParameters.ToFolder),
 		bToFolderTrash = (oToFolder && (oToFolder.type() === Enums.FolderTypes.Trash)),
@@ -1583,7 +1588,7 @@ CMailCache.prototype.onMoveMessagesResponse = function (oResponse, oRequest)
 		fDeleteMessages = _.bind(function (bResult) {
 			if (bResult && oFolder)
 			{
-				this.deleteMessagesFromFolder(oFolder, oParameters.Uids.split(','));
+				this.deleteMessagesFromFolder(oFolder, aUids);
 			}
 		}, this),
 		oCurrFolder = this.folderList().currentFolder(),
@@ -1595,7 +1600,7 @@ CMailCache.prototype.onMoveMessagesResponse = function (oResponse, oRequest)
 	{
 		if (oFolder)
 		{
-			oDiffs = oFolder.revertDeleted(oParameters.Uids.split(','));
+			oDiffs = oFolder.revertDeleted(aUids);
 		}
 		if (oToFolder)
 		{
@@ -1624,8 +1629,8 @@ CMailCache.prototype.onMoveMessagesResponse = function (oResponse, oRequest)
 	}
 	else if (oFolder)
 	{
-		oFolder.commitDeleted(oParameters.Uids.split(','));
-		_.each(oParameters.Uids.split(','), function (sUid) {
+		oFolder.commitDeleted(aUids);
+		_.each(aUids, function (sUid) {
 			Routing.replaceHashWithoutMessageUid(sUid);
 		});
 	}

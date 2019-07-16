@@ -809,7 +809,7 @@ CMessagePaneView.prototype.executePrint = function ()
 
 CMessagePaneView.prototype.executeSave = function ()
 {
-	if (this.isEnableSave())
+	if (this.isEnableSave() && this.currentMessage())
 	{
 		UrlUtils.downloadByUrl(this.currentMessage().sDownloadAsEmlUrl);
 	}
@@ -1084,7 +1084,7 @@ CMessagePaneView.prototype.doAfterPopulatingMessage = function ()
 
 CMessagePaneView.prototype.searchBySubject = function ()
 {
-	if (Settings.AllowSearchMessagesBySubject)
+	if (Settings.AllowSearchMessagesBySubject && this.currentMessage())
 	{
 		var
 			sFolder = this.currentMessage().folder(),

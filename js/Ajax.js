@@ -1,6 +1,8 @@
 'use strict';
 
 var
+	_ = require('underscore'),
+	
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	
 	Ajax = require('%PathToCoreWebclientModule%/js/Ajax.js'),
@@ -62,7 +64,10 @@ module.exports = {
 					;
 					oAccount.passwordMightBeIncorrect(true);
 				}
-				fResponseHandler.apply(oContext, [oResponse, oRequest]);
+				if (_.isFunction(fResponseHandler))
+				{
+					fResponseHandler.apply(oContext, [oResponse, oRequest]);
+				}
 			}
 		;
 		if (oParameters && !oParameters.AccountID)
