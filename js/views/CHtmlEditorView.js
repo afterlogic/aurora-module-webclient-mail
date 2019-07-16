@@ -639,6 +639,8 @@ CHtmlEditorView.prototype.insertLinkFromPopup = function (oCurrentViewModel, eve
 	}
 	
 	this.closeInsertLinkPopup(oCurrentViewModel, event);
+	
+	return false;
 };
 
 /**
