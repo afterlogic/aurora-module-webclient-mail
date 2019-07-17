@@ -8,6 +8,7 @@ var
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	
 	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
+	App = require('%PathToCoreWebclientModule%/js/App.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 	Screens = require('%PathToCoreWebclientModule%/js/Screens.js'),
 	
@@ -151,7 +152,7 @@ CServersAdminSettingsPaneView.prototype.deleteServer = function (iId)
 		fCallBack = _.bind(function (bDelete) {
 			if (bDelete)
 			{
-				Ajax.send('DeleteServer', { 'ServerId': iId, 'TenantId': oServerToDelete.iTenantId }, function (oResponse) {
+				Ajax.send('DeleteServer', { 'ServerId': iId, 'TenantId': oServerToDelete.iTenantId, 'DeletionConfirmedByAdmin': true }, function (oResponse) {
 					if (!oResponse.Result)
 					{
 						Api.showErrorByCode(oResponse, TextUtils.i18n('%MODULENAME%/ERROR_DELETE_MAIL_SERVER'));
@@ -162,11 +163,17 @@ CServersAdminSettingsPaneView.prototype.deleteServer = function (iId)
 		}, this),
 		oServerToDelete = _.find(this.servers(), _.bind(function (oServer) {
 			return oServer.iId === iId;
-		}, this))
+		}, this)),
+		oDeleteEntityParams = {
+			'Type': 'Server',
+			'Count': 1,
+			'ConfirmText': TextUtils.i18n('%MODULENAME%/CONFIRM_REMOVE_SERVER')
+		}
 	;
 	if (oServerToDelete && oServerToDelete.bAllowToDelete)
 	{
-		Popups.showPopup(ConfirmPopup, [TextUtils.i18n('%MODULENAME%/CONFIRM_REMOVE_SERVER'), fCallBack, oServerToDelete.sName]);
+		App.broadcastEvent('ConfirmDeleteEntity::before', oDeleteEntityParams);
+		Popups.showPopup(ConfirmPopup, [oDeleteEntityParams.ConfirmText, fCallBack, oServerToDelete.sName]);
 	}
 };
 
