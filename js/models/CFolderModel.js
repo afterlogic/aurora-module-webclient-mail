@@ -474,6 +474,12 @@ CFolderModel.prototype.removeAllMessages = function ()
 	oUidList = this.getUidList('', '', Settings.MessagesSortBy.DefaultSortBy, Settings.MessagesSortBy.DefaultSortOrder);
 	oUidList.resultCount(0);
 	
+	if (MailCache.currentMessage() && MailCache.currentMessage().accountId() === iAccountId 
+			&& MailCache.currentMessage().folder() === sFullName)
+	{
+		Utils.log('removeAllMessages, the current message is in the list to remove', MailCache.currentMessage() ? {'accountId': MailCache.currentMessage().accountId(),'folder': MailCache.currentMessage().folder(),'uid': MailCache.currentMessage().uid()} : null);
+		aMessagesUidsToRemove = _.without(aMessagesUidsToRemove, MailCache.currentMessage().uid());
+	}
 	_.each(aMessagesUidsToRemove, function (sUid) {
 		MessagesDictionary.remove([iAccountId, sFullName, sUid]);
 	});
@@ -667,7 +673,14 @@ CFolderModel.prototype.revertDeleted = function (aUids)
 CFolderModel.prototype.commitDeleted = function (aUids)
 {
 	_.each(aUids, _.bind(function (sUid) {
-		MessagesDictionary.remove([this.iAccountId, this.fullName(), sUid]);
+		var bCurrentMessageIsBeingDeleted = MailCache.currentMessage() && MailCache.currentMessage().accountId() === this.iAccountId 
+				&& MailCache.currentMessage().folder() === this.fullName()
+				&& MailCache.currentMessage().uid() === sUid;
+		if (!bCurrentMessageIsBeingDeleted)
+		{
+			Utils.log('commitDeleted, the current message is to remove', MailCache.currentMessage() ? {'accountId': MailCache.currentMessage().accountId(),'folder': MailCache.currentMessage().folder(),'uid': MailCache.currentMessage().uid()} : null);
+			MessagesDictionary.remove([this.iAccountId, this.fullName(), sUid]);
+		}
 		this.aMessagesDictionaryUids = _.without(this.aMessagesDictionaryUids, sUid);
 	}, this));
 	
