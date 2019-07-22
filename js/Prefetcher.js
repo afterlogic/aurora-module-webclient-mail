@@ -218,8 +218,7 @@ Prefetcher.startThreadListPrefetch = function ()
 		if (oCacheMess.threadCount() > 0)
 		{
 			_.each(oCacheMess.threadUids(), function (sThreadUid) {
-				var oThreadMess = MessagesDictionary.get([oCurrFolder.iAccountId, oCurrFolder.fullName(), sThreadUid]);
-				if (!oThreadMess && !oCurrFolder.hasThreadUidBeenRequested(sThreadUid))
+				if (!oCurrFolder.hasThreadUidBeenRequested(sThreadUid))
 				{
 					aUidsForLoad.push(sThreadUid);
 				}
