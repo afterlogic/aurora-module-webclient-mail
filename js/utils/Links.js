@@ -367,7 +367,7 @@ LinksUtils.parseCompose = function (aParams)
 LinksUtils.parseToAddr = function (mToAddr)
 {
 	var
-		sToAddr = decodeURI(Types.pString(mToAddr)),
+		sToAddr = decodeURIComponent(Types.pString(mToAddr)),
 		bHasMailTo = sToAddr.indexOf('mailto:') !== -1,
 		aMailto = [],
 		aMessageParts = [],
