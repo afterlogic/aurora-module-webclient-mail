@@ -730,9 +730,12 @@ CFolderModel.prototype.commitDeleted = function (aUids)
 		var bCurrentMessageIsBeingDeleted = MailCache.currentMessage() && MailCache.currentMessage().accountId() === this.iAccountId 
 				&& MailCache.currentMessage().folder() === this.fullName()
 				&& MailCache.currentMessage().uid() === sUid;
-		if (!bCurrentMessageIsBeingDeleted)
+		if (bCurrentMessageIsBeingDeleted)
 		{
 			Utils.log('commitDeleted, the current message is to remove', MailCache.currentMessage() ? {'accountId': MailCache.currentMessage().accountId(),'folder': MailCache.currentMessage().folder(),'uid': MailCache.currentMessage().uid()} : null);
+		}
+		else
+		{
 			this.removeMessageFromDict(sUid);
 		}
 		this.aMessagesDictionaryUids = _.without(this.aMessagesDictionaryUids, sUid);
