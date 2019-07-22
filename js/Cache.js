@@ -141,7 +141,7 @@ function CMailCache()
 		// restart autorefresh after restoring Internet connection
 		if (!this.checkMailStarted() && oParams.Response.Method === 'Ping' && oParams.Response.Module === 'Core' && oParams.Response.Result)
 		{
-			this.setAutocheckmailTimer();
+			this.executeCheckMail();
 		}
 	}, this));
 }
@@ -545,6 +545,8 @@ CMailCache.prototype.getUseListStatusIfPossibleValue = function (iFoldersToReque
  */
 CMailCache.prototype.executeCheckMail = function (bAbortPrevious)
 {
+	clearTimeout(this.iAutoCheckMailTimer);
+	
 	var
 		iAccountID = this.currentAccountId(),
 		aFolders = this.getNamesOfFoldersToRefresh(),
@@ -691,9 +693,14 @@ CMailCache.prototype.requestCurrentMessageList = function (sFolder, iPage, sSear
  * @param {int} iSortOrder
  * @param {boolean} bCurrent
  * @param {boolean} bFillMessages
+ * @param {boolean} bDoNotRequest
  */
-CMailCache.prototype.requestMessageList = function (sFolder, iPage, sSearch, sFilters, sSortBy, iSortOrder, bCurrent, bFillMessages)
+CMailCache.prototype.requestMessageList = function (sFolder, iPage, sSearch, sFilters, sSortBy, iSortOrder, bCurrent, bFillMessages, bDoNotRequest)
 {
+	// Parameter is true if method was called only to update last access time of messages for specified page.
+	// This case is used for Prefetcher work.
+	bDoNotRequest = Types.pBool(bDoNotRequest, false);
+	
 	var
 		oFolderList = this.oFolderListItems[this.currentAccountId()],
 		oFolder = (oFolderList) ? oFolderList.getFolderByFullName(sFolder) : null,
@@ -741,6 +748,7 @@ CMailCache.prototype.requestMessageList = function (sFolder, iPage, sSearch, sFi
 	if (oUidList)
 	{
 		aUids = this.setMessagesFromUidList(oUidList, iOffset, bFillMessages);
+		oFolder.updateLastAccessTime(aUids);
 	}
 	
 	if (oUidList)
@@ -749,7 +757,7 @@ CMailCache.prototype.requestMessageList = function (sFolder, iPage, sSearch, sFi
 			(bCacheIsEmpty) ||
 			((iOffset + aUids.length < oUidList.resultCount()) && (aUids.length < Settings.MailsPerPage))
 		;
-		bStartRequest = oFolder.hasChanges() || bDataExpected;
+		bStartRequest = !bDoNotRequest && (oFolder.hasChanges() || bDataExpected);
 	}
 	
 	if (bStartRequest)
@@ -1481,8 +1489,7 @@ CMailCache.prototype.onGetMessagesResponse = function (oResponse, oRequest)
 	}
 	else
 	{
-		this.requirePrefetcher();
-		Prefetcher.disableMessagesPrefetch();
+		Utils.log('onGetMessagesResponse, there was an error while getting message list', oResponse, oRequest);
 	}
 };
 
@@ -1492,9 +1499,6 @@ CMailCache.prototype.onGetMessagesResponse = function (oResponse, oRequest)
  */
 CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 {
-	this.requirePrefetcher();
-	Prefetcher.enableMessagesPrefetch();
-	
 	var
 		oResult = oResponse.Result,
 		oParameters = oRequest.Parameters,

@@ -146,6 +146,7 @@ function CMessageModel()
 
 	this.completelyFilled = ko.observable(false);
 	this.iLastAccessTime = 0;
+	this.updateLastAccessTime();
 
 	this.checked = ko.observable(false);
 	this.checked.subscribe(function (bChecked) {
@@ -202,9 +203,19 @@ CMessageModel.prototype.requireMailCache = function ()
 	}
 };
 
-CMessageModel.prototype.setLastAccessTime = function ()
+/**
+ * Updates last access time of the message and last access time of all messages in thread.
+ */
+CMessageModel.prototype.updateLastAccessTime = function ()
 {
 	this.iLastAccessTime = moment().unix();
+	_.each(this.threadUids(), function (sUid) {
+		var oMessage = MessagesDictionary.get([this.accountId(), this.folder(), sUid]);
+		if (oMessage)
+		{
+			oMessage.updateLastAccessTime();
+		}
+	}, this);
 };
 
 /**
@@ -450,7 +461,6 @@ CMessageModel.prototype.parse = function (oData, iAccountId, bThreadPart, bTrust
 			
 			this.aExtend = oData.Extend;
 			this.completelyFilled(true);
-			this.setLastAccessTime();
 
 			App.broadcastEvent('MailWebclient::ParseMessage::after', {
 				msg: this

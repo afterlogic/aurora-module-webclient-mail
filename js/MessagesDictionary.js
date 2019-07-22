@@ -1,57 +1,115 @@
 'use strict';
 
+const
+	CHECK_AND_CLEAR_DICT_EVERY_MINUTES = 30,
+	DESTROY_MESSAGES_IF_NUMBER_OVER = 1000,
+	DESTROY_NOT_USED_LAST_HOURS = 4
+;
+
 var
 	_ = require('underscore'),
-//	moment = require('moment'),
+	moment = require('moment'),
 	
-	Utils = require('%PathToCoreWebclientModule%/js/utils/Common.js')
+	Utils = require('%PathToCoreWebclientModule%/js/utils/Common.js'),
+	
+	MailCache = null
 ;
 
 function CMessagesDictionary()
 {
 	this.oMessages = {};
 	
-//	setInterval(this.checkCount.bind(this), 30000);
+	// Clears dictionary from old messages every 30 minutes
+	setInterval(this.checkAndClear.bind(this), 1000 * 60 * CHECK_AND_CLEAR_DICT_EVERY_MINUTES);
 }
 
+/**
+ * Obtains message from dictionary.
+ * @param {array} aKey
+ * @returns {object}
+ */
 CMessagesDictionary.prototype.get = function (aKey)
 {
 	var sKey = JSON.stringify(aKey);
 	return this.oMessages[sKey];
 };
 
+/**
+ * Adds message to dictionary.
+ * @param {array} aKey
+ * @param {object} oMessage
+ */
 CMessagesDictionary.prototype.set = function (aKey, oMessage)
 {
 	var sKey = JSON.stringify(aKey);
 	this.oMessages[sKey] = oMessage;
 };
 
-//CMessagesDictionary.prototype.checkCount = function ()
-//{
-//	var
-//		iCount = _.size(this.oMessages),
-//		iPrevNow = moment().add(-1, 'minutes').unix()
-//	;
-//	if (iCount > 10)
-//	{
-//		console.log('iCount', iCount);
-//		_.each(this.oMessages, function (oMessage, sKey) {
-//			console.log(oMessage.iLastAccessTime !== 0 && oMessage.iLastAccessTime < iPrevNow, oMessage.iLastAccessTime, iPrevNow);
-//			if (oMessage.iLastAccessTime !== 0 && oMessage.iLastAccessTime < iPrevNow)
-//			{
-//				Utils.destroyObjectWithObservables(this.oMessages, sKey);
-//			}
-//		});
-//		console.log('size', _.size(this.oMessages));
-//	}
-//};
+/**
+ * Requires MailCache. It cannot be required earlier because it is not initialized yet.
+ */
+CMessagesDictionary.prototype.requireMailCache = function ()
+{
+	if (MailCache === null)
+	{
+		MailCache = require('modules/%ModuleName%/js/Cache.js');
+	}
+};
 
+/**
+ * Checks the number of messages in the dictionary.
+ * If the number is over 1000 destroys messages that have not been used for 4 hours.
+ */
+CMessagesDictionary.prototype.checkAndClear = function ()
+{
+	this.requireMailCache();
+	
+	// Do not check if the current folder has not been synchronized for the last 30 minutes.
+	// This may be first moments after computer wakes up.
+	if (moment().diff(MailCache.getCurrentFolder().relevantInformationLastMoment) > 1000 * 60 * CHECK_AND_CLEAR_DICT_EVERY_MINUTES)
+	{
+		return;
+	}
+	
+	var
+		iCount = _.size(this.oMessages),
+		iPrevNow = moment().add(-DESTROY_NOT_USED_LAST_HOURS, 'hours').unix()
+	;
+	
+	if (iCount > DESTROY_MESSAGES_IF_NUMBER_OVER)
+	{
+		// Update last access time for messages on the current page.
+		_.each(MailCache.messages(), function (oMessage) {
+			oMessage.updateLastAccessTime();
+		});
+		
+		// Update last access time for the current message.
+		if (MailCache.currentMessage())
+		{
+			MailCache.currentMessage().updateLastAccessTime();
+		}
+		
+		// Destroy old messages.
+		_.each(this.oMessages, function (oMessage, sKey) {
+			if (oMessage.iLastAccessTime !== 0 && oMessage.iLastAccessTime < iPrevNow)
+			{
+				Utils.destroyObjectWithObservables(this.oMessages, sKey);
+			}
+		}.bind(this));
+	}
+};
+
+/**
+ * Removes message from the dictionary.
+ * @param {Array} aKey
+ */
 CMessagesDictionary.prototype.remove = function (aKey)
 {
 	var sKey = JSON.stringify(aKey);
 	Utils.destroyObjectWithObservables(this.oMessages, sKey);
 };
 
+// Updates all messages dates if current date has been just changed.
 CMessagesDictionary.prototype.updateMomentDates = function ()
 {
 	_.each(this.oMessages, function (oMessage) {

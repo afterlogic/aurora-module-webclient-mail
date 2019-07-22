@@ -117,18 +117,74 @@ CFolderModel.prototype.getMessageByUid = function (sUid)
 };
 
 /**
+ * Removes message uid from the dictionary.
+ * @param {string} sUid
+ * @returns {Object}
+ */
+CFolderModel.prototype.removeMessageFromDict = function (sUid)
+{
+	MessagesDictionary.remove([this.iAccountId, this.fullName(), sUid]);
+	this.aMessagesDictionaryUids = _.without(this.aMessagesDictionaryUids, sUid);
+	this.aRequestedUids = _.without(this.aRequestedUids, sUid);
+	this.aRequestedThreadUids = _.without(this.aRequestedThreadUids, sUid);
+};
+
+/**
+ * Update last access time for messages with specified uids.
+ * @param {array} aUids
+ */
+CFolderModel.prototype.updateLastAccessTime = function (aUids) {
+	_.each(aUids, function (sUid) {
+		var oMessage = this.getMessageByUid(sUid);
+		if (oMessage)
+		{
+			oMessage.updateLastAccessTime();
+		}
+	}, this);
+};
+
+/**
+ * Executes some function for all uids of messages from the folder in the dictionary.
+ * Removes invalid uids from lists.
+ * @param {function} fDoForAllMessages
+ */
+CFolderModel.prototype.doForAllMessages = function (fDoForAllMessages) {
+	var aInvalidUids = [];
+	
+	_.each(this.aMessagesDictionaryUids, function (sUidInDict) {
+		var oMessage = this.getMessageByUid(sUidInDict);
+		if (oMessage)
+		{
+			fDoForAllMessages(oMessage);
+		}
+		else
+		{
+			aInvalidUids.push(sUidInDict);
+		}
+	}, this);
+	
+	if (aInvalidUids.length > 0)
+	{
+		this.aMessagesDictionaryUids = _.difference(this.aMessagesDictionaryUids, aInvalidUids);
+		this.aRequestedUids = _.difference(this.aRequestedUids, aInvalidUids);
+		this.aRequestedThreadUids = _.difference(this.aRequestedThreadUids, aInvalidUids);
+	}
+};
+
+/**
  * @returns {Array}
  */
 CFolderModel.prototype.getFlaggedMessageUids = function ()
 {
 	var aUids = [];
-	_.each(this.aMessagesDictionaryUids, function (sUid) {
-		var oMessage = this.getMessageByUid(sUid);
-		if (oMessage && oMessage.flagged())
+	
+	this.doForAllMessages(function (oMessage) {
+		if (oMessage.flagged())
 		{
 			aUids.push(oMessage.uid());
 		}
-	}, this);
+	});
+	
 	return aUids;
 };
 
@@ -419,8 +475,8 @@ CFolderModel.prototype.hasThreadUidBeenRequested = function (sUid)
 CFolderModel.prototype.hasListBeenRequested = function (oParams)
 {
 	var
-		aFindedParams = _.where(this.requestedLists, oParams),
-		bHasParams = aFindedParams.length > 0
+		aFoundParams = _.where(this.requestedLists, oParams),
+		bHasParams = aFoundParams.length > 0
 	;
 	
 	if (!bHasParams)
@@ -457,8 +513,6 @@ CFolderModel.prototype.markMessageReplied = function (sUid, sReplyType)
 CFolderModel.prototype.removeAllMessages = function ()
 {
 	var
-		iAccountId = this.iAccountId,
-		sFullName = this.fullName(),
 		oUidListsToRemove = this.oUids,
 		aMessagesUidsToRemove = this.aMessagesDictionaryUids,
 		oUidList = null
@@ -474,15 +528,15 @@ CFolderModel.prototype.removeAllMessages = function ()
 	oUidList = this.getUidList('', '', Settings.MessagesSortBy.DefaultSortBy, Settings.MessagesSortBy.DefaultSortOrder);
 	oUidList.resultCount(0);
 	
-	if (MailCache.currentMessage() && MailCache.currentMessage().accountId() === iAccountId 
-			&& MailCache.currentMessage().folder() === sFullName)
+	if (MailCache.currentMessage() && MailCache.currentMessage().accountId() === this.iAccountId 
+			&& MailCache.currentMessage().folder() === this.fullName())
 	{
 		Utils.log('removeAllMessages, the current message is in the list to remove', MailCache.currentMessage() ? {'accountId': MailCache.currentMessage().accountId(),'folder': MailCache.currentMessage().folder(),'uid': MailCache.currentMessage().uid()} : null);
 		aMessagesUidsToRemove = _.without(aMessagesUidsToRemove, MailCache.currentMessage().uid());
 	}
 	_.each(aMessagesUidsToRemove, function (sUid) {
-		MessagesDictionary.remove([iAccountId, sFullName, sUid]);
-	});
+		this.removeMessageFromDict(sUid);
+	}, this);
 	aMessagesUidsToRemove = null;
 
 	_.each(oUidListsToRemove, function (oUidList) {
@@ -679,7 +733,7 @@ CFolderModel.prototype.commitDeleted = function (aUids)
 		if (!bCurrentMessageIsBeingDeleted)
 		{
 			Utils.log('commitDeleted, the current message is to remove', MailCache.currentMessage() ? {'accountId': MailCache.currentMessage().accountId(),'folder': MailCache.currentMessage().folder(),'uid': MailCache.currentMessage().uid()} : null);
-			MessagesDictionary.remove([this.iAccountId, this.fullName(), sUid]);
+			this.removeMessageFromDict(sUid);
 		}
 		this.aMessagesDictionaryUids = _.without(this.aMessagesDictionaryUids, sUid);
 	}, this));
@@ -1042,7 +1096,6 @@ CFolderModel.prototype.getCompletelyFilledMessage = function (sUid, fResponseHan
 		}
 		else if (fResponseHandler && oContext)
 		{
-			oMessage.setLastAccessTime();
 			fResponseHandler.call(oContext, oMessage, sUid);
 		}
 	}
@@ -1066,14 +1119,13 @@ CFolderModel.prototype.showExternalPictures = function (sUid)
  */
 CFolderModel.prototype.alwaysShowExternalPicturesForSender = function (sEmail)
 {
-	_.each(this.aMessagesDictionaryUids, function (sUid) {
-		var oMessage = this.getMessageByUid(sUid);
+	this.doForAllMessages(function (oMessage) {
 		var aFrom = oMessage.oFrom.aCollection;
 		if (aFrom.length > 0 && aFrom[0].sEmail === sEmail)
 		{
 			oMessage.alwaysShowExternalPicturesForSender();
 		}
-	}, this);
+	});
 };
 
 /**
@@ -1085,12 +1137,11 @@ CFolderModel.prototype.executeGroupOperation = function (sField, aUids, bSetActi
 {
 	var iUnseenDiff = 0;
 
-	_.each(this.aMessagesDictionaryUids, function (sUidInDict) {
-		var oMessage = this.getMessageByUid(sUidInDict);
+	this.doForAllMessages(function (oMessage) {
 		if (aUids.length > 0)
 		{
 			_.each(aUids, function (sUid) {
-				if (oMessage && oMessage.uid() === sUid && oMessage[sField]() !== bSetAction)
+				if (oMessage.uid() === sUid && oMessage[sField]() !== bSetAction)
 				{
 					oMessage[sField](bSetAction);
 					iUnseenDiff++;
@@ -1101,7 +1152,7 @@ CFolderModel.prototype.executeGroupOperation = function (sField, aUids, bSetActi
 		{
 			oMessage[sField](bSetAction);
 		}
-	}, this);
+	});
 
 	if (aUids.length === 0)
 	{

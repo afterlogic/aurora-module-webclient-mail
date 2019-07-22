@@ -13,9 +13,7 @@ var
 	MessagesDictionary = require('modules/%ModuleName%/js/MessagesDictionary.js'),
 	
 	Prefetcher = {},
-	bFetchersIdentitiesPrefetched = false,
-	bStarredMessageListPrefetched = false,
-	bMessagesPrefetchDisabled = true
+	bFetchersIdentitiesPrefetched = false
 ;
 
 Prefetcher.prefetchFetchersIdentities = function ()
@@ -32,12 +30,45 @@ Prefetcher.prefetchFetchersIdentities = function ()
 
 Prefetcher.prefetchAccountFilters = function ()
 {
-	var oAccount = AccountList.getCurrent();
+	var
+		oAccount = AccountList.getCurrent(),
+		bFiltersRequested = false
+	;
 	
 	if (oAccount && oAccount.allowFilters() && !oAccount.filters())
 	{
 		oAccount.requestFilters();
+		bFiltersRequested = true;
 	}
+	
+	return bFiltersRequested;
+};
+
+/**
+ * Prefetches message list with specified parameters. Checks if this list have already prefetched earlier.
+ * @param {Object} oFolder
+ * @param {number} iPage
+ * @param {string} sSearch
+ * @param {string} sFilters
+ * @returns {Boolean}
+ */
+Prefetcher.prefetchMessageList = function (oFolder, iPage, sSearch, sFilters)
+{
+	var
+		oParams = {
+			page: iPage,
+			search: sSearch,
+			filters: sFilters
+		},
+		bDoNotRequest = oFolder.hasListBeenRequested(oParams),
+		oRequestData = null
+	;
+
+	oRequestData = MailCache.requestMessageList(oFolder.fullName(), oParams.page, oParams.search, oParams.filters,
+										Settings.MessagesSortBy.DefaultSortBy, Settings.MessagesSortBy.DefaultSortOrder,
+										false, false, bDoNotRequest);
+
+	return !bDoNotRequest && !!oRequestData && oRequestData.RequestStarted;
 };
 
 Prefetcher.prefetchStarredMessageList = function ()
@@ -45,21 +76,14 @@ Prefetcher.prefetchStarredMessageList = function ()
 	var
 		oFolderList = MailCache.folderList(),
 		oInbox = oFolderList ? oFolderList.inboxFolder() : null,
-		oRes = null,
 		bRequestStarted = false
 	;
 
 	if (oInbox)
 	{
-		oRes = MailCache.requestMessageList(oInbox.fullName(), 1, '', Enums.FolderFilter.Flagged, Settings.MessagesSortBy.DefaultSortBy, Settings.MessagesSortBy.DefaultSortOrder, false, false);
-		bRequestStarted = !!oRes && !!oRes.RequestStarted;
+		bRequestStarted = this.prefetchMessageList(oInbox, 1, '', Enums.FolderFilter.Flagged);
 	}
 	
-	if (!bStarredMessageListPrefetched)
-	{
-		bStarredMessageListPrefetched = bRequestStarted;
-	}
-
 	return bRequestStarted;
 };
 
@@ -68,15 +92,15 @@ Prefetcher.prefetchUnseenMessageList = function ()
 	var
 		oFolderList = MailCache.folderList(),
 		oInbox = oFolderList ? oFolderList.inboxFolder() : null,
-		oRes = null
+		bRequestStarted = false
 	;
 
-	if (oInbox && oInbox.hasChanges())
+	if (oInbox)
 	{
-		oRes = MailCache.requestMessageList(oInbox.fullName(), 1, '', Enums.FolderFilter.Unseen, Settings.MessagesSortBy.DefaultSortBy, Settings.MessagesSortBy.DefaultSortOrder, false, false);
+		bRequestStarted = this.prefetchMessageList(oInbox, 1, '', Enums.FolderFilter.Unseen);
 	}
 
-	return oRes && oRes.RequestStarted;
+	return bRequestStarted;
 };
 
 /**
@@ -115,25 +139,15 @@ Prefetcher.startPagePrefetch = function (iPage)
 		oUidList = MailCache.uidList(),
 		iOffset = (iPage - 1) * Settings.MailsPerPage,
 		bPageExists = iPage > 0 && iOffset < oUidList.resultCount(),
-		oParams = null,
-		oRequestData = null
+		bRequestStarted = false
 	;
 	
 	if (oCurrFolder && !oCurrFolder.hasChanges() && bPageExists)
 	{
-		oParams = {
-			folder: oCurrFolder.fullName(),
-			page: iPage,
-			search: oUidList.search()
-		};
-		
-		if (!oCurrFolder.hasListBeenRequested(oParams))
-		{
-			oRequestData = MailCache.requestMessageList(oParams.folder, oParams.page, oParams.search, '', Settings.MessagesSortBy.DefaultSortBy, Settings.MessagesSortBy.DefaultSortOrder, false, false);
-		}
+		bRequestStarted = this.prefetchMessageList(oCurrFolder, iPage, oUidList.search(), '');
 	}
 	
-	return oRequestData && oRequestData.RequestStarted;
+	return bRequestStarted;
 };
 
 Prefetcher.startOtherFoldersPrefetch = function ()
@@ -183,23 +197,14 @@ Prefetcher.getOtherFolderNames = function (iCount)
  */
 Prefetcher.startFolderPrefetch = function (oFolder)
 {
-	var
-		iPage = 1,
-		sSearch = '',
-		oParams = {
-			folder: oFolder ? oFolder.fullName() : '',
-			page: iPage,
-			search: sSearch
-		},
-		oRequestData = null
-	;
+	var bRequestStarted = false;
 
-	if (oFolder && !oFolder.hasListBeenRequested(oParams))
+	if (oFolder)
 	{
-		oRequestData = MailCache.requestMessageList(oParams.folder, oParams.page, oParams.search, '', Settings.MessagesSortBy.DefaultSortBy, Settings.MessagesSortBy.DefaultSortOrder, false, false);
+		bRequestStarted = this.prefetchMessageList(oFolder, 1, '', '');
 	}
 
-	return !!oRequestData && oRequestData.RequestStarted;
+	return bRequestStarted;
 };
 
 Prefetcher.startThreadListPrefetch = function ()
@@ -259,20 +264,13 @@ Prefetcher.startMessagesPrefetch = function ()
 				aUids.push(oMsg.uid());
 				iTotalSize += iTextSize + iJsonSizeOf1Message;
 			}
-			else if (oMsg.completelyFilled())
-			{
-				oMsg.setLastAccessTime();
-			}
 		}
 	;
 
 	if (oCurrFolder && oCurrFolder.selected())
 	{
 		_.each(MailCache.messages(), fFillUids);
-		_.each(oCurrFolder.aMessagesDictionaryUids, function (sUid) {
-			var oMsg = MessagesDictionary.get([iAccountId, sCurrFolderFullName, sUid]);
-			fFillUids(oMsg);
-		});
+		oCurrFolder.doForAllMessages(fFillUids);
 
 		if (aUids.length > 0)
 		{
@@ -329,12 +327,6 @@ Prefetcher.prefetchAccountQuota = function ()
 };
 
 module.exports = {
-	disableMessagesPrefetch: function () {
-		bMessagesPrefetchDisabled = true;
-	},
-	enableMessagesPrefetch: function () {
-		bMessagesPrefetchDisabled = false;
-	},
 	startMin: function () {
 		var bPrefetchStarted = false;
 		
@@ -345,9 +337,7 @@ module.exports = {
 			bPrefetchStarted = Prefetcher.prefetchAccountFilters();
 		}
 		
-		// starred messages should be prefetched once (bStarredMessageListPrefetched flag is used for this)
-		// but prefetchStarredMessageList method can be called from outside and should be executed then
-		if (!bStarredMessageListPrefetched && !bPrefetchStarted)
+		if (!bPrefetchStarted)
 		{
 			bPrefetchStarted = Prefetcher.prefetchStarredMessageList();
 		}
@@ -369,39 +359,34 @@ module.exports = {
 			bPrefetchStarted = Prefetcher.prefetchAccountFilters();
 		}
 		
-		if (!bMessagesPrefetchDisabled)
+		if (!bPrefetchStarted)
 		{
-			if (!bPrefetchStarted)
-			{
-				bPrefetchStarted = Prefetcher.startMessagesPrefetch();
-			}
+			bPrefetchStarted = Prefetcher.startMessagesPrefetch();
+		}
 
-			if (!bPrefetchStarted)
-			{
-				bPrefetchStarted = Prefetcher.startThreadListPrefetch();
-			}
+		if (!bPrefetchStarted)
+		{
+			bPrefetchStarted = Prefetcher.startThreadListPrefetch();
+		}
 
-			// starred messages should be prefetched once (bStarredMessageListPrefetched flag is used for this)
-			// but prefetchStarredMessageList method can be called from outside and should be executed then
-			if (!bStarredMessageListPrefetched && !bPrefetchStarted)
-			{
-				bPrefetchStarted = Prefetcher.prefetchStarredMessageList();
-			}
+		if (!bPrefetchStarted)
+		{
+			bPrefetchStarted = Prefetcher.prefetchStarredMessageList();
+		}
 
-			if (!bPrefetchStarted)
-			{
-				bPrefetchStarted = Prefetcher.startPagePrefetch(MailCache.page() + 1);
-			}
+		if (!bPrefetchStarted)
+		{
+			bPrefetchStarted = Prefetcher.startPagePrefetch(MailCache.page() + 1);
+		}
 
-			if (!bPrefetchStarted)
-			{
-				bPrefetchStarted = Prefetcher.startPagePrefetch(MailCache.page() - 1);
-			}
+		if (!bPrefetchStarted)
+		{
+			bPrefetchStarted = Prefetcher.startPagePrefetch(MailCache.page() - 1);
+		}
 
-			if (!bPrefetchStarted)
-			{
-				bPrefetchStarted = Prefetcher.prefetchUnseenMessageList();
-			}
+		if (!bPrefetchStarted)
+		{
+			bPrefetchStarted = Prefetcher.prefetchUnseenMessageList();
 		}
 
 		if (!bPrefetchStarted)
