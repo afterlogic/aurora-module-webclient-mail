@@ -1496,10 +1496,10 @@ CComposeView.prototype.onSendOrSaveMessageResponse = function (oResponse, oReque
 	switch (oResData.Method)
 	{
 		case 'SaveMessage':
-            if (oResData.Result && oRequest.DraftUid === this.templateUid() && oRequest.DraftFolder === this.templateFolderName())
+            if (oResData.Result && oParameters.DraftUid === this.templateUid() && oParameters.DraftFolder === this.templateFolderName())
             {
 				this.templateUid(Types.pString(oResData.NewUid));
-                if (this instanceof CComposeView)// it is screen, not popup
+                if (this.composeShown() && this instanceof CComposeView)// it is screen, not popup
                 {
 					Routing.replaceHashDirectly(LinksUtils.getComposeFromMessage('drafts', oParameters.DraftFolder, this.templateUid()));
                 }
@@ -1507,7 +1507,7 @@ CComposeView.prototype.onSendOrSaveMessageResponse = function (oResponse, oReque
 			else if (oResData.Result && oParameters.DraftUid === this.draftUid())
 			{
 				this.draftUid(Types.pString(oResData.NewUid));
-				if (this instanceof CComposeView)// it is screen, not popup
+				if (this.composeShown() && this instanceof CComposeView)// it is screen, not popup
 				{
 					Routing.replaceHashDirectly(LinksUtils.getComposeFromMessage('drafts', oParameters.DraftFolder, this.draftUid()));
 				}
