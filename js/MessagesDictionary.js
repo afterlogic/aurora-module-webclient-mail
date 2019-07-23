@@ -2,7 +2,6 @@
 
 const
 	CHECK_AND_CLEAR_DICT_EVERY_MINUTES = 30,
-	DESTROY_MESSAGES_IF_NUMBER_OVER = 1000,
 	DESTROY_NOT_USED_LAST_HOURS = 4
 ;
 
@@ -12,8 +11,15 @@ var
 	
 	Utils = require('%PathToCoreWebclientModule%/js/utils/Common.js'),
 	
+	Settings = require('modules/%ModuleName%/js/Settings.js'),
+	
 	MailCache = null
 ;
+
+function GetMessagesLimitToStore()
+{
+	return Settings.MailsPerPage * 8 + 700;
+}
 
 function CMessagesDictionary()
 {
@@ -73,11 +79,14 @@ CMessagesDictionary.prototype.checkAndClear = function ()
 	
 	var
 		iCount = _.size(this.oMessages),
-		iPrevNow = moment().add(-DESTROY_NOT_USED_LAST_HOURS, 'hours').unix()
+		iPrevNow = moment().add(-DESTROY_NOT_USED_LAST_HOURS, 'hours').unix(),
+		iMessagesLimitToStore = GetMessagesLimitToStore()
 	;
 	
-	if (iCount > DESTROY_MESSAGES_IF_NUMBER_OVER)
+	if (iCount > iMessagesLimitToStore)
 	{
+		Utils.log('checkAndClear', iCount, Settings.MailsPerPage, iMessagesLimitToStore);
+		
 		// Update last access time for messages on the current page.
 		_.each(MailCache.messages(), function (oMessage) {
 			oMessage.updateLastAccessTime();
@@ -96,6 +105,8 @@ CMessagesDictionary.prototype.checkAndClear = function ()
 				Utils.destroyObjectWithObservables(this.oMessages, sKey);
 			}
 		}.bind(this));
+		
+		Utils.log('checkAndClear', _.size(this.oMessages));
 	}
 };
 
