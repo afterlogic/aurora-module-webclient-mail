@@ -873,18 +873,18 @@ CMessageListView.prototype.deleteMessages = function (aUids)
 	
 	if (aUids.length > 0)
 	{
-		MailUtils.deleteMessages(aUids);
-	}
-	
-	if (sUidToOpenAfter !== '')
-	{
-		oMessageToOpenAfter = _.find(this.collection(), function (oMessage) {
-			return oMessage.uid() === sUidToOpenAfter;
-		});
-		if (oMessageToOpenAfter)
-		{
-			this.routeForMessage(oMessageToOpenAfter);
-		}
+		MailUtils.deleteMessages(aUids, function () {
+			if (sUidToOpenAfter !== '')
+			{
+				oMessageToOpenAfter = _.find(this.collection(), function (oMessage) {
+					return oMessage.uid() === sUidToOpenAfter;
+				});
+				if (oMessageToOpenAfter)
+				{
+					this.routeForMessage(oMessageToOpenAfter);
+				}
+			}
+		}.bind(this));
 	}
 };
 
