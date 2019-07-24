@@ -833,15 +833,36 @@ CMessageListView.prototype.executeCopyToFolder = function (sToFolder)
  */
 CMessageListView.prototype.onDeletePress = function (aMessages)
 {
+	var aUids = _.map(aMessages, function (oMessage)
+	{
+		return oMessage.uid();
+	});
+
+	if (aUids.length > 0)
+	{
+		this.deleteMessages(aUids);
+	}
+};
+
+/**
+ * Calls for the selected messages delete operation. Called by the mouse click on the delete button.
+ */
+CMessageListView.prototype.executeDelete = function ()
+{
+	this.deleteMessages(this.checkedOrSelectedUids());
+};
+
+/**
+ * @param {Array} aUids
+ */
+CMessageListView.prototype.deleteMessages = function (aUids)
+{
 	var
 		sUidToOpenAfter = '',
-		oMessageToOpenAfter = null,
-		aUids = _.map(aMessages, function (oMessage) {
-			return oMessage.uid();
-		})
+		oMessageToOpenAfter = null
 	;
 	
-	if (aMessages.length === 1 && aMessages[0].selected())
+	if (aUids.length === 1 && MailCache.currentMessage() && aUids[0] === MailCache.currentMessage().uid())
 	{
 		sUidToOpenAfter = MailCache.prevMessageUid();
 		if (sUidToOpenAfter === '')
@@ -865,14 +886,6 @@ CMessageListView.prototype.onDeletePress = function (aMessages)
 			this.routeForMessage(oMessageToOpenAfter);
 		}
 	}
-};
-
-/**
- * Calls for the selected messages delete operation. Called by the mouse click on the delete button.
- */
-CMessageListView.prototype.executeDelete = function ()
-{
-	MailUtils.deleteMessages(this.checkedOrSelectedUids());
 };
 
 /**
