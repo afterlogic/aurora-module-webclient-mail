@@ -394,6 +394,7 @@ CHtmlEditorView.prototype.init = function (sText, bPlain, sTabIndex, sPlaceholde
 			'fontNameArray': this.aFonts,
 			'defaultFontName': this.sDefaultFont,
 			'defaultFontSize': this.iDefaultSize,
+			'alwaysTryUseImageWhilePasting': Settings.AlwaysTryUseImageWhilePasting,
 			'isRtl': UserSettings.IsRTL,
 			'enableDrop': false,
 			'onChange': _.bind(this.textChanged, this, true),

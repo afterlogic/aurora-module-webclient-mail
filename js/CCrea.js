@@ -21,6 +21,7 @@ function CCrea(oOptions)
         'fontNameArray': ['Tahoma'],
         'defaultFontName': 'Tahoma',
         'defaultFontSize': 3,
+		'alwaysTryUseImageWhilePasting': true,
         'dropableArea': null,
         'isRtl': false,
         'onChange': function () {},
@@ -164,8 +165,8 @@ CCrea.prototype.start = function (bEditable)
                 sHtml = oEvent.clipboardData.getData('text/html'),
                 aHtml
             ;
-
-            if (self.pasteImage(oEvent))
+			
+            if (self.oOptions.alwaysTryUseImageWhilePasting && self.pasteImage(oEvent))
             {
                 oEvent.preventDefault();
             }

@@ -49,6 +49,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			'ComposeToolbarOrder' => $this->getConfig('ComposeToolbarOrder', array()),
 			'DefaultFontName' => $this->getConfig('DefaultFontName', 'Tahoma'),
 			'DefaultFontSize' => $this->getConfig('DefaultFontSize', 3),
+			'AlwaysTryUseImageWhilePasting' => $this->getConfig('AlwaysTryUseImageWhilePasting', true),
 			'JoinReplyPrefixes' => $this->getConfig('JoinReplyPrefixes', false),
 			'MailsPerPage' => $this->getConfig('MailsPerPage', 20),
 			'MaxMessagesBodiesSizeToPrefetch' => $this->getConfig('MaxMessagesBodiesSizeToPrefetch', 50000),
