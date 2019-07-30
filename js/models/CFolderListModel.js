@@ -199,7 +199,7 @@ CFolderListModel.prototype.renameFolder = function (sFullName, sNewFullName, sNe
 	oFolder.fullName(sNewFullName);
 	oFolder.fullNameHash(sNewFullNameHash);
 	this.oNamedCollection[sNewFullName] = oFolder;
-	this.oNamedCollection[sFullName] = undefined;
+	delete this.oNamedCollection[sFullName];
 };
 
 CFolderListModel.prototype.changeTemplateFolder = function (sFolderName, bTemplate)
