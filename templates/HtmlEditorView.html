@@ -76,7 +76,8 @@
 					<span class="dropdown_helper">
 						<span class="dropdown_content">
 							<span data-bind="i18n: {'key': '%MODULENAME%/LABEL_URL'}"></span>:
-							<input class="input" type="text" data-bind="value: linkForInsert, hasfocus: linkFocused, onFocusSelect: true, onEnter: insertLinkFromPopup" />
+							<input class="input" type="text" data-bind="value: linkForInsert, hasfocus: linkFocused, 
+									onFocusSelect: true, valueUpdate: 'afterkeydown', onEnter: insertLinkFromPopup" />
 							<span class="button" data-bind="click: insertLinkFromPopup, i18n: {'key': '%MODULENAME%/ACTION_INSERT'}"></span>
 							<span class="button" data-bind="click: closeInsertLinkPopup, i18n: {'key': 'COREWEBCLIENT/ACTION_CANCEL'}"></span>
 						</span>
