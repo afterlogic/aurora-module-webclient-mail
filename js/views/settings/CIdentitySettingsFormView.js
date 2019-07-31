@@ -39,7 +39,7 @@ function CIdentitySettingsFormView(oParent, bCreate)
 
 	this.isDefault = ko.observable(false);
 	this.email = ko.observable('');
-	this.accountPart = ko.observable(false);
+	this.disableEditEmail = ko.observable(Settings.OnlyUserEmailsInIdentities);
 	this.friendlyName = ko.observable('');
 	this.friendlyNameHasFocus = ko.observable(false);
 }
@@ -170,7 +170,7 @@ CIdentitySettingsFormView.prototype.populate = function ()
 	{
 		this.isDefault(oIdentity.isDefault());
 		this.email(oIdentity.email());
-		this.accountPart(oIdentity.bAccountPart);
+		this.disableEditEmail(Settings.OnlyUserEmailsInIdentities || oIdentity.bAccountPart);
 		this.friendlyName(oIdentity.friendlyName());
 
 		this.disableCheckbox(oIdentity.isDefault());
