@@ -54,7 +54,7 @@ function CFolderModel(iAccountId)
 	this.sHash = '';
 	this.messageCount = ko.observable(0);
 	this.unseenMessageCount = ko.observable(0);
-	this.sRealUnseenMessageCount = 0;
+	this.iRealUnseenMessageCount = 0;
 	this.hasExtendedInfo = ko.observable(false);
 	/** Extended **/
 	this.fullName = ko.observable('');
@@ -88,7 +88,7 @@ function CFolderModel(iAccountId)
 	
 	this.hasChanges = ko.observable(false);
 	
-	this.relevantInformationLastMoment = null;
+	this.oRelevantInformationLastMoment = null;
 }
 
 CFolderModel.prototype.requireMailCache = function ()
@@ -523,7 +523,7 @@ CFolderModel.prototype.removeAllMessages = function ()
 
 	this.messageCount(0);
 	this.unseenMessageCount(0);
-	this.sRealUnseenMessageCount = 0;
+	this.iRealUnseenMessageCount = 0;
 	
 	oUidList = this.getUidList('', '', Settings.MessagesSortBy.DefaultSortBy, Settings.MessagesSortBy.DefaultSortOrder);
 	oUidList.resultCount(0);
@@ -590,34 +590,46 @@ CFolderModel.prototype.removeUnseenMessageListsFromCache = function ()
  * @param {string} sHash
  * @param {number} iMsgCount
  * @param {number} iMsgUnseenCount
- * @param {boolean} bUpdateOnlyRealData
+ * @param {boolean} bNotApplyInfoToUI
  */
-CFolderModel.prototype.setRelevantInformation = function (sUidNext, sHash, iMsgCount, iMsgUnseenCount, bUpdateOnlyRealData)
+CFolderModel.prototype.setRelevantInformation = function (sUidNext, sHash, iMsgCount, iMsgUnseenCount, bNotApplyInfoToUI)
 {
-	var hasChanges = this.hasExtendedInfo() && (this.sHash !== sHash || this.sRealUnseenMessageCount !== iMsgUnseenCount);
+	var bHasChanges = this.hasExtendedInfo() && (this.sHash !== sHash
+			|| this.iRealUnseenMessageCount !== iMsgUnseenCount
+			|| this.unseenMessageCount() !== iMsgUnseenCount);
 	
-	if (!bUpdateOnlyRealData)
+	// If different, either new messages appeared or some messages were deleted
+	this.sHash = sHash;
+	this.iRealUnseenMessageCount = iMsgUnseenCount;
+	
+	// New info of the folder shouldn't be applied to UI for current message list before the list is received from the server.
+	if (!this.hasExtendedInfo() || !bNotApplyInfoToUI)
 	{
+		// If sUidNext is always updated, some of desktop notifications are shown twice
 		this.sUidNext = sUidNext;
-	}
-	this.sHash = sHash; // if different, either new messages were appeared, or some messages were deleted
-	if (!this.hasExtendedInfo() || !bUpdateOnlyRealData)
-	{
+		
+		// If messages counts are always updated, new message appears in the list with significant delay
 		this.messageCount(iMsgCount);
 		this.unseenMessageCount(iMsgUnseenCount);
-		if (iMsgUnseenCount === 0) { this.unseenMessageCount.valueHasMutated(); } //fix for folder count summing
+		
+		// Fix for folder count summing
+		if (iMsgUnseenCount === 0)
+		{
+			this.unseenMessageCount.valueHasMutated();
+		}
 	}
-	this.sRealUnseenMessageCount = iMsgUnseenCount;
+	
 	this.hasExtendedInfo(true);
 
-	if (hasChanges)
+	if (bHasChanges)
 	{
 		this.markHasChanges();
 	}
 	
-	this.relevantInformationLastMoment = moment(); // Date and time of last updating of the folder information.
+	// Date and time of last updating of the folder information.
+	this.oRelevantInformationLastMoment = moment();
 	
-	return hasChanges;
+	return bHasChanges;
 };
 
 CFolderModel.prototype.increaseCountIfHasNotInfo = function ()
