@@ -1,6 +1,6 @@
 <!-- ko if: visible -->
 	<div data-bind="visible: visible(),
-		 css: 'item folder-level' + (iLevel + 1) + ' ' + name() + (selected() ? ' selected' : '') + 
+		 css: 'item folder-level' + (getDisplayedLevel() + 1) + ' ' + name() + (selected() ? ' selected' : '') + 
 					(canBeSelected() ? ' canSelect' : ' canNotSelect') + (bExists ? ' exists' : '') + 
 					(subscribed() ? ' subscribed' : '') + (isSystem() ? ' system' : ' user') + 
 					(virtualEmpty() ? ' virtualEmpty' : '') + (subfolders().length !== 0 ? ' accordion' : '') + 

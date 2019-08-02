@@ -38,7 +38,7 @@ function CFolderModel(iAccountId)
 {
 	this.iAccountId = iAccountId;
 	this.bNamespace = false;
-	this.iLevel = 0;
+	this.iDisplayedLevel = 0;
 
 	this.bIgnoreImapSubscription = Settings.IgnoreImapSubscription;
 	this.bAllowTemplateFolders = Settings.AllowTemplateFolders;
@@ -102,9 +102,14 @@ CFolderModel.prototype.requireMailCache = function ()
 /**
  * @param {number} iLevel
  */
-CFolderModel.prototype.setLevel = function (iLevel)
+CFolderModel.prototype.setDisplayedLevel = function (iLevel)
 {
-	this.iLevel = iLevel;
+	this.iDisplayedLevel = iLevel;
+};
+
+CFolderModel.prototype.getDisplayedLevel = function ()
+{
+	return this.iDisplayedLevel;
 };
 
 /**
@@ -793,7 +798,7 @@ CFolderModel.prototype.getUidList = function (sSearch, sFilters, sSortBy, iSortO
 CFolderModel.prototype.initStarredFolder = function (iLevel, sFullName)
 {
 	this.bVirtual = true;
-	this.setLevel(iLevel);
+	this.setDisplayedLevel(iLevel);
 	this.fullName(sFullName);
 	this.name(TextUtils.i18n('%MODULENAME%/LABEL_FOLDER_STARRED'));
 	this.type(Enums.FolderTypes.Starred);

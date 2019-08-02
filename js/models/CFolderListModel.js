@@ -313,7 +313,7 @@ CFolderListModel.prototype.parseRecursively = function (aRawCollection, oNamedFo
 				this.expandNames().push(Types.pString(aRawCollection[iIndex].Name));
 			}
 
-			oFolder.setLevel(iLevel);
+			oFolder.setDisplayedLevel(iLevel);
 
 			switch (oFolder.type())
 			{
@@ -352,12 +352,19 @@ CFolderListModel.prototype.parseRecursively = function (aRawCollection, oNamedFo
 			}
 			else if (oSubFolders !== null)
 			{
-				aSubfolders = this.parseRecursively(oSubFolders['@Collection'], oNamedFolderListOld, iLevel, oFolder.fullName());
+				if(oFolder.bNamespace && oFolder.type() === Enums.FolderTypes.Inbox)
+				{
+					aSubfolders = this.parseRecursively(oSubFolders['@Collection'], oNamedFolderListOld, iLevel - 1, oFolder.fullName());
+				}
+				else
+				{
+					aSubfolders = this.parseRecursively(oSubFolders['@Collection'], oNamedFolderListOld, iLevel, oFolder.fullName());
+				}
 				if(oFolder.type() === Enums.FolderTypes.Inbox)
 				{
+					this.createStarredFolder(oFolder.fullName(), iLevel);
 					if (oFolder.bNamespace)
 					{
-						this.createStarredFolder(oFolder.fullName(), iLevel + 1);
 						if (this.oStarredFolder)
 						{
 							aSubfolders.unshift(this.oStarredFolder);
@@ -365,7 +372,6 @@ CFolderListModel.prototype.parseRecursively = function (aRawCollection, oNamedFo
 					}
 					else
 					{
-						this.createStarredFolder(oFolder.fullName(), iLevel);
 						if (this.oStarredFolder)
 						{
 							aParsedCollection.push(this.oStarredFolder);
@@ -440,7 +446,7 @@ CFolderListModel.prototype.getOptions = function (sFirstItem, bEnableSystem, bHi
 	_.each(this.aLinedCollection, function (oFolder) {
 		if (oFolder && !oFolder.bVirtual && (!bHideInbox || Enums.FolderTypes.Inbox !== oFolder.type()) && (!bIgnoreUnsubscribed || oFolder.subscribed()))
 		{
-			var sPrefix = (new Array(oFolder.iLevel + 1)).join(sDeepPrefix);
+			var sPrefix = (new Array(oFolder.getDisplayedLevel() + 1)).join(sDeepPrefix);
 			aCollection.push({
 				'name': oFolder.name(),
 				'fullName': oFolder.fullName(),
