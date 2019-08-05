@@ -72,7 +72,12 @@ CMessagesDictionary.prototype.checkAndClear = function ()
 	
 	// Do not check if the current folder has not been synchronized for the last 30 minutes.
 	// This may be first moments after computer wakes up.
-	if (moment().diff(MailCache.getCurrentFolder().oRelevantInformationLastMoment) > 1000 * 60 * CHECK_AND_CLEAR_DICT_EVERY_MINUTES)
+	var oIndicatorFolder = MailCache.getCurrentFolder();
+	if (!oIndicatorFolder && MailCache.folderList())
+	{
+		oIndicatorFolder = MailCache.folderList().inboxFolder();
+	}
+	if (!oIndicatorFolder || moment().diff(oIndicatorFolder.oRelevantInformationLastMoment) > 1000 * 60 * CHECK_AND_CLEAR_DICT_EVERY_MINUTES)
 	{
 		return;
 	}
