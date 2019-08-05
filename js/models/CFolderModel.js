@@ -89,6 +89,8 @@ function CFolderModel(iAccountId)
 	this.hasChanges = ko.observable(false);
 	
 	this.oRelevantInformationLastMoment = null;
+	
+	this.bSubscribtionsInitialized = false;
 }
 
 CFolderModel.prototype.requireMailCache = function ()
@@ -873,34 +875,39 @@ CFolderModel.prototype.parse = function (oData, sParentFullName, sNamespaceFolde
  */
 CFolderModel.prototype.initSubscriptions = function (sParentFullName)
 {
-	this.requireMailCache();
-	this.unseenMessageCount.subscribe(function () {
-		_.delay(_.bind(function () {
-			MailCache.countMessages(this);
-		},this), 1000);
-	}, this);
-	
-	this.subscribed.subscribe(function () {
-		if (sParentFullName)
-		{
-			var oParentFolder = MailCache.folderList().getFolderByFullName(sParentFullName);
-			if(oParentFolder)
+	if (!this.bSubscribtionsInitialized)
+	{
+		this.requireMailCache();
+		this.unseenMessageCount.subscribe(function () {
+			_.delay(_.bind(function () {
+				MailCache.countMessages(this);
+			},this), 1000);
+		}, this);
+
+		this.subscribed.subscribe(function () {
+			if (sParentFullName)
 			{
-				MailCache.countMessages(oParentFolder);
+				var oParentFolder = MailCache.folderList().getFolderByFullName(sParentFullName);
+				if(oParentFolder)
+				{
+					MailCache.countMessages(oParentFolder);
+				}
 			}
-		}
-	}, this);
-	
-	this.edited.subscribe(function (bEdited) {
-		if (bEdited === false)
-		{
-			this.nameForEdit(this.name());
-		}
-	}, this);
-	
-	this.hasChanges.subscribe(function () {
-		this.requestedLists = [];
-	}, this);
+		}, this);
+
+		this.edited.subscribe(function (bEdited) {
+			if (bEdited === false)
+			{
+				this.nameForEdit(this.name());
+			}
+		}, this);
+
+		this.hasChanges.subscribe(function () {
+			this.requestedLists = [];
+		}, this);
+
+		this.bSubscribtionsInitialized = true;
+	}
 };
 
 CFolderModel.prototype.initComputedFields = function ()
