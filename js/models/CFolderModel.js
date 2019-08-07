@@ -401,9 +401,15 @@ CFolderModel.prototype.parseAndCacheMessage = function (oRawMessage, bThreadPart
 {
 	var
 		sUid = oRawMessage.Uid.toString(),
-		bNewMessage = !this.getMessageByUid(sUid),
-		oMessage = bNewMessage ? new CMessageModel() : this.getMessageByUid(sUid)
+		bNewMessage = false,
+		oMessage = this.getMessageByUid(sUid)
 	;
+	
+	if (!oMessage)
+	{
+		bNewMessage = true;
+		oMessage = new CMessageModel();
+	}
 	
 	oMessage.parse(oRawMessage, this.iAccountId, bThreadPart, bTrustThreadInfo);
 	if (this.type() === Enums.FolderTypes.Inbox && bNewMessage && oMessage.flagged())
@@ -415,7 +421,12 @@ CFolderModel.prototype.parseAndCacheMessage = function (oRawMessage, bThreadPart
 	MessagesDictionary.set([this.iAccountId, this.fullName(), sUid], oMessage);
 	if (bNewMessage)
 	{
-		this.aMessagesDictionaryUids.push(sUid);
+		this.aRequestedUids = _.without(this.aRequestedUids, sUid);
+		this.aRequestedThreadUids = _.without(this.aRequestedThreadUids, sUid);
+		if (-1 === _.indexOf(this.aMessagesDictionaryUids, sUid))
+		{
+			this.aMessagesDictionaryUids.push(sUid);
+		}
 	}
 	
 	return oMessage;
@@ -526,6 +537,9 @@ CFolderModel.prototype.removeAllMessages = function ()
 	;
 	
 	this.aMessagesDictionaryUids = [];
+	this.aRequestedUids = [];
+	this.aRequestedThreadUids = [];
+	this.requestedLists = [];
 	this.oUids = {};
 
 	this.messageCount(0);
@@ -758,6 +772,8 @@ CFolderModel.prototype.commitDeleted = function (aUids)
 			this.removeMessageFromDict(sUid);
 		}
 		this.aMessagesDictionaryUids = _.without(this.aMessagesDictionaryUids, sUid);
+		this.aRequestedUids = _.without(this.aRequestedUids, sUid);
+		this.aRequestedThreadUids = _.without(this.aRequestedThreadUids, sUid);
 	}, this));
 	
 	_.each(this.oUids, function (oUidList) {
