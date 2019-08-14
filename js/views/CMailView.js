@@ -143,6 +143,10 @@ function CMailView()
 		$('html').addClass('layout-horiz-split');
 	}
 	
+	App.subscribeEvent('CoreWebclient::GetDebugInfo', _.bind(function (oParams) {
+		oParams.Info.push('checkMailStarted: ' + MailCache.checkMailStarted() + ', messagesLoading: ' + MailCache.messagesLoading());
+	}, this));
+	
 	App.broadcastEvent('%ModuleName%::ConstructView::after', {'Name': this.ViewConstructorName, 'View': this});
 }
 
