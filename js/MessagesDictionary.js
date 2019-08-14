@@ -1,6 +1,6 @@
 'use strict';
 
-const
+var
 	CHECK_AND_CLEAR_DICT_EVERY_MINUTES = 30,
 	DESTROY_NOT_USED_LAST_HOURS = 4
 ;
