@@ -834,7 +834,7 @@ CCrea.prototype.getText = function (bRemoveSignatureAnchor)
 
         sVal = this.$editableArea.html();
         sVal = this.replacePToBr(sVal);
-        sVal = '<div data-crea="font-wrapper" style="font-family: ' + this.sBasicFontName + '; font-size: ' + this.sBasicFontSize + '; direction: ' + this.sBasicDirection + '">' + sVal + '</div>';
+        sVal = '<div data-crea="font-wrapper" style="font-family: ' + this.getFontNameWithFamily(this.sBasicFontName) + '; font-size: ' + this.sBasicFontSize + '; direction: ' + this.sBasicDirection + '">' + sVal + '</div>';
     }
 
     return sVal;
