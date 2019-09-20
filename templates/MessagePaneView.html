@@ -95,7 +95,9 @@
 		</div>
 	</div>
 
-	<!-- ko template: {name: sAttachmentsSwitcherViewTemplate} --><!-- /ko -->
+	<!-- ko if: sAttachmentsSwitcherViewTemplate -->
+		<!-- ko template: {name: sAttachmentsSwitcherViewTemplate} --><!-- /ko -->
+	<!-- /ko -->
 </div>
 <div class="panel_center">
 	<div class="panels" data-bind="css: {'has_attachments': hasNotInlineAttachments, 'view_attachments': visibleAttachments}">
