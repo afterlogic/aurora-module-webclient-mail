@@ -611,6 +611,33 @@ CComposeView.prototype.onRoute = function (aParams)
 				this.getMessageOnRoute();
 			}
 			break;
+		case 'data':
+			var oData = oParams.Object;
+
+			if (oData)
+			{
+				if (oData.to)
+				{
+					this.setRecipient(this.toAddr, oData.to);
+				}
+				if (oData.subject)
+				{
+					this.subject(oData.subject);
+				}
+				if (!oData.isHtml)
+				{
+					this.plainText(true);
+				}
+				var sBody = '<div></div>';
+				if (oData.body)
+				{
+					sBody = oData.isHtml ? '<div>' + oData.body + '</div>' : oData.body;
+					this.textBody(sBody);
+				}
+				this.triggerToolbarControllersAfterPopulatingMessage(true, !oData.isHtml, sBody);
+			}
+			
+			break;
 		default:
 			this.routeParams(aParams);
 			this.fillDefault(oParams);
@@ -894,14 +921,20 @@ CComposeView.prototype.setDataFromMessage = function (oMessage)
 	this.selectedImportance(oMessage.importance());
 	this.sendReadingConfirmation(oMessage.readingConfirmationAddressee() !== '');
 	
+	var bDraft = !!oMessage.folderObject() && (oMessage.folderObject().type() === Enums.FolderTypes.Drafts);
+	this.triggerToolbarControllersAfterPopulatingMessage(bDraft, oMessage.isPlain(), oMessage.textRaw(), oMessage.sensitivity());
+};
+
+CComposeView.prototype.triggerToolbarControllersAfterPopulatingMessage = function (bDraft, bPlain, sRawText, iSensitivity)
+{
 	_.each(this.toolbarControllers(), function (oController) {
 		if (_.isFunction(oController.doAfterPopulatingMessage))
 		{
 			oController.doAfterPopulatingMessage({
-				bDraft: !!oMessage.folderObject() && (oMessage.folderObject().type() === Enums.FolderTypes.Drafts),
-				bPlain: oMessage.isPlain(),
-				sRawText: oMessage.textRaw(),
-				iSensitivity: oMessage.sensitivity()
+				bDraft: bDraft,
+				bPlain: bPlain,
+				sRawText: sRawText,
+				iSensitivity: iSensitivity
 			});
 		}
 	});

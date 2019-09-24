@@ -43,6 +43,14 @@ ScreenComposeUtils.composeMessageToAddresses = function (sToAddresses)
 	Routing.setHash(aParams);
 };
 
+ScreenComposeUtils.composeMessageWithData = function (oData)
+{
+	var aParams = LinksUtils.getComposeWithData(oData);
+	aParams.shift();
+	aParams.shift();
+	Routing.goDirectly(LinksUtils.getCompose(), aParams);
+};
+
 /**
  * @param {Object} oMessage
  */

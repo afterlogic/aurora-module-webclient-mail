@@ -125,6 +125,13 @@ module.exports = function (oAppData) {
 					var ComposeView = GetComposeView();
 					ComposeView.registerToolbarController(oController);
 				},
+				getComposeMessageWithData: function () {
+					var
+						bAllowSendMail = true,
+						ComposeUtils = require('modules/%ModuleName%/js/utils/Compose.js')
+					;
+					return bAllowSendMail ? ComposeUtils.composeMessageWithData : false;
+				},
 				getComposeMessageToAddresses: function () {
 					var
 						bAllowSendMail = true,
@@ -155,6 +162,13 @@ module.exports = function (oAppData) {
 						ComposeUtils = require('modules/%ModuleName%/js/utils/Compose.js')
 					;
 					return bAllowSendMail ? ComposeUtils.composeMessageToAddresses : false;
+				},
+				getComposeMessageWithData: function () {
+					var
+						bAllowSendMail = true,
+						ComposeUtils = require('modules/%ModuleName%/js/utils/Compose.js')
+					;
+					return bAllowSendMail ? ComposeUtils.composeMessageWithData : false;
 				},
 				getComposeMessageWithAttachments: function () {
 					var

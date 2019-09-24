@@ -51,6 +51,13 @@ PopupComposeUtils.composeMessageToAddresses = function (sToAddresses)
 	Popups.showPopup(GetComposePopup(), [aParams]);
 };
 
+PopupComposeUtils.composeMessageWithData = function (oData)
+{
+	var aParams = LinksUtils.getComposeWithData(oData);
+	aParams.shift();
+	Popups.showPopup(GetComposePopup(), [aParams]);
+};
+
 /**
  * @param {Object} oMessage
  */

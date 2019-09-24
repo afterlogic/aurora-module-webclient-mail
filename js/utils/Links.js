@@ -300,6 +300,16 @@ LinksUtils.getComposeWithToField = function (sTo)
 	return [Settings.HashModuleName + '-compose', sAccountHash, 'to', sTo];
 };
 
+LinksUtils.getComposeWithData = function (oData)
+{
+	var
+		AccountList = require('modules/%ModuleName%/js/AccountList.js'),
+		oCurrAccount = AccountList.getCurrent(),
+		sAccountHash = oCurrAccount ? oCurrAccount.hash() : ''
+	;
+	return [Settings.HashModuleName + '-compose', sAccountHash, 'data', oData];
+};
+
 /**
  * @param {string} sType
  * @param {Object} oObject
@@ -340,7 +350,7 @@ LinksUtils.parseCompose = function (aParams)
 	var
 		sAccountHash = (aParams.length > 0) ? aParams[0] : '',
 		sRouteType = (aParams.length > 1) ? aParams[1] : '',
-		oObject = ((sRouteType === Enums.ReplyType.ForwardAsAttach || sRouteType === 'attachments') && aParams.length > 2) ? 
+		oObject = ((sRouteType === Enums.ReplyType.ForwardAsAttach || sRouteType === 'attachments' || sRouteType === 'data') && aParams.length > 2) ? 
 					(sRouteType === Enums.ReplyType.ForwardAsAttach ? aParams[4] : aParams[2]) : null,
 		oToAddr = (sRouteType === 'to' && aParams.length > 2) ? LinksUtils.parseToAddr(aParams[2]) : null,
 		bMessage = ((sRouteType === Enums.ReplyType.Reply || sRouteType === Enums.ReplyType.ReplyAll 
@@ -367,7 +377,7 @@ LinksUtils.parseCompose = function (aParams)
 LinksUtils.parseToAddr = function (mToAddr)
 {
 	var
-		sToAddr = decodeURIComponent(Types.pString(mToAddr)),
+		sToAddr = Types.pString(mToAddr),
 		bHasMailTo = sToAddr.indexOf('mailto:') !== -1,
 		aMailto = [],
 		aMessageParts = [],
@@ -390,10 +400,10 @@ LinksUtils.parseToAddr = function (mToAddr)
 				{
 					switch (aParts[0].toLowerCase())
 					{
-						case 'subject': sSubject = aParts[1]; break;
-						case 'cc': sCcAddr = aParts[1]; break;
-						case 'bcc': sBccAddr = aParts[1]; break;
-						case 'body': sBody = aParts[1]; break;
+						case 'subject': sSubject = decodeURIComponent(aParts[1]); break;
+						case 'cc': sCcAddr = decodeURIComponent(aParts[1]); break;
+						case 'bcc': sBccAddr = decodeURIComponent(aParts[1]); break;
+						case 'body': sBody = decodeURIComponent(aParts[1]); break;
 					}
 				}
 			});
