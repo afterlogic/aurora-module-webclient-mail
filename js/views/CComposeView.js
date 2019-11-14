@@ -539,11 +539,12 @@ CComposeView.prototype.onShow = function ()
 	$(this.splitterDom()).trigger('resize');
 	$(this.bottomPanel()).trigger('resize');
 
-	if (!this.oHtmlEditor.isInitialized())
-	{
+//	if (!this.oHtmlEditor.isInitialized())
+//	{
+		// Crea $container must be recreated because compose popup is destroyed after it is closed
 		this.oHtmlEditor.init(this.textBody(), this.plainText(), '7');
 		this.oHtmlEditor.commit();
-	}
+//	}
 
 	this.initUploader();
 
