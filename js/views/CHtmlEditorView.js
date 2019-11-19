@@ -375,6 +375,8 @@ CHtmlEditorView.prototype.init = function (sText, bPlain, sTabIndex, sPlaceholde
 		if (this.oCrea.$container.children().length === 0)
 		{
 			this.oCrea.start(this.isEnable());
+			// this.editorUploader must be re-initialized because compose popup is destroyed after it is closed
+			this.initEditorUploader();
 		}
 	}
 	else
@@ -804,7 +806,8 @@ CHtmlEditorView.prototype.closeInsertImagePopup = function (oCurrentViewModel, e
  */
 CHtmlEditorView.prototype.initUploader = function ()
 {
-	if (this.imageUploaderButton() && !this.oJua)
+	// this.oJua must be re-initialized because compose popup is destroyed after it is closed
+	if (this.imageUploaderButton())
 	{
 		this.oJua = new CJua({
 			'action': '?/Api/',
@@ -847,7 +850,8 @@ CHtmlEditorView.prototype.initUploader = function ()
  */
 CHtmlEditorView.prototype.initEditorUploader = function ()
 {
-	if (Settings.AllowInsertImage && this.uploaderAreaDom() && !this.editorUploader)
+	// this.editorUploader must be re-initialized because compose popup is destroyed after it is closed
+	if (Settings.AllowInsertImage && this.uploaderAreaDom())
 	{
 		var
 			fBodyDragEnter = null,

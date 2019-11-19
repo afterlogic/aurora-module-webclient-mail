@@ -108,6 +108,7 @@ CCrea.prototype.start = function (bEditable)
         return !!(sValue.match(/^[A-Z0-9\"!#\$%\^\{\}`~&'\+\-=_\.]+@[A-Z0-9\.\-]+$/i));
     }
 
+	this.aRanges = null; // if this.aRanges is not null first focus doesn't work properly, then insert image doesn't work
     this.$container = $('#' + this.oOptions.creaId);
     this.$editableArea = $('<div></div>').addClass('crea-content-editable')
         .prop('contentEditable', 'true').appendTo(this.$container);

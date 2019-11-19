@@ -1426,7 +1426,8 @@ CComposeView.prototype.onFileRemove = function (sFileUid)
  */
 CComposeView.prototype.initUploader = function ()
 {
-	if (this.composeShown() && this.composeUploaderButton() && this.oJua === null)
+	// this.oJua must be re-initialized because compose popup is destroyed after it is closed
+	if (this.composeShown() && this.composeUploaderButton())
 	{
 		this.oJua = new CJua({
 			'action': '?/Api/',
