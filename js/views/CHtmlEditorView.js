@@ -123,7 +123,10 @@ function CHtmlEditorView(bInsertImageAsBase64, oParent)
 	this.bAllowChangeInputDirection = UserSettings.IsRTL || Settings.AllowChangeInputDirection;
 	this.disableEdit = ko.observable(false);
 	
-	this.textChanged = ko.observable(false);
+  this.textChanged = ko.observable(false);
+
+  this.actualTextСhanged = ko.observable(false);
+  // this.actualTextСhanged = ko.observable(false).extend({ rateLimit: 500 });
 }
 
 CHtmlEditorView.prototype.ViewTemplate = '%ModuleName%_HtmlEditorView';
@@ -399,7 +402,11 @@ CHtmlEditorView.prototype.init = function (sText, bPlain, sTabIndex, sPlaceholde
 			'alwaysTryUseImageWhilePasting': Settings.AlwaysTryUseImageWhilePasting,
 			'isRtl': UserSettings.IsRTL,
 			'enableDrop': false,
-			'onChange': _.bind(this.textChanged, this, true),
+			// 'onChange': _.bind(this.textChanged, this, true),
+			'onChange': _.bind(function () {
+        this.textChanged(true);
+        this.actualTextСhanged.valueHasMutated();
+      }, this),
 			'onCursorMove': _.bind(this.setFontValuesFromText, this),
 			'onFocus': _.bind(this.onCreaFocus, this),
 			'onBlur': _.bind(this.onCreaBlur, this),

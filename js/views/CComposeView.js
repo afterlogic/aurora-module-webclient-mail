@@ -203,13 +203,13 @@ function CComposeView()
 	this.subject = ko.observable('').extend({'reversible': true});
 	this.plainText = ko.observable(false);
 	this.textBody = ko.observable('');
-	this.textBody.subscribe(function () {
+	this.textBody.subscribe(function (value) {
 		this.oHtmlEditor.setText(this.textBody(), this.plainText());
 		this.oHtmlEditor.commit();
 	}, this);
 
 	this.focusedField = ko.observable();
-	this.oHtmlEditor.textFocused.subscribe(function () {
+	this.oHtmlEditor.textFocused.subscribe(function (val) {
 		if (this.oHtmlEditor.textFocused())
 		{
 			this.focusedField('text');
@@ -328,7 +328,6 @@ function CComposeView()
 		_.each(this.toolbarControllers(), function (oController) {
 			bDisableBodyEdit = bDisableBodyEdit || !!oController.disableBodyEdit && oController.disableBodyEdit();
 		});
-		
 		this.oHtmlEditor.setDisableEdit(bDisableBodyEdit);
 	}, this);
 	
@@ -630,8 +629,9 @@ CComposeView.prototype.onRoute = function (aParams)
 					this.plainText(true);
 				}
 				var sBody = '<div></div>';
-				if (oData.body)
+        if (oData.body)
 				{
+          console.log('oData.body: ', oData.body);
 					sBody = oData.isHtml ? '<div>' + oData.body + '</div>' : oData.body;
 					this.textBody(sBody);
 				}
@@ -1291,10 +1291,10 @@ CComposeView.prototype.isChanged = function ()
 		bImportanceChanged = this.selectedImportance.changed(),
 		bReadConfChanged = this.sendReadingConfirmation.changed(),
 		bControllersChanged = false,
-		bHtmlChanged = this.oHtmlEditor.textChanged(),
+    bHtmlChanged = this.oHtmlEditor.textChanged(),
 		bAttachmentsChanged = this.attachmentsChanged(),
 		bChangedInPreviousWindow = this.changedInPreviousWindow()
-	;
+    ;
 	
 	_.each(this.toolbarControllers(), function (oController) {
 		if (_.isFunction(oController.isChanged))
