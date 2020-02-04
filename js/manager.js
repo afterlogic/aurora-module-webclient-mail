@@ -193,6 +193,9 @@ module.exports = function (oAppData) {
 				getSearchMessagesInCurrentFolder: function () {
 					return _.bind(Cache.searchMessagesInCurrentFolder, Cache);
 				},
+				getMessage: function (sFullName, sUid, fResponseHandler) {
+					return Cache.getMessage(sFullName, sUid, fResponseHandler, Cache);
+				},
 				getAllAccountsFullEmails: function () {
 					return AccountList.getAllFullEmails();
 				},

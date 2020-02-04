@@ -629,15 +629,36 @@ CComposeView.prototype.onRoute = function (aParams)
 					this.plainText(true);
 				}
 				var sBody = '<div></div>';
-        if (oData.body)
+				if (oData.body)
 				{
-          console.log('oData.body: ', oData.body);
 					sBody = oData.isHtml ? '<div>' + oData.body + '</div>' : oData.body;
 					this.textBody(sBody);
 				}
+				if (oData.replyToMessage)
+				{
+					var oReplyData = SendingUtils.getReplyDataFromMessage(oData.replyToMessage, Enums.ReplyType.Reply, App.currentAccountId(), null, true);
+
+					this.plainText(false);
+					this.draftInfo(oReplyData.DraftInfo);
+					this.draftUid(oReplyData.DraftUid);
+					this.setRecipient(this.toAddr, oReplyData.To);
+					this.setRecipient(this.ccAddr, oReplyData.Cc);
+					this.setRecipient(this.bccAddr, oReplyData.Bcc);
+					this.subject(oReplyData.Subject);
+					this.textBody(oReplyData.Text);
+					this.attachments(oReplyData.Attachments);
+					this.inReplyTo(oReplyData.InReplyTo);
+					this.references(oReplyData.References);
+
+					this.requestAttachmentsTempName();
+				}
+				if (oData.attachments)
+				{
+					this.addAttachments(oData.attachments);
+				}
 				this.triggerToolbarControllersAfterPopulatingMessage(true, !oData.isHtml, sBody);
 			}
-			
+
 			break;
 		default:
 			this.routeParams(aParams);
