@@ -14,6 +14,7 @@ var
 	CreateAccountShortFormPopup = require('modules/%ModuleName%/js/popups/CreateAccountShortFormPopup.js'),
 	CreateIdentityPopup = require('modules/%ModuleName%/js/popups/CreateIdentityPopup.js'),
 	CreateFetcherPopup = require('modules/%ModuleName%/js/popups/CreateFetcherPopup.js'),
+	CreateAliasPopup = require('modules/%ModuleName%/js/popups/CreateAliasPopup.js'),
 	
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
@@ -25,6 +26,7 @@ var
 	AccountSettingsFormView = require('modules/%ModuleName%/js/views/settings/AccountSettingsFormView.js'),
 	CIdentitySettingsFormView = require('modules/%ModuleName%/js/views/settings/CIdentitySettingsFormView.js'),
 	CFetcherIncomingSettingsFormView = require('modules/%ModuleName%/js/views/settings/CFetcherIncomingSettingsFormView.js'),
+	CAliasSettingsFormView = require('modules/%ModuleName%/js/views/settings/CAliasSettingsFormView.js'),
 	FetcherOutgoingSettingsFormView = require('modules/%ModuleName%/js/views/settings/FetcherOutgoingSettingsFormView.js'),
 	SignatureSettingsFormView = require('modules/%ModuleName%/js/views/settings/SignatureSettingsFormView.js')
 ;
@@ -38,6 +40,7 @@ function CAccountsSettingsPaneView()
 	this.bAllowMultiAccounts = Settings.AllowMultiAccounts;
 	this.bAllowIdentities = !!Settings.AllowIdentities;
 	this.bAllowFetchers = !!Settings.AllowFetchers;
+	this.bAllowAliases = !!Settings.AllowAliases;
 	
 	this.accounts = AccountList.collection;
 	
@@ -50,7 +53,11 @@ function CAccountsSettingsPaneView()
 	this.editedIdentityId = ko.computed(function () {
 		return this.editedIdentity() ? this.editedIdentity().id() : null;
 	}, this);
-	
+	this.editedAlias = ko.observable(null);
+	this.editedAliasId = ko.computed(function () {
+		return this.editedAlias() ? this.editedAlias().id() : null;
+	}, this);
+
 	this.allowFolders = ko.observable(false);
 	this.allowForward = ko.observable(false);
 	this.allowAutoresponder = ko.observable(false);
@@ -131,6 +138,21 @@ function CAccountsSettingsPaneView()
 			visible: ko.observable(true)
 		}
 	];
+
+	this.aAliasTabs = [
+		{
+			name: 'properties',
+			title: TextUtils.i18n('%MODULENAME%/LABEL_PROPERTIES_TAB'),
+			view: new CAliasSettingsFormView(this),
+			visible: ko.observable(true)
+		},
+		{
+			name: 'signature',
+			title: TextUtils.i18n('%MODULENAME%/LABEL_SIGNATURE_TAB'),
+			view: SignatureSettingsFormView,
+			visible: ko.observable(true)
+		}
+	];
 	
 	this.currentTab = ko.observable(null);
 	this.tabs = ko.computed(function () {
@@ -141,6 +163,10 @@ function CAccountsSettingsPaneView()
 		if (this.editedFetcher())
 		{
 			return this.aFetcherTabs;
+		}
+		if (this.editedAlias())
+		{
+			return this.aAliasTabs;
 		}
 		return this.aAccountTabs;
 	}, this);
@@ -201,9 +227,10 @@ CAccountsSettingsPaneView.prototype.showTab = function (aParams)
 		sHash = aParams.length > 1 ? aParams[1] : (oEditedAccount ? oEditedAccount.hash() : ''),
 		sTab = aParams.length > 2 ? aParams[2] : ''
 	;
-	
+
 	this.editedIdentity(sType === 'identity' ? (AccountList.getIdentityByHash(sHash) || null) : null);
 	this.editedFetcher(sType === 'fetcher' ? (AccountList.getFetcherByHash(sHash) || null) : null);
+	this.editedAlias(sType === 'alias' ? (AccountList.getAliasByHash(sHash) || null) : null);
 	
 	if (sType === 'account')
 	{
@@ -308,6 +335,24 @@ CAccountsSettingsPaneView.prototype.editFetcher = function (sHash)
 };
 
 /**
+ * @param {number} iAccountId
+ * @param {Object} oEv
+ */
+CAccountsSettingsPaneView.prototype.addAlias = function (iAccountId, oEv)
+{
+	oEv.stopPropagation();
+	Popups.showPopup(CreateAliasPopup, [iAccountId]);
+};
+
+/**
+ * @param {string} sHash
+ */
+CAccountsSettingsPaneView.prototype.editAlias = function (sHash)
+{
+	ModulesManager.run('SettingsWebclient', 'setAddHash', [['alias', sHash]]);
+};
+
+/**
  * @param {string} sTabName
  */
 CAccountsSettingsPaneView.prototype.changeRoute = function (sTabName)
@@ -323,6 +368,10 @@ CAccountsSettingsPaneView.prototype.changeRoute = function (sTabName)
 	else if (this.editedFetcher())
 	{
 		aAddHash = ['fetcher', this.editedFetcher().hash(), sTabName];
+	}
+	else if (this.editedAlias())
+	{
+		aAddHash = ['alias', this.editedAlias().hash(), sTabName];
 	}
 	ModulesManager.run('SettingsWebclient', 'setAddHash', [aAddHash]);
 };
@@ -342,7 +391,7 @@ CAccountsSettingsPaneView.prototype.changeTab = function (sName)
 			{
 				if (_.isFunction(oNewTab.view.showTab))
 				{
-					oNewTab.view.showTab(this.editedIdentity() || this.editedFetcher());
+					oNewTab.view.showTab(this.editedIdentity() || this.editedFetcher() || this.editedAlias());
 				}
 				this.currentTab(oNewTab);
 			}
@@ -414,6 +463,12 @@ CAccountsSettingsPaneView.prototype.onRemoveIdentity = function ()
 CAccountsSettingsPaneView.prototype.onRemoveFetcher = function ()
 {
 	this.editedFetcher(null);
+	this.changeRoute('');
+};
+
+CAccountsSettingsPaneView.prototype.onRemoveAlias = function ()
+{
+	this.editedAlias(null);
 	this.changeRoute('');
 };
 

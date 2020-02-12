@@ -17,6 +17,7 @@ var
 	
 	CAccountModel = require('modules/%ModuleName%/js/models/CAccountModel.js'),
 	CFetcherModel = require('modules/%ModuleName%/js/models/CFetcherModel.js'),
+	CAliasModel = require('modules/%ModuleName%/js/models/CAliasModel.js'),
 	CIdentityModel = require('modules/%ModuleName%/js/models/CIdentityModel.js')
 ;
 
@@ -177,6 +178,26 @@ CAccountListModel.prototype.getFetcherByHash = function(sHash)
 };
 
 /**
+ * @param {type} sHash
+ * @returns {Object}
+ */
+CAccountListModel.prototype.getAliasByHash = function(sHash)
+{
+	var oAlias = null;
+	
+	_.each(this.collection(), function (oAccount) {
+		if (!oAlias)
+		{
+			oAlias = _.find(oAccount.aliases() || [], function (oAlias) {
+				return oAlias.hash() === sHash;
+			});
+		}
+	}, this);
+	
+	return oAlias;
+};
+
+/**
  * Fills the collection of accounts.
  * @param {Array} aAccounts
  */
@@ -318,6 +339,7 @@ CAccountListModel.prototype.populateFetchersIdentities = function ()
 {
 	this.populateFetchers();
 	this.populateIdentities();
+	this.populateAliases();
 };
 
 CAccountListModel.prototype.populateFetchers = function ()
@@ -328,6 +350,10 @@ CAccountListModel.prototype.populateFetchers = function ()
 	}
 };
 
+CAccountListModel.prototype.populateAliases = function ()
+{
+	CoreAjax.send(Settings.AliasesServerModuleName, 'GetAliases', { 'AccountID': this.editedId() }, this.onGetAliasesResponse, this);
+};
 /**
  * @param {Object} oResponse
  * @param {Object} oRequest
@@ -352,6 +378,33 @@ CAccountListModel.prototype.onGetFetchersResponse = function (oResponse, oReques
 	_.each(this.collection(), function (oAccount) {
 		var aFetchers = Types.isNonEmptyArray(oFetchers[oAccount.id()]) ? oFetchers[oAccount.id()] : [];
 		oAccount.fetchers(aFetchers);
+	}, this);
+};
+
+/**
+ * @param {Object} oResponse
+ * @param {Object} oRequest
+ */
+CAccountListModel.prototype.onGetAliasesResponse = function (oResponse, oRequest)
+{
+	var oAliases = {};
+
+	if (oResponse.Result && Types.isNonEmptyArray(oResponse.Result.ObjAliases))
+	{
+		_.each(oResponse.Result.ObjAliases, function (oData) {
+			var oAlias = new CAliasModel();
+			oAlias.parse(oData);
+			if (!oAliases[oAlias.accountId()])
+			{
+				oAliases[oAlias.accountId()] = [];
+			}
+			oAliases[oAlias.accountId()].push(oAlias);
+		});
+	}
+	
+	_.each(this.collection(), function (oAccount) {
+		var aAliases = Types.isNonEmptyArray(oAliases[oAccount.id()]) ? oAliases[oAccount.id()] : [];
+		oAccount.aliases(aAliases);
 	}, this);
 };
 

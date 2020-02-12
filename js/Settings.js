@@ -13,6 +13,7 @@ module.exports = {
 	ServerModuleName: 'Mail',
 	HashModuleName: 'mail',
 	FetchersServerModuleName: 'MtaConnector',
+	AliasesServerModuleName: 'CpanelIntegrator',
 	
 	// from Core module
 	EnableMultiTenant: false,
@@ -25,6 +26,7 @@ module.exports = {
 	AllowEditDomainsInServer: true,
 	AllowFetchers: false,
 	AllowIdentities: false,
+	AllowAliases: false,
 	OnlyUserEmailsInIdentities: false,
 	AllowInsertImage: true,
 	AllowMultiAccounts: false,
@@ -73,9 +75,10 @@ module.exports = {
 			oCoreDataSection = oAppData['Core'],
 			oAppDataMailSection = oAppData[this.ServerModuleName],
 			oAppDataMailWebclientSection = oAppData['%ModuleName%'],
-			oAppDataFetchersSection = oAppData[this.FetchersServerModuleName]
+			oAppDataFetchersSection = oAppData[this.FetchersServerModuleName],
+			oAppDataAliasesSection = oAppData[this.AliasesServerModuleName]
 		;
-		
+
 		if (!_.isEmpty(oCoreDataSection))
 		{
 			this.EnableMultiTenant = Types.pBool(oCoreDataSection.EnableMultiTenant, this.EnableMultiTenant);
@@ -137,6 +140,10 @@ module.exports = {
 		if (!_.isEmpty(oAppDataFetchersSection))
 		{
 			this.AllowFetchers = Types.pBool(oAppDataFetchersSection.AllowFetchers, this.AllowFetchers);
+		}
+		if (!_.isEmpty(oAppDataAliasesSection))
+		{
+			this.AllowAliases = Types.pBool(oAppDataAliasesSection.AllowAliases, this.AllowAliases);
 		}
 		
 		App.registerUserAccountsCount(this.userMailAccountsCount);
