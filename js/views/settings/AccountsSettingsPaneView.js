@@ -143,7 +143,7 @@ function CAccountsSettingsPaneView()
 		{
 			name: 'properties',
 			title: TextUtils.i18n('%MODULENAME%/LABEL_PROPERTIES_TAB'),
-			view: new CAliasSettingsFormView(this),
+			view: new CAliasSettingsFormView(this, this.bAllowAliases),
 			visible: ko.observable(true)
 		},
 		{

@@ -12,7 +12,6 @@ var
 
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
-//	CAliasModel = require('modules/%ModuleName%/js/models/CAliasModel.js'),
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
 	CoreAjax = require('%PathToCoreWebclientModule%/js/Ajax.js')
 ;

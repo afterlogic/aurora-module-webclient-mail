@@ -3,15 +3,12 @@
 var
 	_ = require('underscore'),
 	ko = require('knockout'),
-	
+
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
-	
 	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 	Screens = require('%PathToCoreWebclientModule%/js/Screens.js'),
-	
 	CAbstractSettingsFormView = ModulesManager.run('SettingsWebclient', 'getAbstractSettingsFormViewClass'),
-	
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	CoreAjax = require('%PathToCoreWebclientModule%/js/Ajax.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js')
@@ -21,18 +18,15 @@ var
  * @constructor
  * 
  * @param {Object} oParent
- * @param {boolean} bCreate
+ * @param {boolean} bAllowAliases
  */
-function CAliasSettingsFormView(oParent, bCreate)
+function CAliasSettingsFormView(oParent, bAllowAliases)
 {
 	CAbstractSettingsFormView.call(this, Settings.ServerModuleName);
-	
-	this.alias = ko.observable(null);
-	
-	this.oParent = oParent;
-	this.bCreate = bCreate;
 
-	this.disableRemoveAlias = ko.observable(bCreate);
+	this.alias = ko.observable(null);
+	this.oParent = oParent;
+	this.disableRemoveAlias = ko.observable(!bAllowAliases);
 	this.friendlyName = ko.observable('');
 	this.friendlyNameHasFocus = ko.observable(false);
 }
@@ -65,18 +59,14 @@ CAliasSettingsFormView.prototype.getParametersForSave = function ()
 		var
 			oParameters = {
 				'AccountID': this.alias().accountId(),
-				'FriendlyName': this.friendlyName()
+				'FriendlyName': this.friendlyName(),
+				'EntityId': this.alias().id()
 			}
 		;
 
-		if (!this.bCreate)
-		{
-			oParameters.EntityId = this.alias().id();
-		}
-
 		return oParameters;
 	}
-	
+
 	return {};
 };
 
@@ -84,7 +74,7 @@ CAliasSettingsFormView.prototype.save = function ()
 {
 	this.isSaving(true);
 	this.updateSavedState();
-	CoreAjax.send(Settings.AliasesServerModuleName, this.bCreate ? 'CreateAlias' : 'UpdateAlias', this.getParametersForSave(), this.onResponse, this);
+	CoreAjax.send(Settings.AliasesServerModuleName, 'UpdateAlias', this.getParametersForSave(), this.onResponse, this);
 };
 
 /**
@@ -101,8 +91,6 @@ CAliasSettingsFormView.prototype.onResponse = function (oResponse, oRequest)
 	}
 	else
 	{
-		var oParameters = oRequest.Parameters;
-		
 		AccountList.populateAliases(function () {
 			var
 				oCurrAccount = AccountList.getCurrent(),
@@ -116,11 +104,6 @@ CAliasSettingsFormView.prototype.onResponse = function (oResponse, oRequest)
 				ModulesManager.run('SettingsWebclient', 'setAddHash', [['alias', oCreatedAlias.hash()]]);
 			}
 		});
-		
-		if (this.bCreate && _.isFunction(this.oParent.closePopup))
-		{
-			this.oParent.closePopup();
-		}
 
 		Screens.showReport(TextUtils.i18n('COREWEBCLIENT/REPORT_SETTINGS_UPDATE_SUCCESS'));
 	}
@@ -129,10 +112,9 @@ CAliasSettingsFormView.prototype.onResponse = function (oResponse, oRequest)
 CAliasSettingsFormView.prototype.populate = function ()
 {
 	var oAlias = this.alias();
-	
+
 	if (oAlias)
 	{
-		this.disableRemoveAlias(this.bCreate);
 		this.friendlyName(oAlias.friendlyName());
 
 		setTimeout(function () {
@@ -152,7 +134,7 @@ CAliasSettingsFormView.prototype.remove = function ()
 
 		CoreAjax.send(Settings.AliasesServerModuleName, 'DeleteAliases', oParameters, this.onAccountAliasDeleteResponse, this);
 
-		if (!this.bCreate && _.isFunction(this.oParent.onRemoveAlias))
+		if (_.isFunction(this.oParent.onRemoveAlias))
 		{
 			this.oParent.onRemoveAlias();
 		}
