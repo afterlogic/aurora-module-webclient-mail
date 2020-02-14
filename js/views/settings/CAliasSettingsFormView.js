@@ -11,7 +11,9 @@ var
 	CAbstractSettingsFormView = ModulesManager.run('SettingsWebclient', 'getAbstractSettingsFormViewClass'),
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	CoreAjax = require('%PathToCoreWebclientModule%/js/Ajax.js'),
-	Settings = require('modules/%ModuleName%/js/Settings.js')
+	Settings = require('modules/%ModuleName%/js/Settings.js'),
+	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
+	ConfirmPopup = require('%PathToCoreWebclientModule%/js/popups/ConfirmPopup.js')
 ;
 
 /**
@@ -127,17 +129,28 @@ CAliasSettingsFormView.prototype.remove = function ()
 {
 	if (this.alias())
 	{
-		var oParameters = {
-			'AccountID': this.alias().accountId(),
-			'Aliases': [this.alias().email()]
-		};
+		Popups.showPopup(
+			ConfirmPopup, 
+			[
+				TextUtils.i18n('%MODULENAME%/CONFIRM_DELETE_ALIAS'),
+				_.bind(function (bRemove) {
+					if (bRemove)
+					{
+						var oParameters = {
+							'AccountID': this.alias().accountId(),
+							'Aliases': [this.alias().email()]
+						};
 
-		CoreAjax.send(Settings.AliasesServerModuleName, 'DeleteAliases', oParameters, this.onAccountAliasDeleteResponse, this);
-
-		if (_.isFunction(this.oParent.onRemoveAlias))
-		{
-			this.oParent.onRemoveAlias();
-		}
+						CoreAjax.send(Settings.AliasesServerModuleName, 'DeleteAliases', oParameters, this.onAccountAliasDeleteResponse, this);
+						if (_.isFunction(this.oParent.onRemoveAlias))
+						{
+							this.oParent.onRemoveAlias();
+						}
+					}
+				},
+				this)
+			]
+		);
 	}
 };
 
