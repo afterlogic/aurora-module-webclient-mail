@@ -57,7 +57,6 @@ function CMailView()
 
 	this.isEnableGroupOperations = this.oMessageList.isEnableGroupOperations;
 
-	this.composeLink = ko.observable(Routing.buildHashFromArray(LinksUtils.getCompose()));
 	this.sCustomBigButtonModule = '';
 	this.fCustomBigButtonHandler = null;
 	this.customBigButtonText = ko.observable('');
