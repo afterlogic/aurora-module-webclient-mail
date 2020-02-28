@@ -196,8 +196,9 @@ SendingUtils.sendReplyMessage = function (sMethod, sText, sDraftUid, fSendMessag
 
 		if (oFetcherOrIdentity)
 		{
+			oParameters.IdentityID = oFetcherOrIdentity && oFetcherOrIdentity.IDENTITY ? oFetcherOrIdentity.id() : '';
+			oParameters.AliasID = oFetcherOrIdentity && oFetcherOrIdentity.ALIAS ? oFetcherOrIdentity.id() : '';
 			oParameters.FetcherID = oFetcherOrIdentity && oFetcherOrIdentity.FETCHER ? oFetcherOrIdentity.id() : '';
-			oParameters.IdentityID = oFetcherOrIdentity && !oFetcherOrIdentity.FETCHER ? oFetcherOrIdentity.id() : '';
 		}
 
 		oParameters.Bcc = '';
@@ -640,6 +641,15 @@ SendingUtils.getAccountFetchersIdentitiesList = function (oAccount)
 				'name': oIdnt.friendlyName(),
 				'isDefault': oIdnt.isDefault(),
 				'result': oIdnt
+			});
+		});
+		
+		_.each(oAccount.aliases(), function (oAlias) {
+			aList.push({
+				'email': oAlias.email(),
+				'name': oAlias.friendlyName(),
+				'isDefault': false,
+				'result': oAlias
 			});
 		});
 	}

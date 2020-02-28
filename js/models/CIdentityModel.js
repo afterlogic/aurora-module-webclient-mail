@@ -13,6 +13,8 @@ var
  */
 function CIdentityModel()
 {
+	this.IDENTITY = true; // constant
+	
 	this.bAccountPart = false;
 	this.isDefault = ko.observable(false);
 	this.email = ko.observable('');

@@ -1503,8 +1503,9 @@ CComposeView.prototype.getSendSaveParameters = function (bRemoveSignatureAnchor,
 
 	oParameters = {
 		'AccountID': this.senderAccountId(),
+		'IdentityID': this.selectedFetcherOrIdentity() && this.selectedFetcherOrIdentity().IDENTITY ? this.selectedFetcherOrIdentity().id() : '',
+		'AliasID': this.selectedFetcherOrIdentity() && this.selectedFetcherOrIdentity().ALIAS ? this.selectedFetcherOrIdentity().id() : '',
 		'FetcherID': this.selectedFetcherOrIdentity() && this.selectedFetcherOrIdentity().FETCHER ? this.selectedFetcherOrIdentity().id() : '',
-		'IdentityID': this.selectedFetcherOrIdentity() && !this.selectedFetcherOrIdentity().FETCHER ? this.selectedFetcherOrIdentity().id() : '',
 		'DraftInfo': this.draftInfo(),
 		'DraftUid': this.draftUid(),
 		'To': this.toAddr(),
