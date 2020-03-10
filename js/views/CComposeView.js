@@ -1945,7 +1945,10 @@ CComposeView.prototype.getExtInterface = function ()
 		setHtmlText: _.bind(function (sHtml) {
 			this.textBody(sHtml);
 		}, this),
-		undoHtml: _.bind(this.oHtmlEditor.undoAndClearRedo, this.oHtmlEditor)
+		undoHtml: _.bind(this.oHtmlEditor.undoAndClearRedo, this.oHtmlEditor),
+		getSubject: _.bind(function () {
+			return this.subject();
+		}, this)
 	};
 };
 
