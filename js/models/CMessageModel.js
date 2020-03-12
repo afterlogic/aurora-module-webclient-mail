@@ -272,7 +272,22 @@ CMessageModel.prototype.fillFromOrToText = function ()
 	
 	if (oFolder.type() === Enums.FolderTypes.Drafts || oFolder.type() === Enums.FolderTypes.Sent)
 	{
-		this.fromOrToText(this.oTo.getDisplay(TextUtils.i18n('%MODULENAME%/LABEL_ME_RECIPIENT'), oAccount.email()));
+		var
+			sToDisplay = this.oTo.getDisplay(TextUtils.i18n('%MODULENAME%/LABEL_ME_RECIPIENT'), oAccount.email()),
+			sCcDisplay = this.oCc.getDisplay(TextUtils.i18n('%MODULENAME%/LABEL_ME_RECIPIENT'), oAccount.email()),
+			sBccDisplay = this.oBcc.getDisplay(TextUtils.i18n('%MODULENAME%/LABEL_ME_RECIPIENT'), oAccount.email()),
+			aDisplay = []
+		;
+		if (Types.isNonEmptyString(sToDisplay)) {
+			aDisplay.push(sToDisplay)
+		}
+		if (Types.isNonEmptyString(sCcDisplay)) {
+			aDisplay.push(sCcDisplay)
+		}
+		if (Types.isNonEmptyString(sBccDisplay)) {
+			aDisplay.push(sBccDisplay)
+		}
+		this.fromOrToText(aDisplay);
 	}
 	else
 	{
@@ -391,10 +406,10 @@ CMessageModel.prototype.parse = function (oData, iAccountId, bThreadPart, bTrust
 		this.oDateModel.parse(oData.TimeStampInUTC);
 		this.oFrom.parse(oData.From);
 		this.oTo.parse(oData.To);
-		this.fillFromOrToText();
 		this.oCc.parse(oData.Cc);
 		this.oBcc.parse(oData.Bcc);
 		this.oReplyTo.parse(oData.ReplyTo);
+		this.fillFromOrToText();
 		
 		this.fullDate(this.oDateModel.getFullDate());
 		this.fullFrom(this.oFrom.getFull());
