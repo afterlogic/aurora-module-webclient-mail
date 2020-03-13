@@ -6,6 +6,7 @@ var
 
 	App = require('%PathToCoreWebclientModule%/js/App.js'),
 	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
+	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 	CAbstractPopup = require('%PathToCoreWebclientModule%/js/popups/CAbstractPopup.js'),
 	Screens = require('%PathToCoreWebclientModule%/js/Screens.js'),
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
@@ -106,7 +107,19 @@ CreateAliasPopup.prototype.onCreateAliasResponse = function (oResponse, oRequest
 	this.loading(false);
 	if (oResponse.Result)
 	{
-		AccountList.populateAliases();
+		AccountList.populateAliases(function () {
+			var
+				oCurrAccount = AccountList.getCurrent(),
+				aCurrAliases = oCurrAccount.aliases(),
+				oCreatedAlias = _.find(aCurrAliases, function (oAlias) {
+					return oAlias.id() === oResponse.Result;
+				})
+			;
+			if (oCreatedAlias)
+			{
+				ModulesManager.run('SettingsWebclient', 'setAddHash', [['alias', oCreatedAlias.hash()]]);
+			}
+		});
 		this.closePopup();
 	}
 	else
