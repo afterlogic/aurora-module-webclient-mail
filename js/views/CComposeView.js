@@ -1929,6 +1929,7 @@ CComposeView.prototype.getExtInterface = function ()
 			return this.notInlineAttachments().length > 0;
 		}, this),
 		getPlainText: _.bind(this.oHtmlEditor.getPlainText, this.oHtmlEditor),
+		koTextChange: this.oHtmlEditor.textChanged,
 		getFromEmail: _.bind(function () {
 			return AccountList.getEmail(this.senderAccountId());
 		}, this),
