@@ -27,9 +27,12 @@
 												<span data-bind="i18n: {'key': '%MODULENAME%/LABEL_FROM'}"></span>:
 											</td>
 											<td class="value">
-												<select class="input" tabindex="1" data-bind="foreach: senderList, value: selectedSender">
-													<option data-bind="text: fullEmail, value: id"></option>
-												</select>
+												<div style="position: relative">
+													<div class="disable_mask" data-bind="visible: disableFromEdit"></div>
+													<select class="input" tabindex="1" data-bind="foreach: senderList, value: selectedSender, disable: disableFromEdit">
+														<option data-bind="text: fullEmail, value: id"></option>
+													</select>
+												</div>
 											</td>
 										</tr>
 										<tr class="to">

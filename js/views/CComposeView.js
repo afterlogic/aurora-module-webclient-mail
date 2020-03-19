@@ -322,6 +322,15 @@ function CComposeView()
 		
 		return bDisableHeadersEdit;
 	}, this);
+	this.disableFromEdit = ko.computed(function () {
+		var bDisableFromEdit = false;
+
+		_.each(this.toolbarControllers(), function (oController) {
+			bDisableFromEdit = bDisableFromEdit || !!oController.disableFromEdit && oController.disableFromEdit();
+		});
+
+		return bDisableFromEdit;
+	}, this);
 	ko.computed(function () {
 		var bDisableBodyEdit = false;
 		
@@ -1931,7 +1940,7 @@ CComposeView.prototype.getExtInterface = function ()
 		getPlainText: _.bind(this.oHtmlEditor.getPlainText, this.oHtmlEditor),
 		koTextChange: this.oHtmlEditor.textChanged,
 		getFromEmail: _.bind(function () {
-			return AccountList.getEmail(this.senderAccountId());
+			return this.selectedFetcherOrIdentity().email();
 		}, this),
 		getRecipientEmails: _.bind(function () {
 			return this.recipientEmails();
