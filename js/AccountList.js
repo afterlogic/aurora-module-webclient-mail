@@ -352,19 +352,21 @@ CAccountListModel.prototype.populateFetchers = function ()
 
 CAccountListModel.prototype.populateAliases = function (fAfterPopulateAliases)
 {
-	CoreAjax.send(
-		Settings.AliasesServerModuleName,
-		'GetAliases',
-		{ 'AccountID': this.editedId() },
-		function (oResponse, oRequest) {
-			this.onGetAliasesResponse(oResponse, oRequest);
-			if (_.isFunction(fAfterPopulateAliases))
-			{
-				fAfterPopulateAliases();
-			}
-		},
-		this
-	);
+	if (Settings.AllowAliases) {
+		CoreAjax.send(
+			Settings.AliasesServerModuleName,
+			'GetAliases',
+			{ 'AccountID': this.editedId() },
+			function (oResponse, oRequest) {
+				this.onGetAliasesResponse(oResponse, oRequest);
+				if (_.isFunction(fAfterPopulateAliases))
+				{
+					fAfterPopulateAliases();
+				}
+			},
+			this
+		);
+	}
 };
 /**
  * @param {Object} oResponse

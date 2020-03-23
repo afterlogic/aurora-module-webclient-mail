@@ -46,7 +46,11 @@ function CAccountModel(oData)
 			Cache.getFolderList(this.id());
 		}
 	}, this);
-	this.signature = ko.observable(Types.pString(oData.Signature));
+	var sSignature = Types.pString(oData.Signature);
+	if (sSignature.indexOf('<') !== 0) {
+		sSignature = '<div>' + sSignature + '</div>';
+	}
+	this.signature = ko.observable(sSignature);
 	this.useSignature = ko.observable(!!oData.UseSignature);
 	this.serverId = ko.observable(Types.pInt(oData.ServerId));
 	this.oServer = new CServerModel(oData.Server);
