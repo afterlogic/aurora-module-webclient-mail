@@ -46,13 +46,8 @@ MailUtils.deleteMessages = function (aUids, fAfterDelete)
 			}
 		}
 	;
-	
-	if (bInSpam)
-	{
-		MailCache.deleteMessages(aUids);
-		fAfterDelete();
-	}
-	else if (bInTrash)
+
+	if (bInSpam || bInTrash)
 	{
 		Popups.showPopup(ConfirmPopup, [
 			TextUtils.i18n('%MODULENAME%/CONFIRM_DELETE_MESSAGES_PLURAL', {}, null, aUids.length), 
