@@ -637,6 +637,10 @@ CComposeView.prototype.onRoute = function (aParams)
 				{
 					this.plainText(true);
 				}
+				if (oData.selectedSenderId)
+				{
+					this.selectedSender(oData.selectedSenderId);
+				}
 				var sBody = '<div></div>';
 				if (oData.body)
 				{
@@ -1945,7 +1949,7 @@ CComposeView.prototype.getExtInterface = function ()
 		getRecipientEmails: _.bind(function () {
 			return this.recipientEmails();
 		}, this),
-		
+		getSelectedSender: _.bind(this.selectedSender, this),
 		saveSilently: _.bind(this.executeSave, this, true),
 		setPlainTextMode: _.bind(this.plainText, this, true),
 		setPlainText: _.bind(function (sText) {
