@@ -192,6 +192,12 @@ function CMessageModel()
 	
 	this.domMessageForPrint = ko.observable(null);
 	
+	this.notInlineAttachments = ko.computed(function () {
+		return _.filter(this.attachments(), function (oAttach) {
+			return !oAttach.linked();
+		});
+	}, this);
+	
 	this.Custom = {};
 }
 
