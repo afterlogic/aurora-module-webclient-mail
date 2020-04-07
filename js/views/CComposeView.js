@@ -131,6 +131,7 @@ function CComposeView()
 		if (!this.oHtmlEditor.isEditing())
 		{
 			this.oHtmlEditor.clearUndoRedo();
+			this.oHtmlEditor.commit();
 		}
 	}, this);
 
@@ -1325,7 +1326,7 @@ CComposeView.prototype.isChanged = function ()
 		bImportanceChanged = this.selectedImportance.changed(),
 		bReadConfChanged = this.sendReadingConfirmation.changed(),
 		bControllersChanged = false,
-    bHtmlChanged = this.oHtmlEditor.textChanged(),
+		bHtmlChanged = this.oHtmlEditor.textChanged(),
 		bAttachmentsChanged = this.attachmentsChanged(),
 		bChangedInPreviousWindow = this.changedInPreviousWindow()
     ;

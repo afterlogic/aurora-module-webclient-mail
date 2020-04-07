@@ -316,10 +316,6 @@ CCrea.prototype.editableSave = function ()
         this.aEditableAreaHtml.push([sEditableHtml, this.getCaretPos(this.$editableArea[0])]);
         this.iUndoRedoPosition = this.aEditableAreaHtml.length - 1;
         this.oOptions.onChange();
-        // if ( this.oOptions.onChange.valueHasMutated !== undefined) {
-        //   this.oOptions.onChange.valueHasMutated();  
-        // } 
-        
     }
 };
 
@@ -955,7 +951,7 @@ CCrea.prototype.changeSignatureContent = function (sNewSignatureContent, sOldSig
             }
         }
     }
-
+	
     this.editableSave();
 };
 

@@ -65,9 +65,14 @@ MailUtils.deleteMessages = function (aUids, fAfterDelete)
 	}
 };
 
+MailUtils.isAvailableRegisterMailto = function ()
+{
+	return window.navigator && $.isFunction(window.navigator.registerProtocolHandler);
+};
+
 MailUtils.registerMailto = function (bRegisterOnce)
 {
-	if (window.navigator && $.isFunction(window.navigator.registerProtocolHandler) && (!bRegisterOnce || Storage.getData('MailtoAsked') !== true))
+	if (MailUtils.isAvailableRegisterMailto() && (!bRegisterOnce || Storage.getData('MailtoAsked') !== true))
 	{
 		window.navigator.registerProtocolHandler(
 			'mailto',
