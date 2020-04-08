@@ -102,18 +102,18 @@ function CServerPairPropertiesView(sPairId, bAdminEdit)
 	this.name = ko.observable('');
 	this.name.focused = ko.observable(false);
 	this.bAdminEdit = bAdminEdit;
-	this.oIncoming = new CServerPropertiesView(143, 993, sPairId + '_incoming', TextUtils.i18n('%MODULENAME%/LABEL_IMAP_SERVER'), bAdminEdit ? this.name : null);
+	this.oIncoming = new CServerPropertiesView(143, 993, sPairId + '_incoming', TextUtils.i18n('%MODULENAME%/LABEL_IMAP_SERVER'), null);
 	this.oOutgoing = new CServerPropertiesView(25, 465, sPairId + '_outgoing', TextUtils.i18n('%MODULENAME%/LABEL_SMTP_SERVER'), this.oIncoming.server);
 	this.outgoingUseAuth = ko.observable(true);
 	this.outgoingUseAuth.enable = ko.observable(true);
 	this.domains = ko.observable('');
 	this.bAllowEditDomains = Settings.AllowEditDomainsInServer;
-	this.name.focused.subscribe(function () {
-		if (this.bAllowEditDomains && !this.name.focused() && this.domains() === '')
-		{
-			this.domains(this.name());
-		}
-	}, this);
+//	this.name.focused.subscribe(function () {
+//		if (this.bAllowEditDomains && !this.name.focused() && this.domains() === '')
+//		{
+//			this.domains(this.name());
+//		}
+//	}, this);
 	this.smtpAuthType = ko.observable(window.Enums.SmtpAuthType.UseUserCredentials);
 	this.smtpLogin = ko.observable('');
 	this.smtpPassword = ko.observable('');
