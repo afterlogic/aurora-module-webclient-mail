@@ -62,15 +62,21 @@ CAttachmentModel.prototype.getCopy = function ()
 
 CAttachmentModel.prototype.copyProperties = function (oSource)
 {
+	this.folderName(oSource.folderName());
+	this.messageUid(oSource.messageUid());
+	this.cid(oSource.cid());
+	this.contentLocation(oSource.contentLocation());
+	this.inline(oSource.inline());
+	this.linked(oSource.linked());
+	this.mimePartIndex(oSource.mimePartIndex());
+	this.messagePart(oSource.messagePart());
+	this.content(oSource.content());
+
 	this.fileName(oSource.fileName());
 	this.tempName(oSource.tempName());
 	this.size(oSource.size());
 	this.hash(oSource.hash());
 	this.mimeType(oSource.mimeType());
-	this.cid(oSource.cid());
-	this.contentLocation(oSource.contentLocation());
-	this.inline(oSource.inline());
-	this.linked(oSource.linked());
 	this.thumbnailSrc(oSource.thumbnailSrc());
 	this.thumbnailLoaded(oSource.thumbnailLoaded());
 	this.statusText(oSource.statusText());
