@@ -521,8 +521,7 @@ CMessageModel.prototype.getDomText = function (sAppPath, bForcedShowPictures)
 			{
 				this.alwaysShowExternalPicturesForSender();
 			}
-			
-			if (bForcedShowPictures && this.isExternalsShown())
+			else if (bForcedShowPictures && this.isExternalsShown() || this.isExternalsAlwaysShown())
 			{
 				this.showExternalPictures();
 			}
@@ -631,13 +630,10 @@ CMessageModel.prototype.showExternalPictures = function ()
  */
 CMessageModel.prototype.alwaysShowExternalPicturesForSender = function ()
 {
-	if (this.completelyFilled())
+	this.isExternalsAlwaysShown(true);
+	if (this.completelyFilled() && !this.isExternalsShown())
 	{
-		this.isExternalsAlwaysShown(true);
-		if (!this.isExternalsShown())
-		{
-			this.showExternalPictures();
-		}
+		this.showExternalPictures();
 	}
 };
 
