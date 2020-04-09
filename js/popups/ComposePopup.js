@@ -147,13 +147,19 @@ CComposePopup.prototype.onOpen = function (aParams)
 CComposePopup.prototype.minimize = function ()
 {
 	this.minimized(true);
-	this.$popupDom.addClass('minimized');
+	if (this.$popupDom)
+	{
+		this.$popupDom.addClass('minimized');
+	}
 };
 
 CComposePopup.prototype.maximize = function ()
 {
 	this.minimized(false);
-	this.$popupDom.removeClass('minimized');
+	if (this.$popupDom)
+	{
+		this.$popupDom.removeClass('minimized');
+	}
 };
 
 CComposePopup.prototype.saveAndClose = function ()
