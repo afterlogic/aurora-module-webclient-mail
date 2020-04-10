@@ -1512,7 +1512,9 @@ CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 				this.folderList().currentFolderFullName() === oResult.FolderName,
 		bCurrentList = bCurrentFolder &&
 				this.uidList().search() === oResult.Search &&
-				this.uidList().filters() === oResult.Filters,
+				this.uidList().filters() === oResult.Filters &&
+				this.uidList().sortBy() === oRequest.Parameters.SortBy &&
+				this.uidList().sortOrder() === oRequest.Parameters.SortOrder,
 		bCurrentPage = this.page() === ((oResult.Offset / Settings.MailsPerPage) + 1),
 		aNewFolderMessages = []
 	;
