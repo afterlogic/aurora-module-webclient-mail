@@ -1831,6 +1831,19 @@ CMailCache.prototype.changeTemplateFolder = function (sFolderName, bTemplate)
 var MailCache = new CMailCache();
 
 Pulse.registerDayOfMonthFunction(_.bind(MailCache.changeDatesInMessages, MailCache));
+Pulse.registerWakeupFunction(function () {
+	Utils.log('wakeup, hasOpenedRequests, hasInternetConnectionProblem', Ajax.hasOpenedRequests(), Ajax.hasInternetConnectionProblem());
+	if (MailCache.checkMailStarted() && !Ajax.hasOpenedRequests())
+	{
+		MailCache.checkMailStarted(false);
+		MailCache.folderListLoading.removeAll();
+		MailCache.savingDraftUid('');
+		if (!Ajax.hasInternetConnectionProblem())
+		{
+			MailCache.executeCheckMail();
+		}
+	}
+});
 
 UserSettings.timeFormat.subscribe(MailCache.changeDatesInMessages, MailCache);
 UserSettings.dateFormat.subscribe(MailCache.changeDatesInMessages, MailCache);

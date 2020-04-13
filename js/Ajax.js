@@ -47,7 +47,10 @@ module.exports = {
 		Ajax.getOpenedRequest('Mail', sMethod);
 	},
 	hasOpenedRequests: function (sMethod) {
-		Ajax.hasOpenedRequests('Mail', sMethod);
+		return Ajax.hasOpenedRequests('Mail', sMethod || '');
+	},
+	hasInternetConnectionProblem: function () {
+		return Ajax.hasInternetConnectionProblem();
 	},
 	registerOnAllRequestsClosedHandler: Ajax.registerOnAllRequestsClosedHandler,
 	send: function (sMethod, oParameters, fResponseHandler, oContext) {
