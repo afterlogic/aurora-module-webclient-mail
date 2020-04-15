@@ -73,9 +73,6 @@ function CServersAdminSettingsPaneView()
 	}, this);
 	
 	this.updateSavedState();
-	this.oServerPairPropertiesView.currentValues.subscribe(function () {
-		this.updateSavedState();
-	}, this);
 }
 
 _.extendOwn(CServersAdminSettingsPaneView.prototype, CAbstractSettingsFormView.prototype);

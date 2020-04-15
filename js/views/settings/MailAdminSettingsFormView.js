@@ -51,8 +51,8 @@ CMailAdminSettingsFormView.prototype.onRouteChild = function ()
 CMailAdminSettingsFormView.prototype.getCurrentValues = function ()
 {
 	return [
-		this.autocreateMailAccountOnNewUserFirstLogin,
-		this.allowAddAccounts,
+		this.autocreateMailAccountOnNewUserFirstLogin(),
+		this.allowAddAccounts(),
 		this.horizontalLayoutByDefault()
 	];
 };
