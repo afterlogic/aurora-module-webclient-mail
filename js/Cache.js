@@ -119,7 +119,7 @@ function CMailCache()
 				}.bind(this)),
 				oFolder = this.folderList().getFolderByFullName(this.currentMessage().folder())
 			;
-			if (!oCurrMessage) {
+			if (oFolder && !oCurrMessage) {
 				oFolder.getCompletelyFilledMessage(this.currentMessage().uid(), null, null, true);
 			}
 		}
