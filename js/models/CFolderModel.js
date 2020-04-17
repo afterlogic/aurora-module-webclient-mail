@@ -1090,8 +1090,9 @@ CFolderModel.prototype.onGetMessageResponse = function (oResponse, oRequest)
 		if (bSelected)
 		{
 			Api.showErrorByCode(oResponse, TextUtils.i18n('COREWEBCLIENT/ERROR_UNKNOWN'));
-			Routing.replaceHashWithoutMessageUid(sUid);
 		}
+		Routing.replaceHashWithoutMessageUid(sUid);
+		this.removeMessageFromDict(sUid);
 		
 		oMessage = null;
 		bPassResponse = true;
@@ -1114,7 +1115,7 @@ CFolderModel.prototype.onGetMessageResponse = function (oResponse, oRequest)
  * @param {Function} fResponseHandler
  * @param {Object} oContext
  */
-CFolderModel.prototype.getCompletelyFilledMessage = function (sUid, fResponseHandler, oContext)
+CFolderModel.prototype.getCompletelyFilledMessage = function (sUid, fResponseHandler, oContext, bForceAjaxRequest)
 {
 	var
 		oMessage = this.getMessageByUid(sUid),
@@ -1128,7 +1129,7 @@ CFolderModel.prototype.getCompletelyFilledMessage = function (sUid, fResponseHan
 
 	if (sUid.length > 0)
 	{
-		if (!oMessage || !oMessage.completelyFilled() || oMessage.truncated())
+		if (!oMessage || !oMessage.completelyFilled() || oMessage.truncated() || bForceAjaxRequest)
 		{
 			if (fResponseHandler && oContext)
 			{

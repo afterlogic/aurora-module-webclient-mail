@@ -112,6 +112,17 @@ function CMailCache()
 		{
 			this.messagesLoadingError(false);
 		}
+		if (this.currentMessage()) {
+			var
+				oCurrMessage = _.find(this.messages(), function (oMessage) {
+					return oMessage.sUniq === this.currentMessage().sUniq;
+				}.bind(this)),
+				oFolder = this.folderList().getFolderByFullName(this.currentMessage().folder())
+			;
+			if (!oCurrMessage) {
+				oFolder.getCompletelyFilledMessage(this.currentMessage().uid(), null, null, true);
+			}
+		}
 	}, this);
 	
 	this.uidList = ko.observable(new CUidListModel());
