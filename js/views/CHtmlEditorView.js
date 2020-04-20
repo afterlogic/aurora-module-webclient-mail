@@ -452,7 +452,7 @@ CHtmlEditorView.prototype.setFocus = function ()
  */
 CHtmlEditorView.prototype.changeSignatureContent = function (sNewSignatureContent, sOldSignatureContent)
 {
-	if (this.oCrea)
+	if (this.oCrea && !this.disableEdit())
 	{
 		this.oCrea.changeSignatureContent(sNewSignatureContent, sOldSignatureContent);
 	}
@@ -509,7 +509,7 @@ CHtmlEditorView.prototype.getText = function (bRemoveSignatureAnchor)
  */
 CHtmlEditorView.prototype.setText = function (sText, bPlain)
 {
-	if (this.oCrea)
+	if (this.oCrea && !this.disableEdit())
 	{
 		if (bPlain)
 		{
