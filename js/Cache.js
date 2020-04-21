@@ -1473,6 +1473,7 @@ CMailCache.prototype.onCurrentGetMessagesResponse = function (oResponse, oReques
 
 	if (!oResponse.Result)
 	{
+		Utils.log('onCurrentGetMessagesResponse, error ', JSON.stringify(oRequest).substr(0, 300), JSON.stringify(oResponse).substr(0, 300));
 		Api.showErrorByCode(oResponse);
 		if (this.messagesLoading() === true && (this.messages().length === 0 || oResponse.ErrorCode !== Enums.Errors.NotDisplayedError))
 		{
@@ -1500,7 +1501,7 @@ CMailCache.prototype.onGetMessagesResponse = function (oResponse, oRequest)
 	}
 	else
 	{
-		Utils.log('onGetMessagesResponse, there was an error while getting message list', oResponse, oRequest);
+		Utils.log('onGetMessagesResponse, error ', JSON.stringify(oRequest).substr(0, 300), JSON.stringify(oResponse).substr(0, 300));
 	}
 };
 
@@ -1845,19 +1846,6 @@ CMailCache.prototype.changeTemplateFolder = function (sFolderName, bTemplate)
 var MailCache = new CMailCache();
 
 Pulse.registerDayOfMonthFunction(_.bind(MailCache.changeDatesInMessages, MailCache));
-Pulse.registerWakeupFunction(function () {
-	Utils.log('wakeup, hasOpenedRequests, hasInternetConnectionProblem', Ajax.hasOpenedRequests(), Ajax.hasInternetConnectionProblem());
-	if (MailCache.checkMailStarted() && !Ajax.hasOpenedRequests())
-	{
-		MailCache.checkMailStarted(false);
-		MailCache.folderListLoading.removeAll();
-		MailCache.savingDraftUid('');
-		if (!Ajax.hasInternetConnectionProblem())
-		{
-			MailCache.executeCheckMail();
-		}
-	}
-});
 
 UserSettings.timeFormat.subscribe(MailCache.changeDatesInMessages, MailCache);
 UserSettings.dateFormat.subscribe(MailCache.changeDatesInMessages, MailCache);
