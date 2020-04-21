@@ -1646,6 +1646,9 @@ CMailCache.prototype.onMoveMessagesResponse = function (oResponse, oRequest)
 	}
 	else if (oFolder)
 	{
+		this.messages(_.filter(this.messages(), function (oMessage) {
+			return _.indexOf(aUids, oMessage.uid()) === -1;
+		}));
 		oFolder.commitDeleted(aUids);
 		_.each(aUids, function (sUid) {
 			Routing.replaceHashWithoutMessageUid(sUid);
