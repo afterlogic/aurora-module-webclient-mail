@@ -420,4 +420,53 @@ LinksUtils.parseToAddr = function (mToAddr)
 	};
 };
 
+/**
+ * @param {array} aParams
+ * @returns {Object}
+ */
+LinksUtils.parseMailServers = function (aParams)
+{
+	var
+		iIndex = 0,
+		sTemp = '',
+		iPage = 1,
+		bCreate = false,
+		iEditServerId = 0
+	;
+	
+	if (Types.isNonEmptyArray(aParams))
+	{
+		if (aParams.length > iIndex)
+		{
+			sTemp = Types.pString(aParams[iIndex]);
+			if (IsPageParam(sTemp))
+			{
+				iPage = Types.pInt(sTemp.substr(1));
+				if (iPage <= 0)
+				{
+					iPage = 1;
+				}
+				iIndex++;
+			}
+		}
+		
+		if (aParams.length > iIndex)
+		{
+			sTemp = Types.pString(aParams[iIndex]);
+			bCreate = sTemp === 'create';
+			if (!bCreate)
+			{
+				iEditServerId = Types.pInt(sTemp, iEditServerId);
+				iIndex++;
+			}
+		}
+	}
+	
+	return {
+		'Page': iPage,
+		'Create': bCreate,
+		'EditServerId': iEditServerId
+	};
+};
+
 module.exports = LinksUtils;

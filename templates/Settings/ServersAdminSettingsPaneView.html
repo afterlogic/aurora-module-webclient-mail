@@ -22,6 +22,9 @@
 				</div>
 			</div>
 		</div>
+		<div data-bind="visible: !createMode() && oPageSwitcher.pages().length > 0" class="mail-servers-pagination">
+			<!-- ko template: {name: oPageSwitcher.ViewTemplate, data: oPageSwitcher} --><!-- /ko -->
+		</div>
 		<div class="tabs" data-bind="visible: createMode() || editedServerId() !== 0">
 			<div class="tabs_container">
 				<div class="tab">

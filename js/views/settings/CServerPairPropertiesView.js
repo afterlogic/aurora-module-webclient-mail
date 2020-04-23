@@ -23,9 +23,12 @@ var
  * @constructor
  * @param {string} sPairId
  * @param {boolean} bAdminEdit
+ * @param {int} iServersPerPage
  */
-function CServerPairPropertiesView(sPairId, bAdminEdit)
+function CServerPairPropertiesView(sPairId, bAdminEdit, iServersPerPage)
 {
+	this.iServersPerPage = Types.pInt(iServersPerPage, 0);
+	this.totalServersCount = ko.observable(0);
 	this.servers = ko.observableArray([]);
 	this.serversRetrieved = ko.observable(false);
 	this.serverOptions = ko.observableArray([{ 'Name': TextUtils.i18n('%MODULENAME%/LABEL_CONFIGURE_SERVER_MANUALLY'), 'Id': 0 }]);
@@ -186,22 +189,28 @@ CServerPairPropertiesView.prototype.setServerId = function (iServerId)
 	}
 };
 
-CServerPairPropertiesView.prototype.requestServers = function ()
+CServerPairPropertiesView.prototype.requestServers = function (iOffset, sSearch)
 {
 	var iTenantId = _.isFunction(App.getTenantId) ? App.getTenantId() : 0;
 	this.serversRetrieved(false);
-	Ajax.send('GetServers', { 'TenantId': iTenantId}, function (oResponse) {
-		if (_.isArray(oResponse.Result))
+	Ajax.send('GetServers', {
+			'TenantId': iTenantId,
+			'Offset': Types.pInt(iOffset, 0),
+			'Limit': this.iServersPerPage,
+			'Search': Types.pString(sSearch, '')
+		}, function (oResponse) {
+		if (_.isArray(oResponse && oResponse.Result && oResponse.Result.Items))
 		{
 			var aServerOptions = [{ 'Name': TextUtils.i18n('%MODULENAME%/LABEL_CONFIGURE_SERVER_MANUALLY'), 'Id': 0 }];
 
-			_.each(oResponse.Result, function (oServer) {
+			_.each(oResponse.Result.Items, function (oServer) {
 				aServerOptions.push({ 'Name': oServer.Name, 'Id': Types.pInt(oServer.EntityId) });
 			});
 
-			this.servers(_.map(oResponse.Result, function (oServerData) {
+			this.servers(_.map(oResponse.Result.Items, function (oServerData) {
 				return new CServerModel(oServerData);
 			}));
+			this.totalServersCount(oResponse.Result.Count);
 			this.serverOptions(aServerOptions);
 			this.serversRetrieved(true);
 			if (this.iEditedServerId)

@@ -9,6 +9,7 @@ var
 	
 	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
 	App = require('%PathToCoreWebclientModule%/js/App.js'),
+	CPageSwitcherView = require('%PathToCoreWebclientModule%/js/views/CPageSwitcherView.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 	Screens = require('%PathToCoreWebclientModule%/js/Screens.js'),
 	
@@ -16,6 +17,8 @@ var
 	
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
 	ConfirmPopup = require('%PathToCoreWebclientModule%/js/popups/ConfirmPopup.js'),
+	
+	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
 	
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
 	CServerPairPropertiesView = require('modules/%ModuleName%/js/views/settings/CServerPairPropertiesView.js'),
@@ -31,7 +34,9 @@ function CServersAdminSettingsPaneView()
 
 	this.visible = ko.observable(true);
 	
-	this.oServerPairPropertiesView = new CServerPairPropertiesView('server_edit', true);
+	this.iServersPerPage = 10;
+	this.oServerPairPropertiesView = new CServerPairPropertiesView('server_edit', true, this.iServersPerPage);
+	this.totalServersCount = this.oServerPairPropertiesView.totalServersCount;
 	
 	this.tenants = ModulesManager.run('AdminPanelWebclient', 'getTenantsObservable');
 	this.tenantOptions = ko.computed(function () {
@@ -72,6 +77,14 @@ function CServersAdminSettingsPaneView()
 		}, this));
 	}, this);
 	
+	this.oPageSwitcher = new CPageSwitcherView(0, this.iServersPerPage);
+	this.oPageSwitcher.currentPage.subscribe(function () {
+		this.routeServerList();
+	}, this);
+	this.totalServersCount.subscribe(function () {
+		this.oPageSwitcher.setCount(this.totalServersCount());
+	}, this);
+	
 	this.updateSavedState();
 }
 
@@ -103,7 +116,15 @@ CServersAdminSettingsPaneView.prototype.routeCreateServer = function ()
  */
 CServersAdminSettingsPaneView.prototype.routeEditServer = function (iId)
 {
-	ModulesManager.run('AdminPanelWebclient', 'setAddHash', [[iId]]);
+	var
+		aHash = [iId],
+		iPage = this.oPageSwitcher.currentPage()
+	;
+	if (iPage > 1)
+	{
+		aHash.unshift('p' + iPage);
+	}
+	ModulesManager.run('AdminPanelWebclient', 'setAddHash', [aHash]);
 };
 
 /**
@@ -111,7 +132,15 @@ CServersAdminSettingsPaneView.prototype.routeEditServer = function (iId)
  */
 CServersAdminSettingsPaneView.prototype.routeServerList = function ()
 {
-	ModulesManager.run('AdminPanelWebclient', 'setAddHash', [[]]);
+	var
+		aHash = [],
+		iPage = this.oPageSwitcher.currentPage()
+	;
+	if (iPage > 1)
+	{
+		aHash.push('p' + iPage);
+	}
+	ModulesManager.run('AdminPanelWebclient', 'setAddHash', [aHash]);
 };
 
 /**
@@ -120,15 +149,21 @@ CServersAdminSettingsPaneView.prototype.routeServerList = function ()
  */
 CServersAdminSettingsPaneView.prototype.onRouteChild = function (aParams)
 {
-	var
-		bCreate = Types.isNonEmptyArray(aParams) && aParams[0] === 'create',
-		iEditServerId = !bCreate && Types.isNonEmptyArray(aParams) ? Types.pInt(aParams[0]) : 0
-	;
+	var oParams = LinksUtils.parseMailServers(aParams);
 	
-	this.createMode(bCreate);
-	this.editedServerId(iEditServerId);
+	this.createMode(oParams.Create);
+	this.editedServerId(oParams.EditServerId);
 	
-	this.oServerPairPropertiesView.serverInit(bCreate);
+	this.oServerPairPropertiesView.serverInit(oParams.Create);
+	
+	if (!oParams.Create && oParams.EditServerId === 0)
+	{
+		if (oParams.Page !== this.oPageSwitcher.currentPage())
+		{
+			this.oPageSwitcher.setPage(oParams.Page, this.iServersPerPage);
+		}
+		this.oServerPairPropertiesView.requestServers((this.oPageSwitcher.currentPage() - 1) * this.iServersPerPage);
+	}
 	
 	this.revert();
 };
@@ -136,7 +171,7 @@ CServersAdminSettingsPaneView.prototype.onRouteChild = function (aParams)
 CServersAdminSettingsPaneView.prototype.onShow = function ()
 {
 	this.selectedTenantId(this.getSelectedTenantId());
-	this.oServerPairPropertiesView.requestServers();
+	this.oServerPairPropertiesView.requestServers((this.oPageSwitcher.currentPage() - 1) * this.iServersPerPage);
 };
 
 /**
@@ -154,7 +189,7 @@ CServersAdminSettingsPaneView.prototype.deleteServer = function (iId)
 					{
 						Api.showErrorByCode(oResponse, TextUtils.i18n('%MODULENAME%/ERROR_DELETE_MAIL_SERVER'));
 					}
-					this.oServerPairPropertiesView.requestServers();
+					this.oServerPairPropertiesView.requestServers((this.oPageSwitcher.currentPage() - 1) * this.iServersPerPage);
 				}, this);
 			}
 		}, this),
@@ -187,7 +222,7 @@ CServersAdminSettingsPaneView.prototype.save = function ()
 		this.isSaving(true);
 		Ajax.send(sMethod, this.getParametersForSave(), function (oResponse) {
 			this.isSaving(false);
-			this.oServerPairPropertiesView.requestServers();
+			this.oServerPairPropertiesView.requestServers((this.oPageSwitcher.currentPage() - 1) * this.iServersPerPage);
 			if (this.createMode())
 			{
 				this.routeServerList();
