@@ -82,6 +82,7 @@ function CServersAdminSettingsPaneView()
 	this.oPageSwitcher.currentPage.subscribe(function () {
 		this.routeServerList();
 	}, this);
+	this.iCurrentPage = 0;
 	this.totalServersCount.subscribe(function () {
 		this.oPageSwitcher.setCount(this.totalServersCount());
 		if (this.searchValue() === '')
@@ -175,7 +176,6 @@ CServersAdminSettingsPaneView.prototype.onRouteChild = function (aParams)
 {
 	var oParams = LinksUtils.parseMailServers(aParams);
 	this.newSearchValue(oParams.Search);
-	this.searchValue(oParams.Search);
 	this.createMode(oParams.Create);
 	this.editedServerId(oParams.EditServerId);
 	
@@ -187,7 +187,12 @@ CServersAdminSettingsPaneView.prototype.onRouteChild = function (aParams)
 		{
 			this.oPageSwitcher.setPage(oParams.Page, this.iServersPerPage);
 		}
-		this.oServerPairPropertiesView.requestServers((this.oPageSwitcher.currentPage() - 1) * this.iServersPerPage, this.searchValue());
+		if (this.oPageSwitcher.currentPage() !== this.iCurrentPage || this.newSearchValue() !== this.searchValue())
+		{
+			this.iCurrentPage = this.oPageSwitcher.currentPage();
+			this.searchValue(this.newSearchValue());
+			this.oServerPairPropertiesView.requestServers((this.oPageSwitcher.currentPage() - 1) * this.iServersPerPage, this.searchValue());
+		}
 	}
 	
 	this.revert();
@@ -195,6 +200,7 @@ CServersAdminSettingsPaneView.prototype.onRouteChild = function (aParams)
 
 CServersAdminSettingsPaneView.prototype.onShow = function ()
 {
+	this.iCurrentPage = 0; // to re-request server list
 	this.selectedTenantId(this.getSelectedTenantId());
 };
 
@@ -215,12 +221,10 @@ CServersAdminSettingsPaneView.prototype.deleteServer = function (iId)
 					}
 					if (iId === this.editedServerId())
 					{
+//						this.editedServerId(null);
 						this.routeServerList();
 					}
-					else
-					{
-						this.oServerPairPropertiesView.requestServers((this.oPageSwitcher.currentPage() - 1) * this.iServersPerPage, this.searchValue());
-					}
+					this.oServerPairPropertiesView.requestServers((this.oPageSwitcher.currentPage() - 1) * this.iServersPerPage, this.searchValue());
 				}, this);
 			}
 		}, this),

@@ -173,7 +173,7 @@ CServerPairPropertiesView.prototype.setServer = function (oServer)
 
 CServerPairPropertiesView.prototype.setServerId = function (iServerId)
 {
-	if (this.serversRetrieved())
+	if (this.serversRetrieved() || iServerId === 0)
 	{
 		var bEmptyServerNow = this.selectedServerId() === 0;
 		this.selectedServerId(0); // If server with identifier iServerId doesn't exist in the list selectedServerId will be reset to previous value that will be 0
@@ -199,31 +199,31 @@ CServerPairPropertiesView.prototype.requestServers = function (iOffset, sSearch)
 			'Limit': this.iServersPerPage,
 			'Search': Types.pString(sSearch, '')
 		}, function (oResponse) {
-		if (_.isArray(oResponse && oResponse.Result && oResponse.Result.Items))
-		{
-			var aServerOptions = [{ 'Name': TextUtils.i18n('%MODULENAME%/LABEL_CONFIGURE_SERVER_MANUALLY'), 'Id': 0 }];
-
-			_.each(oResponse.Result.Items, function (oServer) {
-				aServerOptions.push({ 'Name': oServer.Name, 'Id': Types.pInt(oServer.EntityId) });
-			});
-
-			this.servers(_.map(oResponse.Result.Items, function (oServerData) {
-				return new CServerModel(oServerData);
-			}));
-			this.totalServersCount(oResponse.Result.Count);
-			this.serverOptions(aServerOptions);
-			this.serversRetrieved(true);
-			if (this.iEditedServerId)
+			if (_.isArray(oResponse && oResponse.Result && oResponse.Result.Items))
 			{
-				this.setServerId(this.iEditedServerId);
-				this.iEditedServerId = 0;
+				var aServerOptions = [{ 'Name': TextUtils.i18n('%MODULENAME%/LABEL_CONFIGURE_SERVER_MANUALLY'), 'Id': 0 }];
+
+				_.each(oResponse.Result.Items, function (oServer) {
+					aServerOptions.push({ 'Name': oServer.Name, 'Id': Types.pInt(oServer.EntityId) });
+				});
+
+				this.servers(_.map(oResponse.Result.Items, function (oServerData) {
+					return new CServerModel(oServerData);
+				}));
+				this.totalServersCount(oResponse.Result.Count);
+				this.serverOptions(aServerOptions);
+				this.serversRetrieved(true);
+				if (this.iEditedServerId)
+				{
+					this.setServerId(this.iEditedServerId);
+					this.iEditedServerId = 0;
+				}
 			}
-		}
-		else
-		{
-			Api.showErrorByCode(oResponse);
-		}
-	}, this);
+			else
+			{
+				Api.showErrorByCode(oResponse);
+			}
+		}, this);
 };
 
 CServerPairPropertiesView.prototype.clear = function ()
