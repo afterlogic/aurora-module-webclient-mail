@@ -6,13 +6,7 @@
 </div>
 
 <div class="panel_center">
-	<div class="fields" data-bind="visible: servers().length === 0 && !createMode() && serversRetrieved()">
-		<div class="fieldset">
-			<div class="hint" style="margin: 0;" data-bind="i18n: {'key': '%MODULENAME%/INFO_NO_SERVERS'}"></div>
-		</div>
-	</div>
-	<div data-bind="visible: createMode() || servers().length > 0">
-		<div class="items_list account_list" data-bind="visible: !createMode()">
+		<div class="items_list account_list" data-bind="visible: !createMode() && servers().length > 0">
 			<div data-bind="foreach: servers">
 				<div class="item account" data-bind="css: {'selected': iId === $parent.editedServerId()},  click: function () { $parent.routeEditServer(iId); }">
 					<span class="title" data-bind="text: sName + sTenantHint"></span>
@@ -22,8 +16,22 @@
 				</div>
 			</div>
 		</div>
-		<div data-bind="visible: !createMode() && oPageSwitcher.pages().length > 0" class="mail-servers-pagination">
-			<!-- ko template: {name: oPageSwitcher.ViewTemplate, data: oPageSwitcher} --><!-- /ko -->
+		<div class="fields" data-bind="visible: servers().length === 0 && !createMode() && serversRetrieved()" style="margin-bottom: 40px;">
+			<div class="fieldset">
+				<div class="hint" style="margin: 0;" data-bind="i18n: {'key': '%MODULENAME%/INFO_NO_SERVERS'}, visible: searchValue() === ''"></div>
+				<div class="hint" style="margin: 0;" data-bind="i18n: {'key': '%MODULENAME%/INFO_NO_SERVERS_FOUND'}, visible: searchValue() !== ''"></div>
+			</div>
+		</div>
+		<div data-bind="visible: !createMode() && (visibleSearch() || searchValue() !== '')" class="mail-servers-pagination">
+			<span class="search_block">
+				<span class="input" data-bind="css: {'focus': isSearchFocused}">
+					<span class="icon search" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_SEARCH'}, click: routeSearch"></span>
+					<input class="field" spellcheck="false" type="text" data-bind="hasfocus: isSearchFocused, value: newSearchValue, onEnter: routeSearch, valueUpdate: 'afterkeydown'" />
+				</span>
+			</span>
+			<span data-bind="visible: oPageSwitcher.pages().length > 0">
+				<!-- ko template: {name: oPageSwitcher.ViewTemplate, data: oPageSwitcher} --><!-- /ko -->
+			</span>
 		</div>
 		<div class="tabs" data-bind="visible: createMode() || editedServerId() !== 0">
 			<div class="tabs_container">
@@ -82,5 +90,4 @@
 				</div>
 			</div>
 		</div>
-	</div>
 </div>

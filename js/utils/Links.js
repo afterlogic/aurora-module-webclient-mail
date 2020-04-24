@@ -31,6 +31,16 @@ function IsMsgParam(sTemp)
 };
 
 /**
+ * @param {string} sTemp
+ * 
+ * @return {boolean}
+ */
+function IsServerParam(sTemp)
+{
+	return ('s' === sTemp.substr(0, 1) && (/^[1-9][\d]*$/).test(sTemp.substr(1)));
+};
+
+/**
  * @param {string=} sFolder = 'INBOX'
  * @param {number=} iPage = 1
  * @param {string=} sUid = ''
@@ -430,6 +440,7 @@ LinksUtils.parseMailServers = function (aParams)
 		iIndex = 0,
 		sTemp = '',
 		iPage = 1,
+		sSearch = '',
 		bCreate = false,
 		iEditServerId = 0
 	;
@@ -453,17 +464,37 @@ LinksUtils.parseMailServers = function (aParams)
 		if (aParams.length > iIndex)
 		{
 			sTemp = Types.pString(aParams[iIndex]);
-			bCreate = sTemp === 'create';
-			if (!bCreate)
+			if (!IsServerParam(sTemp) && sTemp !== 'create')
 			{
-				iEditServerId = Types.pInt(sTemp, iEditServerId);
+				sSearch = sTemp;
 				iIndex++;
 			}
+		}
+		
+		if (aParams.length > iIndex)
+		{
+			sTemp = Types.pString(aParams[iIndex]);
+			if (IsServerParam(sTemp))
+			{
+				iEditServerId = Types.pInt(sTemp.substr(1), iEditServerId);
+				if (iEditServerId <= 0)
+				{
+					iEditServerId = 1;
+				}
+				iIndex++;
+			}
+		}
+		
+		if (aParams.length > iIndex)
+		{
+			sTemp = Types.pString(aParams[iIndex]);
+			bCreate = sTemp === 'create';
 		}
 	}
 	
 	return {
 		'Page': iPage,
+		'Search': sSearch,
 		'Create': bCreate,
 		'EditServerId': iEditServerId
 	};
