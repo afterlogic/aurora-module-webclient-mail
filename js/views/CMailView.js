@@ -346,8 +346,19 @@ CMailView.prototype.onRoute = function (aParams)
 	
 	if (oParams.MailtoCompose)
 	{
-		ComposeUtils.composeMessageToAddresses(aParams[2]);
-		Routing.replaceHash(LinksUtils.getMailbox());
+		if (App.isMobile())
+		{
+			var aParams = LinksUtils.getComposeWithToField(aParams[2]);
+			Routing.replaceHash(aParams);
+			setTimeout(function () {
+				Routing.clearPreviousHash();
+			}, 0);
+		}
+		else
+		{
+			ComposeUtils.composeMessageToAddresses(aParams[2]);
+			Routing.replaceHash(LinksUtils.getMailbox());
+		}
 	}
 };
 
