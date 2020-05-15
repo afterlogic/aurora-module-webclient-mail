@@ -503,6 +503,12 @@ CHtmlEditorView.prototype.getText = function (bRemoveSignatureAnchor)
 	return (this.sPlaceholderText !== '' && this.removeAllTags(sText) === this.sPlaceholderText) ? '' : sText;
 };
 
+
+CHtmlEditorView.prototype.getEditableArea = function ()
+{
+	return this.oCrea.$editableArea;
+};
+
 /**
  * @param {string} sText
  * @param {boolean} bPlain
