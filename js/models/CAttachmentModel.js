@@ -133,6 +133,7 @@ CAttachmentModel.prototype.onGetMessageResponse = function (oResult, oRequest)
 	
 	if (oResult && this.oNewWindow)
 	{
+		oResult.TimeStampInUTC = oResult.ReceivedOrDateTimeStampInUTC;
 		oMessage.parse(oResult, oParameters.AccountID, false, true);
 		this.messagePart(oMessage);
 		this.messagePart().viewMessage(this.oNewWindow);
