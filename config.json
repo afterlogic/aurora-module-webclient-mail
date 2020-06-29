@@ -78,5 +78,9 @@
 	"HorizontalLayoutByDefault": [
 		false,
 		"bool"
+	],
+	"DisableRtlRendering": [
+		false,
+		"bool"
 	]
 }

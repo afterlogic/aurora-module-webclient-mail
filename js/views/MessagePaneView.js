@@ -474,7 +474,10 @@ CMessagePaneView.prototype.onCurrentMessageSubscribe = function ()
 		
 		this.setMessageBody();
 		
-		this.rtlMessage(oMessage.rtl());
+		if (!Settings.DisableRtlRendering)
+		{
+			this.rtlMessage(oMessage.rtl());
+		}
 
 		if (App.isNewTab())
 		{

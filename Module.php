@@ -60,6 +60,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			'PrefixesToRemoveBeforeSearchMessagesBySubject' => $this->getConfig('PrefixesToRemoveBeforeSearchMessagesBySubject', []),
 			'AllowHorizontalLayout' => $this->getConfig('AllowHorizontalLayout', false),
 			'HorizontalLayoutByDefault' => $this->getConfig('HorizontalLayoutByDefault', false),
+			'DisableRtlRendering' => $this->getConfig('DisableRtlRendering', false),
 		);
 		
 		$oUser = \Aurora\System\Api::getAuthenticatedUser();

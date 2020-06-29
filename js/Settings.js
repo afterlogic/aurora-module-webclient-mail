@@ -60,6 +60,7 @@ module.exports = {
 	AllowHorizontalLayout: false,
 	HorizontalLayout: false,
 	HorizontalLayoutByDefault: false,
+	DisableRtlRendering: false,
 	
 	userMailAccountsCount: ko.observable(0),
 	mailAccountsEmails: ko.observableArray([]),
@@ -135,6 +136,7 @@ module.exports = {
 			this.AllowHorizontalLayout = Types.pBool(oAppDataMailWebclientSection.AllowHorizontalLayout, this.AllowHorizontalLayout);
 			this.HorizontalLayout = this.AllowHorizontalLayout && Types.pBool(oAppDataMailWebclientSection.HorizontalLayout, this.HorizontalLayout);
 			this.HorizontalLayoutByDefault = this.AllowHorizontalLayout && Types.pBool(oAppDataMailWebclientSection.HorizontalLayoutByDefault, this.HorizontalLayoutByDefault);
+			this.DisableRtlRendering = Types.pBool(oAppDataMailWebclientSection.DisableRtlRendering, this.DisableRtlRendering);
 		}
 		
 		if (!_.isEmpty(oAppDataFetchersSection))
