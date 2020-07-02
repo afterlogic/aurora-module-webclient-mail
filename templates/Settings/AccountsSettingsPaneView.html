@@ -12,7 +12,7 @@
 		</div>
 	</div>
 	<div data-bind="visible: accounts().length > 0">
-		<div class="items_list account_list">
+		<div class="items_list simple_list">
 			<div data-bind="foreach: accounts">
 				<div class="item account" data-bind="css: {'selected': id() === $parent.editedAccountId() && !$parent.editedFetcherId() && !$parent.editedIdentityId()},  click: function () {$parent.editAccount(hash());}">
 					<span class="link fetcher" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ADD_IDENTITY'}, visible: $parent.bAllowIdentities, click: function (oModel, oEv) {$parent.addIdentity(id(), oEv);}"></span>

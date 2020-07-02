@@ -6,7 +6,7 @@
 </div>
 
 <div class="panel_center">
-		<div class="items_list account_list" data-bind="visible: !createMode() && servers().length > 0">
+		<div class="items_list simple_list" data-bind="visible: !createMode() && servers().length > 0">
 			<div data-bind="foreach: servers">
 				<div class="item account" data-bind="css: {'selected': iId === $parent.editedServerId()},  click: function () { $parent.routeEditServer(iId); }">
 					<span class="title" data-bind="text: sName + sTenantHint"></span>
