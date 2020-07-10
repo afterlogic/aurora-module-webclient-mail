@@ -251,6 +251,36 @@
 		color: #b5ad94;
 		padding: 8px 25px;
 		margin: -6px -10px 0;
+		
+		&.notice-auto-encrypt {
+			background: #96c671;
+			border-color: #82b35d;
+			color: white;
+			font-size: 16px;
+			
+			.custom_checkbox {
+				margin: 0;
+				vertical-align: unset;
+			}
+			
+			.notice-auto-encrypt-info {
+				font-size: 14px;
+				padding-top: 9px;
+			}
+			
+			.notice-auto-encrypt-icon {
+				float: left;
+				font-size: 35px;
+				margin-left: -23px;
+				.init-icon-font(after);
+				
+				&:after {
+					content: "\e658";
+					vertical-align: middle;
+					text-shadow: 0 0 1px grey;
+				}
+			}
+		}
 	}
 
 	table.fields {

@@ -20,9 +20,9 @@ function CComposeViewAutoEncrypt()
 	this.recipientsInfo = ko.observable({});
 	this.hasRecipientsWithKey = ko.computed(function () {
 		return !!_.find(this.recipientsInfo(), function (oRecipientInfo) {
-			return oRecipientInfo.hasKey;
-		});
-	}, this);
+			return oRecipientInfo.hasKey && _.indexOf(this.recipientEmails(), oRecipientInfo.email) !== -1;
+		}.bind(this));
+	}, this).extend({ throttle: 100 });
 	this.autoEncryptSignMessage = ko.observable(false);
 	this.allowAtoEncryptSignMessage = ko.computed(function () {
 		return this.hasRecipientsWithKey() && !this.messageSignedOrEncrypted();
@@ -38,11 +38,6 @@ CComposeViewAutoEncrypt.prototype.getInputosaurusMethods = function ()
 		addRecipientInfo: function (oRecipientInfo) {
 			var oRecipient = AddressUtils.getEmailParts(oRecipientInfo.value);
 			this.recipientsInfo()[oRecipient.email] = oRecipientInfo;
-			this.recipientsInfo.valueHasMutated();
-		}.bind(this),
-		removeRecipientInfo: function (sFullEmail) {
-			var oRecipient = AddressUtils.getEmailParts(sFullEmail);
-			delete this.recipientsInfo()[oRecipient.email];
 			this.recipientsInfo.valueHasMutated();
 		}.bind(this),
 		getRecipientPgpKeyHtml: function (sFullEmail) {

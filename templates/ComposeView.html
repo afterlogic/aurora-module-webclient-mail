@@ -21,19 +21,18 @@
 									</span>
 
 									<div class="notice" data-bind="visible: bDemo, i18n: {'key': '%MODULENAME%/INFO_SEND_EMAIL_TO_DEMO_ONLY'}"></div>
-									<div class="notice" data-bind="visible: autoEncryptSignMessage, i18n: {'key': '%MODULENAME%/INFO_MESSAGE_WILL_BE_CONVERTED_TO_PLAIN'}"></div>
+									<div class="notice notice-auto-encrypt" data-bind="visible: allowAtoEncryptSignMessage">
+										<div class="notice-auto-encrypt-icon"></div>
+										<div>
+											<label class="custom_checkbox" data-bind="css: {'checked': autoEncryptSignMessage}">
+												<span class="icon"></span>
+												<input type="checkbox" id="autoEncryptSignMessage" data-bind="checked: autoEncryptSignMessage" />
+											</label>
+											<label for="autoEncryptSignMessage" data-bind="i18n: {'key': '%MODULENAME%/INFO_AUTO_ENCRYPT_SIGN_MESSAGE'}"></label>
+										</div>
+										<div class="notice-auto-encrypt-info" data-bind="i18n: {'key': '%MODULENAME%/INFO_MESSAGE_WILL_BE_CONVERTED_TO_PLAIN'}"></div>
+									</div>
 									<table class="fields">
-										<tr class="auto-encrypt-sign-message" data-bind="visible: allowAtoEncryptSignMessage">
-											<td class="label">
-												<label class="custom_checkbox" data-bind="css: {'checked': autoEncryptSignMessage}">
-													<span class="icon"></span>
-													<input type="checkbox" id="autoEncryptSignMessage" data-bind="checked: autoEncryptSignMessage" />
-												</label>
-											</td>
-											<td class="value">
-												<label for="autoEncryptSignMessage" data-bind="i18n: {'key': '%MODULENAME%/INFO_AUTO_ENCRYPT_SIGN_MESSAGE'}"></label>
-											</td>
-										</tr>
 										<tr class="from" data-bind="visible: visibleFrom() && !headersCompressed()">
 											<td class="label">
 												<span data-bind="i18n: {'key': '%MODULENAME%/LABEL_FROM'}"></span>:
