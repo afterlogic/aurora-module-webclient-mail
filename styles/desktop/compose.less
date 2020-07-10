@@ -249,7 +249,8 @@
 		background: #ffffc5;
 		border-bottom: 1px solid #f5edd4;
 		color: #b5ad94;
-		padding: 8px 11px;
+		padding: 8px 25px;
+		margin: -6px -10px 0;
 	}
 
 	table.fields {
@@ -314,6 +315,7 @@
 			}
 		}
 		
+		.auto-encrypt-sign-message,
 		.from,
 		.to,
 		.cc,
@@ -344,6 +346,12 @@
 				.scroll-inner {
 					max-height: 100px;
 				}
+			}
+		}
+		
+		.auto-encrypt-sign-message {
+			.custom_checkbox {
+				vertical-align: unset;
 			}
 		}
 	}
@@ -392,6 +400,12 @@
 		
 		.attachments_container {
 			padding: 20px;
+		}
+		
+		.notice {
+			margin: -34px -9px 11px;
+			padding: 8px 11px;
+			white-space: normal;
 		}
 	}
 }

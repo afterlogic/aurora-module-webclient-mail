@@ -40,6 +40,7 @@ var
 	CMessageModel = require('modules/%ModuleName%/js/models/CMessageModel.js'),
 	CAttachmentModel = require('modules/%ModuleName%/js/models/CAttachmentModel.js'),
 	
+	CComposeViewAutoEncrypt = require('modules/%ModuleName%/js/views/CComposeViewAutoEncrypt.js'),
 	CHtmlEditorView = require('modules/%ModuleName%/js/views/CHtmlEditorView.js'),
 	
 	MainTab = App.isNewTab() && window.opener && window.opener.MainTabMailMethods,
@@ -53,6 +54,7 @@ var
 function CComposeView()
 {
 	CAbstractScreenView.call(this, '%ModuleName%');
+	CComposeViewAutoEncrypt.call(this);
 	
 	this.browserTitle = ko.computed(function () {
 		return AccountList.getEmail() + ' - ' + TextUtils.i18n('%MODULENAME%/HEADING_COMPOSE_BROWSER_TAB');
@@ -332,6 +334,18 @@ function CComposeView()
 
 		return bDisableFromEdit;
 	}, this);
+	this.messageSignedOrEncrypted = ko.computed(function () {
+		var bSignedOrEncrypted = false;
+
+		_.each(this.toolbarControllers(), function (oController) {
+			if (_.isFunction(oController.pgpEncrypted) && _.isFunction(oController.pgpSecured))
+			{
+				bSignedOrEncrypted = bSignedOrEncrypted || oController.pgpEncrypted() || oController.pgpSecured();
+			}
+		});
+
+		return bSignedOrEncrypted;
+	}, this);
 	ko.computed(function () {
 		var bDisableBodyEdit = false;
 		
@@ -415,6 +429,7 @@ function CComposeView()
 }
 
 _.extendOwn(CComposeView.prototype, CAbstractScreenView.prototype);
+_.extendOwn(CComposeView.prototype, CComposeViewAutoEncrypt.prototype);
 
 CComposeView.prototype.ViewTemplate = App.isNewTab() ? '%ModuleName%_ComposeScreenView' : '%ModuleName%_ComposeView';
 CComposeView.prototype.ViewConstructorName = 'CComposeView';
@@ -452,7 +467,7 @@ CComposeView.prototype.initInputosaurus = function (koAddrDom, koAddr, koLockAdd
 {
 	if (koAddrDom() && $(koAddrDom()).length > 0)
 	{
-		$(koAddrDom()).inputosaurus({
+		var oOptions = {
 			width: 'auto',
 			parseOnBlur: true,
 			autoCompleteSource: ModulesManager.run('ContactsWebclient', 'getSuggestionsAutocompleteCallback', ['all', '', /*bWithGroups*/true]) || function () {},
@@ -473,7 +488,8 @@ CComposeView.prototype.initInputosaurus = function (koAddrDom, koAddr, koLockAdd
 			}, this),
 			focus: _.bind(this.focusedField, this, sFocusedField),
 			mobileDevice: Browser.mobileDevice
-		});
+		};
+		$(koAddrDom()).inputosaurus(_.extendOwn(oOptions, this.getInputosaurusMethods()));
 	}
 };
 
@@ -588,6 +604,9 @@ CComposeView.prototype.reset = function ()
 	this.isDraftsCleared(false);
 	
 	this.ignoreHasUnsavedChanges(false);
+
+	this.recipientsInfo({});
+	this.autoEncryptSignMessage(false);
 };
 
 /**
@@ -1644,7 +1663,11 @@ CComposeView.prototype.executeSend = function (mParam)
 		}, this)
 	;
 
-	if (this.isEnableSending() && this.verifyDataForSending())
+	if (this.autoEncryptSignMessage())
+	{
+		this.encryptSignAndSend();
+	}
+	else if (this.isEnableSending() && this.verifyDataForSending())
 	{
 		_.each(this.toolbarControllers(), function (oController) {
 			if (_.isFunction(oController.doBeforeSend))

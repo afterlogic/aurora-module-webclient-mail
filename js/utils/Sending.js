@@ -47,9 +47,12 @@ SendingUtils.setReplyData = function (sText, sDraftUid)
  * @param {Function} fSendMessageResponseHandler
  * @param {Object} oSendMessageResponseContext
  * @param {boolean=} bPostponedSending = false
+ * @param {boolean=} bAddToSentFolder = true
  */
-SendingUtils.send = function (sMethod, oParameters, bShowLoading, fSendMessageResponseHandler, oSendMessageResponseContext, bPostponedSending)
+SendingUtils.send = function (sMethod, oParameters, bShowLoading, fSendMessageResponseHandler, oSendMessageResponseContext, bPostponedSending, bAddToSentFolder)
 {
+	bAddToSentFolder = (typeof bAddToSentFolder === 'boolean') ? bAddToSentFolder : true;
+
 	var
 		iAccountID = oParameters.AccountID,
 		oAccount = AccountList.getAccount(iAccountID),
@@ -74,20 +77,29 @@ SendingUtils.send = function (sMethod, oParameters, bShowLoading, fSendMessageRe
 	{
 		case 'SendMessage':
 			sLoadingMessage = TextUtils.i18n('COREWEBCLIENT/INFO_SENDING');
-			oParameters.SentFolder = sSentFolder;
-			if (oParameters.DraftUid !== '')
+			if (bAddToSentFolder)
 			{
-				oParameters.DraftFolder = sDraftFolder;
-				if (MainTab)
+				oParameters.SentFolder = sSentFolder;
+				if (oParameters.DraftUid !== '')
 				{
-					MainTab.removeOneMessageFromCacheForFolder(oParameters.AccountID, oParameters.DraftFolder, oParameters.DraftUid);
-					MainTab.replaceHashWithoutMessageUid(oParameters.DraftUid);
+					oParameters.DraftFolder = sDraftFolder;
+					if (MainTab)
+					{
+						MainTab.removeOneMessageFromCacheForFolder(oParameters.AccountID, oParameters.DraftFolder, oParameters.DraftUid);
+						MainTab.replaceHashWithoutMessageUid(oParameters.DraftUid);
+					}
+					else
+					{
+						MailCache.removeOneMessageFromCacheForFolder(oParameters.AccountID, oParameters.DraftFolder, oParameters.DraftUid);
+						Routing.replaceHashWithoutMessageUid(oParameters.DraftUid);
+					}
 				}
-				else
-				{
-					MailCache.removeOneMessageFromCacheForFolder(oParameters.AccountID, oParameters.DraftFolder, oParameters.DraftUid);
-					Routing.replaceHashWithoutMessageUid(oParameters.DraftUid);
-				}
+			}
+			else
+			{
+				delete oParameters.SentFolder;
+				delete oParameters.DraftUid;
+				delete oParameters.DraftFolder;
 			}
 			break;
 		case 'SaveMessage':
