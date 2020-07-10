@@ -65,6 +65,10 @@ CComposeViewAutoEncrypt.prototype.getInputosaurusMethods = function ()
 				{
 					sKeyHtml += '<span class="address_capsule_key"></span>';
 				}
+				else
+				{
+					sKeyHtml += '<span class="address_capsule_key address_capsule_key_unset"></span>';
+				}
 			}
 			return sKeyHtml;
 		}.bind(this)
