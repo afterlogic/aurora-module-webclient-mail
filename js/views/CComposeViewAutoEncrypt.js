@@ -280,7 +280,7 @@ CComposeViewAutoEncrypt.prototype.encryptSignAndSend = function ()
 		{
 			if (oRecipients.signCount > 0 || oRecipients.signEncryptCount > 0)
 			{
-				ModulesManager.run('OpenPgpWebclient', 'askPassword', [sFromEmail, function (sPassword) {
+				ModulesManager.run('OpenPgpWebclient', 'getPrivateKeyPassword', [sFromEmail, function (sPassword) {
 					this.proceedEncryptSignAndSend(oRecipients, sFromEmail, sPassword);
 				}.bind(this)]);
 			}
