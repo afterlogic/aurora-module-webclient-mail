@@ -259,7 +259,7 @@ CComposeViewAutoEncrypt.prototype.proceedEncryptSignAndSend = function (oRecipie
 	if (oRecipients.encryptCount > 0)
 	{
 		ModulesManager.run('OpenPgpWebclient', 'encryptSign', [true, false, sData, oRecipients.encrypt,
-			fOkCallback.bind(this, oRecipients.encrypt, oRecipients.signEncryptCount === 0)]);
+			fOkCallback.bind(this, oRecipients.encrypt, oRecipients.signEncryptCount === 0), sFromEmail]);
 	}
 	if (oRecipients.signEncryptCount > 0)
 	{
