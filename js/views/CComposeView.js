@@ -425,6 +425,8 @@ function CComposeView()
 	
 	this.registerOwnToolbarControllers();
 	
+	this.setAutoEncryptSubscribes();
+	
 	App.broadcastEvent('%ModuleName%::ConstructView::after', {'Name': this.ViewConstructorName, 'View': this});
 }
 
@@ -604,9 +606,6 @@ CComposeView.prototype.reset = function ()
 	this.isDraftsCleared(false);
 	
 	this.ignoreHasUnsavedChanges(false);
-
-	this.recipientsInfo({});
-	this.autoEncryptSignMessage(false);
 };
 
 /**
@@ -833,6 +832,9 @@ CComposeView.prototype.onHide = function ()
 	{
 		this.oJua.setDragAndDropEnabledStatus(false);
 	}
+
+	this.recipientsInfo({});
+	this.recipientsInfo.valueHasMutated();
 };
 
 /**

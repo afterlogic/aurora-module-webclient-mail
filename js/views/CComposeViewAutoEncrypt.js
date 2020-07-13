@@ -18,19 +18,54 @@ var
 function CComposeViewAutoEncrypt()
 {
 	this.recipientsInfo = ko.observable({});
+	this.autoEncryptSignMessage = ko.observable(false);
+}
+
+CComposeViewAutoEncrypt.prototype.setAutoEncryptSubscribes = function ()
+{
 	this.hasRecipientsWithKey = ko.computed(function () {
 		return !!_.find(this.recipientsInfo(), function (oRecipientInfo) {
-			return oRecipientInfo.hasKey && _.indexOf(this.recipientEmails(), oRecipientInfo.email) !== -1;
+			return oRecipientInfo.hasKey && (oRecipientInfo.encryptMessage || oRecipientInfo.signMessage) && _.indexOf(this.recipientEmails(), oRecipientInfo.email) !== -1;
 		}.bind(this));
-	}, this).extend({ throttle: 100 });
-	this.autoEncryptSignMessage = ko.observable(false);
+	}, this).extend({ throttle: 10 });
 	this.allowAtoEncryptSignMessage = ko.computed(function () {
 		return this.hasRecipientsWithKey() && !this.messageSignedOrEncrypted();
 	}, this);
 	this.allowAtoEncryptSignMessage.subscribe(function () {
 		this.autoEncryptSignMessage(this.allowAtoEncryptSignMessage());
 	}, this);
-}
+
+	this.recipientEmails.subscribe(function () {
+		var
+			aInfoKeys = _.keys(this.recipientsInfo()),
+			aDiff = _.difference(this.recipientEmails(), aInfoKeys)
+		;
+		if (aDiff.length > 0)
+		{
+			ModulesManager.run('ContactsWebclient', 'getContactsByEmails', [aDiff, function (oContacts) {
+				_.each(_.values(oContacts), function (oContact) {
+					this.recipientsInfo()[oContact.email()] = {
+						email: oContact.email(),
+						encryptMessage: oContact.pgpEncryptMessages(),
+						hasKey: typeof oContact.publicPgpKey() === 'string' && oContact.publicPgpKey() !== '',
+						id: oContact.uuid(),
+						label: oContact.email(),
+						name: oContact.displayName(),
+						sharedToAll: oContact.sharedToAll(),
+						signMessage: oContact.pgpSignMessages(),
+						storage: oContact.storage(),
+						team: oContact.team(),
+						value: oContact.email()
+					};
+				}.bind(this));
+				$(this.toAddrDom()).inputosaurus('refresh');
+				$(this.ccAddrDom()).inputosaurus('refresh');
+				$(this.bccAddrDom()).inputosaurus('refresh');
+				this.recipientsInfo.valueHasMutated();
+			}.bind(this)]);
+		}
+	}, this);
+};
 
 CComposeViewAutoEncrypt.prototype.getInputosaurusMethods = function ()
 {
