@@ -44,19 +44,22 @@ CComposeViewAutoEncrypt.prototype.setAutoEncryptSubscribes = function ()
 		{
 			ModulesManager.run('ContactsWebclient', 'getContactsByEmails', [aDiff, function (oContacts) {
 				_.each(_.values(oContacts), function (oContact) {
-					this.recipientsInfo()[oContact.email()] = {
-						email: oContact.email(),
-						encryptMessage: oContact.pgpEncryptMessages(),
-						hasKey: typeof oContact.publicPgpKey() === 'string' && oContact.publicPgpKey() !== '',
-						id: oContact.uuid(),
-						label: oContact.email(),
-						name: oContact.displayName(),
-						sharedToAll: oContact.sharedToAll(),
-						signMessage: oContact.pgpSignMessages(),
-						storage: oContact.storage(),
-						team: oContact.team(),
-						value: oContact.email()
-					};
+					if (oContact)
+					{
+						this.recipientsInfo()[oContact.email()] = {
+							email: oContact.email(),
+							encryptMessage: oContact.pgpEncryptMessages(),
+							hasKey: typeof oContact.publicPgpKey() === 'string' && oContact.publicPgpKey() !== '',
+							id: oContact.uuid(),
+							label: oContact.email(),
+							name: oContact.displayName(),
+							sharedToAll: oContact.sharedToAll(),
+							signMessage: oContact.pgpSignMessages(),
+							storage: oContact.storage(),
+							team: oContact.team(),
+							value: oContact.email()
+						};
+					}
 				}.bind(this));
 				$(this.toAddrDom()).inputosaurus('refresh');
 				$(this.ccAddrDom()).inputosaurus('refresh');
