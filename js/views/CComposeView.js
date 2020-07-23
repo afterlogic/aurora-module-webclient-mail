@@ -1970,7 +1970,7 @@ CComposeView.prototype.getExtInterface = function ()
 		getPlainText: _.bind(this.oHtmlEditor.getPlainText, this.oHtmlEditor),
 		koTextChange: this.oHtmlEditor.textChanged,
 		getFromEmail: _.bind(function () {
-			return this.selectedFetcherOrIdentity().email();
+			return this.selectedFetcherOrIdentity() ? this.selectedFetcherOrIdentity().email() : AccountList.getEmail();
 		}, this),
 		getRecipientEmails: _.bind(function () {
 			return this.recipientEmails();
