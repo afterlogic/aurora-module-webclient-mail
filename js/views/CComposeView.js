@@ -689,6 +689,7 @@ CComposeView.prototype.onRoute = function (aParams)
 					this.addAttachments(oData.attachments);
 				}
 				this.triggerToolbarControllersAfterPopulatingMessage(true, !oData.isHtml, sBody);
+				this.commit(true);
 			}
 
 			break;
