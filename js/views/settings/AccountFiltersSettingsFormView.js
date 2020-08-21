@@ -73,7 +73,6 @@ function CAccountFiltersSettingsFormView()
 			this.phaseArray[iIndex] += ' ' + sItem;
 		}
 	}, this);
-	console.log('this.phaseArray', this.phaseArray);
 	this.firstState = null;
 }
 
