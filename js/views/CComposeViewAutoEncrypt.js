@@ -89,23 +89,20 @@ CComposeViewAutoEncrypt.prototype.getInputosaurusMethods = function ()
 			;
 			if (bHasKey)
 			{
+				sKeyHtml += '<span class="address_capsule_key address_capsule_key_unset"></span>';
 				if (oRecipientInfo.encryptMessage)
 				{
 					sEncryptTitle = TextUtils.i18n('%MODULENAME%/HINT_MESSAGE_ENCRYPT_WITH_KEY');
 					sKeyHtml += '<span class="address_capsule_key address_capsule_key_encrypt" title="' + sEncryptTitle + '"></span>';
 				}
+				else
+				{
+					sKeyHtml += '<span class="address_capsule_key address_capsule_key_not_encrypt"></span>';
+				}
 				if (oRecipientInfo.signMessage)
 				{
 					sSignTitle = TextUtils.i18n('%MODULENAME%/HINT_MESSAGE_SIGN_WITH_KEY');
 					sKeyHtml += '<span class="address_capsule_key address_capsule_key_sign" title="' + sSignTitle + '"></span>';
-				}
-				if (!oRecipientInfo.encryptMessage && !oRecipientInfo.signMessage)
-				{
-					sKeyHtml += '<span class="address_capsule_key"></span>';
-				}
-				else
-				{
-					sKeyHtml += '<span class="address_capsule_key address_capsule_key_unset"></span>';
 				}
 			}
 			return sKeyHtml;

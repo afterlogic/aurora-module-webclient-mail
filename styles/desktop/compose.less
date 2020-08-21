@@ -283,14 +283,14 @@
 		}
 	}
 	
-	.address_capsule_key_encrypt, .address_capsule_key_sign {
+	.address_capsule_key_encrypt, .address_capsule_key_not_encrypt, .address_capsule_key_sign {
 		display: none;
 	}
 	.address_capsule_key_unset {
 		display: unset;
 	}
 	&.compose-auto-encrypt {
-		.address_capsule_key_encrypt, .address_capsule_key_sign {
+		.address_capsule_key_encrypt, .address_capsule_key_not_encrypt, .address_capsule_key_sign {
 			display: unset;
 		}
 		.address_capsule_key_unset {
