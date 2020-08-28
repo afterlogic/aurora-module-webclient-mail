@@ -561,6 +561,9 @@ CComposeView.prototype.getMessageOnRoute = function ()
  */
 CComposeView.prototype.onShow = function ()
 {
+	// onShow is called before onRoute so reset is called here before anything else
+	this.reset();
+	
 	var sFocusedField = this.focusedField();
 
 	$(this.splitterDom()).trigger('resize');
@@ -592,6 +595,7 @@ CComposeView.prototype.onShow = function ()
 CComposeView.prototype.reset = function ()
 {
 	this.plainText(false);
+	this.textBody('');
 	
 	this.bUploadStatus = false;
 	window.clearTimeout(this.iUploadAttachmentsTimer);
@@ -619,8 +623,6 @@ CComposeView.prototype.onRoute = function (aParams)
 	
 	// should be the first action to set right account id in new tab
 	AccountList.changeCurrentAccountByHash(oParams.AccountHash);
-	
-	this.reset();
 	
 	this.routeType(oParams.RouteType);
 	switch (this.routeType())
