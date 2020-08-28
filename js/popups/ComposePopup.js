@@ -169,7 +169,9 @@ CComposePopup.prototype.saveAndClose = function ()
 		this.saveCommand();
 	}
 
-	this.closePopup();
+	// closePopup method will remove the entire popup so click event for span.item.save_and_close won't be fired and tooltip won't be hidden.
+	// So we postpone it for a bit.
+	setTimeout(this.closePopup.bind(this), 0);
 };
 
 CComposePopup.prototype.cancelPopup = function ()
