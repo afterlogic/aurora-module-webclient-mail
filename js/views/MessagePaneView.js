@@ -1062,7 +1062,7 @@ CMessagePaneView.prototype.doAfterPopulatingMessage = function ()
 {
 	var
 		oMessage = this.currentMessage(),
-		bLoaded = oMessage && this.isCurrentMessageLoaded(),
+		bLoaded = oMessage && !this.isLoading(),
 		oMessageProps = bLoaded ? {
 			aToEmails: oMessage.oTo.getEmails(),
 			bPlain: oMessage.isPlain(),
