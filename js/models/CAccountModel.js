@@ -238,7 +238,7 @@ CAccountModel.prototype.onAccountDeleteResponse = function (oResponse, oRequest)
 		var ComposeUtils = require('modules/%ModuleName%/js/utils/Compose.js');
 		if (_.isFunction(ComposeUtils.closeComposePopup))
 		{
-			ComposeUtils.closeComposePopup();
+			ComposeUtils.closeComposePopup(oRequest.Parameters.AccountID);
 		}
 		
 		this.requireAccounts();

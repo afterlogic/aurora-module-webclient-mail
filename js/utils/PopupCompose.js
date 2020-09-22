@@ -78,9 +78,13 @@ PopupComposeUtils.composeMessageWithAttachments = function (aFileItems)
 	Popups.showPopup(GetComposePopup(), [aParams]);
 };
 
-PopupComposeUtils.closeComposePopup = function ()
+PopupComposeUtils.closeComposePopup = function (iAccountId)
 {
-	Popups.showPopup(GetComposePopup(), [['close']]);
+	var ComposePopup = GetComposePopup();
+	if (ComposePopup.opened() && (!iAccountId || ComposePopup.senderAccountId() === iAccountId))
+	{
+		Popups.showPopup(ComposePopup, [['close']]);
+	}
 };
 
 module.exports = PopupComposeUtils;
