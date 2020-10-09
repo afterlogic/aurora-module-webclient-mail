@@ -119,6 +119,24 @@
 			<a href="javascript:void(0);" class="item ltr" data-bind="visible: bAllowChangeInputDirection, click: setLtrDirection, customTooltip: '%MODULENAME%/ACTION_SET_LTR_DIRECTION'">
 				<span class="icon">ltr</span>
 			</a>
+			
+			<span class="separator" data-bind="visible: templates().length > 0"></span>
+			
+			<a href="javascript:void(0);" class="item template" data-bind="visible: templates().length > 0, click: toggleTemplatePopup, 
+					css: {'expand': visibleTemplatePopup}, customTooltip: '%MODULENAME%/ACTION_INSERT_TEMPLATE'">
+				<span class="icon"></span>
+				<span class="dropdown">
+					<span class="dropdown_helper">
+						<span class="dropdown_content" data-bind="customScrollbar: {x: false}">
+							<span class="scroll-inner">
+								<!-- ko foreach: templates -->
+								<div data-bind="text: subject, click: function (oViewModel, oEvent) { $parent.insertTemplate(text, oEvent); }"></div>
+								<!-- /ko -->
+							</span>
+						</span>
+					</span>
+				</span>
+			</a>
 		</div>
 	</div>
 

@@ -112,6 +112,7 @@ function CHtmlEditorView(bInsertImageAsBase64, oParent)
 	this.imageUploaderButton = ko.observable(null);
 	this.aUploadedImagesData = [];
 	this.imagePathFromWeb = ko.observable('');
+	this.visibleTemplatePopup = ko.observable(false);
 
 	this.visibleFontColorPopup = ko.observable(false);
 	this.oFontColorPickerView = new CColorPickerView(TextUtils.i18n('%MODULENAME%/LABEL_TEXT_COLOR'), this.setTextColorFromPopup, this);
@@ -123,10 +124,20 @@ function CHtmlEditorView(bInsertImageAsBase64, oParent)
 	this.bAllowChangeInputDirection = UserSettings.IsRTL || Settings.AllowChangeInputDirection;
 	this.disableEdit = ko.observable(false);
 	
-  this.textChanged = ko.observable(false);
+	this.textChanged = ko.observable(false);
 
-  this.actualTextСhanged = ko.observable(false);
-  // this.actualTextСhanged = ko.observable(false).extend({ rateLimit: 500 });
+	this.actualTextСhanged = ko.observable(false);
+	
+	this.templates = ko.observableArray([]);
+	
+	if (Settings.AllowInsertTemplateOnCompose) {
+		App.subscribeEvent('%ModuleName%::ParseMessagesBodies::after', _.bind(function (oParameters) {
+			if (oParameters.AccountID === MailCache.currentAccountId() && oParameters.Folder === MailCache.getTemplateFolder())
+			{
+				this.fillTemplates();
+			}
+		}, this));
+	}
 }
 
 CHtmlEditorView.prototype.ViewTemplate = '%ModuleName%_HtmlEditorView';
@@ -172,7 +183,8 @@ CHtmlEditorView.prototype.removePlaceholder = function ()
 
 CHtmlEditorView.prototype.hasOpenedPopup = function ()
 {
-	return this.visibleInsertLinkPopup() || this.visibleLinkPopup() || this.visibleImagePopup() || this.visibleInsertImagePopup() || this.visibleFontColorPopup();
+	return this.visibleInsertLinkPopup() || this.visibleLinkPopup() || this.visibleImagePopup() 
+			|| this.visibleInsertImagePopup() || this.visibleFontColorPopup() || this.visibleTemplatePopup();
 };
 	
 CHtmlEditorView.prototype.setDisableEdit = function (bDisableEdit)
@@ -431,6 +443,65 @@ CHtmlEditorView.prototype.init = function (sText, bPlain, sTabIndex, sPlaceholde
 	this.aUploadedImagesData = [];
 	this.selectedFont(this.sDefaultFont);
 	this.selectedSize(this.iDefaultSize);
+		
+	if (Settings.AllowInsertTemplateOnCompose) {
+		this.fillTemplates();
+	}
+};
+
+/**
+ * Fills template list if there is template folder in account.
+ * Messages of template folder are requested in Prefetcher.
+ */
+CHtmlEditorView.prototype.fillTemplates = function ()
+{
+	var
+		oFolderList = MailCache.folderList(),
+		sTemplateFolder = MailCache.getTemplateFolder(),
+		oTemplateFolder = sTemplateFolder ? oFolderList.getFolderByFullName(sTemplateFolder) : null,
+		oUidList = oTemplateFolder ? oTemplateFolder.getUidList('', '', Settings.MessagesSortBy.DefaultSortBy, Settings.MessagesSortBy.DefaultSortOrder) : null,
+		aTemplates = []
+	;
+	
+	if (oUidList)
+	{
+		var aUids = oUidList.collection();
+		if (aUids.length > Settings.MaxTemplatesCountOnCompose)
+		{
+			aUids = aUids.splice(Settings.MaxTemplatesCountOnCompose);
+		}
+		_.each(aUids, function (sUid) {
+			var oMessage = oTemplateFolder.getMessageByUid(sUid);
+			if (oMessage.text() !== '')
+			{
+				aTemplates.push({
+					subject: oMessage.subject(),
+					text: oMessage.text()
+				});
+			}
+		});
+	}
+	this.templates(aTemplates);
+};
+
+CHtmlEditorView.prototype.toggleTemplatePopup = function (oViewModel, oEvent)
+{
+	if (this.visibleTemplatePopup())
+	{
+		this.visibleTemplatePopup(false);
+	}
+	else
+	{
+		oEvent.stopPropagation();
+		this.closeAllPopups();
+		this.visibleTemplatePopup(true);
+	}
+};
+
+CHtmlEditorView.prototype.insertTemplate = function (sHtml, oEvent)
+{
+	oEvent.stopPropagation();
+	this.insertHtml(sHtml);
 };
 
 CHtmlEditorView.prototype.isInitialized = function ()
@@ -601,6 +672,7 @@ CHtmlEditorView.prototype.closeAllPopups = function (bWithoutLinkPopup)
 	this.visibleImagePopup(false);
 	this.visibleInsertImagePopup(false);
 	this.visibleFontColorPopup(false);
+	this.visibleTemplatePopup(false);
 };
 
 /**

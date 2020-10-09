@@ -737,6 +737,12 @@ CMailCache.prototype.requestMessageList = function (sFolder, iPage, sSearch, sFi
 		aUids = []
 	;
 	
+	if (sFolder === this.getTemplateFolder() && iOffset === 0 && Settings.MailsPerPage < Settings.MaxTemplatesCountOnCompose &&
+			sSearch === '' && sFilters === '' && sSortBy === Settings.MessagesSortBy.DefaultSortBy && iSortOrder === Settings.MessagesSortBy.DefaultSortOrder)
+	{
+		oParameters.Limit = Settings.MaxTemplatesCountOnCompose;
+	}
+	
 	if (oFolder.type() === Enums.FolderTypes.Inbox && sFilters === '')
 	{
 		oParameters['InboxUidnext'] = oFolder.sUidNext;

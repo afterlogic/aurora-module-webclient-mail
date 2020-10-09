@@ -237,12 +237,11 @@ Prefetcher.startThreadListPrefetch = function ()
 	return false;
 };
 
-Prefetcher.startMessagesPrefetch = function ()
+Prefetcher.startMessagesPrefetch = function (oFolder)
 {
 	var
 		iAccountId = MailCache.currentAccountId(),
-		oCurrFolder = MailCache.getCurrentFolder(),
-		sCurrFolderFullName = oCurrFolder ? oCurrFolder.fullName() : '',
+		oPrefetchFolder = oFolder ? oFolder : MailCache.getCurrentFolder(),
 		iTotalSize = 0,
 		iMaxSize = Settings.MaxMessagesBodiesSizeToPrefetch,
 		aUids = [],
@@ -254,7 +253,7 @@ Prefetcher.startMessagesPrefetch = function ()
 				bUidNotAdded = !_.find(aUids, function (sUid) {
 					return sUid === oMsg.uid();
 				}, this),
-				bHasNotBeenRequested = !oCurrFolder.hasUidBeenRequested(oMsg.uid()),
+				bHasNotBeenRequested = !oPrefetchFolder.hasUidBeenRequested(oMsg.uid()),
 				iTextSize = oMsg.textSize() < Settings.MessageBodyTruncationThreshold ? oMsg.textSize() : Settings.MessageBodyTruncationThreshold
 			;
 
@@ -266,18 +265,21 @@ Prefetcher.startMessagesPrefetch = function ()
 		}
 	;
 
-	if (oCurrFolder && oCurrFolder.selected())
+	if (oPrefetchFolder)
 	{
-		_.each(MailCache.messages(), fFillUids);
-		oCurrFolder.doForAllMessages(fFillUids);
+		if (oPrefetchFolder.selected())
+		{
+			_.each(MailCache.messages(), fFillUids);
+		}
+		oPrefetchFolder.doForAllMessages(fFillUids);
 
 		if (aUids.length > 0)
 		{
-			oCurrFolder.addRequestedUids(aUids);
+			oPrefetchFolder.addRequestedUids(aUids);
 
 			oParameters = {
 				'AccountID': iAccountId,
-				'Folder': sCurrFolderFullName,
+				'Folder': oPrefetchFolder.fullName(),
 				'Uids': aUids,
 				'MessageBodyTruncationThreshold': Settings.MessageBodyTruncationThreshold
 			};
@@ -306,6 +308,7 @@ Prefetcher.onGetMessagesBodiesResponse = function (oResponse, oRequest)
 		_.each(oResponse.Result, function (oRawMessage) {
 			oFolder.parseAndCacheMessage(oRawMessage, false, false);
 		});
+		App.broadcastEvent('%ModuleName%::ParseMessagesBodies::after', { AccountID: oParameters.AccountID, Folder: oParameters.Folder });
 	}
 };
 
@@ -325,12 +328,57 @@ Prefetcher.prefetchAccountQuota = function ()
 	return false;
 };
 
+/**
+ * Prefetches templates folder.
+ */
+Prefetcher.prefetchTemplateFolder = function ()
+{
+	var
+		oFolderList = MailCache.folderList(),
+		sTemplateFolder = MailCache.getTemplateFolder()
+	;
+
+	if (sTemplateFolder !== '')
+	{
+		return this.startFolderPrefetch(oFolderList.getFolderByFullName(sTemplateFolder));
+	}
+	
+	return false;
+};
+
+/**
+ * Prefetches template messages bodies.
+ */
+Prefetcher.prefetchTemplateMessages = function ()
+{
+	var
+		oFolderList = MailCache.folderList(),
+		sTemplateFolder = MailCache.getTemplateFolder(),
+		oTemplateFolder = sTemplateFolder ? oFolderList.getFolderByFullName(sTemplateFolder) : null
+	;
+
+	if (oTemplateFolder)
+	{
+		return this.startMessagesPrefetch(oTemplateFolder);
+	}
+};
+
 module.exports = {
 	startMin: function () {
 		var bPrefetchStarted = false;
 		
 		bPrefetchStarted = Prefetcher.prefetchFetchersIdentities();
+
+		if (!bPrefetchStarted)
+		{
+			bPrefetchStarted = Prefetcher.prefetchTemplateFolder();
+		}
 		
+		if (!bPrefetchStarted)
+		{
+			bPrefetchStarted = Prefetcher.prefetchTemplateMessages();
+		}
+	
 		if (!bPrefetchStarted)
 		{
 			bPrefetchStarted = Prefetcher.prefetchAccountFilters();
@@ -353,6 +401,16 @@ module.exports = {
 		
 		bPrefetchStarted = Prefetcher.prefetchFetchersIdentities();
 		
+		if (!bPrefetchStarted)
+		{
+			bPrefetchStarted = Prefetcher.prefetchTemplateFolder();
+		}
+		
+		if (!bPrefetchStarted)
+		{
+			bPrefetchStarted = Prefetcher.prefetchTemplateMessages();
+		}
+	
 		if (!bPrefetchStarted)
 		{
 			bPrefetchStarted = Prefetcher.prefetchAccountFilters();
