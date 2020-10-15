@@ -61,6 +61,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			'AllowHorizontalLayout' => $this->getConfig('AllowHorizontalLayout', false),
 			'HorizontalLayoutByDefault' => $this->getConfig('HorizontalLayoutByDefault', false),
 			'DisableRtlRendering' => $this->getConfig('DisableRtlRendering', false),
+			'AllowQuickSendOnCompose' => $this->getConfig('AllowQuickSendOnCompose', false),
 		);
 		
 		$oUser = \Aurora\System\Api::getAuthenticatedUser();

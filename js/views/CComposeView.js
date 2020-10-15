@@ -393,7 +393,6 @@ function CComposeView()
 	this.sPopupButtonsViewTemplate = !App.isNewTab() ? '%ModuleName%_Compose_PopupButtonsView' : '';
 
 	this.aHotkeys = [
-		{ value: 'Ctrl+Enter', action: TextUtils.i18n('%MODULENAME%/LABEL_SEND_HOTKEY'), visible: ko.observable(true) },
 		{ value: 'Ctrl+S', action: TextUtils.i18n('%MODULENAME%/LABEL_SAVE_HOTKEY'), visible: this.draftFolderIsAvailable },
 		{ value: 'Ctrl+Z', action: TextUtils.i18n('%MODULENAME%/LABEL_UNDO_HOTKEY'), visible: ko.observable(true) },
 		{ value: 'Ctrl+Y', action: TextUtils.i18n('%MODULENAME%/LABEL_REDO_HOTKEY'), visible: ko.observable(true) },
@@ -402,6 +401,11 @@ function CComposeView()
 		{ value: 'Ctrl+I', action: TextUtils.i18n('%MODULENAME%/LABEL_ITALIC_HOTKEY'), visible: ko.observable(true) },
 		{ value: 'Ctrl+U', action: TextUtils.i18n('%MODULENAME%/LABEL_UNDERLINE_HOTKEY'), visible: ko.observable(true) }
 	];
+	
+	if (Settings.AllowQuickSendOnCompose)
+	{
+		this.aHotkeys.unshift({ value: 'Ctrl+Enter', action: TextUtils.i18n('%MODULENAME%/LABEL_SEND_HOTKEY'), visible: ko.observable(true) });
+	}
 
 	this.bAllowFiles = !!SelectFilesPopup;
 
@@ -537,7 +541,7 @@ CComposeView.prototype.hotKeysBind = function ()
 					this.saveCommand();
 				}
 			}
-			else if (bComputed && nKey === Enums.Key.Enter && this.toAddr() !== '')
+			else if (Settings.AllowQuickSendOnCompose && bComputed && nKey === Enums.Key.Enter && this.toAddr() !== '')
 			{
 				this.sendCommand();
 			}

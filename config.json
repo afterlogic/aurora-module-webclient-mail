@@ -82,5 +82,9 @@
 	"DisableRtlRendering": [
 		false,
 		"bool"
+	],
+	"AllowQuickSendOnCompose": [
+		false,
+		"bool"
 	]
 }
