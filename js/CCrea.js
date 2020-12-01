@@ -1834,8 +1834,17 @@ CCrea.prototype.checkAnchorNode = function ()
         if (oSel.anchorNode && (oSel.anchorNode.parentElement || oSel.anchorNode.parentNode))
         {
             oCurrLink = oSel.anchorNode.parentElement || oSel.anchorNode.parentNode;
+			
+			if (oCurrLink.parentNode.tagName === 'A')
+			{
+				oCurrLink = oCurrLink.parentNode;
+			}
+			else if (oCurrLink.parentElement.tagName === 'A')
+			{
+				oCurrLink = oCurrLink.parentNode;
+			}
 
-            if (oCurrLink.tagName === 'A' || oCurrLink.parentNode.tagName === 'A' || oCurrLink.parentElement.tagName === 'A')
+            if (oCurrLink.tagName === 'A')
             {
                 if (!this.bInUrl || oCurrLink !== this.oCurrLink)
                 {
