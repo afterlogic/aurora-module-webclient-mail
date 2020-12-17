@@ -995,6 +995,7 @@ CMessagePaneView.prototype.hotKeysBind = function ()
 		}
 		else if (bComputed && ev.keyCode === Enums.Key.r)
 		{
+			ev.preventDefault();
 			this.executeReply();
 		}
 	}, this));
