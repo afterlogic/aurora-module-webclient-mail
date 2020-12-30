@@ -13,6 +13,17 @@
 	<div class="panel_center" data-bind="customScrollbar: {x: false}">
 		<div class="scroll-inner">
 			<div class="items_list collapsible">
+				<div class="folders" style="margin-bottom: 20px;">
+					<div class="item folder-level1 INBOX canSelect exists subscribed system"
+						 data-bind="css: { 'selected': folderFullName() === '__unified__inbox__' }">
+						<a class="title" data-bind="attr: {'href': allInboxesHash}">
+							<span class="name">
+								<span class="icon type1 INBOX"></span>
+								<span class="text animGoal">All Inboxes</span>
+							</span>
+						</a>
+					</div>
+				</div>
 				<div class="folders">
 				<!-- ko template: {name: '%ModuleName%_FolderView', foreach: folderList().collection} --><!-- /ko -->
 				</div>

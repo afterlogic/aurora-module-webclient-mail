@@ -124,19 +124,19 @@ function CMessagePaneView()
 	}, this);
 	
 	this.isCurrentNotDraftOrSent = ko.computed(function () {
-		var oCurrFolder = MailCache.folderList().currentFolder();
+		var oCurrFolder = MailCache.getCurrentFolder();
 		return (oCurrFolder && oCurrFolder.fullName().length > 0 &&
 			oCurrFolder.type() !== Enums.FolderTypes.Drafts &&
 			oCurrFolder.type() !== Enums.FolderTypes.Sent);
 	}, this);
 
 	this.isCurrentSentFolder = ko.computed(function () {
-		var oCurrFolder = MailCache.folderList().currentFolder();
+		var oCurrFolder = MailCache.getCurrentFolder();
 		return !!oCurrFolder && oCurrFolder.fullName().length > 0 && oCurrFolder.type() === Enums.FolderTypes.Sent;
 	}, this);
 
 	this.isCurrentNotDraftFolder = ko.computed(function () {
-		var oCurrFolder = MailCache.folderList().currentFolder();
+		var oCurrFolder = MailCache.getCurrentFolder();
 		return !!oCurrFolder && oCurrFolder.fullName().length > 0 && oCurrFolder.type() !== Enums.FolderTypes.Drafts;
 	}, this);
 
@@ -760,7 +760,7 @@ CMessagePaneView.prototype.executePrevMessage = function ()
 {
 	if (this.isEnablePrevMessage())
 	{
-		Routing.setHash(LinksUtils.getViewMessage(MailCache.folderList().currentFolderFullName(), this.prevMessageUid()));
+		Routing.setHash(LinksUtils.getViewMessage(MailCache.getCurrentFolderFullname(), this.prevMessageUid()));
 	}
 };
 
@@ -768,7 +768,7 @@ CMessagePaneView.prototype.executeNextMessage = function ()
 {
 	if (this.isEnableNextMessage())
 	{
-		Routing.setHash(LinksUtils.getViewMessage(MailCache.folderList().currentFolderFullName(), this.nextMessageUid()));
+		Routing.setHash(LinksUtils.getViewMessage(MailCache.getCurrentFolderFullname(), this.nextMessageUid()));
 	}
 };
 

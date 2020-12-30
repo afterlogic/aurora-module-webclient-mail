@@ -165,17 +165,24 @@ CFolderListModel.prototype.setCurrentFolder = function (sFolderFullName, sFilter
 			}
 		}
 		
-		this.currentFolder(oFolder);
-		if (sFilters === Enums.FolderFilter.Flagged)
+		if (sFolderFullName === '__unified__inbox__')
 		{
-			if (this.oStarredFolder)
-			{
-				this.oStarredFolder.selected(true);
-			}
+			this.currentFolder(null);
 		}
 		else
 		{
-			this.currentFolder().selected(true);
+			this.currentFolder(oFolder);
+			if (sFilters === Enums.FolderFilter.Flagged)
+			{
+				if (this.oStarredFolder)
+				{
+					this.oStarredFolder.selected(true);
+				}
+			}
+			else
+			{
+				this.currentFolder().selected(true);
+			}
 		}
 	}
 };

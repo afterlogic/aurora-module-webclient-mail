@@ -46,6 +46,7 @@ function CMailView()
 	this.openMessageInNewWindowBound = _.bind(this.openMessageInNewWindow, this);
 	
 	this.oFolderList = new CFolderListView();
+	this.isUnifiedFolderCurrent = MailCache.isUnifiedFolderCurrent;
 	this.oMessageList = new CMessageListView(this.openMessageInNewWindowBound);
 	
 	this.oBaseMessagePaneView = MessagePaneView;
@@ -106,20 +107,20 @@ function CMailView()
 	this.notSpamCommand = Utils.createCommand(this.oMessageList, this.oMessageList.executeNotSpam, this.isEnableGroupOperations);
 
 	this.isVisibleReplyTool = ko.computed(function () {
-		return (this.folderList().currentFolder() &&
-			this.folderList().currentFolderFullName().length > 0 &&
-			this.folderList().currentFolderType() !== Enums.FolderTypes.Drafts &&
-			this.folderList().currentFolderType() !== Enums.FolderTypes.Sent);
+		return (MailCache.getCurrentFolder() &&
+			MailCache.getCurrentFolderFullname().length > 0 &&
+			MailCache.getCurrentFolderType() !== Enums.FolderTypes.Drafts &&
+			MailCache.getCurrentFolderType() !== Enums.FolderTypes.Sent);
 	}, this);
 
 	this.isVisibleForwardTool = ko.computed(function () {
-		return (this.folderList().currentFolder() &&
-			this.folderList().currentFolderFullName().length > 0 &&
-			this.folderList().currentFolderType() !== Enums.FolderTypes.Drafts);
+		return (MailCache.getCurrentFolder() &&
+			MailCache.getCurrentFolderFullname().length > 0 &&
+			MailCache.getCurrentFolderType() !== Enums.FolderTypes.Drafts);
 	}, this);
 
 	this.isSpamFolder = ko.computed(function () {
-		return this.folderList().currentFolderType() === Enums.FolderTypes.Spam;
+		return MailCache.getCurrentFolderType() === Enums.FolderTypes.Spam;
 	}, this);
 	
 	this.customModulesDisabledSpam = ko.observableArray([]);
@@ -132,7 +133,7 @@ function CMailView()
 	}, this);
 	
 	this.isTrashFolder = ko.computed(function () {
-		return this.folderList().currentFolderType() === Enums.FolderTypes.Trash;
+		return MailCache.getCurrentFolderType() === Enums.FolderTypes.Trash;
 	}, this);
 
 	this.jqPanelHelper = null;
@@ -391,25 +392,20 @@ CMailView.prototype.bindMessagePane = function ()
 
 CMailView.prototype.onBind = function ()
 {
-	var
-		koFolderList = this.folderList,
-		oMessageList = this.oMessageList
-	;
-
 	this.oMessageList.onBind(this.$viewDom);
 	this.bindMessagePane();
 
 	$(this.domFoldersMoveTo()).on('click', 'span.folder', function (oEvent) {
 		var sClickedFolder = $(this).data('folder');
-		if (koFolderList().currentFolderFullName() !== sClickedFolder)
+		if (MailCache.getCurrentFolderFullname() !== sClickedFolder)
 		{
 			if (oEvent.ctrlKey)
 			{
-				oMessageList.executeCopyToFolder(sClickedFolder);
+				this.oMessageList.executeCopyToFolder(sClickedFolder);
 			}
 			else
 			{
-				oMessageList.executeMoveToFolder(sClickedFolder);
+				this.oMessageList.executeMoveToFolder(sClickedFolder);
 			}
 		}
 	});
@@ -472,7 +468,7 @@ CMailView.prototype.dragAndDropHelper = function (oMessage, bCtrl)
 		iCount = aUids.length
 	;
 		
-	oHelper.data('p7-message-list-folder', this.folderList().currentFolderFullName());
+	oHelper.data('p7-message-list-folder', MailCache.getCurrentFolderFullname());
 	oHelper.data('p7-message-list-uids', aUids);
 
 	$('.count-text', oHelper).text(TextUtils.i18n('%MODULENAME%/LABEL_DRAG_MESSAGES_PLURAL', {

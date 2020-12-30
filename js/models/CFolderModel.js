@@ -418,7 +418,7 @@ CFolderModel.prototype.parseAndCacheMessage = function (oRawMessage, bThreadPart
 		MailCache.increaseStarredCount();
 	}
 	
-	MessagesDictionary.set([this.iAccountId, this.fullName(), sUid], oMessage);
+	MessagesDictionary.set([oMessage.accountId(), oMessage.folder(), sUid], oMessage);
 	if (bNewMessage)
 	{
 		this.aRequestedUids = _.without(this.aRequestedUids, sUid);

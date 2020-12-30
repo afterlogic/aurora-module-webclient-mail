@@ -13,6 +13,8 @@ var
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
 	CreateFolderPopup = require('modules/%ModuleName%/js/popups/CreateFolderPopup.js'),
 	
+	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
+	
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	MailCache = require('modules/%ModuleName%/js/Cache.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js')
@@ -24,6 +26,14 @@ var
 function CFolderListView()
 {
 	this.folderList = MailCache.folderList;
+	
+	this.folderFullName = ko.computed(function () {
+		var oFolder = MailCache.getCurrentFolder();
+		return oFolder ? oFolder.fullName() : '';
+	}, this);
+	this.allInboxesHash = ko.computed(function () {
+		return Routing.buildHashFromArray(LinksUtils.getMailbox('__unified__inbox__'));
+	}, this);
 	
 	this.manageFoldersHash = ko.computed(function () {
 		if (ModulesManager.isModuleEnabled('SettingsWebclient'))

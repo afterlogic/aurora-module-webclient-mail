@@ -135,7 +135,7 @@ Prefetcher.prefetchPrevPage = function (sCurrentUid)
 Prefetcher.startPagePrefetch = function (iPage)
 {
 	var
-		oCurrFolder = MailCache.folderList().currentFolder(),
+		oCurrFolder = MailCache.getCurrentFolder(),
 		oUidList = MailCache.uidList(),
 		iOffset = (iPage - 1) * Settings.MailsPerPage,
 		bPageExists = iPage > 0 && iOffset < oUidList.resultCount(),

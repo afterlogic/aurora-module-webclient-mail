@@ -31,8 +31,20 @@ var
 function CMessageModel()
 {
 	this.accountId = ko.observable(AccountList.currentId());
+	this.accountEmail = ko.computed(function () {
+		var oAccount = AccountList.getAccount(this.accountId());
+		return oAccount ? oAccount.email() : '';
+	}, this);
+	this.accountColor = ko.computed(function () {
+		if (this.accountEmail() === 'nadine@afterlogic.com')
+		{
+			return 'cadetblue';
+		}
+		return '#d29d8c';
+	}, this);
 	this.folder = ko.observable('');
 	this.uid = ko.observable('');
+	this.unifiedUid = ko.observable('');
 	this.sUniq = '';
 	
 	this.subject = ko.observable('');
@@ -154,7 +166,7 @@ function CMessageModel()
 		if (!this.threadOpened() && MailCache.useThreadingInCurrentList())
 		{
 			var
-				oFolder = MailCache.folderList().getFolderByFullName(this.folder())
+				oFolder = MailCache.getFolderByFullName(this.accountId(), this.folder())
 			;
 			_.each(this.threadUids(), function (sUid) {
 				var oMessage = MessagesDictionary.get([oFolder.iAccountId, oFolder.fullName(), sUid]);
@@ -271,33 +283,30 @@ CMessageModel.prototype.viewMessage = function (oWin)
 CMessageModel.prototype.fillFromOrToText = function ()
 {
 	this.requireMailCache();
-	var
-		oFolder = MailCache.getFolderByFullName(this.accountId(), this.folder()),
-		oAccount = AccountList.getAccount(this.accountId())
-	;
+	var oFolder = MailCache.getFolderByFullName(this.accountId(), this.folder());
 	
-	if (oFolder.type() === Enums.FolderTypes.Drafts || oFolder.type() === Enums.FolderTypes.Sent)
+	if (oFolder && (oFolder.type() === Enums.FolderTypes.Drafts || oFolder.type() === Enums.FolderTypes.Sent))
 	{
 		var
-			sToDisplay = this.oTo.getDisplay(TextUtils.i18n('%MODULENAME%/LABEL_ME_RECIPIENT'), oAccount.email()),
-			sCcDisplay = this.oCc.getDisplay(TextUtils.i18n('%MODULENAME%/LABEL_ME_RECIPIENT'), oAccount.email()),
-			sBccDisplay = this.oBcc.getDisplay(TextUtils.i18n('%MODULENAME%/LABEL_ME_RECIPIENT'), oAccount.email()),
+			sToDisplay = this.oTo.getDisplay(TextUtils.i18n('%MODULENAME%/LABEL_ME_RECIPIENT'), this.accountEmail()),
+			sCcDisplay = this.oCc.getDisplay(TextUtils.i18n('%MODULENAME%/LABEL_ME_RECIPIENT'), this.accountEmail()),
+			sBccDisplay = this.oBcc.getDisplay(TextUtils.i18n('%MODULENAME%/LABEL_ME_RECIPIENT'), this.accountEmail()),
 			aDisplay = []
 		;
 		if (Types.isNonEmptyString(sToDisplay)) {
-			aDisplay.push(sToDisplay)
+			aDisplay.push(sToDisplay);
 		}
 		if (Types.isNonEmptyString(sCcDisplay)) {
-			aDisplay.push(sCcDisplay)
+			aDisplay.push(sCcDisplay);
 		}
 		if (Types.isNonEmptyString(sBccDisplay)) {
-			aDisplay.push(sBccDisplay)
+			aDisplay.push(sBccDisplay);
 		}
 		this.fromOrToText(aDisplay);
 	}
 	else
 	{
-		this.fromOrToText(this.oFrom.getDisplay(TextUtils.i18n('%MODULENAME%/LABEL_ME_SENDER'), oAccount.email()));
+		this.fromOrToText(this.oFrom.getDisplay(TextUtils.i18n('%MODULENAME%/LABEL_ME_SENDER'), this.accountEmail()));
 	}
 };
 
@@ -403,6 +412,12 @@ CMessageModel.prototype.parse = function (oData, iAccountId, bThreadPart, bTrust
 		this.accountId(iAccountId);
 		this.folder(oData.Folder);
 		this.uid(Types.pString(oData.Uid));
+		this.unifiedUid(Types.pString(oData.UnifiedUid));
+		if (Types.isNonEmptyString(oData.UnifiedUid))
+		{
+			var aParts = oData.UnifiedUid.split(':');
+			this.accountId(Types.pInt(aParts[0]));
+		}
 		this.sUniq = this.accountId() + this.folder() + this.uid();
 		
 		this.subject(Types.pString(oData.Subject));
@@ -734,6 +749,7 @@ CMessageModel.prototype.toJSON = function ()
 {
 	return {
 		uid: this.uid(),
+		unifiedUid: this.unifiedUid(),
 		accountId: this.accountId(),
 		to: this.to(),
 		subject: this.subject(),
