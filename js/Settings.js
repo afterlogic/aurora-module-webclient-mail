@@ -38,6 +38,8 @@ module.exports = {
 	AutocreateMailAccountOnNewUserFirstLogin: false,
 	IgnoreImapSubscription: false,
 	ImageUploadSizeLimit: 0,
+	AllowUnifiedInbox: true,
+	unifiedInboxReady: ko.observable(false),
 	
 	// from MailWebclient module
 	AllowAppRegisterMailto: false,

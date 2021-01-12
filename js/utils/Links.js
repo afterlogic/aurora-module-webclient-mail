@@ -5,6 +5,9 @@ var
 	
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	
+	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
+	
+	MailCache = null,
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	
 	LinksUtils = {}
@@ -111,18 +114,31 @@ LinksUtils.getMailbox = function (sFolder, iPage, sUid, sSearch, sFilters, sSort
 };
 
 /**
+ * Requires MailCache. It cannot be required earlier because it is not initialized yet.
+ */
+LinksUtils.requireMailCache = function ()
+{
+	if (MailCache === null)
+	{
+		MailCache = require('modules/%ModuleName%/js/Cache.js');
+	}
+};
+
+/**
  * @param {Array} aParamsToParse
- * @param {string} sInboxFullName
  * 
  * @return {Object}
  */
-LinksUtils.parseMailbox = function (aParamsToParse, sInboxFullName)
+LinksUtils.parseMailbox = function (aParamsToParse)
 {
+	this.requireMailCache();
+	
 	var
 		bMailtoCompose = aParamsToParse.length > 0 && aParamsToParse[0] === 'compose' && aParamsToParse[1] === 'to',
 		aParams = bMailtoCompose ? [] : aParamsToParse,
 		sAccountHash = '',
-		sFolder = 'INBOX',
+		sFolder = '',
+		sInboxFullName = MailCache.folderList().inboxFolderFullName() || 'INBOX',
 		iPage = 1,
 		sUid = '',
 		sSearch = '',
@@ -143,6 +159,11 @@ LinksUtils.parseMailbox = function (aParamsToParse, sInboxFullName)
 	if (Types.isNonEmptyArray(aParams))
 	{
 		sFolder = Types.pString(aParams[iIndex]);
+		if (sFolder === MailCache.oUnifiedFolder.fullName() && !Settings.unifiedInboxReady())
+		{
+			sFolder = '';
+			Routing.replaceHashDirectly(LinksUtils.getMailbox()); // unified inbox should be available to select when it's ready
+		}
 		iIndex++;
 
 		if (aParams.length > iIndex)

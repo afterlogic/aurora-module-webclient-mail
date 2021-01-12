@@ -9,6 +9,7 @@ var
 	
 	Storage = require('%PathToCoreWebclientModule%/js/Storage.js'),
 	
+	MailCache = null,
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	CFolderModel = require('modules/%ModuleName%/js/models/CFolderModel.js')
 ;
@@ -92,6 +93,17 @@ function CFolderListModel()
 	this.sDelimiter = '';
 }
 
+/**
+ * Requires MailCache. It cannot be required earlier because it is not initialized yet.
+ */
+CFolderListModel.prototype.requireMailCache = function ()
+{
+	if (MailCache === null)
+	{
+		MailCache = require('modules/%ModuleName%/js/Cache.js');
+	}
+};
+
 CFolderListModel.prototype.getFoldersCount = function ()
 {
 	return this.aLinedCollection.length;
@@ -145,6 +157,8 @@ CFolderListModel.prototype.getNamesOfFoldersToRefresh = function ()
  */
 CFolderListModel.prototype.setCurrentFolder = function (sFolderFullName, sFilters)
 {
+	this.requireMailCache();
+	
 	var
 		oFolder = this.getFolderByFullName(sFolderFullName)
 	;
@@ -165,7 +179,7 @@ CFolderListModel.prototype.setCurrentFolder = function (sFolderFullName, sFilter
 			}
 		}
 		
-		if (sFolderFullName === '__unified__inbox__')
+		if (sFolderFullName === MailCache.oUnifiedFolder.fullName())
 		{
 			this.currentFolder(null);
 		}

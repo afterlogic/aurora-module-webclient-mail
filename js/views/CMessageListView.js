@@ -485,10 +485,8 @@ CMessageListView.prototype.onHide = function (aParams)
 CMessageListView.prototype.onRoute = function (aParams)
 {
 	var
-		oInbox = this.folderList().inboxFolder(),
-		sInboxFullName = oInbox ? oInbox.fullName() : '',
-		oParams = LinksUtils.parseMailbox(aParams, sInboxFullName),
-		sCurrentFolder = this.folderFullName() === '' ? sInboxFullName : this.folderFullName(),
+		oParams = LinksUtils.parseMailbox(aParams),
+		sCurrentFolder = this.folderFullName() || this.folderList().inboxFolderFullName(),
 		bRouteChanged = this.currentPage() !== oParams.Page ||
 			sCurrentFolder !== oParams.Folder ||
 			this.filters() !== oParams.Filters || (oParams.Filters === Enums.FolderFilter.Unseen && MailCache.waitForUnseenMessages()) ||

@@ -6,6 +6,7 @@ var
 	
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	
+	MailCache = null,
 	MessagesDictionary = require('modules/%ModuleName%/js/MessagesDictionary.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js')
 ;
@@ -30,6 +31,17 @@ function CUidListModel()
 	this.collection = ko.observableArray([]);
 	this.threadUids = {};
 }
+
+/**
+ * Requires MailCache. It cannot be required earlier because it is not initialized yet.
+ */
+CUidListModel.prototype.requireMailCache = function ()
+{
+	if (MailCache === null)
+	{
+		MailCache = require('modules/%ModuleName%/js/Cache.js');
+	}
+};
 
 /**
  * @param {string} sUid
@@ -66,6 +78,8 @@ CUidListModel.prototype.setUidsAndCount = function (iOffset, oResult)
  */
 CUidListModel.prototype.getUidsForOffset = function (iOffset)
 {
+	this.requireMailCache();
+	
 	var
 		iIndex = 0,
 		iLen = this.collection().length,
@@ -83,7 +97,7 @@ CUidListModel.prototype.getUidsForOffset = function (iOffset)
 		{
 			sUid = this.collection()[iIndex];
 			var sUidForDict = sUid;
-			if (this.sFullName === '__unified__inbox__')
+			if (this.sFullName === MailCache.oUnifiedFolder.fullName())
 			{
 				var aParts = sUid.split(':');
 				iAccountId = Types.pInt(aParts[0]);

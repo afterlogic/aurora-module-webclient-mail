@@ -16,6 +16,26 @@ var
 	bFetchersIdentitiesPrefetched = false
 ;
 
+Prefetcher.prefetchFolderLists = function ()
+{
+	if (Settings.AllowUnifiedInbox && !Settings.unifiedInboxReady())
+	{
+		var oAccount = _.find(AccountList.collection(), function (oAcct) {
+			return !MailCache.oFolderListItems[oAcct.id()];
+		}, this);
+		if (oAccount)
+		{
+			MailCache.getFolderList(oAccount.id());
+			return true;
+		}
+		else
+		{
+			Settings.unifiedInboxReady(true);
+		}
+	}
+	return false;
+};
+
 Prefetcher.prefetchFetchersIdentities = function ()
 {
 	if (!App.isNewTab() && !bFetchersIdentitiesPrefetched && (Settings.AllowFetchers || Settings.AllowIdentities))
@@ -368,6 +388,11 @@ module.exports = {
 		var bPrefetchStarted = false;
 		
 		bPrefetchStarted = Prefetcher.prefetchFetchersIdentities();
+		
+		if (!bPrefetchStarted)
+		{
+			bPrefetchStarted = Prefetcher.prefetchFolderLists();
+		}
 
 		if (!bPrefetchStarted)
 		{
@@ -401,6 +426,11 @@ module.exports = {
 		
 		bPrefetchStarted = Prefetcher.prefetchFetchersIdentities();
 		
+		if (!bPrefetchStarted)
+		{
+			bPrefetchStarted = Prefetcher.prefetchFolderLists();
+		}
+
 		if (!bPrefetchStarted)
 		{
 			bPrefetchStarted = Prefetcher.prefetchTemplateFolder();
