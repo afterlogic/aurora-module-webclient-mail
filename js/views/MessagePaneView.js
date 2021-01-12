@@ -144,8 +144,9 @@ function CMessagePaneView()
 	this.isVisibleResendTool = this.isCurrentSentFolder;
 	this.isVisibleForwardTool = this.isCurrentNotDraftFolder;
 
-	this.uid = ko.observable('');
+	this.accountId = ko.observable(0);
 	this.folder = ko.observable('');
+	this.uid = ko.observable('');
 	this.folder.subscribe(function () {
 		if (this.jqPanelHelper)
 		{
@@ -392,9 +393,9 @@ CMessagePaneView.prototype.onFolderListSubscribe = function ()
 
 CMessagePaneView.prototype.onMessagesSubscribe = function ()
 {
-	if (!this.currentMessage() && this.uid().length > 0)
+	if (!this.currentMessage() && this.uid() && this.uid().length > 0)
 	{
-		MailCache.setCurrentMessage(this.uid(), this.folder());
+		MailCache.setCurrentMessage(this.accountId(), this.folder(), this.uid());
 	}
 };
 
@@ -678,18 +679,33 @@ CMessagePaneView.prototype.doHidingBlockquotes = function (aCollapsedStatuses)
  */
 CMessagePaneView.prototype.onRoute = function (aParams)
 {
-	var oParams = LinksUtils.parseMailbox(aParams);
+	var
+		oParams = LinksUtils.parseMailbox(aParams),
+		iMessageAccountId = 0,
+		sFolder = oParams.Folder,
+		sUid = oParams.Uid
+	;
 	
 	AccountList.changeCurrentAccountByHash(oParams.AccountHash);
+	iMessageAccountId = MailCache.currentAccountId();
 	
-	if (this.replyText() !== '' && this.uid() !== oParams.Uid)
+	if (sFolder === '__unified__inbox__' && Types.isNonEmptyString(sUid))
+	{
+		var aParts = sUid.split(':');
+		iMessageAccountId = Types.pInt(aParts[0]);
+		sFolder = 'INBOX';
+		sUid = Types.pString(aParts[1]);
+	}
+	
+	if (this.replyText() !== '' && this.uid() !== sUid)
 	{
 		this.saveReplyMessage(false);
 	}
 
-	this.uid(oParams.Uid);
-	this.folder(oParams.Folder);
-	MailCache.setCurrentMessage(this.uid(), this.folder());
+	this.accountId(iMessageAccountId);
+	this.uid(sUid);
+	this.folder(sFolder);
+	MailCache.setCurrentMessage(this.accountId(), this.folder(), this.uid());
 	
 	this.contentHasFocus(true);
 };

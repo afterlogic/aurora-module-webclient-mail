@@ -708,7 +708,7 @@ CMessageListView.prototype.routeForMessage = function (oMessage)
 			oFolder = MailCache.getCurrentFolder(),
 			sFolder = MailCache.getCurrentFolderFullname(),
 			iPage = this.oPageSwitcher.currentPage(),
-			sUid = oMessage.uid(),
+			sUid = oMessage.unifiedUid() || oMessage.uid(),
 			sSearch = this.search()
 		;
 		

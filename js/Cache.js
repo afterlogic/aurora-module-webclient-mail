@@ -827,7 +827,7 @@ CMailCache.prototype.requestMessageList = function (sFolder, iPage, sSearch, sFi
 	{
 		if (oParameters.Folder === '__unified__inbox__')
 		{
-//			oParameters.Folder = 'INBOX';
+			delete oParameters.Folder;
 			Ajax.send('GetUnifiedMailboxMessages', oParameters, fCallBack, this);
 		}
 		else
@@ -1149,23 +1149,29 @@ CMailCache.prototype.setCurrentFolder = function (sFolder, sFilters)
 };
 
 /**
- * @param {string|null} sUid
+ * @param {number} iAccountId
  * @param {string} sFolder
+ * @param {string|null} sUid
  */
-CMailCache.prototype.setCurrentMessage = function (sUid, sFolder)
+CMailCache.prototype.setCurrentMessage = function (iAccountId, sFolder, sUid)
 {
 	var
 		oCurrFolder = this.getCurrentFolder(),
 		oMessage = null
 	;
 	
-	if (App.isNewTab() && (!oCurrFolder || oCurrFolder.fullName() !== sFolder))
+	if (App.isNewTab() && (!oCurrFolder || (oCurrFolder.fullName() !== sFolder && oCurrFolder.fullName() !== '__unified__inbox__')))
 	{
 		this.setCurrentFolder(sFolder, '');
 		oCurrFolder = this.getCurrentFolder();
 	}
 	
-	if (oCurrFolder && sUid)
+	if (oCurrFolder && oCurrFolder.fullName() === '__unified__inbox__')
+	{
+		oCurrFolder = this.getFolderByFullName(iAccountId, sFolder);
+	}
+	
+	if (oCurrFolder && sUid && oCurrFolder.fullName() === sFolder)
 	{
 		oMessage = MessagesDictionary.get([oCurrFolder.iAccountId, oCurrFolder.fullName(), sUid]);
 	}
@@ -1570,6 +1576,11 @@ CMailCache.prototype.onGetMessagesResponse = function (oResponse, oRequest)
  */
 CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 {
+	if (oRequest.Parameters && !Types.isNonEmptyString(oRequest.Parameters.Folder))
+	{
+		oRequest.Parameters.Folder = '__unified__inbox__';
+	}
+	
 	var
 		oResult = oResponse.Result,
 		oParameters = oRequest.Parameters,

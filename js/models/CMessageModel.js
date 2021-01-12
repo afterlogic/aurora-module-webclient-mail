@@ -412,7 +412,10 @@ CMessageModel.prototype.parse = function (oData, iAccountId, bThreadPart, bTrust
 		this.accountId(iAccountId);
 		this.folder(oData.Folder);
 		this.uid(Types.pString(oData.Uid));
-		this.unifiedUid(Types.pString(oData.UnifiedUid));
+		if (Types.isNonEmptyString(oData.UnifiedUid))
+		{
+			this.unifiedUid(oData.UnifiedUid);
+		}
 		if (Types.isNonEmptyString(oData.UnifiedUid))
 		{
 			var aParts = oData.UnifiedUid.split(':');

@@ -446,6 +446,11 @@ CMailView.prototype.hotKeysBind = function ()
 	},this));
 };
 
+/**
+ * Method is used from Notes module
+ * @param {string} sFolderName
+ * @param {number} iUid
+ */
 CMailView.prototype.routeMessageView = function (sFolderName, iUid)
 {
 	Routing.setHash(LinksUtils.getMailbox(sFolderName, this.oMessageList.oPageSwitcher.currentPage(), iUid));
