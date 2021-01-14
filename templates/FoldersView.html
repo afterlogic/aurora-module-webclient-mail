@@ -17,6 +17,8 @@
 					<div class="item folder-level1 INBOX system"
 						 data-bind="css: { 'selected': folderFullName() === oUnifiedFolder.fullName(), 'canSelect exists subscribed': unifiedInboxReady }">
 						<a class="title" data-bind="attr: {'href': allInboxesHash}, visible: unifiedInboxReady">
+							<span class="count unseen" data-bind="visible: oUnifiedFolder.showUnseenMessagesCount(),
+									text: oUnifiedFolder.unseenMessagesCountToShow()"></span>
 							<span class="name">
 								<span class="icon type1 INBOX"></span>
 								<span class="text animGoal" data-bind="text: oUnifiedFolder.name()"></span>

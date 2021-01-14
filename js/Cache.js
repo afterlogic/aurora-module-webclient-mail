@@ -563,7 +563,7 @@ CMailCache.prototype.setMessagesFromUidList = function (oUidList, iOffset, bFill
 		}
 
 		if (this.currentMessage() && (this.currentMessage().deleted() ||
-			this.currentMessage().folder() !== this.getCurrentFolderFullname()))
+			this.currentMessage().folder() !== this.getCurrentFolderFullname() && !this.isUnifiedFolderCurrent()))
 		{
 			this.currentMessage(null);
 		}
@@ -1181,7 +1181,7 @@ CMailCache.prototype.setCurrentMessage = function (iAccountId, sFolder, sUid)
 		this.currentMessage(oMessage);
 		if (!this.currentMessage().seen())
 		{
-			this.executeGroupOperation('SetMessagesSeen', [this.currentMessage().uid()], 'seen', true);
+			this.executeGroupOperation('SetMessagesSeen', [this.currentMessage().unifiedUid() || this.currentMessage().uid()], 'seen', true);
 		}
 		oCurrFolder.getCompletelyFilledMessage(sUid, this.onCurrentMessageResponse, this);
 	}
@@ -1245,69 +1245,114 @@ CMailCache.prototype.getMessage = function (sFullName, sUid, fResponseHandler, o
  */
 CMailCache.prototype.executeGroupOperation = function (sMethod, aUids, sField, bSetAction)
 {
+	if (this.isUnifiedFolderCurrent())
+	{
+		var oUidsByAccounts = {};
+		_.each(aUids, function (sUnifiedUid) {
+			var
+				aParts = sUnifiedUid.split(':'),
+				iAccountId = Types.pInt(aParts[0]),
+				sUid = Types.pString(aParts[1])
+			;
+			if (sUid !== '')
+			{
+				if (!oUidsByAccounts[iAccountId])
+				{
+					oUidsByAccounts[iAccountId] = [];
+				}
+				oUidsByAccounts[iAccountId].push(sUid);
+			}
+		});
+		
+		_.each(oUidsByAccounts, function (aUidsByAccount, iAccountId) {
+			var
+				oFolderList = this.oFolderListItems[iAccountId],
+				oInbox = oFolderList ? oFolderList.inboxFolder() : null
+			;
+			if (oInbox)
+			{
+				this.executeGroupOperationForFolder(sMethod, oInbox, aUidsByAccount, sField, bSetAction);
+			}
+		}.bind(this));
+	}
+	else
+	{
+		var oCurrFolder = this.getCurrentFolder();
+		if (oCurrFolder)
+		{
+			this.executeGroupOperationForFolder(sMethod, oCurrFolder, aUids, sField, bSetAction);
+		}
+	}
+};
+
+/**
+ * @param {string} sMethod
+ * @param {object} oFolder
+ * @param {Array} aUids
+ * @param {string} sField
+ * @param {boolean} bSetAction
+ */
+CMailCache.prototype.executeGroupOperationForFolder = function (sMethod, oFolder, aUids, sField, bSetAction)
+{
 	var
-		oCurrFolder = this.getCurrentFolder(),
 		oParameters = {
-			'Folder': oCurrFolder ? oCurrFolder.fullName() : '',
+			'Folder': oFolder.fullName(),
 			'Uids': aUids.join(','),
 			'SetAction': bSetAction
 		},
 		iOffset = (this.page() - 1) * Settings.MailsPerPage,
 		iUidsCount = aUids.length,
 		iStarredCount = this.folderList().oStarredFolder ? this.folderList().oStarredFolder.messageCount() : 0,
-		oStarredUidList = oCurrFolder ? oCurrFolder.getUidList('', Enums.FolderFilter.Flagged, Settings.MessagesSortBy.DefaultSortBy, Settings.MessagesSortBy.DefaultSortOrder) : null,
+		oStarredUidList = oFolder.getUidList('', Enums.FolderFilter.Flagged, Settings.MessagesSortBy.DefaultSortBy, Settings.MessagesSortBy.DefaultSortOrder),
 		fCallback = (sMethod === 'SetMessagesSeen') ? this.onSetMessagesSeenResponse : function () {}
 	;
 
-	if (oCurrFolder)
+	if (sMethod === 'SetMessagesSeen')
 	{
-		if (sMethod === 'SetMessagesSeen')
-		{
-			this.iSetMessagesSeenCount++;
-		}
-		Ajax.send(sMethod, oParameters, fCallback, this);
+		this.iSetMessagesSeenCount++;
+	}
+	Ajax.send(sMethod, oParameters, fCallback, this);
 
-		oCurrFolder.executeGroupOperation(sField, aUids, bSetAction);
-		
-		if (oCurrFolder.type() === Enums.FolderTypes.Inbox && sField === 'flagged')
+	oFolder.executeGroupOperation(sField, aUids, bSetAction);
+
+	if (oFolder.type() === Enums.FolderTypes.Inbox && sField === 'flagged')
+	{
+		if (this.uidList().filters() === Enums.FolderFilter.Flagged)
 		{
-			if (this.uidList().filters() === Enums.FolderFilter.Flagged)
+			if (!bSetAction)
 			{
-				if (!bSetAction)
+				this.uidList().deleteUids(aUids);
+				if (this.folderList().oStarredFolder)
 				{
-					this.uidList().deleteUids(aUids);
-					if (this.folderList().oStarredFolder)
-					{
-						this.folderList().oStarredFolder.messageCount(oStarredUidList.resultCount());
-					}
-				}
-			}
-			else
-			{
-				oCurrFolder.removeFlaggedMessageListsFromCache();
-				if (this.uidList().search() === '' && this.folderList().oStarredFolder)
-				{
-					if (bSetAction)
-					{
-						this.folderList().oStarredFolder.messageCount(iStarredCount + iUidsCount);
-					}
-					else
-					{
-						this.folderList().oStarredFolder.messageCount((iStarredCount - iUidsCount > 0) ? iStarredCount - iUidsCount : 0);
-					}
+					this.folderList().oStarredFolder.messageCount(oStarredUidList.resultCount());
 				}
 			}
 		}
-			
-		if (sField === 'seen')
+		else
 		{
-			oCurrFolder.removeUnseenMessageListsFromCache();
+			oFolder.removeFlaggedMessageListsFromCache();
+			if (this.uidList().search() === '' && this.folderList().oStarredFolder)
+			{
+				if (bSetAction)
+				{
+					this.folderList().oStarredFolder.messageCount(iStarredCount + iUidsCount);
+				}
+				else
+				{
+					this.folderList().oStarredFolder.messageCount((iStarredCount - iUidsCount > 0) ? iStarredCount - iUidsCount : 0);
+				}
+			}
 		}
-		
-		if (this.uidList().filters() !== Enums.FolderFilter.Unseen || this.waitForUnseenMessages())
-		{
-			this.setMessagesFromUidList(this.uidList(), iOffset, true);
-		}
+	}
+
+	if (sField === 'seen')
+	{
+		oFolder.removeUnseenMessageListsFromCache();
+	}
+
+	if (this.uidList().filters() !== Enums.FolderFilter.Unseen || this.waitForUnseenMessages())
+	{
+		this.setMessagesFromUidList(this.uidList(), iOffset, true);
 	}
 };
 

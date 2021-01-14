@@ -93,7 +93,7 @@ function CMailView()
 	this.markAllReadCommand = Utils.createCommand(this.oMessageList, this.oMessageList.executeMarkAllRead);
 	this.customModulesDisabledMove = ko.observableArray([]);
 	this.visibleMoveTool = ko.computed(function () {
-		return !Types.isNonEmptyArray(this.customModulesDisabledMove());
+		return !MailCache.isUnifiedFolderCurrent() && !Types.isNonEmptyArray(this.customModulesDisabledMove());
 	}, this);
 	this.moveToFolderCommand = Utils.createCommand(this, function () {}, this.isEnableGroupOperations);
 //	this.copyToFolderCommand = Utils.createCommand(this, function () {}, this.isEnableGroupOperations);
