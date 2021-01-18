@@ -149,6 +149,15 @@ module.exports = function (oAppData) {
 				getSearchMessagesInCurrentFolder: function () {
 					var MainTab = window.opener && window.opener.MainTabMailMethods;
 					return MainTab ? _.bind(MainTab.searchMessagesInCurrentFolder, MainTab) : false;
+				},
+				getCurrentMessage: function () {
+					return Cache.currentMessage();
+				},
+				getCurrentFolderList: function () {
+					return Cache.folderList();
+				},
+				syncFolders: function () {
+					return Cache.getFolderList(Cache.currentAccountId());
 				}
 			};
 		}
@@ -198,6 +207,12 @@ module.exports = function (oAppData) {
 				},
 				getCurrentMessage: function () {
 					return Cache.currentMessage();
+				},
+				getCurrentFolderList: function () {
+					return Cache.folderList();
+				},
+				syncFolders: function () {
+					return Cache.getFolderList(Cache.currentAccountId());
 				},
 				getAllAccountsFullEmails: function () {
 					return AccountList.getAllFullEmails();
