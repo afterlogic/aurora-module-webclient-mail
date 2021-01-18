@@ -196,6 +196,9 @@ module.exports = function (oAppData) {
 				getMessage: function (sFullName, sUid, fResponseHandler) {
 					return Cache.getMessage(sFullName, sUid, fResponseHandler, Cache);
 				},
+				getCurrentMessage: function () {
+					return Cache.currentMessage();
+				},
 				getAllAccountsFullEmails: function () {
 					return AccountList.getAllFullEmails();
 				},
