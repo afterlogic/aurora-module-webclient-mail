@@ -1701,6 +1701,22 @@ CMailCache.prototype.increaseStarredCount = function ()
 	}
 };
 
+CMailCache.prototype.removeMessageFromCurrentList = function (iAccountId, sFolder, sUid)
+{
+	var
+		oFolder = this.getFolderByFullName(iAccountId, sFolder),
+		oMessage = oFolder.getMessageByUid(sUid)
+	;
+	if (oMessage)
+	{
+		this.messages(_.filter(this.messages(), function (oTempMessage) {
+			return oTempMessage.uid() !== sUid;
+		}));
+		Routing.replaceHashWithoutMessageUid(sUid);
+		oFolder.markHasChanges();
+	}
+};
+
 /**
  * @param {Object} oResponse
  * @param {Object} oRequest
