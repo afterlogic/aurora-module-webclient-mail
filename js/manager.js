@@ -158,6 +158,9 @@ module.exports = function (oAppData) {
 				},
 				syncFolders: function () {
 					return Cache.getFolderList(Cache.currentAccountId());
+				},
+				removeMessageFromCurrentList: function (iAccountId, sFolder, sUid) {
+					return Cache.removeMessageFromCurrentList(iAccountId, sFolder, sUid);
 				}
 			};
 		}
@@ -213,6 +216,9 @@ module.exports = function (oAppData) {
 				},
 				syncFolders: function () {
 					return Cache.getFolderList(Cache.currentAccountId());
+				},
+				removeMessageFromCurrentList: function (iAccountId, sFolder, sUid) {
+					return Cache.removeMessageFromCurrentList(iAccountId, sFolder, sUid);
 				},
 				getAllAccountsFullEmails: function () {
 					return AccountList.getAllFullEmails();
