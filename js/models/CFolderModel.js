@@ -59,6 +59,7 @@ function CFolderModel(iAccountId)
 	/** Extended **/
 	this.fullName = ko.observable('');
 	this.fullNameHash = ko.observable('');
+	this.parentFullName = ko.observable('');
 	this.bSelectable = true;
 	this.subscribed = ko.observable(true);
 	this.name = ko.observable('');
@@ -845,6 +846,7 @@ CFolderModel.prototype.parse = function (oData, sParentFullName, sNamespaceFolde
 		this.nameForEdit(sName);
 		this.fullName(Types.pString(oData.FullNameRaw));
 		this.fullNameHash(Types.pString(oData.FullNameHash));
+		this.parentFullName(Types.pString(sParentFullName));
 		this.sDelimiter = oData.Delimiter;
 		
 		iType = Types.pInt(oData.Type);
