@@ -271,7 +271,7 @@ CFolderModel.prototype.getThreadMessages = function (oMessage)
 		oLastMessage = null,
 		iShowThrottle = 50
 	;
-	
+
 	_.each(oMessage.threadUids(), function (sThreadUid) {
 		if (iCount < oMessage.threadCountForLoad())
 		{
@@ -281,6 +281,10 @@ CFolderModel.prototype.getThreadMessages = function (oMessage)
 				if (!oThreadMessage.deleted())
 				{
 					oThreadMessage.markAsThreadPart(iShowThrottle, oMessage.uid());
+					if (!oThreadMessage.unifiedUid())
+					{
+						oThreadMessage.unifiedUid(oThreadMessage.accountId() + ':' + oThreadMessage.uid());
+					}
 					aLoadedMessages.push(oThreadMessage);
 					aChangedThreadUids.push(oThreadMessage.uid());
 					iCount++;

@@ -32,9 +32,11 @@ Ajax.registerAbortRequestHandler(Settings.ServerModuleName, function (oRequest, 
 		case 'ClearFolder':
 			// GetRelevantFoldersInformation-request aborted during folder cleaning, not to get the wrong information.
 			return	oOpenedRequest.Method === 'GetRelevantFoldersInformation' || 
+					oOpenedRequest.Method === 'GetUnifiedRelevantFoldersInformation' || 
 					oOpenedRequest.Method === 'GetMessages' && oOpenedParameters.Folder === oParameters.Folder;
 		case 'GetRelevantFoldersInformation':
-			return oOpenedRequest.Method === 'GetRelevantFoldersInformation' && oParameters.AccountID === oOpenedParameters.AccountID;
+			return oOpenedRequest.Method === 'GetRelevantFoldersInformation' && oParameters.AccountID === oOpenedParameters.AccountID ||
+					oOpenedRequest.Method === 'GetUnifiedRelevantFoldersInformation';
 		case 'GetMessagesFlags':
 			return oOpenedRequest.Method === 'GetMessagesFlags';
 	}
