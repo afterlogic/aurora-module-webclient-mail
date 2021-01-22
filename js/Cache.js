@@ -101,12 +101,12 @@ function CMailCache()
 	this.folderListLoading = ko.observableArray([]);
 	
 	this.isUnifiedFolderCurrent = ko.observable(false);
-	this.oUnifiedFolder = new CFolderModel(0);
+	this.oUnifiedInbox = new CFolderModel(0, true);
 	this.getCurrentFolder = ko.computed(function ()
 	{
 		if (this.isUnifiedFolderCurrent())
 		{
-			return this.oUnifiedFolder;
+			return this.oUnifiedInbox;
 		}
 		return this.folderList().currentFolder();
 	}, this);
@@ -115,7 +115,7 @@ function CMailCache()
 	{
 		if (this.isUnifiedFolderCurrent())
 		{
-			return this.oUnifiedFolder.fullName();
+			return this.oUnifiedInbox.fullName();
 		}
 		return this.folderList().currentFolderFullName();
 	}, this);
@@ -124,7 +124,7 @@ function CMailCache()
 	{
 		if (this.isUnifiedFolderCurrent())
 		{
-			return this.oUnifiedFolder.type();
+			return this.oUnifiedInbox.type();
 		}
 		return this.folderList().currentFolderType();
 	}, this);
@@ -241,7 +241,7 @@ CMailCache.prototype.init = function ()
 		this.initPrevNextSubscribes();
 	}
 	
-	this.oUnifiedFolder.parse({
+	this.oUnifiedInbox.parse({
 		'@Object': 'Object/Folder',
 		'Name': TextUtils.i18n('%MODULENAME%/LABEL_FOLDER_ALL_INBOXES'),
 		'FullNameRaw': '__unified__inbox__',
@@ -382,9 +382,9 @@ CMailCache.prototype.calcPrevMessageUid = function ()
  */
 CMailCache.prototype.getFolderByFullName = function (iAccountId, sFolderFullName)
 {
-	if (sFolderFullName === this.oUnifiedFolder.fullName())
+	if (sFolderFullName === this.oUnifiedInbox.fullName())
 	{
-		return  this.oUnifiedFolder;
+		return  this.oUnifiedInbox;
 	}
 	
 	var
@@ -539,7 +539,7 @@ CMailCache.prototype.setMessagesFromUidList = function (oUidList, iOffset, bFill
 				iAccountId = oUidList.iAccountId,
 				sFullName = oUidList.sFullName;
 			;
-			if (sFullName === this.oUnifiedFolder.fullName())
+			if (sFullName === this.oUnifiedInbox.fullName())
 			{
 				var aParts = sUid.split(':');
 				iAccountId = Types.pInt(aParts[0]);
@@ -825,7 +825,7 @@ CMailCache.prototype.requestMessageList = function (sFolder, iPage, sSearch, sFi
 	
 	if (bStartRequest)
 	{
-		if (oParameters.Folder === this.oUnifiedFolder.fullName())
+		if (oParameters.Folder === this.oUnifiedInbox.fullName())
 		{
 			delete oParameters.Folder;
 			Ajax.send('GetUnifiedMailboxMessages', oParameters, fCallBack, this);
@@ -1144,8 +1144,20 @@ CMailCache.prototype.showExternalPictures = function (bAlwaysForSender)
  */
 CMailCache.prototype.setCurrentFolder = function (sFolder, sFilters)
 {
-	this.isUnifiedFolderCurrent(sFolder === this.oUnifiedFolder.fullName())
+	this.isUnifiedFolderCurrent(sFolder === this.oUnifiedInbox.fullName())
 	this.folderList().setCurrentFolder(sFolder, sFilters);
+};
+
+CMailCache.prototype.getMessageUid = function (oMessage)
+{
+	if (this.isUnifiedFolderCurrent())
+	{
+		return oMessage.unifiedUid();
+	}
+	else
+	{
+		return oMessage.uid();
+	}
 };
 
 /**
@@ -1160,13 +1172,13 @@ CMailCache.prototype.setCurrentMessage = function (iAccountId, sFolder, sUid)
 		oMessage = null
 	;
 	
-	if (App.isNewTab() && (!oCurrFolder || (oCurrFolder.fullName() !== sFolder && oCurrFolder.fullName() !== this.oUnifiedFolder.fullName())))
+	if (App.isNewTab() && (!oCurrFolder || (oCurrFolder.fullName() !== sFolder && oCurrFolder.fullName() !== this.oUnifiedInbox.fullName())))
 	{
 		this.setCurrentFolder(sFolder, '');
 		oCurrFolder = this.getCurrentFolder();
 	}
 	
-	if (oCurrFolder && oCurrFolder.fullName() === this.oUnifiedFolder.fullName())
+	if (oCurrFolder && oCurrFolder.fullName() === this.oUnifiedInbox.fullName())
 	{
 		oCurrFolder = this.getFolderByFullName(iAccountId, sFolder);
 	}
@@ -1181,7 +1193,7 @@ CMailCache.prototype.setCurrentMessage = function (iAccountId, sFolder, sUid)
 		this.currentMessage(oMessage);
 		if (!this.currentMessage().seen())
 		{
-			this.executeGroupOperation('SetMessagesSeen', [this.currentMessage().unifiedUid() || this.currentMessage().uid()], 'seen', true);
+			this.executeGroupOperation('SetMessagesSeen', [this.getMessageUid(this.currentMessage())], 'seen', true);
 		}
 		oCurrFolder.getCompletelyFilledMessage(sUid, this.onCurrentMessageResponse, this);
 	}
@@ -1234,6 +1246,23 @@ CMailCache.prototype.getMessage = function (sFullName, sUid, fResponseHandler, o
 	if (oFolder)
 	{
 		oFolder.getCompletelyFilledMessage(sUid, fResponseHandler, oContext);
+	}
+};
+
+CMailCache.prototype.setUnifiedInboxUnseenChanges = function (iAccountId, sFolderFullName, bSetAction, iUnseenDiff)
+{
+	var oInbox  = this.oUnifiedInbox.getUnifiedInbox(iAccountId);
+	if (oInbox && oInbox.fullName() === sFolderFullName)
+	{
+		if (bSetAction)
+		{
+			this.oUnifiedInbox.addMessagesCountsDiff(0, -iUnseenDiff);
+		}
+		else
+		{
+			this.oUnifiedInbox.addMessagesCountsDiff(0, iUnseenDiff);
+		}
+		this.oUnifiedInbox.markHasChanges();
 	}
 };
 
@@ -1295,14 +1324,17 @@ CMailCache.prototype.executeGroupOperation = function (sMethod, aUids, sField, b
 CMailCache.prototype.executeGroupOperationForFolder = function (sMethod, oFolder, aUids, sField, bSetAction)
 {
 	var
+		iAccountId = oFolder.iAccountId,
+		oFolderList = this.oFolderListItems[iAccountId],
 		oParameters = {
+			'AccountID': iAccountId,
 			'Folder': oFolder.fullName(),
 			'Uids': aUids.join(','),
 			'SetAction': bSetAction
 		},
 		iOffset = (this.page() - 1) * Settings.MailsPerPage,
 		iUidsCount = aUids.length,
-		iStarredCount = this.folderList().oStarredFolder ? this.folderList().oStarredFolder.messageCount() : 0,
+		iStarredCount = oFolderList.oStarredFolder ? oFolderList.oStarredFolder.messageCount() : 0,
 		oStarredUidList = oFolder.getUidList('', Enums.FolderFilter.Flagged, Settings.MessagesSortBy.DefaultSortBy, Settings.MessagesSortBy.DefaultSortOrder),
 		fCallback = (sMethod === 'SetMessagesSeen') ? this.onSetMessagesSeenResponse : function () {}
 	;
@@ -1322,24 +1354,24 @@ CMailCache.prototype.executeGroupOperationForFolder = function (sMethod, oFolder
 			if (!bSetAction)
 			{
 				this.uidList().deleteUids(aUids);
-				if (this.folderList().oStarredFolder)
+				if (oFolderList.oStarredFolder)
 				{
-					this.folderList().oStarredFolder.messageCount(oStarredUidList.resultCount());
+					oFolderList.oStarredFolder.messageCount(oStarredUidList.resultCount());
 				}
 			}
 		}
 		else
 		{
 			oFolder.removeFlaggedMessageListsFromCache();
-			if (this.uidList().search() === '' && this.folderList().oStarredFolder)
+			if (this.uidList().search() === '' && oFolderList.oStarredFolder)
 			{
 				if (bSetAction)
 				{
-					this.folderList().oStarredFolder.messageCount(iStarredCount + iUidsCount);
+					oFolderList.oStarredFolder.messageCount(iStarredCount + iUidsCount);
 				}
 				else
 				{
-					this.folderList().oStarredFolder.messageCount((iStarredCount - iUidsCount > 0) ? iStarredCount - iUidsCount : 0);
+					oFolderList.oStarredFolder.messageCount((iStarredCount - iUidsCount > 0) ? iStarredCount - iUidsCount : 0);
 				}
 			}
 		}
@@ -1615,6 +1647,41 @@ CMailCache.prototype.onGetMessagesResponse = function (oResponse, oRequest)
 	}
 };
 
+CMailCache.prototype.parseAndCacheMessages = function (aMessagesCollection, oFolder, bTrustThreadInfo, aNewFolderMessages)
+{
+	if (oFolder.fullName() === this.oUnifiedInbox.fullName())
+	{
+		var
+			oFolders = {},
+			oInbox = null
+		;
+		_.each(aMessagesCollection, function (oRawMessage) {
+			var
+				aParts = oRawMessage.UnifiedUid.split(':'),
+				iAccountId = Types.pInt(aParts[0])
+			;
+			oInbox = oFolders[iAccountId];
+			if (!oInbox)
+			{
+				var oFolderList = this.oFolderListItems[iAccountId];
+				oInbox = oFolderList ? oFolderList.inboxFolder() : null;
+			}
+			if (oInbox)
+			{
+				var oFolderMessage = oInbox.parseAndCacheMessage(oRawMessage, false, bTrustThreadInfo);
+				aNewFolderMessages.push(oFolderMessage);
+			}
+		}, this);
+	}
+	else
+	{
+		_.each(aMessagesCollection, function (oRawMessage) {
+			var oFolderMessage = oFolder.parseAndCacheMessage(oRawMessage, false, bTrustThreadInfo);
+			aNewFolderMessages.push(oFolderMessage);
+		}, this);
+	}
+};
+
 /**
  * @param {Object} oResponse
  * @param {Object} oRequest
@@ -1623,7 +1690,7 @@ CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 {
 	if (oRequest.Parameters && !Types.isNonEmptyString(oRequest.Parameters.Folder))
 	{
-		oRequest.Parameters.Folder = this.oUnifiedFolder.fullName();
+		oRequest.Parameters.Folder = this.oUnifiedInbox.fullName();
 	}
 	
 	var
@@ -1635,7 +1702,7 @@ CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 		bTrustThreadInfo = oParameters.UseThreading,
 		bHasFolderChanges = false,
 		bCurrentFolder = (this.currentAccountId() === iAccountId
-				|| oParameters.Folder === this.oUnifiedFolder.fullName())
+				|| oParameters.Folder === this.oUnifiedInbox.fullName())
 				&& this.getCurrentFolderFullname() === oParameters.Folder,
 		bCurrentList = bCurrentFolder &&
 				this.uidList().search() === oResult.Search &&
@@ -1659,10 +1726,7 @@ CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 		oFolder.removeAllMessageListsFromCacheIfHasChanges();
 		oUidList = oFolder.getUidList(oResult.Search, oResult.Filters, oParameters.SortBy, oParameters.SortOrder);
 		oUidList.setUidsAndCount(oParameters.Offset, oResult);
-		_.each(oResult['@Collection'], function (oRawMessage) {
-			var oFolderMessage = oFolder.parseAndCacheMessage(oRawMessage, false, bTrustThreadInfo);
-			aNewFolderMessages.push(oFolderMessage);
-		}, this);
+		this.parseAndCacheMessages(oResult['@Collection'], oFolder, bTrustThreadInfo, aNewFolderMessages);
 		
 		if (bCurrentList)
 		{

@@ -179,7 +179,7 @@ CFolderListModel.prototype.setCurrentFolder = function (sFolderFullName, sFilter
 			}
 		}
 		
-		if (sFolderFullName === MailCache.oUnifiedFolder.fullName())
+		if (sFolderFullName === MailCache.oUnifiedInbox.fullName())
 		{
 			this.currentFolder(null);
 		}

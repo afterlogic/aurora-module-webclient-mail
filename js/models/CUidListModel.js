@@ -97,14 +97,14 @@ CUidListModel.prototype.getUidsForOffset = function (iOffset)
 		{
 			sUid = this.collection()[iIndex];
 			var sUidForDict = sUid;
-			if (this.sFullName === MailCache.oUnifiedFolder.fullName())
+			if (sUid !== undefined && this.sFullName === MailCache.oUnifiedInbox.fullName())
 			{
 				var aParts = sUid.split(':');
 				iAccountId = Types.pInt(aParts[0]);
 				sFullName = 'INBOX';
 				sUidForDict = aParts[1];
 			}
-			oMsg = MessagesDictionary.get([iAccountId, sFullName, sUidForDict]);
+			oMsg = (sUid === undefined) ? null : MessagesDictionary.get([iAccountId, sFullName, sUidForDict]);
 
 			if (oMsg && !oMsg.deleted() || sUid === undefined)
 			{

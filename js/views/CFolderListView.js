@@ -33,9 +33,9 @@ function CFolderListView()
 	}, this);
 	this.bAllowUnifiedInbox = Settings.AllowUnifiedInbox;
 	this.unifiedInboxReady = Settings.unifiedInboxReady;
-	this.oUnifiedFolder = MailCache.oUnifiedFolder;
+	this.oUnifiedInbox = MailCache.oUnifiedInbox;
 	this.allInboxesHash = ko.computed(function () {
-		return Routing.buildHashFromArray(LinksUtils.getMailbox(this.oUnifiedFolder.fullName()));
+		return Routing.buildHashFromArray(LinksUtils.getMailbox(this.oUnifiedInbox.fullName()));
 	}, this);
 	
 	this.manageFoldersHash = ko.computed(function () {

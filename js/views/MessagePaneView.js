@@ -689,7 +689,7 @@ CMessagePaneView.prototype.onRoute = function (aParams)
 	AccountList.changeCurrentAccountByHash(oParams.AccountHash);
 	iMessageAccountId = MailCache.currentAccountId();
 	
-	if (sFolder === MailCache.oUnifiedFolder.fullName() && Types.isNonEmptyString(sUid))
+	if (sFolder === MailCache.oUnifiedInbox.fullName() && Types.isNonEmptyString(sUid))
 	{
 		var aParts = sUid.split(':');
 		iMessageAccountId = Types.pInt(aParts[0]);

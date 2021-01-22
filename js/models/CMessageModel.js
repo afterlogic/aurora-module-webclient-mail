@@ -36,7 +36,7 @@ function CMessageModel()
 		return oAccount ? oAccount.email() : '';
 	}, this);
 	this.accountColor = ko.computed(function () {
-		if (this.accountEmail() === 'nadine@afterlogic.com')
+		if (this.accountId() === AccountList.getDefault().id())
 		{
 			return 'cadetblue';
 		}

@@ -159,7 +159,7 @@ LinksUtils.parseMailbox = function (aParamsToParse)
 	if (Types.isNonEmptyArray(aParams))
 	{
 		sFolder = Types.pString(aParams[iIndex]);
-		if (sFolder === MailCache.oUnifiedFolder.fullName() && !Settings.unifiedInboxReady())
+		if (sFolder === MailCache.oUnifiedInbox.fullName() && !Settings.unifiedInboxReady())
 		{
 			sFolder = '';
 			Routing.replaceHashDirectly(LinksUtils.getMailbox()); // unified inbox should be available to select when it's ready

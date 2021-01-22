@@ -236,7 +236,7 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 		var
 			aChecked = this.selector.listChecked(),
 			aCheckedUids = _.map(aChecked, function (oItem) {
-				return oItem.unifiedUid() || oItem.uid();
+				return MailCache.getMessageUid(oItem);
 			}),
 			oFolder = MailCache.getCurrentFolder(),
 			aThreadCheckedUids = oFolder ? oFolder.getThreadCheckedUidsFromList(aChecked) : [],
@@ -250,7 +250,7 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 		var aChecked = this.checkedUids();
 		if (aChecked.length === 0 && MailCache.currentMessage() && _.isFunction(MailCache.currentMessage().deleted) && !MailCache.currentMessage().deleted())
 		{
-			aChecked = [MailCache.currentMessage().unifiedUid() || MailCache.currentMessage().uid()];
+			aChecked = [MailCache.getMessageUid(MailCache.currentMessage())];
 		}
 		return aChecked;
 	}, this);
@@ -706,7 +706,7 @@ CMessageListView.prototype.routeForMessage = function (oMessage)
 			oFolder = MailCache.getCurrentFolder(),
 			sFolder = MailCache.getCurrentFolderFullname(),
 			iPage = this.oPageSwitcher.currentPage(),
-			sUid = oMessage.unifiedUid() || oMessage.uid(),
+			sUid = MailCache.getMessageUid(oMessage),
 			sSearch = this.search()
 		;
 		
@@ -781,7 +781,7 @@ CMessageListView.prototype.onFlagClick = function (oMessage)
 {
 	if (!this.isSavingDraft(oMessage))
 	{
-		MailCache.executeGroupOperation('SetMessageFlagged', [oMessage.unifiedUid() || oMessage.uid()], 'flagged', !oMessage.flagged());
+		MailCache.executeGroupOperation('SetMessageFlagged', [MailCache.getMessageUid(oMessage)], 'flagged', !oMessage.flagged());
 	}
 };
 
