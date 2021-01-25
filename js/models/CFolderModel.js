@@ -336,7 +336,8 @@ CFolderModel.prototype.computeThreadData = function (oMessage)
 	
 	_.each(oMessage.threadUids(), function (sThreadUid) {
 		var
-			oThreadMessage = this.getMessageByUid(sThreadUid),
+			oInbox = this.bIsUnifiedInbox ? this.getUnifiedInbox(oMessage.accountId()) : null,
+			oThreadMessage = oInbox ? oInbox.getMessageByUid(sThreadUid) : this.getMessageByUid(sThreadUid),
 			sThreadEmail = ''
 		;
 		
@@ -405,23 +406,23 @@ CFolderModel.prototype.loadThreadMessages = function (aUidsForLoad)
  */
 CFolderModel.prototype.getThreadCheckedUidsFromList = function (aMessages)
 {
-	var
-		oFolder = this,
-		aThreadUids = []
-	;
+	var aThreadUids = [];
 	
 	_.each(aMessages, function (oMessage) {
 		if (oMessage.threadCount() > 0 && !oMessage.threadOpened())
 		{
 			_.each(oMessage.threadUids(), function (sUid) {
-				var oThreadMessage = oFolder.getMessageByUid(sUid);
+				var
+					oInbox = this.bIsUnifiedInbox ? this.getUnifiedInbox(oMessage.accountId()) : null,
+					oThreadMessage = oInbox ? oInbox.getMessageByUid(sUid) : this.getMessageByUid(sUid)
+				;
 				if (oThreadMessage && !oThreadMessage.deleted() && oThreadMessage.checked())
 				{
-					aThreadUids.push(sUid);
+					aThreadUids.push(this.bIsUnifiedInbox ? oThreadMessage.unifiedUid() : oThreadMessage.uid());
 				}
-			});
+			}, this);
 		}
-	});
+	}, this);
 	
 	return aThreadUids;
 };
@@ -754,6 +755,7 @@ CFolderModel.prototype.markDeletedByUids = function (aUids)
 
 	this.addMessagesCountsDiff(-iMinusDiff, -iUnseenMinusDiff);
 	
+	MailCache.setUnifiedInboxUnseenChanges(this.iAccountId, this.fullName(), -iMinusDiff, -iUnseenMinusDiff);
 	return {MinusDiff: iMinusDiff, UnseenMinusDiff: iUnseenMinusDiff};
 };
 
@@ -1245,15 +1247,16 @@ CFolderModel.prototype.executeGroupOperation = function (sField, aUids, bSetActi
 		if (bSetAction)
 		{
 			this.addMessagesCountsDiff(0, -iUnseenDiff);
+			MailCache.setUnifiedInboxUnseenChanges(this.iAccountId, this.fullName(), 0, -iUnseenDiff);
 		}
 		else
 		{
 			this.addMessagesCountsDiff(0, iUnseenDiff);
+			MailCache.setUnifiedInboxUnseenChanges(this.iAccountId, this.fullName(), 0, iUnseenDiff);
 		}
 		this.markHasChanges();
 		
 		this.requireMailCache();
-		MailCache.setUnifiedInboxUnseenChanges(this.iAccountId, this.fullName(), bSetAction, iUnseenDiff);
 	}
 };
 

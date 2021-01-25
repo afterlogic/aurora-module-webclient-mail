@@ -816,7 +816,7 @@ CMessageListView.prototype.executeMarkAllRead = function ()
  */
 CMessageListView.prototype.executeMoveToFolder = function (sToFolder)
 {
-	MailCache.moveMessagesToFolder(sToFolder, this.checkedOrSelectedUids());
+	MailCache.moveMessagesToFolder(MailCache.getCurrentFolder(), MailCache.getFolderByFullName(MailCache.currentAccountId(), sToFolder), this.checkedOrSelectedUids());
 };
 
 CMessageListView.prototype.executeCopyToFolder = function (sToFolder)
@@ -891,11 +891,33 @@ CMessageListView.prototype.deleteMessages = function (aUids)
  */
 CMessageListView.prototype.executeSpam = function ()
 {
-	var sSpamFullName = this.folderList().spamFolderFullName();
-
-	if (MailCache.getCurrentFolderFullname() !== sSpamFullName)
+	var aUids = this.checkedOrSelectedUids();
+	if (MailCache.isUnifiedFolderCurrent())
 	{
-		MailCache.moveMessagesToFolder(sSpamFullName, this.checkedOrSelectedUids());
+		var oUidsByAccounts = MailCache.getUidsSeparatedByAccounts(aUids);
+
+		_.each(oUidsByAccounts, function (oData) {
+			var
+				aUidsByAccount = oData.Uids,
+				iAccountId = oData.AccountId,
+				oFolderList = MailCache.oFolderListItems[iAccountId],
+				oAccSpam = oFolderList ? oFolderList.spamFolder() : null,
+				oAccInbox = oFolderList ? oFolderList.inboxFolder() : null
+			;
+			if (oAccInbox && oAccSpam && oAccInbox.fullName() !== oAccSpam.fullName())
+			{
+				MailCache.moveMessagesToFolder(oAccInbox, oAccSpam, aUidsByAccount);
+			}
+		});
+	}
+	else
+	{
+		var oSpamFolder = this.folderList().spamFolder();
+
+		if (oSpamFolder && MailCache.getCurrentFolderFullname() !== oSpamFolder.fullName())
+		{
+			MailCache.moveMessagesToFolder(MailCache.getCurrentFolder(), oSpamFolder, aUids);
+		}
 	}
 };
 
@@ -904,11 +926,14 @@ CMessageListView.prototype.executeSpam = function ()
  */
 CMessageListView.prototype.executeNotSpam = function ()
 {
-	var oInbox = this.folderList().inboxFolder();
+	var
+		oCurrentFolder = MailCache.getCurrentFolder(),
+		oInbox = this.folderList().inboxFolder()
+	;
 
-	if (oInbox && MailCache.getCurrentFolderFullname() !== oInbox.fullName())
+	if (oInbox && oCurrentFolder && oCurrentFolder.fullName() !== oInbox.fullName())
 	{
-		MailCache.moveMessagesToFolder(oInbox.fullName(), this.checkedOrSelectedUids());
+		MailCache.moveMessagesToFolder(oCurrentFolder, oInbox, this.checkedOrSelectedUids());
 	}
 };
 

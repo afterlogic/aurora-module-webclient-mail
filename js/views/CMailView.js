@@ -392,6 +392,8 @@ CMailView.prototype.bindMessagePane = function ()
 
 CMailView.prototype.onBind = function ()
 {
+	var oMessageList = this.oMessageList;
+	
 	this.oMessageList.onBind(this.$viewDom);
 	this.bindMessagePane();
 
@@ -401,11 +403,11 @@ CMailView.prototype.onBind = function ()
 		{
 			if (oEvent.ctrlKey)
 			{
-				this.oMessageList.executeCopyToFolder(sClickedFolder);
+				oMessageList.executeCopyToFolder(sClickedFolder);
 			}
 			else
 			{
-				this.oMessageList.executeMoveToFolder(sClickedFolder);
+				oMessageList.executeMoveToFolder(sClickedFolder);
 			}
 		}
 	});
