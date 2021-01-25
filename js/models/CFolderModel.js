@@ -391,6 +391,7 @@ CFolderModel.prototype.loadThreadMessages = function (aUidsForLoad)
 	if (aUidsForLoad.length > 0)
 	{
 		var oParameters = {
+			'AccountID': this.iAccountId,
 			'Folder': this.fullName(),
 			'Uids': aUidsForLoad
 		};
@@ -437,7 +438,7 @@ CFolderModel.prototype.parseAndCacheMessage = function (oRawMessage, bThreadPart
 		bNewMessage = false,
 		oMessage = this.getMessageByUid(sUid)
 	;
-	
+
 	if (!oMessage)
 	{
 		bNewMessage = true;
@@ -455,7 +456,6 @@ CFolderModel.prototype.parseAndCacheMessage = function (oRawMessage, bThreadPart
 	if (bNewMessage)
 	{
 		this.aRequestedUids = _.without(this.aRequestedUids, sUid);
-		this.aRequestedThreadUids = _.without(this.aRequestedThreadUids, sUid);
 		if (-1 === _.indexOf(this.aMessagesDictionaryUids, sUid))
 		{
 			this.aMessagesDictionaryUids.push(sUid);

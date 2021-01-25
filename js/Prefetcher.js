@@ -230,31 +230,45 @@ Prefetcher.startFolderPrefetch = function (oFolder)
 Prefetcher.startThreadListPrefetch = function ()
 {
 	var
-		aUidsForLoad = [],
+		bPrefetchStarted = false,
+		oUidsForLoad = {},
+		oFolders = {},
 		oCurrFolder = MailCache.getCurrentFolder()
 	;
 
 	_.each(MailCache.messages(), function (oCacheMess) {
 		if (oCacheMess.threadCount() > 0)
 		{
+			var
+				iAccountId = oCacheMess.accountId(),
+				oFolder = oCurrFolder.bIsUnifiedInbox ? oCurrFolder.getUnifiedInbox(iAccountId) : oCurrFolder
+			;
+			if (!_.isArray(oUidsForLoad[iAccountId]))
+			{
+				oUidsForLoad[iAccountId] = [];
+				oFolders[iAccountId] = oFolder;
+			}
 			_.each(oCacheMess.threadUids(), function (sThreadUid) {
-				if (!oCurrFolder.hasThreadUidBeenRequested(sThreadUid))
+				if (!oFolder.hasThreadUidBeenRequested(sThreadUid))
 				{
-					aUidsForLoad.push(sThreadUid);
+					oUidsForLoad[iAccountId].push(sThreadUid);
 				}
 			});
 		}
 	}, this);
 
-	if (aUidsForLoad.length > 0)
-	{
-		aUidsForLoad = aUidsForLoad.slice(0, Settings.MailsPerPage);
-		oCurrFolder.addRequestedThreadUids(aUidsForLoad);
-		oCurrFolder.loadThreadMessages(aUidsForLoad);
-		return true;
-	}
+	_.each(oUidsForLoad, function (aUidsForLoad, iAccountId) {
+		var oFolder = oFolders[iAccountId];
+		if (oFolder && aUidsForLoad.length > 0)
+		{
+			aUidsForLoad = aUidsForLoad.slice(0, Settings.MailsPerPage);
+			oFolder.addRequestedThreadUids(aUidsForLoad);
+			oFolder.loadThreadMessages(aUidsForLoad);
+			bPrefetchStarted = true;
+		}
+	});
 
-	return false;
+	return bPrefetchStarted;
 };
 
 Prefetcher.startMessagesPrefetch = function (oFolder)
