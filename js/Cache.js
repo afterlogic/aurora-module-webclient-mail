@@ -1202,24 +1202,13 @@ CMailCache.prototype.getMessageUid = function (oMessage)
 CMailCache.prototype.setCurrentMessage = function (iAccountId, sFolder, sUid)
 {
 	var
-		oCurrFolder = this.getCurrentFolder(),
+		oFolder = this.getFolderByFullName(iAccountId, sFolder),
 		oMessage = null
 	;
 	
-	if (App.isNewTab() && (!oCurrFolder || (oCurrFolder.fullName() !== sFolder && oCurrFolder.fullName() !== this.oUnifiedInbox.fullName())))
+	if (oFolder && sUid && oFolder.fullName() === sFolder)
 	{
-		this.setCurrentFolder(sFolder, '');
-		oCurrFolder = this.getCurrentFolder();
-	}
-	
-	if (oCurrFolder && oCurrFolder.fullName() === this.oUnifiedInbox.fullName())
-	{
-		oCurrFolder = this.getFolderByFullName(iAccountId, sFolder);
-	}
-	
-	if (oCurrFolder && sUid && oCurrFolder.fullName() === sFolder)
-	{
-		oMessage = MessagesDictionary.get([oCurrFolder.iAccountId, oCurrFolder.fullName(), sUid]);
+		oMessage = MessagesDictionary.get([oFolder.iAccountId, oFolder.fullName(), sUid]);
 	}
 	
 	if (oMessage && !oMessage.deleted())
@@ -1229,14 +1218,14 @@ CMailCache.prototype.setCurrentMessage = function (iAccountId, sFolder, sUid)
 		{
 			this.executeGroupOperation('SetMessagesSeen', [this.getMessageUid(this.currentMessage())], 'seen', true);
 		}
-		oCurrFolder.getCompletelyFilledMessage(sUid, this.onCurrentMessageResponse, this);
+		oFolder.getCompletelyFilledMessage(sUid, this.onCurrentMessageResponse, this);
 	}
 	else
 	{
 		this.currentMessage(null);
-		if (App.isNewTab() && oCurrFolder)
+		if (App.isNewTab() && oFolder)
 		{
-			oCurrFolder.getCompletelyFilledMessage(sUid, this.onCurrentMessageResponse, this);
+			oFolder.getCompletelyFilledMessage(sUid, this.onCurrentMessageResponse, this);
 		}
 	}
 };

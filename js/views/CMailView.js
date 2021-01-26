@@ -276,6 +276,7 @@ CMailView.prototype.openMessageInNewWindow = function (oMessage)
 	if (oMessage)
 	{
 		var
+			iAccountId = oMessage.accountId(),
 			sFolder = oMessage.folder(),
 			sUid = oMessage.uid(),
 			oFolder = this.folderList().getFolderByFullName(sFolder),
@@ -289,7 +290,7 @@ CMailView.prototype.openMessageInNewWindow = function (oMessage)
 		}
 		else
 		{
-			sHash = Routing.buildHashFromArray(LinksUtils.getViewMessage(sFolder, sUid));
+			sHash = Routing.buildHashFromArray(LinksUtils.getViewMessage(iAccountId, sFolder, sUid));
 			if (_.isFunction(this.messagePane().passReplyDataToNewTab))
 			{
 				this.messagePane().passReplyDataToNewTab(oMessage.sUniq);

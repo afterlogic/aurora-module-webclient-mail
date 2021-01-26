@@ -776,7 +776,7 @@ CMessagePaneView.prototype.executePrevMessage = function ()
 {
 	if (this.isEnablePrevMessage())
 	{
-		Routing.setHash(LinksUtils.getViewMessage(MailCache.getCurrentFolderFullname(), this.prevMessageUid()));
+		Routing.setHash(LinksUtils.getViewMessage(MailCache.currentAccountId(), MailCache.getCurrentFolderFullname(), this.prevMessageUid()));
 	}
 };
 
@@ -784,7 +784,7 @@ CMessagePaneView.prototype.executeNextMessage = function ()
 {
 	if (this.isEnableNextMessage())
 	{
-		Routing.setHash(LinksUtils.getViewMessage(MailCache.getCurrentFolderFullname(), this.nextMessageUid()));
+		Routing.setHash(LinksUtils.getViewMessage(MailCache.currentAccountId(), MailCache.getCurrentFolderFullname(), this.nextMessageUid()));
 	}
 };
 

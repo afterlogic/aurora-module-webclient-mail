@@ -276,12 +276,12 @@ LinksUtils.parseMailbox = function (aParamsToParse)
  * @param {string} sUid
  * @return {Array}
  */
-LinksUtils.getViewMessage = function (sFolder, sUid)
+LinksUtils.getViewMessage = function (iAccountId, sFolder, sUid)
 {
 	var
 		AccountList = require('modules/%ModuleName%/js/AccountList.js'),
-		oCurrAccount = AccountList.getCurrent(),
-		sAccountHash = oCurrAccount ? oCurrAccount.hash() : ''
+		oAccount = AccountList.getAccount(iAccountId),
+		sAccountHash = oAccount ? oAccount.hash() : ''
 	;
 	return [Settings.HashModuleName + '-view', sAccountHash, sFolder, 'msg' + sUid];
 };
