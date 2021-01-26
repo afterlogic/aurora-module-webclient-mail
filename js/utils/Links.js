@@ -301,17 +301,18 @@ LinksUtils.getCompose = function ()
 
 /**
  * @param {string} sType
+ * @param {int} iAccountId
  * @param {string} sFolder
  * @param {string} sUid
  * 
  * @return {Array}
  */
-LinksUtils.getComposeFromMessage = function (sType, sFolder, sUid)
+LinksUtils.getComposeFromMessage = function (sType, iAccountId, sFolder, sUid)
 {
 	var
 		AccountList = require('modules/%ModuleName%/js/AccountList.js'),
-		oCurrAccount = AccountList.getCurrent(),
-		sAccountHash = oCurrAccount ? oCurrAccount.hash() : ''
+		oAccount = AccountList.getAccount(iAccountId),
+		sAccountHash = oAccount ? oAccount.hash() : ''
 	;
 	return [Settings.HashModuleName + '-compose', sAccountHash, sType, sFolder, sUid];
 };

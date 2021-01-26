@@ -435,7 +435,7 @@ CMessageListView.prototype.onMessageDblClick = function (oMessage)
 		{
 			if (oFolder.type() === Enums.FolderTypes.Drafts || bTemplateFolder)
 			{
-				ComposeUtils.composeMessageFromDrafts(oMessage.folder(), oMessage.uid());
+				ComposeUtils.composeMessageFromDrafts(oMessage.accountId(), oMessage.folder(), oMessage.uid());
 			}
 			else
 			{
@@ -714,7 +714,7 @@ CMessageListView.prototype.routeForMessage = function (oMessage)
 		{
 			if (App.isMobile() && oFolder.type() === Enums.FolderTypes.Drafts)
 			{
-				Routing.setHash(LinksUtils.getComposeFromMessage('drafts', oMessage.folder(), oMessage.uid()));
+				Routing.setHash(LinksUtils.getComposeFromMessage('drafts', oMessage.accountId(), oMessage.folder(), oMessage.uid()));
 			}
 			else
 			{

@@ -651,7 +651,7 @@ CMailCache.prototype.executeCheckMail = function (bAbortPrevious)
 			oParameters = {
 				'AccountID': iCurrentAccountId,
 				'Folders': aFolders,
-				'UseListStatusIfPossible': this.getUseListStatusIfPossibleValue(this.currentAccountId(), aFolders.length)
+				'UseListStatusIfPossible': this.getUseListStatusIfPossibleValue(iCurrentAccountId, aFolders.length)
 			};
 
 			this.checkMailStarted(true);
@@ -1513,19 +1513,52 @@ CMailCache.prototype.onGetFoldersResponse = function (oResponse, oRequest)
  */
 CMailCache.prototype.getAllFoldersRelevantInformation = function (iAccountId)
 {
-	var
-		oFolderList = this.oFolderListItems[iAccountId],
-		aFolders = oFolderList ? oFolderList.getFoldersWithoutCountInfo() : [],
-		oParameters = {
-			'AccountID': iAccountId,
-			'Folders': aFolders,
-			'UseListStatusIfPossible': this.getUseListStatusIfPossibleValue(this.currentAccountId(), aFolders.length)
-		}
-	;
-	
-	if (aFolders.length > 0 && AccountList.getAccount(iAccountId))
+	if (Settings.unifiedInboxReady())
 	{
-		Ajax.send('GetRelevantFoldersInformation', oParameters, this.onGetRelevantFoldersInformationResponse, this);
+		var aAccountsData = [];
+		_.each(this.oFolderListItems, function (oFolderList, iTmpAccountId) {
+			if (iAccountId === iTmpAccountId)
+			{
+				aFolders = oFolderList ? oFolderList.getFoldersWithoutCountInfo() : [];
+			}
+			else
+			{
+				aFolders = this.getNamesOfFoldersToRefresh(iAccountId);
+			}
+			if (aFolders.length > 0)
+			{
+				aAccountsData.push({
+					'AccountID': iTmpAccountId,
+					'Folders': aFolders,
+					'UseListStatusIfPossible': this.getUseListStatusIfPossibleValue(iTmpAccountId, aFolders.length)
+				});
+			}
+		}, this);
+		if (aAccountsData.length > 0)
+		{
+			oParameters = {
+				'AccountsData': aAccountsData
+			};
+
+			Ajax.send('GetUnifiedRelevantFoldersInformation', oParameters, this.onGetRelevantFoldersInformationResponse, this);
+		}
+	}
+	else
+	{
+		var
+			oFolderList = this.oFolderListItems[iAccountId],
+			aFolders = oFolderList ? oFolderList.getFoldersWithoutCountInfo() : [],
+			oParameters = {
+				'AccountID': iAccountId,
+				'Folders': aFolders,
+				'UseListStatusIfPossible': this.getUseListStatusIfPossibleValue(iAccountId, aFolders.length)
+			}
+		;
+
+		if (aFolders.length > 0)
+		{
+			Ajax.send('GetRelevantFoldersInformation', oParameters, this.onGetRelevantFoldersInformationResponse, this);
+		}
 	}
 };
 

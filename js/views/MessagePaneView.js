@@ -753,7 +753,7 @@ CMessagePaneView.prototype.executeReplyOrForward = function (sReplyType)
 		this.replyText('');
 		this.replyDraftUid('');
 		
-		ComposeUtils.composeMessageAsReplyOrForward(sReplyType, this.currentMessage().folder(), this.currentMessage().uid());
+		ComposeUtils.composeMessageAsReplyOrForward(sReplyType, this.currentMessage().accountId(), this.currentMessage().folder(), this.currentMessage().uid());
 	}
 };
 

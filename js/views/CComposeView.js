@@ -1600,7 +1600,7 @@ CComposeView.prototype.onSendOrSaveMessageResponse = function (oResponse, oReque
 				this.templateUid(Types.pString(oResData.NewUid));
                 if (this.composeShown() && this instanceof CComposeView)// it is screen, not popup
                 {
-					Routing.replaceHashDirectly(LinksUtils.getComposeFromMessage('drafts', oParameters.DraftFolder, this.templateUid()));
+					Routing.replaceHashDirectly(LinksUtils.getComposeFromMessage('drafts', MailCache.currentAccountId(), oParameters.DraftFolder, this.templateUid()));
                 }
             }
 			else if (oResData.Result && oParameters.DraftUid === this.draftUid())
@@ -1608,7 +1608,7 @@ CComposeView.prototype.onSendOrSaveMessageResponse = function (oResponse, oReque
 				this.draftUid(Types.pString(oResData.NewUid));
 				if (this.composeShown() && this instanceof CComposeView)// it is screen, not popup
 				{
-					Routing.replaceHashDirectly(LinksUtils.getComposeFromMessage('drafts', oParameters.DraftFolder, this.draftUid()));
+					Routing.replaceHashDirectly(LinksUtils.getComposeFromMessage('drafts', MailCache.currentAccountId(), oParameters.DraftFolder, this.draftUid()));
 				}
 			}
 			this.saving(false);
@@ -1856,12 +1856,12 @@ CComposeView.prototype.openInNewWindow = function ()
 
 	if (this.draftUid().length > 0 && !this.isChanged())
 	{
-		sHash = Routing.buildHashFromArray(LinksUtils.getComposeFromMessage('drafts', MailCache.folderList().draftsFolderFullName(), this.draftUid(), true));
+		sHash = Routing.buildHashFromArray(LinksUtils.getComposeFromMessage('drafts', MailCache.currentAccountId(), MailCache.folderList().draftsFolderFullName(), this.draftUid(), true));
 		oWin = WindowOpener.openTab('?message-newtab' + sHash);
 	}
     else if (this.templateUid().length > 0 && !this.isChanged())
     {
-		sHash = Routing.buildHashFromArray(LinksUtils.getComposeFromMessage('drafts', this.templateFolderName(), this.templateUid(), true));
+		sHash = Routing.buildHashFromArray(LinksUtils.getComposeFromMessage('drafts', MailCache.currentAccountId(), this.templateFolderName(), this.templateUid(), true));
 		oWin = WindowOpener.openTab('?message-newtab' + sHash);
     }
 	else if (!this.isChanged())

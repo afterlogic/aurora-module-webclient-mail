@@ -286,7 +286,7 @@ CMailView.prototype.openMessageInNewWindow = function (oMessage)
 
 		if (bDraftFolder)
 		{
-			sHash = Routing.buildHashFromArray(LinksUtils.getComposeFromMessage('drafts', sFolder, sUid));
+			sHash = Routing.buildHashFromArray(LinksUtils.getComposeFromMessage('drafts', iAccountId, sFolder, sUid));
 		}
 		else
 		{
