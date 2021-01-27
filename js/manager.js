@@ -206,7 +206,7 @@ module.exports = function (oAppData) {
 					return _.bind(Cache.searchMessagesInCurrentFolder, Cache);
 				},
 				getMessage: function (sFullName, sUid, fResponseHandler) {
-					return Cache.getMessage(sFullName, sUid, fResponseHandler, Cache);
+					return Cache.getMessage(Cache.currentAccountId(), sFullName, sUid, fResponseHandler, Cache);
 				},
 				getCurrentMessage: function () {
 					return Cache.currentMessage();

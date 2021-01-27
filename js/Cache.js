@@ -1257,15 +1257,15 @@ CMailCache.prototype.onCurrentMessageResponse = function (oMessage, sUid, oRespo
 };
 
 /**
+ * @param {int} iAccountId
  * @param {string} sFullName
  * @param {string} sUid
  * @param {Function} fResponseHandler
  * @param {Object} oContext
  */
-CMailCache.prototype.getMessage = function (sFullName, sUid, fResponseHandler, oContext)
+CMailCache.prototype.getMessage = function (iAccountId, sFullName, sUid, fResponseHandler, oContext)
 {
-	var oFolder = this.getFolderByFullName(this.currentAccountId(), sFullName);
-	
+	var oFolder = this.getFolderByFullName(iAccountId, sFullName);
 	if (oFolder)
 	{
 		oFolder.getCompletelyFilledMessage(sUid, fResponseHandler, oContext);

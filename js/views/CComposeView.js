@@ -125,7 +125,7 @@ function CComposeView()
 	this.senderAccountId = SenderSelector.senderAccountId;
 	this.senderList = SenderSelector.senderList;
 	this.visibleFrom = ko.computed(function () {
-		return this.senderList().length > 1;
+		return this.senderList().length > 1 || this.senderAccountId() !== MailCache.currentAccountId();
 	}, this);
 	this.selectedSender = SenderSelector.selectedSender;
 	this.selectedFetcherOrIdentity = SenderSelector.selectedFetcherOrIdentity;
@@ -552,10 +552,14 @@ CComposeView.prototype.hotKeysBind = function ()
 
 CComposeView.prototype.getMessageOnRoute = function ()
 {
-	var oParams = LinksUtils.parseCompose(this.routeParams());
-	if (this.routeType() !== '' && oParams.MessageFolderName && oParams.MessageUid)
+	var
+		oParams = LinksUtils.parseCompose(this.routeParams()),
+		oAccount = AccountList.getAccountByHash(oParams.AccountHash)
+	;
+
+	if (oAccount && this.routeType() !== '' && oParams.MessageFolderName && oParams.MessageUid)
 	{
-		MailCache.getMessage(oParams.MessageFolderName, oParams.MessageUid, this.onMessageResponse, this);
+		MailCache.getMessage(oAccount.id(), oParams.MessageFolderName, oParams.MessageUid, this.onMessageResponse, this);
 	}
 };
 
@@ -624,10 +628,13 @@ CComposeView.prototype.reset = function ()
 CComposeView.prototype.onRoute = function (aParams)
 {
 	var oParams = LinksUtils.parseCompose(aParams);
-	
-	// should be the first action to set right account id in new tab
-	AccountList.changeCurrentAccountByHash(oParams.AccountHash);
-	
+
+	if (App.isNewTab())
+	{
+		// should be the first action to set right account id in new tab
+		AccountList.changeCurrentAccountByHash(oParams.AccountHash);
+	}
+
 	this.routeType(oParams.RouteType);
 	switch (this.routeType())
 	{
@@ -1233,7 +1240,7 @@ CComposeView.prototype.requestAttachmentsTempName = function ()
 	if (aHash.length > 0)
 	{
 		this.messageUploadAttachmentsStarted(true);
-		Ajax.send('SaveAttachmentsAsTempFiles', { 'Attachments': aHash }, this.onMessageUploadAttachmentsResponse, this);
+		Ajax.send('SaveAttachmentsAsTempFiles', { 'AccountID': this.senderAccountId(), 'Attachments': aHash }, this.onMessageUploadAttachmentsResponse, this);
 	}
 };
 
@@ -1249,7 +1256,7 @@ CComposeView.prototype.onMessageUploadAttachmentsResponse = function (oResponse,
 
 	if (oResponse.Result)
 	{
-		_.each(oResponse.Result, _.bind(this.setAttachTepmNameByHash, this));
+		_.each(oResponse.Result, _.bind(this.setAttachTempNameByHash, this));
 	}
 	else
 	{
@@ -1271,7 +1278,7 @@ CComposeView.prototype.onMessageUploadAttachmentsResponse = function (oResponse,
  * @param {string} sHash
  * @param {string} sTempName
  */
-CComposeView.prototype.setAttachTepmNameByHash = function (sHash, sTempName)
+CComposeView.prototype.setAttachTempNameByHash = function (sHash, sTempName)
 {
 	_.each(this.attachments(), function (oAttach) {
 		if (oAttach.hash() === sHash)
