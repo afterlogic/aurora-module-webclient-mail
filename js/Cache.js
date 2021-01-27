@@ -623,7 +623,8 @@ CMailCache.prototype.executeCheckMail = function (bAbortPrevious)
 	{
 		if (Settings.unifiedInboxReady())
 		{
-			_.each(this.oFolderListItems, function (oFolderList, iAccountId) {
+			_.each(this.oFolderListItems, function (oFolderList, sAccountId) {
+				var iAccountId = Types.pInt(sAccountId);
 				aFolders = this.getNamesOfFoldersToRefresh(iAccountId);
 				if (aFolders.length > 0)
 				{
@@ -1338,8 +1339,11 @@ CMailCache.prototype.executeGroupOperation = function (sMethod, aUids, sField, b
 	}
 	else if (this.isUnifiedFolderCurrent() && aUids.length === 0)
 	{
-		_.each(this.oFolderListItems, function (oFolderList, iAccountId) {
-			var oInbox  = this.oUnifiedInbox.getUnifiedInbox(iAccountId);
+		_.each(this.oFolderListItems, function (oFolderList, sAccountId) {
+			var
+				iAccountId = Types.pInt(sAccountId),
+				oInbox  = this.oUnifiedInbox.getUnifiedInbox(iAccountId)
+			;
 			if (oInbox)
 			{
 				this.executeGroupOperationForFolder(sMethod, oInbox, aUids, sField, bSetAction);
@@ -1516,7 +1520,8 @@ CMailCache.prototype.getAllFoldersRelevantInformation = function (iAccountId)
 	if (Settings.unifiedInboxReady())
 	{
 		var aAccountsData = [];
-		_.each(this.oFolderListItems, function (oFolderList, iTmpAccountId) {
+		_.each(this.oFolderListItems, function (oFolderList, sTmpAccountId) {
+			var iTmpAccountId = Types.pInt(sTmpAccountId);
 			if (iAccountId === iTmpAccountId)
 			{
 				aFolders = oFolderList ? oFolderList.getFoldersWithoutCountInfo() : [];
@@ -1578,17 +1583,17 @@ CMailCache.prototype.onGetRelevantFoldersInformationResponse = function (oRespon
 	if (oResult === false)
 	{
 		Api.showErrorByCode(oResponse);
-		if (Ajax.hasOpenedRequests('GetRelevantFoldersInformation'))
+		if (Ajax.hasOpenedRequests('GetRelevantFoldersInformation') || Ajax.hasOpenedRequests('GetUnifiedRelevantFoldersInformation'))
 		{
 			bCheckMailStarted = true;
 		}
 	}
 	else
 	{
-		if (oResult.Unified && oResult.Counts)
+		if (oResult.Unified && oResult.Accounts)
 		{
-			_.each(oResult.Counts, function (oCounts, iAccountId) {
-				this.onGetRelevantFoldersInformationResponseForAccount(iAccountId, oCounts);
+			_.each(oResult.Accounts, function (oAccountData) {
+				this.onGetRelevantFoldersInformationResponseForAccount(oAccountData.AccountId, oAccountData.Counts);
 			}, this);
 			var
 				bSameFolder = this.isUnifiedFolderCurrent(),
