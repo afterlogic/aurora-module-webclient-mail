@@ -125,7 +125,7 @@ function CComposeView()
 	this.senderAccountId = SenderSelector.senderAccountId;
 	this.senderList = SenderSelector.senderList;
 	this.visibleFrom = ko.computed(function () {
-		return this.senderList().length > 1 || this.senderAccountId() !== MailCache.currentAccountId();
+		return App.isNewTab() || this.senderList().length > 1 || this.senderAccountId() !== MailCache.currentAccountId();
 	}, this);
 	this.selectedSender = SenderSelector.selectedSender;
 	this.selectedFetcherOrIdentity = SenderSelector.selectedFetcherOrIdentity;
