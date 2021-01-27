@@ -59,7 +59,7 @@ MailUtils.deleteMessages = function (aUids, fAfterDelete)
 	}
 	else
 	{
-		if (MailCache.isUnifiedFolderCurrent())
+		if (MailCache.oUnifiedInbox.selected())
 		{
 			MailUtils.deleteMessagesFromUnifiedInbox(aUids, fAfterDelete);
 		}

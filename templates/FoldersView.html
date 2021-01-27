@@ -15,19 +15,19 @@
 			<div class="items_list collapsible">
 				<div class="folders" style="margin-bottom: 20px;" data-bind="visible: bAllowUnifiedInbox">
 					<div class="item folder-level1 INBOX system"
-						 data-bind="css: { 'selected': folderFullName() === oUnifiedInbox.fullName(), 'canSelect exists subscribed': unifiedInboxReady }">
-						<a class="title" data-bind="attr: {'href': allInboxesHash}, visible: unifiedInboxReady">
+						 data-bind="css: { 'selected': oUnifiedInbox.selected(), 'canSelect exists subscribed': unifiedInboxReady }">
+						<a class="title" data-bind="attr: {'href': oUnifiedInbox.routingHash}, visible: unifiedInboxReady">
 							<span class="count unseen" data-bind="visible: oUnifiedInbox.showUnseenMessagesCount(),
 									text: oUnifiedInbox.unseenMessagesCountToShow()"></span>
 							<span class="name">
 								<span class="icon type1 INBOX"></span>
-								<span class="text animGoal" data-bind="text: oUnifiedInbox.name()"></span>
+								<span class="text animGoal" data-bind="text: oUnifiedInbox.displayName()"></span>
 							</span>
 						</a>
 						<span class="title" data-bind="visible: !unifiedInboxReady()">
 							<span class="name">
 								<span class="icon type1 INBOX"></span>
-								<span class="text animGoal" data-bind="text: oUnifiedInbox.name()"></span>
+								<span class="text animGoal" data-bind="text: oUnifiedInbox.displayName()"></span>
 							</span>
 						</span>
 					</div>

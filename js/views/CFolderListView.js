@@ -34,10 +34,7 @@ function CFolderListView()
 	this.bAllowUnifiedInbox = Settings.AllowUnifiedInbox;
 	this.unifiedInboxReady = Settings.unifiedInboxReady;
 	this.oUnifiedInbox = MailCache.oUnifiedInbox;
-	this.allInboxesHash = ko.computed(function () {
-		return Routing.buildHashFromArray(LinksUtils.getMailbox(this.oUnifiedInbox.fullName()));
-	}, this);
-	
+
 	this.manageFoldersHash = ko.computed(function () {
 		if (ModulesManager.isModuleEnabled('SettingsWebclient'))
 		{

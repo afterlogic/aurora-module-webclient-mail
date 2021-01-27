@@ -46,7 +46,7 @@ function CMailView()
 	this.openMessageInNewWindowBound = _.bind(this.openMessageInNewWindow, this);
 	
 	this.oFolderList = new CFolderListView();
-	this.isUnifiedFolderCurrent = MailCache.isUnifiedFolderCurrent;
+	this.isUnifiedFolderCurrent = MailCache.oUnifiedInbox.selected;
 	this.oMessageList = new CMessageListView(this.openMessageInNewWindowBound);
 	
 	this.oBaseMessagePaneView = MessagePaneView;
@@ -93,7 +93,7 @@ function CMailView()
 	this.markAllReadCommand = Utils.createCommand(this.oMessageList, this.oMessageList.executeMarkAllRead);
 	this.customModulesDisabledMove = ko.observableArray([]);
 	this.visibleMoveTool = ko.computed(function () {
-		return !MailCache.isUnifiedFolderCurrent() && !Types.isNonEmptyArray(this.customModulesDisabledMove());
+		return !MailCache.oUnifiedInbox.selected() && !Types.isNonEmptyArray(this.customModulesDisabledMove());
 	}, this);
 	this.moveToFolderCommand = Utils.createCommand(this, function () {}, this.isEnableGroupOperations);
 //	this.copyToFolderCommand = Utils.createCommand(this, function () {}, this.isEnableGroupOperations);

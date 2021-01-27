@@ -892,7 +892,7 @@ CMessageListView.prototype.deleteMessages = function (aUids)
 CMessageListView.prototype.executeSpam = function ()
 {
 	var aUids = this.checkedOrSelectedUids();
-	if (MailCache.isUnifiedFolderCurrent())
+	if (MailCache.oUnifiedInbox.selected())
 	{
 		var oUidsByAccounts = MailCache.getUidsSeparatedByAccounts(aUids);
 
