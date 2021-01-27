@@ -2,6 +2,8 @@
 
 var
 	_ = require('underscore'),
+
+	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	
 	App = require('%PathToCoreWebclientModule%/js/App.js'),
 	UserSettings = require('%PathToCoreWebclientModule%/js/Settings.js'),
@@ -10,8 +12,7 @@ var
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	MailCache = require('modules/%ModuleName%/js/Cache.js'),
-	MessagesDictionary = require('modules/%ModuleName%/js/MessagesDictionary.js'),
-	
+
 	Prefetcher = {},
 	bFetchersIdentitiesPrefetched = false
 ;
@@ -273,9 +274,30 @@ Prefetcher.startThreadListPrefetch = function ()
 
 Prefetcher.startMessagesPrefetch = function (oFolder)
 {
+	var oPrefetchFolder = oFolder ? oFolder : MailCache.getCurrentFolder();
+	if (oPrefetchFolder.bIsUnifiedInbox)
+	{
+		_.each(MailCache.oFolderListItems, function (oFolderList, sAccountId) {
+			var
+				iAccountId = Types.pInt(sAccountId),
+				oInbox  = MailCache.oUnifiedInbox.getUnifiedInbox(iAccountId)
+			;
+			if (oInbox)
+			{
+				this.startMessagesPrefetchForFolder(oInbox, oPrefetchFolder.selected());
+			}
+		}, this);
+	}
+	else
+	{
+		this.startMessagesPrefetchForFolder(oPrefetchFolder, oPrefetchFolder.selected());
+	}
+};
+
+Prefetcher.startMessagesPrefetchForFolder = function (oPrefetchFolder, bFolderSelected)
+{
 	var
-		iAccountId = MailCache.currentAccountId(),
-		oPrefetchFolder = oFolder ? oFolder : MailCache.getCurrentFolder(),
+		iAccountId = oPrefetchFolder.iAccountId,
 		iTotalSize = 0,
 		iMaxSize = Settings.MaxMessagesBodiesSizeToPrefetch,
 		aUids = [],
@@ -283,6 +305,7 @@ Prefetcher.startMessagesPrefetch = function (oFolder)
 		iJsonSizeOf1Message = 2048,
 		fFillUids = function (oMsg) {
 			var
+				bFromThisAccount = oMsg.accountId() === iAccountId,
 				bNotFilled = (!oMsg.deleted() && !oMsg.completelyFilled()),
 				bUidNotAdded = !_.find(aUids, function (sUid) {
 					return sUid === oMsg.uid();
@@ -291,7 +314,7 @@ Prefetcher.startMessagesPrefetch = function (oFolder)
 				iTextSize = oMsg.textSize() < Settings.MessageBodyTruncationThreshold ? oMsg.textSize() : Settings.MessageBodyTruncationThreshold
 			;
 
-			if (iTotalSize < iMaxSize && bNotFilled && bUidNotAdded && bHasNotBeenRequested)
+			if (iTotalSize < iMaxSize && bFromThisAccount && bNotFilled && bUidNotAdded && bHasNotBeenRequested)
 			{
 				aUids.push(oMsg.uid());
 				iTotalSize += iTextSize + iJsonSizeOf1Message;
@@ -301,7 +324,7 @@ Prefetcher.startMessagesPrefetch = function (oFolder)
 
 	if (oPrefetchFolder)
 	{
-		if (oPrefetchFolder.selected())
+		if (bFolderSelected)
 		{
 			_.each(MailCache.messages(), fFillUids);
 		}

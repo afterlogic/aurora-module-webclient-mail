@@ -1328,7 +1328,7 @@ CMailCache.prototype.executeGroupOperation = function (sMethod, aUids, sField, b
 			var
 				aUidsByAccount = oData.Uids,
 				iAccountId = oData.AccountId,
-				oInbox = MailCache.oUnifiedInbox.getUnifiedInbox(iAccountId)
+				oInbox = this.oUnifiedInbox.getUnifiedInbox(iAccountId)
 			;
 			if (oInbox)
 			{
