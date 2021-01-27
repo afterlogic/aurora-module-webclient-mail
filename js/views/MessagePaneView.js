@@ -487,7 +487,7 @@ CMessagePaneView.prototype.onCurrentMessageSubscribe = function ()
 			/*jshint onevar: true*/
 
 			_.each(oMessage.attachments(), _.bind(function (oAttach) {
-				var oCopy = new CAttachmentModel();
+				var oCopy = new CAttachmentModel(oAttach.iAccountId);
 				oCopy.copyProperties(oAttach);
 				aAtachments.push(oCopy);
 			}, this));

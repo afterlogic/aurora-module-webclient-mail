@@ -583,7 +583,7 @@ CMessageModel.prototype.parseAttachments = function (oData, iAccountId)
 	if (Types.isNonEmptyArray(aCollection))
 	{
 		this.attachments(_.map(aCollection, function (oRawAttach) {
-			var oAttachment = new CAttachmentModel();
+			var oAttachment = new CAttachmentModel(iAccountId);
 			oAttachment.setMessageData(this.folder(), this.uid());
 			oAttachment.parse(oRawAttach, this.folder(), this.uid());
 			return oAttachment;

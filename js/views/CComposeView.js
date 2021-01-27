@@ -1044,7 +1044,7 @@ CComposeView.prototype.onDataAsAttachmentUpload = function (oResponse, oRequest)
 CComposeView.prototype.addAttachments = function (aFiles)
 {
 	_.each(aFiles, _.bind(function (oFileData) {
-		var oAttach = new CAttachmentModel();
+		var oAttach = new CAttachmentModel(this.senderAccountId());
 		oAttach.parseFromUpload(oFileData);
 		this.attachments.push(oAttach);
 	}, this));
@@ -1061,7 +1061,7 @@ CComposeView.prototype.addFilesAsAttachment = function (aFiles)
 	;
 
 	_.each(aFiles, function (oFile) {
-		oAttach = new CAttachmentModel();
+		oAttach = new CAttachmentModel(this.senderAccountId());
 		oAttach.fileName(oFile.fileName());
 		oAttach.hash(oFile.hash());
 		oAttach.thumbUrlInQueue(oFile.thumbUrlInQueue());
@@ -1128,7 +1128,7 @@ CComposeView.prototype.onFilesUpload = function (oResponse, oRequest)
 CComposeView.prototype.addMessageAsAttachment = function (oMessage)
 {
 	var
-		oAttach = new CAttachmentModel(),
+		oAttach = new CAttachmentModel(oMessage.accountId()),
 		oParameters = null
 	;
 	
@@ -1138,8 +1138,9 @@ CComposeView.prototype.addMessageAsAttachment = function (oMessage)
 		oAttach.uploadStarted(true);
 		
 		this.attachments.push(oAttach);
-		
+
 		oParameters = {
+			'AccountID': oMessage.accountId(),
 			'MessageFolder': oMessage.folder(),
 			'MessageUid': oMessage.uid(),
 			'FileName': oAttach.fileName()
@@ -1305,7 +1306,7 @@ CComposeView.prototype.setMessageDataInNewTab = function (oParameters)
 	this.setRecipient(this.bccAddr, oParameters.bccAddr);
 	this.subject(oParameters.subject);
 	this.attachments(_.map(oParameters.attachments, function (oRawAttach) {
-		var oAttach = new CAttachmentModel();
+		var oAttach = new CAttachmentModel(oParameters.senderAccountId);
 		oAttach.parse(oRawAttach);
 		return oAttach;
 	}, this));
@@ -1405,8 +1406,7 @@ CComposeView.prototype.onFileUploadSelect = function (sFileUid, oFileData)
 	{
 		return false;
 	}
-	
-	oAttach = new CAttachmentModel();
+	oAttach = new CAttachmentModel(this.senderAccountId());
 	oAttach.onUploadSelect(sFileUid, oFileData);
 	this.attachments.push(oAttach);
 

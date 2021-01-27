@@ -65,7 +65,7 @@ PopupComposeUtils.composeMessageWithData = function (oData)
  */
 PopupComposeUtils.composeMessageWithEml = function (oMessage)
 {
-	var aParams = LinksUtils.getComposeWithEmlObject(oMessage.folder(), oMessage.uid(), oMessage);
+	var aParams = LinksUtils.getComposeWithEmlObject(oMessage.accountId(), oMessage.folder(), oMessage.uid(), oMessage);
 	aParams.shift();
 	Popups.showPopup(GetComposePopup(), [aParams]);
 };

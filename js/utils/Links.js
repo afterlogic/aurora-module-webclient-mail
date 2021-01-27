@@ -358,17 +358,18 @@ LinksUtils.getComposeWithObject = function (sType, oObject)
 };
 
 /**
+ * @param {int} iAccountId
  * @param {string} sFolderName
  * @param {string} sUid
  * @param {object} oObject
  * @returns {Array}
  */
-LinksUtils.getComposeWithEmlObject = function (sFolderName, sUid, oObject)
+LinksUtils.getComposeWithEmlObject = function (iAccountId, sFolderName, sUid, oObject)
 {
 	var
 		AccountList = require('modules/%ModuleName%/js/AccountList.js'),
-		oCurrAccount = AccountList.getCurrent(),
-		sAccountHash = oCurrAccount ? oCurrAccount.hash() : ''
+		oAccount = AccountList.getAccount(iAccountId),
+		sAccountHash = oAccount ? oAccount.hash() : ''
 	;
 	return [Settings.HashModuleName + '-compose', sAccountHash, Enums.ReplyType.ForwardAsAttach, sFolderName, sUid, oObject];
 };
