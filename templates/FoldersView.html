@@ -18,7 +18,8 @@
 						 data-bind="css: { 'selected': oUnifiedInbox.selected(), 'canSelect exists subscribed': unifiedInboxReady }">
 						<a class="title" data-bind="attr: {'href': oUnifiedInbox.routingHash}, visible: unifiedInboxReady">
 							<span class="count unseen" data-bind="visible: oUnifiedInbox.showUnseenMessagesCount(),
-									text: oUnifiedInbox.unseenMessagesCountToShow()"></span>
+									text: oUnifiedInbox.unseenMessagesCountToShow(),
+				  					click: function () { oUnifiedInbox.executeUnseenFilter(); }, customTooltip: '%MODULENAME%/ACTION_SHOW_UNREAD_MESSAGES'"></span>
 							<span class="name">
 								<span class="icon type1 INBOX"></span>
 								<span class="text animGoal" data-bind="text: oUnifiedInbox.displayName()"></span>
