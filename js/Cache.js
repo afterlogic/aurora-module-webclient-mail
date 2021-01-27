@@ -1496,8 +1496,6 @@ CMailCache.prototype.onGetFoldersResponse = function (oResponse, oRequest)
 			Utils.destroyObjectWithObservables(this, '__oldFolderList');
 		}
 
-		setTimeout(_.bind(this.getAllFoldersRelevantInformation, this, iAccountId), 2000);
-
 		if (this.currentAccountId() === iAccountId)
 		{
 			this.folderList(oFolderList);
@@ -1505,6 +1503,12 @@ CMailCache.prototype.onGetFoldersResponse = function (oResponse, oRequest)
 		if (this.editedAccountId() === iAccountId)
 		{
 			this.editedFolderList(oFolderList);
+		}
+
+		this.requirePrefetcher();
+		if (!Prefetcher.prefetchFolderLists())
+		{
+			setTimeout(_.bind(this.getAllFoldersRelevantInformation, this, iAccountId), 2000);
 		}
 	}
 	

@@ -528,6 +528,9 @@ module.exports = {
 	prefetchStarredMessageList: function () {
 		Prefetcher.prefetchStarredMessageList();
 	},
+	prefetchFolderLists: function () {
+		return Prefetcher.prefetchFolderLists();
+	},
 	startFolderPrefetch: function (oFolder) {
 		Prefetcher.startFolderPrefetch(oFolder);
 	},
