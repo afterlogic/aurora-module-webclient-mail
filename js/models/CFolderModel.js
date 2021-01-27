@@ -1088,6 +1088,10 @@ CFolderModel.prototype.initComputedFields = function ()
 	}, this);
 
 	this.displayName = ko.computed(function () {
+		if (this.bIsUnifiedInbox)
+		{
+			return TextUtils.i18n('%MODULENAME%/LABEL_FOLDER_ALL_INBOXES');
+		}
 		switch (this.type())
 		{
 			case Enums.FolderTypes.Inbox:
