@@ -171,6 +171,15 @@ Prefetcher.startPagePrefetch = function (iPage)
 	return bRequestStarted;
 };
 
+Prefetcher.startUnifiedInboxPrefetch = function ()
+{
+	if (Settings.unifiedInboxReady())
+	{
+		return this.startFolderPrefetch(MailCache.oUnifiedInbox);
+	}
+	return false;
+};
+
 Prefetcher.startOtherFoldersPrefetch = function ()
 {
 	var
@@ -274,8 +283,17 @@ Prefetcher.startThreadListPrefetch = function ()
 
 Prefetcher.startMessagesPrefetch = function (oFolder)
 {
-	var oPrefetchFolder = oFolder ? oFolder : MailCache.getCurrentFolder();
-	if (oPrefetchFolder.bIsUnifiedInbox)
+	var
+		oPrefetchFolder = oFolder ? oFolder : MailCache.getCurrentFolder(),
+		bPrefetchStarted = false;
+	;
+
+	if (!oPrefetchFolder.bIsUnifiedInbox)
+	{
+		bPrefetchStarted = this.startMessagesPrefetchForFolder(oPrefetchFolder, oPrefetchFolder.selected());
+	}
+
+	if (!bPrefetchStarted && Settings.unifiedInboxReady())
 	{
 		_.each(MailCache.oFolderListItems, function (oFolderList, sAccountId) {
 			var
@@ -284,14 +302,11 @@ Prefetcher.startMessagesPrefetch = function (oFolder)
 			;
 			if (oInbox)
 			{
-				this.startMessagesPrefetchForFolder(oInbox, oPrefetchFolder.selected());
+				bPrefetchStarted = bPrefetchStarted || this.startMessagesPrefetchForFolder(oInbox, MailCache.oUnifiedInbox.selected());
 			}
 		}, this);
 	}
-	else
-	{
-		this.startMessagesPrefetchForFolder(oPrefetchFolder, oPrefetchFolder.selected());
-	}
+	return bPrefetchStarted;
 };
 
 Prefetcher.startMessagesPrefetchForFolder = function (oPrefetchFolder, bFolderSelected)
@@ -516,6 +531,11 @@ module.exports = {
 		if (!bPrefetchStarted)
 		{
 			bPrefetchStarted = Prefetcher.prefetchAccountQuota();
+		}
+
+		if (!bPrefetchStarted)
+		{
+			bPrefetchStarted = Prefetcher.startUnifiedInboxPrefetch();
 		}
 
 		if (!bPrefetchStarted)
