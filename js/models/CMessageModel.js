@@ -43,7 +43,7 @@ function CMessageModel()
 		if (oAccount)
 		{
 			this.showUnifiedMailboxLabel(oAccount.showUnifiedMailboxLabel());
-			this.unifiedMailboxLabelText(oAccount.unifiedMailboxLabelText());
+			this.unifiedMailboxLabelText(oAccount.unifiedMailboxLabelText() || oAccount.email());
 			this.unifiedMailboxLabelColor(oAccount.unifiedMailboxLabelColor());
 		}
 	}, this);

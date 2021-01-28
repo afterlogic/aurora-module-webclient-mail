@@ -93,8 +93,8 @@ function CAccountModel(oData)
 	
 	this.aExtend = Types.pObject(oData.Extend);
 
-	this.includeInUnifiedMailbox = ko.observable(!!oData.IncludeInUnifiedMailbox);
-	this.showUnifiedMailboxLabel = ko.observable(!!oData.ShowUnifiedMailboxLabel);
+	this.includeInUnifiedMailbox = ko.observable(Settings.AllowUnifiedInbox && !!oData.IncludeInUnifiedMailbox);
+	this.showUnifiedMailboxLabel = ko.observable(Settings.AllowUnifiedInbox && !!oData.ShowUnifiedMailboxLabel);
 	this.unifiedMailboxLabelText = ko.observable(Types.pString(oData.UnifiedMailboxLabelText));
 	this.unifiedMailboxLabelColor = ko.observable(Types.pString(oData.UnifiedMailboxLabelColor));
 }
