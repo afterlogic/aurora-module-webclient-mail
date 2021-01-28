@@ -1686,6 +1686,12 @@ CMailCache.prototype.showNotificationsForNewMessages = function (oResponse)
 	{
 		iNewLength = oResponse.Result.New.length;
 		sUid = oResponse.Result.New[0].Uid;
+		var iAccountId = oResponse.Result.New[0].AccountId;
+		if (sCurrentFolderName === this.oUnifiedInbox.fullName())
+		{
+			sUid = iAccountId + ':' + sUid;
+		}
+		
 		oParameters = {
 			action:'show',
 			icon: 'static/styles/images/logo_140x140.png',
