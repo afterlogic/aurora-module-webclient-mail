@@ -31,7 +31,7 @@ function CFolderListView()
 		var oFolder = MailCache.getCurrentFolder();
 		return oFolder ? oFolder.fullName() : '';
 	}, this);
-	this.bAllowUnifiedInbox = Settings.AllowUnifiedInbox;
+	this.bAllowUnifiedInbox = Settings.AllowUnifiedInbox && AccountList.collection().length > 1;
 	this.oUnifiedInbox = MailCache.oUnifiedInbox;
 
 	this.manageFoldersHash = ko.computed(function () {
