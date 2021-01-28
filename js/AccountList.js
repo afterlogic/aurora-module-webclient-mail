@@ -27,6 +27,20 @@ var
 function CAccountListModel()
 {
 	this.collection = ko.observableArray([]);
+
+	this.unifiedMailboxAccounts = ko.computed(function () {
+		if (Settings.AllowUnifiedInbox)
+		{
+			return _.filter(this.collection(), function (oAccount) {
+				return oAccount.includeInUnifiedMailbox();
+			});
+		}
+		return [];
+	}, this);
+	this.unifiedInboxAllowed = ko.computed(function () {
+		return this.unifiedMailboxAccounts().length > 1;
+	}, this);
+	this.unifiedInboxReady = ko.observable(false);
 }
 
 /**

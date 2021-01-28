@@ -11,18 +11,12 @@ var
 	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 	Screens = require('%PathToCoreWebclientModule%/js/Screens.js'),
-	App = require('%PathToCoreWebclientModule%/js/App.js'),
-	
+
 	CAbstractSettingsFormView = ModulesManager.run('SettingsWebclient', 'getAbstractSettingsFormViewClass'),
-	
-	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
-	ChangePasswordPopup = ModulesManager.run('ChangePasswordWebclient', 'getChangePasswordPopup'),
 	
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
-	Settings = require('modules/%ModuleName%/js/Settings.js'),
-	
-	CServerPairPropertiesView = require('modules/%ModuleName%/js/views/settings/CServerPairPropertiesView.js')
+	Settings = require('modules/%ModuleName%/js/Settings.js')
 ;
 
 /**
@@ -40,6 +34,35 @@ function CAccountUnifiedMailboxFormView()
 	this.showUnifiedMailboxLabel = ko.observable(false);
 	this.unifiedMailboxLabelText = ko.observable('');
 	this.unifiedMailboxLabelColor = ko.observable('');
+
+	AccountList.unifiedMailboxAccounts.subscribe(function () {
+		var
+			MailCache = require('modules/%ModuleName%/js/Cache.js'),
+			HeaderItemView = require('modules/%ModuleName%/js/views/HeaderItemView.js')
+		;
+		MailCache.oUnifiedInbox.hasChanges(true);
+		MailCache.oUnifiedInbox.removeAllMessageListsFromCacheIfHasChanges();
+		if (AccountList.unifiedMailboxAccounts().length > 1) {
+			MailCache.executeCheckMail();
+		} else {
+			HeaderItemView.hash(HeaderItemView.baseHash());
+		}
+	});
+
+	this.aColors = [
+		'#f09650',
+		'#f68987',
+		'#6fd0ce',
+		'#8fbce2',
+		'#b9a4f5',
+		'#f68dcf',
+		'#d88adc',
+		'#4afdb4',
+		'#9da1ff',
+		'#5cc9c9',
+		'#77ca71',
+		'#aec9c9'
+	];
 }
 
 _.extendOwn(CAccountUnifiedMailboxFormView.prototype, CAbstractSettingsFormView.prototype);
@@ -100,7 +123,7 @@ CAccountUnifiedMailboxFormView.prototype.save = function ()
 
 	this.updateSavedState();
 
-	Ajax.send('UpdateAccountUnifiedInbox', this.getParametersForSave(), this.onResponse, this);
+	Ajax.send('UpdateAccountUnifiedMailbox', this.getParametersForSave(), this.onResponse, this);
 };
 
 /**
@@ -130,6 +153,10 @@ CAccountUnifiedMailboxFormView.prototype.onResponse = function (oResponse, oRequ
 			Screens.showReport(TextUtils.i18n('COREWEBCLIENT/REPORT_SETTINGS_UPDATE_SUCCESS'));
 		}
 	}
+};
+
+CAccountUnifiedMailboxFormView.prototype.setColor = function (sColor) {
+	this.unifiedMailboxLabelColor(sColor);
 };
 
 module.exports = new CAccountUnifiedMailboxFormView();

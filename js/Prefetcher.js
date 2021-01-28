@@ -19,10 +19,10 @@ var
 
 Prefetcher.prefetchFolderLists = function ()
 {
-	if (Settings.AllowUnifiedInbox && !Settings.unifiedInboxReady())
+	if (AccountList.unifiedInboxAllowed() && !AccountList.unifiedInboxReady())
 	{
 		var oAccount = _.find(AccountList.collection(), function (oAcct) {
-			return !MailCache.oFolderListItems[oAcct.id()];
+			return oAcct.includeInUnifiedMailbox() && !MailCache.oFolderListItems[oAcct.id()];
 		}, this);
 		if (oAccount)
 		{
@@ -31,7 +31,7 @@ Prefetcher.prefetchFolderLists = function ()
 		}
 		else
 		{
-			Settings.unifiedInboxReady(true);
+			AccountList.unifiedInboxReady(true);
 		}
 	}
 	return false;
@@ -173,7 +173,7 @@ Prefetcher.startPagePrefetch = function (iPage)
 
 Prefetcher.startUnifiedInboxPrefetch = function ()
 {
-	if (Settings.unifiedInboxReady())
+	if (AccountList.unifiedInboxReady())
 	{
 		return this.startFolderPrefetch(MailCache.oUnifiedInbox);
 	}
@@ -288,18 +288,15 @@ Prefetcher.startMessagesPrefetch = function (oFolder)
 		bPrefetchStarted = false;
 	;
 
-	if (!oPrefetchFolder.bIsUnifiedInbox)
+	if (oPrefetchFolder && !oPrefetchFolder.bIsUnifiedInbox)
 	{
 		bPrefetchStarted = this.startMessagesPrefetchForFolder(oPrefetchFolder, oPrefetchFolder.selected());
 	}
 
-	if (!bPrefetchStarted && Settings.unifiedInboxReady())
+	if (!bPrefetchStarted && AccountList.unifiedInboxReady())
 	{
-		_.each(MailCache.oFolderListItems, function (oFolderList, sAccountId) {
-			var
-				iAccountId = Types.pInt(sAccountId),
-				oInbox  = MailCache.oUnifiedInbox.getUnifiedInbox(iAccountId)
-			;
+		_.each(AccountList.unifiedMailboxAccounts(), function (oAccount) {
+			var oInbox  = MailCache.oUnifiedInbox.getUnifiedInbox(oAccount.id());
 			if (oInbox)
 			{
 				bPrefetchStarted = bPrefetchStarted || this.startMessagesPrefetchForFolder(oInbox, MailCache.oUnifiedInbox.selected());

@@ -28,8 +28,10 @@
 
 		<div class="row" data-bind="css: {'disabled': !showUnifiedMailboxLabel()}">
 			<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_ACCOUNT_UNIFIED_MAILBOX_LABEL_COLOR'}"></span>
-			<input class="value input" spellcheck="false" type="text" maxlength="65"
-				   data-bind="value: unifiedMailboxLabelColor, valueUpdate: 'afterkeydown', onEnter: save, enable: showUnifiedMailboxLabel"/>
+			<span class="colors" data-bind="foreach: aColors">
+					<span class="item color_pick" data-bind="style: {backgroundColor: $data}, css: {'selected': $parent.unifiedMailboxLabelColor() === $data},
+						 click: function () {$parent.setColor($data);}"></span>
+				</span>
 		</div>
     </div>
 	
