@@ -92,6 +92,11 @@ function CAccountModel(oData)
 	this.bDefault = Settings.AllowDefaultAccountForUser && this.email() === App.getUserPublicId();
 	
 	this.aExtend = Types.pObject(oData.Extend);
+
+	this.includeInUnifiedMailbox = ko.observable(!!oData.IncludeInUnifiedMailbox);
+	this.showUnifiedMailboxLabel = ko.observable(!!oData.ShowUnifiedMailboxLabel);
+	this.unifiedMailboxLabelText = ko.observable(Types.pString(oData.UnifiedMailboxLabelText));
+	this.unifiedMailboxLabelColor = ko.observable(Types.pString(oData.UnifiedMailboxLabelColor));
 }
 
 CAccountModel.prototype.threadingIsAvailable = function ()
@@ -109,6 +114,10 @@ CAccountModel.prototype.updateFromServer = function (oData)
 	this.useToAuthorize(!!oData.UseToAuthorize);
 	this.useThreading(!!oData.UseThreading);
 	this.bSaveRepliesToCurrFolder = !!oData.SaveRepliesToCurrFolder;
+	this.includeInUnifiedMailbox(!!oData.IncludeInUnifiedMailbox);
+	this.showUnifiedMailboxLabel(!!oData.ShowUnifiedMailboxLabel);
+	this.unifiedMailboxLabelText(Types.pString(oData.UnifiedMailboxLabelText));
+	this.unifiedMailboxLabelColor(Types.pString(oData.UnifiedMailboxLabelColor));
 };
 
 CAccountModel.prototype.requireAccounts = function ()

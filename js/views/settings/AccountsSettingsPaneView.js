@@ -24,6 +24,7 @@ var
 	AccountFoldersPaneView = require('modules/%ModuleName%/js/views/settings/AccountFoldersPaneView.js'),
 	AccountForwardSettingsFormView = require('modules/%ModuleName%/js/views/settings/AccountForwardSettingsFormView.js'),
 	AccountSettingsFormView = require('modules/%ModuleName%/js/views/settings/AccountSettingsFormView.js'),
+	AccountUnifiedMailboxFormView = require('modules/%ModuleName%/js/views/settings/AccountUnifiedMailboxFormView.js'),
 	CIdentitySettingsFormView = require('modules/%ModuleName%/js/views/settings/CIdentitySettingsFormView.js'),
 	CFetcherIncomingSettingsFormView = require('modules/%ModuleName%/js/views/settings/CFetcherIncomingSettingsFormView.js'),
 	CAliasSettingsFormView = require('modules/%ModuleName%/js/views/settings/CAliasSettingsFormView.js'),
@@ -70,6 +71,12 @@ function CAccountsSettingsPaneView()
 			title: TextUtils.i18n('%MODULENAME%/LABEL_PROPERTIES_TAB'),
 			view: AccountSettingsFormView,
 			visible: AccountSettingsFormView.visibleTab
+		},
+		{
+			name: 'unified',
+			title: TextUtils.i18n('%MODULENAME%/LABEL_UNIFIED_MAILBOX_TAB'),
+			view: AccountUnifiedMailboxFormView,
+			visible: AccountUnifiedMailboxFormView.visibleTab
 		},
 		{
 			name: 'folders',

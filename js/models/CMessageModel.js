@@ -35,12 +35,17 @@ function CMessageModel()
 		var oAccount = AccountList.getAccount(this.accountId());
 		return oAccount ? oAccount.email() : '';
 	}, this);
-	this.accountColor = ko.computed(function () {
-		if (this.accountId() === AccountList.getDefault().id())
+	this.showUnifiedMailboxLabel = ko.observable('');
+	this.unifiedMailboxLabelText = ko.observable('');
+	this.unifiedMailboxLabelColor = ko.observable('');
+	ko.computed(function () {
+		var oAccount = AccountList.getAccount(this.accountId());
+		if (oAccount)
 		{
-			return 'cadetblue';
+			this.showUnifiedMailboxLabel(oAccount.showUnifiedMailboxLabel());
+			this.unifiedMailboxLabelText(oAccount.unifiedMailboxLabelText());
+			this.unifiedMailboxLabelColor(oAccount.unifiedMailboxLabelColor());
 		}
-		return '#d29d8c';
 	}, this);
 	this.folder = ko.observable('');
 	this.uid = ko.observable('');
