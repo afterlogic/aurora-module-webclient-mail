@@ -187,7 +187,14 @@ CSenderSelector.prototype.setFetcherOrIdentityByReplyMessage = function (oMessag
 	
 	if (oFetcherOrIdentity)
 	{
-		this.changeSelectedSender(oFetcherOrIdentity);
+		if (oFetcherOrIdentity.accountId() !== this.senderAccountId())
+		{
+			this.changeSenderAccountId(oFetcherOrIdentity.accountId(), oFetcherOrIdentity);
+		}
+		else
+		{
+			this.changeSelectedSender(oFetcherOrIdentity);
+		}
 	}
 };
 

@@ -125,7 +125,7 @@ function CComposeView()
 	this.senderAccountId = SenderSelector.senderAccountId;
 	this.senderList = SenderSelector.senderList;
 	this.visibleFrom = ko.computed(function () {
-		return this.senderList().length > 1;
+		return App.isNewTab() || this.senderList().length > 1 || this.senderAccountId() !== MailCache.currentAccountId();
 	}, this);
 	this.selectedSender = SenderSelector.selectedSender;
 	this.selectedFetcherOrIdentity = SenderSelector.selectedFetcherOrIdentity;
@@ -552,10 +552,14 @@ CComposeView.prototype.hotKeysBind = function ()
 
 CComposeView.prototype.getMessageOnRoute = function ()
 {
-	var oParams = LinksUtils.parseCompose(this.routeParams());
-	if (this.routeType() !== '' && oParams.MessageFolderName && oParams.MessageUid)
+	var
+		oParams = LinksUtils.parseCompose(this.routeParams()),
+		oAccount = AccountList.getAccountByHash(oParams.AccountHash)
+	;
+
+	if (oAccount && this.routeType() !== '' && oParams.MessageFolderName && oParams.MessageUid)
 	{
-		MailCache.getMessage(oParams.MessageFolderName, oParams.MessageUid, this.onMessageResponse, this);
+		MailCache.getMessage(oAccount.id(), oParams.MessageFolderName, oParams.MessageUid, this.onMessageResponse, this);
 	}
 };
 
@@ -624,10 +628,13 @@ CComposeView.prototype.reset = function ()
 CComposeView.prototype.onRoute = function (aParams)
 {
 	var oParams = LinksUtils.parseCompose(aParams);
-	
-	// should be the first action to set right account id in new tab
-	AccountList.changeCurrentAccountByHash(oParams.AccountHash);
-	
+
+	if (App.isNewTab())
+	{
+		// should be the first action to set right account id in new tab
+		AccountList.changeCurrentAccountByHash(oParams.AccountHash);
+	}
+
 	this.routeType(oParams.RouteType);
 	switch (this.routeType())
 	{
@@ -1037,7 +1044,7 @@ CComposeView.prototype.onDataAsAttachmentUpload = function (oResponse, oRequest)
 CComposeView.prototype.addAttachments = function (aFiles)
 {
 	_.each(aFiles, _.bind(function (oFileData) {
-		var oAttach = new CAttachmentModel();
+		var oAttach = new CAttachmentModel(this.senderAccountId());
 		oAttach.parseFromUpload(oFileData);
 		this.attachments.push(oAttach);
 	}, this));
@@ -1054,7 +1061,7 @@ CComposeView.prototype.addFilesAsAttachment = function (aFiles)
 	;
 
 	_.each(aFiles, function (oFile) {
-		oAttach = new CAttachmentModel();
+		oAttach = new CAttachmentModel(this.senderAccountId());
 		oAttach.fileName(oFile.fileName());
 		oAttach.hash(oFile.hash());
 		oAttach.thumbUrlInQueue(oFile.thumbUrlInQueue());
@@ -1121,7 +1128,7 @@ CComposeView.prototype.onFilesUpload = function (oResponse, oRequest)
 CComposeView.prototype.addMessageAsAttachment = function (oMessage)
 {
 	var
-		oAttach = new CAttachmentModel(),
+		oAttach = new CAttachmentModel(oMessage.accountId()),
 		oParameters = null
 	;
 	
@@ -1131,8 +1138,9 @@ CComposeView.prototype.addMessageAsAttachment = function (oMessage)
 		oAttach.uploadStarted(true);
 		
 		this.attachments.push(oAttach);
-		
+
 		oParameters = {
+			'AccountID': oMessage.accountId(),
 			'MessageFolder': oMessage.folder(),
 			'MessageUid': oMessage.uid(),
 			'FileName': oAttach.fileName()
@@ -1233,7 +1241,7 @@ CComposeView.prototype.requestAttachmentsTempName = function ()
 	if (aHash.length > 0)
 	{
 		this.messageUploadAttachmentsStarted(true);
-		Ajax.send('SaveAttachmentsAsTempFiles', { 'Attachments': aHash }, this.onMessageUploadAttachmentsResponse, this);
+		Ajax.send('SaveAttachmentsAsTempFiles', { 'AccountID': this.senderAccountId(), 'Attachments': aHash }, this.onMessageUploadAttachmentsResponse, this);
 	}
 };
 
@@ -1249,7 +1257,7 @@ CComposeView.prototype.onMessageUploadAttachmentsResponse = function (oResponse,
 
 	if (oResponse.Result)
 	{
-		_.each(oResponse.Result, _.bind(this.setAttachTepmNameByHash, this));
+		_.each(oResponse.Result, _.bind(this.setAttachTempNameByHash, this));
 	}
 	else
 	{
@@ -1271,7 +1279,7 @@ CComposeView.prototype.onMessageUploadAttachmentsResponse = function (oResponse,
  * @param {string} sHash
  * @param {string} sTempName
  */
-CComposeView.prototype.setAttachTepmNameByHash = function (sHash, sTempName)
+CComposeView.prototype.setAttachTempNameByHash = function (sHash, sTempName)
 {
 	_.each(this.attachments(), function (oAttach) {
 		if (oAttach.hash() === sHash)
@@ -1298,7 +1306,7 @@ CComposeView.prototype.setMessageDataInNewTab = function (oParameters)
 	this.setRecipient(this.bccAddr, oParameters.bccAddr);
 	this.subject(oParameters.subject);
 	this.attachments(_.map(oParameters.attachments, function (oRawAttach) {
-		var oAttach = new CAttachmentModel();
+		var oAttach = new CAttachmentModel(oParameters.senderAccountId);
 		oAttach.parse(oRawAttach);
 		return oAttach;
 	}, this));
@@ -1398,8 +1406,7 @@ CComposeView.prototype.onFileUploadSelect = function (sFileUid, oFileData)
 	{
 		return false;
 	}
-	
-	oAttach = new CAttachmentModel();
+	oAttach = new CAttachmentModel(this.senderAccountId());
 	oAttach.onUploadSelect(sFileUid, oFileData);
 	this.attachments.push(oAttach);
 
@@ -1600,7 +1607,7 @@ CComposeView.prototype.onSendOrSaveMessageResponse = function (oResponse, oReque
 				this.templateUid(Types.pString(oResData.NewUid));
                 if (this.composeShown() && this instanceof CComposeView)// it is screen, not popup
                 {
-					Routing.replaceHashDirectly(LinksUtils.getComposeFromMessage('drafts', oParameters.DraftFolder, this.templateUid()));
+					Routing.replaceHashDirectly(LinksUtils.getComposeFromMessage('drafts', MailCache.currentAccountId(), oParameters.DraftFolder, this.templateUid()));
                 }
             }
 			else if (oResData.Result && oParameters.DraftUid === this.draftUid())
@@ -1608,7 +1615,7 @@ CComposeView.prototype.onSendOrSaveMessageResponse = function (oResponse, oReque
 				this.draftUid(Types.pString(oResData.NewUid));
 				if (this.composeShown() && this instanceof CComposeView)// it is screen, not popup
 				{
-					Routing.replaceHashDirectly(LinksUtils.getComposeFromMessage('drafts', oParameters.DraftFolder, this.draftUid()));
+					Routing.replaceHashDirectly(LinksUtils.getComposeFromMessage('drafts', MailCache.currentAccountId(), oParameters.DraftFolder, this.draftUid()));
 				}
 			}
 			this.saving(false);
@@ -1856,12 +1863,12 @@ CComposeView.prototype.openInNewWindow = function ()
 
 	if (this.draftUid().length > 0 && !this.isChanged())
 	{
-		sHash = Routing.buildHashFromArray(LinksUtils.getComposeFromMessage('drafts', MailCache.folderList().draftsFolderFullName(), this.draftUid(), true));
+		sHash = Routing.buildHashFromArray(LinksUtils.getComposeFromMessage('drafts', MailCache.currentAccountId(), MailCache.folderList().draftsFolderFullName(), this.draftUid(), true));
 		oWin = WindowOpener.openTab('?message-newtab' + sHash);
 	}
     else if (this.templateUid().length > 0 && !this.isChanged())
     {
-		sHash = Routing.buildHashFromArray(LinksUtils.getComposeFromMessage('drafts', this.templateFolderName(), this.templateUid(), true));
+		sHash = Routing.buildHashFromArray(LinksUtils.getComposeFromMessage('drafts', MailCache.currentAccountId(), this.templateFolderName(), this.templateUid(), true));
 		oWin = WindowOpener.openTab('?message-newtab' + sHash);
     }
 	else if (!this.isChanged())

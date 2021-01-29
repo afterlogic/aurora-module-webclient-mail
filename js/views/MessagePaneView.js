@@ -124,19 +124,19 @@ function CMessagePaneView()
 	}, this);
 	
 	this.isCurrentNotDraftOrSent = ko.computed(function () {
-		var oCurrFolder = MailCache.folderList().currentFolder();
+		var oCurrFolder = MailCache.getCurrentFolder();
 		return (oCurrFolder && oCurrFolder.fullName().length > 0 &&
 			oCurrFolder.type() !== Enums.FolderTypes.Drafts &&
 			oCurrFolder.type() !== Enums.FolderTypes.Sent);
 	}, this);
 
 	this.isCurrentSentFolder = ko.computed(function () {
-		var oCurrFolder = MailCache.folderList().currentFolder();
+		var oCurrFolder = MailCache.getCurrentFolder();
 		return !!oCurrFolder && oCurrFolder.fullName().length > 0 && oCurrFolder.type() === Enums.FolderTypes.Sent;
 	}, this);
 
 	this.isCurrentNotDraftFolder = ko.computed(function () {
-		var oCurrFolder = MailCache.folderList().currentFolder();
+		var oCurrFolder = MailCache.getCurrentFolder();
 		return !!oCurrFolder && oCurrFolder.fullName().length > 0 && oCurrFolder.type() !== Enums.FolderTypes.Drafts;
 	}, this);
 
@@ -144,8 +144,9 @@ function CMessagePaneView()
 	this.isVisibleResendTool = this.isCurrentSentFolder;
 	this.isVisibleForwardTool = this.isCurrentNotDraftFolder;
 
-	this.uid = ko.observable('');
+	this.accountId = ko.observable(0);
 	this.folder = ko.observable('');
+	this.uid = ko.observable('');
 	this.folder.subscribe(function () {
 		if (this.jqPanelHelper)
 		{
@@ -392,9 +393,9 @@ CMessagePaneView.prototype.onFolderListSubscribe = function ()
 
 CMessagePaneView.prototype.onMessagesSubscribe = function ()
 {
-	if (!this.currentMessage() && this.uid().length > 0)
+	if (!this.currentMessage() && this.uid() && this.uid().length > 0)
 	{
-		MailCache.setCurrentMessage(this.uid(), this.folder());
+		MailCache.setCurrentMessage(this.accountId(), this.folder(), this.uid());
 	}
 };
 
@@ -486,7 +487,7 @@ CMessagePaneView.prototype.onCurrentMessageSubscribe = function ()
 			/*jshint onevar: true*/
 
 			_.each(oMessage.attachments(), _.bind(function (oAttach) {
-				var oCopy = new CAttachmentModel();
+				var oCopy = new CAttachmentModel(oAttach.iAccountId);
 				oCopy.copyProperties(oAttach);
 				aAtachments.push(oCopy);
 			}, this));
@@ -678,18 +679,33 @@ CMessagePaneView.prototype.doHidingBlockquotes = function (aCollapsedStatuses)
  */
 CMessagePaneView.prototype.onRoute = function (aParams)
 {
-	var oParams = LinksUtils.parseMailbox(aParams);
+	var
+		oParams = LinksUtils.parseMailbox(aParams),
+		iMessageAccountId = 0,
+		sFolder = oParams.Folder,
+		sUid = oParams.Uid
+	;
 	
 	AccountList.changeCurrentAccountByHash(oParams.AccountHash);
+	iMessageAccountId = MailCache.currentAccountId();
 	
-	if (this.replyText() !== '' && this.uid() !== oParams.Uid)
+	if (sFolder === MailCache.oUnifiedInbox.fullName() && Types.isNonEmptyString(sUid))
+	{
+		var aParts = sUid.split(':');
+		iMessageAccountId = Types.pInt(aParts[0]);
+		sFolder = 'INBOX';
+		sUid = Types.pString(aParts[1]);
+	}
+	
+	if (this.replyText() !== '' && this.uid() !== sUid)
 	{
 		this.saveReplyMessage(false);
 	}
 
-	this.uid(oParams.Uid);
-	this.folder(oParams.Folder);
-	MailCache.setCurrentMessage(this.uid(), this.folder());
+	this.accountId(iMessageAccountId);
+	this.uid(sUid);
+	this.folder(sFolder);
+	MailCache.setCurrentMessage(this.accountId(), this.folder(), this.uid());
 	
 	this.contentHasFocus(true);
 };
@@ -737,7 +753,7 @@ CMessagePaneView.prototype.executeReplyOrForward = function (sReplyType)
 		this.replyText('');
 		this.replyDraftUid('');
 		
-		ComposeUtils.composeMessageAsReplyOrForward(sReplyType, this.currentMessage().folder(), this.currentMessage().uid());
+		ComposeUtils.composeMessageAsReplyOrForward(sReplyType, this.currentMessage().accountId(), this.currentMessage().folder(), this.currentMessage().uid());
 	}
 };
 
@@ -760,7 +776,7 @@ CMessagePaneView.prototype.executePrevMessage = function ()
 {
 	if (this.isEnablePrevMessage())
 	{
-		Routing.setHash(LinksUtils.getViewMessage(MailCache.folderList().currentFolderFullName(), this.prevMessageUid()));
+		Routing.setHash(LinksUtils.getViewMessage(MailCache.currentAccountId(), MailCache.getCurrentFolderFullname(), this.prevMessageUid()));
 	}
 };
 
@@ -768,7 +784,7 @@ CMessagePaneView.prototype.executeNextMessage = function ()
 {
 	if (this.isEnableNextMessage())
 	{
-		Routing.setHash(LinksUtils.getViewMessage(MailCache.folderList().currentFolderFullName(), this.nextMessageUid()));
+		Routing.setHash(LinksUtils.getViewMessage(MailCache.currentAccountId(), MailCache.getCurrentFolderFullname(), this.nextMessageUid()));
 	}
 };
 

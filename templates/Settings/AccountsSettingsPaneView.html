@@ -19,6 +19,7 @@
 					<span class="link fetcher" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ADD_FETCHER'}, visible: (bDefault && $parent.bAllowFetchers), click: function (oModel, oEv) {$parent.addFetcher(id(), oEv);}"></span>
 					<span class="link fetcher" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ADD_ALIAS'}, visible: (bDefault && $parent.bAllowAliases), click: function (oModel, oEv) {$parent.addAlias(id(), oEv);}"></span>
 					<span class="title" data-bind="text: email()"></span>
+					<span class="unified_marker" data-bind="visible: includeInUnifiedMailbox() && showUnifiedMailboxLabel(), text: unifiedMailboxLabelText() || email(), style: {'background': unifiedMailboxLabelColor}"></span>
 				</div>
 
 				<!-- ko foreach: identities -->

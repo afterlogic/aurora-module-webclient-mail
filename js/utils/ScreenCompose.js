@@ -14,23 +14,25 @@ ScreenComposeUtils.composeMessage = function ()
 };
 
 /**
+ * @param {int} iAccountId
  * @param {string} sFolder
  * @param {string} sUid
  */
-ScreenComposeUtils.composeMessageFromDrafts = function (sFolder, sUid)
+ScreenComposeUtils.composeMessageFromDrafts = function (iAccountId, sFolder, sUid)
 {
-	var aParams = LinksUtils.getComposeFromMessage('drafts', sFolder, sUid);
+	var aParams = LinksUtils.getComposeFromMessage('drafts', iAccountId, sFolder, sUid);
 	Routing.setHash(aParams);
 };
 
 /**
  * @param {string} sReplyType
+ * @param {int} iAccountId
  * @param {string} sFolder
  * @param {string} sUid
  */
-ScreenComposeUtils.composeMessageAsReplyOrForward = function (sReplyType, sFolder, sUid)
+ScreenComposeUtils.composeMessageAsReplyOrForward = function (sReplyType, iAccountId, sFolder, sUid)
 {
-	var aParams = LinksUtils.getComposeFromMessage(sReplyType, sFolder, sUid);
+	var aParams = LinksUtils.getComposeFromMessage(sReplyType, iAccountId, sFolder, sUid);
 	Routing.setHash(aParams);
 };
 
@@ -56,7 +58,7 @@ ScreenComposeUtils.composeMessageWithData = function (oData)
  */
 ScreenComposeUtils.composeMessageWithEml = function (oMessage)
 {
-	var aParams = LinksUtils.getComposeWithEmlObject(oMessage.folder(), oMessage.uid(), oMessage);
+	var aParams = LinksUtils.getComposeWithEmlObject(oMessage.accountId(), oMessage.folder(), oMessage.uid(), oMessage);
 	aParams.shift();
 	aParams.shift();
 	Routing.goDirectly(LinksUtils.getCompose(), aParams);

@@ -38,7 +38,8 @@ module.exports = {
 	AutocreateMailAccountOnNewUserFirstLogin: false,
 	IgnoreImapSubscription: false,
 	ImageUploadSizeLimit: 0,
-	
+	AllowUnifiedInbox: true,
+
 	// from MailWebclient module
 	AllowAppRegisterMailto: false,
 	AllowChangeInputDirection: true,
@@ -107,6 +108,7 @@ module.exports = {
 			this.AutocreateMailAccountOnNewUserFirstLogin = Types.pBool(oAppDataMailSection.AutocreateMailAccountOnNewUserFirstLogin, this.AutocreateMailAccountOnNewUserFirstLogin);
 			this.IgnoreImapSubscription = Types.pBool(oAppDataMailSection.IgnoreImapSubscription, this.IgnoreImapSubscription);
 			this.ImageUploadSizeLimit = Types.pNonNegativeInt(oAppDataMailSection.ImageUploadSizeLimit, this.ImageUploadSizeLimit);
+			this.AllowUnifiedInbox = Types.pBool(oAppDataMailSection.AllowUnifiedInbox, this.AllowUnifiedInbox);
 			window.Enums.SmtpAuthType = Types.pObject(oAppDataMailSection.SmtpAuthType);
 
 			this.MessagesSortBy = _.clone(Types.pObject(oAppDataMailSection.MessagesSortBy, this.MessagesSortBy));

@@ -4,6 +4,9 @@ var
 	_ = require('underscore'),
 	ko = require('knockout'),
 	
+	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
+	
+	MailCache = null,
 	MessagesDictionary = require('modules/%ModuleName%/js/MessagesDictionary.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js')
 ;
@@ -30,6 +33,17 @@ function CUidListModel()
 }
 
 /**
+ * Requires MailCache. It cannot be required earlier because it is not initialized yet.
+ */
+CUidListModel.prototype.requireMailCache = function ()
+{
+	if (MailCache === null)
+	{
+		MailCache = require('modules/%ModuleName%/js/Cache.js');
+	}
+};
+
+/**
  * @param {string} sUid
  * @param {Array} aThreadUids
  */
@@ -42,15 +56,16 @@ CUidListModel.prototype.addThreadUids = function (sUid, aThreadUids)
 };
 
 /**
+ * @param {int} iOffset
  * @param {Object} oResult
  */
-CUidListModel.prototype.setUidsAndCount = function (oResult)
+CUidListModel.prototype.setUidsAndCount = function (iOffset, oResult)
 {
 	if (oResult['@Object'] === 'Collection/MessageCollection')
 	{
 		_.each(oResult.Uids, function (sUid, iIndex) {
 			
-			this.collection()[iIndex + oResult.Offset] = sUid.toString();
+			this.collection()[iIndex + iOffset] = sUid.toString();
 
 		}, this);
 
@@ -63,10 +78,14 @@ CUidListModel.prototype.setUidsAndCount = function (oResult)
  */
 CUidListModel.prototype.getUidsForOffset = function (iOffset)
 {
+	this.requireMailCache();
+	
 	var
 		iIndex = 0,
 		iLen = this.collection().length,
 		sUid = '',
+		iAccountId = this.iAccountId,
+		sFullName = this.sFullName,
 		iExistsCount = 0,
 		aUids = [],
 		oMsg = null
@@ -77,7 +96,15 @@ CUidListModel.prototype.getUidsForOffset = function (iOffset)
 		if (iIndex >= iOffset && iExistsCount < Settings.MailsPerPage)
 		{
 			sUid = this.collection()[iIndex];
-			oMsg = MessagesDictionary.get([this.iAccountId, this.sFullName, sUid]);
+			var sUidForDict = sUid;
+			if (sUid !== undefined && this.sFullName === MailCache.oUnifiedInbox.fullName())
+			{
+				var aParts = sUid.split(':');
+				iAccountId = Types.pInt(aParts[0]);
+				sFullName = 'INBOX';
+				sUidForDict = aParts[1];
+			}
+			oMsg = (sUid === undefined) ? null : MessagesDictionary.get([iAccountId, sFullName, sUidForDict]);
 
 			if (oMsg && !oMsg.deleted() || sUid === undefined)
 			{

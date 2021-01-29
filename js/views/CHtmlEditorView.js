@@ -844,7 +844,8 @@ CHtmlEditorView.prototype.insertWebImageFromPopup = function (oCurrentViewModel,
 CHtmlEditorView.prototype.insertComputerImageFromPopup = function (sUid, oAttachmentData)
 {
 	var
-		oAttachment = new CAttachmentModel(),
+		iAccountId = _.isFunction(this.oParent && this.oParent.senderAccountId) ? this.oParent.senderAccountId() : MailCache.currentAccountId(),
+		oAttachment = new CAttachmentModel(iAccountId),
 		sViewLink = '',
 		bResult = false
 	;

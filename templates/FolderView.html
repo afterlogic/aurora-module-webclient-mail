@@ -9,7 +9,7 @@
 			css: {'recivedAnim': recivedAnim()},
 			attr: {href: routingHash},
 			visible: canBeSelected(),
-			droppable: {valueFunc: bVirtual ? false : function (oEvent, oUi) { $root.messagesDrop($data, oEvent, oUi); }, switchObserv: selected}
+			droppable: {valueFunc: bVirtual || bIsUnifiedInbox ? false : function (oEvent, oUi) { $root.messagesDrop($data, oEvent, oUi); }, switchObserv: selected}
 		">
 			<!-- ko if: showMessagesCount -->
 				<!-- .count:first-child css selector is used here so this span should not always be rendered -->

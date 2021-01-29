@@ -20,8 +20,9 @@ var
  * @constructor
  * @extends CCommonFileModel
  */
-function CAttachmentModel()
+function CAttachmentModel(iAccountId)
 {
+	this.iAccountId = iAccountId || App.currentAccountId();
 	this.folderName = ko.observable('');
 	this.messageUid = ko.observable('');
 	
@@ -46,14 +47,18 @@ function CAttachmentModel()
 
 _.extendOwn(CAttachmentModel.prototype, CAbstractFileModel.prototype);
 
+/**
+ * Method is used in other modules
+ * @returns {CAttachmentModel}
+ */
 CAttachmentModel.prototype.getNewInstance = function ()
 {
-	return new CAttachmentModel();
+	return new CAttachmentModel(this.iAccountId);
 };
 
 CAttachmentModel.prototype.getCopy = function ()
 {
-	var oCopy = new CAttachmentModel();
+	var oCopy = new CAttachmentModel(this.iAccountId);
 	
 	oCopy.copyProperties(this);
 	
@@ -180,6 +185,7 @@ CAttachmentModel.prototype.viewMessageFile = function ()
 			this.oNewWindow = oWin;
 
 			Ajax.send('GetMessage', {
+				'AccountID': this.iAccountId,
 				'Folder': this.folderName(),
 				'Uid': this.messageUid(),
 				'Rfc822MimeIndex': this.mimePartIndex()

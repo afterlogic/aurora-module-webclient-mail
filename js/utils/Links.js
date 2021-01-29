@@ -5,6 +5,9 @@ var
 	
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	
+	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
+	
+	MailCache = null,
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	
 	LinksUtils = {}
@@ -27,7 +30,7 @@ function IsPageParam(sTemp)
  */
 function IsMsgParam(sTemp)
 {
-	return ('msg' === sTemp.substr(0, 3) && (/^[1-9][\d]*$/).test(sTemp.substr(3)));
+	return ('msg' === sTemp.substr(0, 3) && (/^[1-9][\d:]*$/).test(sTemp.substr(3)));
 };
 
 /**
@@ -111,18 +114,31 @@ LinksUtils.getMailbox = function (sFolder, iPage, sUid, sSearch, sFilters, sSort
 };
 
 /**
+ * Requires MailCache. It cannot be required earlier because it is not initialized yet.
+ */
+LinksUtils.requireMailCache = function ()
+{
+	if (MailCache === null)
+	{
+		MailCache = require('modules/%ModuleName%/js/Cache.js');
+	}
+};
+
+/**
  * @param {Array} aParamsToParse
- * @param {string} sInboxFullName
  * 
  * @return {Object}
  */
-LinksUtils.parseMailbox = function (aParamsToParse, sInboxFullName)
+LinksUtils.parseMailbox = function (aParamsToParse)
 {
+	this.requireMailCache();
+	
 	var
 		bMailtoCompose = aParamsToParse.length > 0 && aParamsToParse[0] === 'compose' && aParamsToParse[1] === 'to',
 		aParams = bMailtoCompose ? [] : aParamsToParse,
 		sAccountHash = '',
-		sFolder = 'INBOX',
+		sFolder = '',
+		sInboxFullName = MailCache.folderList().inboxFolderFullName() || 'INBOX',
 		iPage = 1,
 		sUid = '',
 		sSearch = '',
@@ -255,12 +271,12 @@ LinksUtils.parseMailbox = function (aParamsToParse, sInboxFullName)
  * @param {string} sUid
  * @return {Array}
  */
-LinksUtils.getViewMessage = function (sFolder, sUid)
+LinksUtils.getViewMessage = function (iAccountId, sFolder, sUid)
 {
 	var
 		AccountList = require('modules/%ModuleName%/js/AccountList.js'),
-		oCurrAccount = AccountList.getCurrent(),
-		sAccountHash = oCurrAccount ? oCurrAccount.hash() : ''
+		oAccount = AccountList.getAccount(iAccountId),
+		sAccountHash = oAccount ? oAccount.hash() : ''
 	;
 	return [Settings.HashModuleName + '-view', sAccountHash, sFolder, 'msg' + sUid];
 };
@@ -280,17 +296,18 @@ LinksUtils.getCompose = function ()
 
 /**
  * @param {string} sType
+ * @param {int} iAccountId
  * @param {string} sFolder
  * @param {string} sUid
  * 
  * @return {Array}
  */
-LinksUtils.getComposeFromMessage = function (sType, sFolder, sUid)
+LinksUtils.getComposeFromMessage = function (sType, iAccountId, sFolder, sUid)
 {
 	var
 		AccountList = require('modules/%ModuleName%/js/AccountList.js'),
-		oCurrAccount = AccountList.getCurrent(),
-		sAccountHash = oCurrAccount ? oCurrAccount.hash() : ''
+		oAccount = AccountList.getAccount(iAccountId),
+		sAccountHash = oAccount ? oAccount.hash() : ''
 	;
 	return [Settings.HashModuleName + '-compose', sAccountHash, sType, sFolder, sUid];
 };
@@ -336,17 +353,18 @@ LinksUtils.getComposeWithObject = function (sType, oObject)
 };
 
 /**
+ * @param {int} iAccountId
  * @param {string} sFolderName
  * @param {string} sUid
  * @param {object} oObject
  * @returns {Array}
  */
-LinksUtils.getComposeWithEmlObject = function (sFolderName, sUid, oObject)
+LinksUtils.getComposeWithEmlObject = function (iAccountId, sFolderName, sUid, oObject)
 {
 	var
 		AccountList = require('modules/%ModuleName%/js/AccountList.js'),
-		oCurrAccount = AccountList.getCurrent(),
-		sAccountHash = oCurrAccount ? oCurrAccount.hash() : ''
+		oAccount = AccountList.getAccount(iAccountId),
+		sAccountHash = oAccount ? oAccount.hash() : ''
 	;
 	return [Settings.HashModuleName + '-compose', sAccountHash, Enums.ReplyType.ForwardAsAttach, sFolderName, sUid, oObject];
 };

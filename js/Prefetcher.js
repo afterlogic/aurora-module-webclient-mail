@@ -2,6 +2,8 @@
 
 var
 	_ = require('underscore'),
+
+	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	
 	App = require('%PathToCoreWebclientModule%/js/App.js'),
 	UserSettings = require('%PathToCoreWebclientModule%/js/Settings.js'),
@@ -10,11 +12,30 @@ var
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	MailCache = require('modules/%ModuleName%/js/Cache.js'),
-	MessagesDictionary = require('modules/%ModuleName%/js/MessagesDictionary.js'),
-	
+
 	Prefetcher = {},
 	bFetchersIdentitiesPrefetched = false
 ;
+
+Prefetcher.prefetchFolderLists = function ()
+{
+	if (AccountList.unifiedInboxAllowed() && !AccountList.unifiedInboxReady())
+	{
+		var oAccount = _.find(AccountList.collection(), function (oAcct) {
+			return oAcct.includeInUnifiedMailbox() && !MailCache.oFolderListItems[oAcct.id()];
+		}, this);
+		if (oAccount)
+		{
+			MailCache.getFolderList(oAccount.id());
+			return true;
+		}
+		else
+		{
+			AccountList.unifiedInboxReady(true);
+		}
+	}
+	return false;
+};
 
 Prefetcher.prefetchFetchersIdentities = function ()
 {
@@ -135,7 +156,7 @@ Prefetcher.prefetchPrevPage = function (sCurrentUid)
 Prefetcher.startPagePrefetch = function (iPage)
 {
 	var
-		oCurrFolder = MailCache.folderList().currentFolder(),
+		oCurrFolder = MailCache.getCurrentFolder(),
 		oUidList = MailCache.uidList(),
 		iOffset = (iPage - 1) * Settings.MailsPerPage,
 		bPageExists = iPage > 0 && iOffset < oUidList.resultCount(),
@@ -150,12 +171,21 @@ Prefetcher.startPagePrefetch = function (iPage)
 	return bRequestStarted;
 };
 
+Prefetcher.startUnifiedInboxPrefetch = function ()
+{
+	if (AccountList.unifiedInboxReady())
+	{
+		return this.startFolderPrefetch(MailCache.oUnifiedInbox);
+	}
+	return false;
+};
+
 Prefetcher.startOtherFoldersPrefetch = function ()
 {
 	var
 		oFolderList = MailCache.folderList(),
 		sCurrFolder = oFolderList.currentFolderFullName(),
-		aFoldersFromAccount = MailCache.getNamesOfFoldersToRefresh(),
+		aFoldersFromAccount = MailCache.getNamesOfFoldersToRefresh(MailCache.currentAccountId()),
 		aSystemFolders = oFolderList ? [oFolderList.inboxFolderFullName(), oFolderList.sentFolderFullName(), oFolderList.draftsFolderFullName(), oFolderList.spamFolderFullName()] : [],
 		aOtherFolders = (aFoldersFromAccount.length < 5) ? this.getOtherFolderNames(5 - aFoldersFromAccount.length) : [],
 		aFolders = _.uniq(_.compact(_.union(aSystemFolders, aFoldersFromAccount, aOtherFolders))),
@@ -210,38 +240,76 @@ Prefetcher.startFolderPrefetch = function (oFolder)
 Prefetcher.startThreadListPrefetch = function ()
 {
 	var
-		aUidsForLoad = [],
+		bPrefetchStarted = false,
+		oUidsForLoad = {},
+		oFolders = {},
 		oCurrFolder = MailCache.getCurrentFolder()
 	;
 
 	_.each(MailCache.messages(), function (oCacheMess) {
 		if (oCacheMess.threadCount() > 0)
 		{
+			var
+				iAccountId = oCacheMess.accountId(),
+				oFolder = oCurrFolder.bIsUnifiedInbox ? oCurrFolder.getUnifiedInbox(iAccountId) : oCurrFolder
+			;
+			if (!_.isArray(oUidsForLoad[iAccountId]))
+			{
+				oUidsForLoad[iAccountId] = [];
+				oFolders[iAccountId] = oFolder;
+			}
 			_.each(oCacheMess.threadUids(), function (sThreadUid) {
-				if (!oCurrFolder.hasThreadUidBeenRequested(sThreadUid))
+				if (!oFolder.hasThreadUidBeenRequested(sThreadUid))
 				{
-					aUidsForLoad.push(sThreadUid);
+					oUidsForLoad[iAccountId].push(sThreadUid);
 				}
 			});
 		}
 	}, this);
 
-	if (aUidsForLoad.length > 0)
-	{
-		aUidsForLoad = aUidsForLoad.slice(0, Settings.MailsPerPage);
-		oCurrFolder.addRequestedThreadUids(aUidsForLoad);
-		oCurrFolder.loadThreadMessages(aUidsForLoad);
-		return true;
-	}
+	_.each(oUidsForLoad, function (aUidsForLoad, iAccountId) {
+		var oFolder = oFolders[iAccountId];
+		if (oFolder && aUidsForLoad.length > 0)
+		{
+			aUidsForLoad = aUidsForLoad.slice(0, Settings.MailsPerPage);
+			oFolder.addRequestedThreadUids(aUidsForLoad);
+			oFolder.loadThreadMessages(aUidsForLoad);
+			bPrefetchStarted = true;
+		}
+	});
 
-	return false;
+	return bPrefetchStarted;
 };
 
 Prefetcher.startMessagesPrefetch = function (oFolder)
 {
 	var
-		iAccountId = MailCache.currentAccountId(),
 		oPrefetchFolder = oFolder ? oFolder : MailCache.getCurrentFolder(),
+		bPrefetchStarted = false;
+	;
+
+	if (oPrefetchFolder && !oPrefetchFolder.bIsUnifiedInbox)
+	{
+		bPrefetchStarted = this.startMessagesPrefetchForFolder(oPrefetchFolder, oPrefetchFolder.selected());
+	}
+
+	if (!bPrefetchStarted && AccountList.unifiedInboxReady())
+	{
+		_.each(AccountList.unifiedMailboxAccounts(), function (oAccount) {
+			var oInbox  = MailCache.oUnifiedInbox.getUnifiedInbox(oAccount.id());
+			if (oInbox)
+			{
+				bPrefetchStarted = bPrefetchStarted || this.startMessagesPrefetchForFolder(oInbox, MailCache.oUnifiedInbox.selected());
+			}
+		}, this);
+	}
+	return bPrefetchStarted;
+};
+
+Prefetcher.startMessagesPrefetchForFolder = function (oPrefetchFolder, bFolderSelected)
+{
+	var
+		iAccountId = oPrefetchFolder.iAccountId,
 		iTotalSize = 0,
 		iMaxSize = Settings.MaxMessagesBodiesSizeToPrefetch,
 		aUids = [],
@@ -249,6 +317,7 @@ Prefetcher.startMessagesPrefetch = function (oFolder)
 		iJsonSizeOf1Message = 2048,
 		fFillUids = function (oMsg) {
 			var
+				bFromThisAccount = oMsg.accountId() === iAccountId,
 				bNotFilled = (!oMsg.deleted() && !oMsg.completelyFilled()),
 				bUidNotAdded = !_.find(aUids, function (sUid) {
 					return sUid === oMsg.uid();
@@ -257,7 +326,7 @@ Prefetcher.startMessagesPrefetch = function (oFolder)
 				iTextSize = oMsg.textSize() < Settings.MessageBodyTruncationThreshold ? oMsg.textSize() : Settings.MessageBodyTruncationThreshold
 			;
 
-			if (iTotalSize < iMaxSize && bNotFilled && bUidNotAdded && bHasNotBeenRequested)
+			if (iTotalSize < iMaxSize && bFromThisAccount && bNotFilled && bUidNotAdded && bHasNotBeenRequested)
 			{
 				aUids.push(oMsg.uid());
 				iTotalSize += iTextSize + iJsonSizeOf1Message;
@@ -267,7 +336,7 @@ Prefetcher.startMessagesPrefetch = function (oFolder)
 
 	if (oPrefetchFolder)
 	{
-		if (oPrefetchFolder.selected())
+		if (bFolderSelected)
 		{
 			_.each(MailCache.messages(), fFillUids);
 		}
@@ -368,6 +437,11 @@ module.exports = {
 		var bPrefetchStarted = false;
 		
 		bPrefetchStarted = Prefetcher.prefetchFetchersIdentities();
+		
+		if (!bPrefetchStarted)
+		{
+			bPrefetchStarted = Prefetcher.prefetchFolderLists();
+		}
 
 		if (!bPrefetchStarted)
 		{
@@ -401,6 +475,11 @@ module.exports = {
 		
 		bPrefetchStarted = Prefetcher.prefetchFetchersIdentities();
 		
+		if (!bPrefetchStarted)
+		{
+			bPrefetchStarted = Prefetcher.prefetchFolderLists();
+		}
+
 		if (!bPrefetchStarted)
 		{
 			bPrefetchStarted = Prefetcher.prefetchTemplateFolder();
@@ -453,6 +532,11 @@ module.exports = {
 
 		if (!bPrefetchStarted)
 		{
+			bPrefetchStarted = Prefetcher.startUnifiedInboxPrefetch();
+		}
+
+		if (!bPrefetchStarted)
+		{
 			bPrefetchStarted = Prefetcher.startOtherFoldersPrefetch();
 		}
 		
@@ -460,6 +544,9 @@ module.exports = {
 	},
 	prefetchStarredMessageList: function () {
 		Prefetcher.prefetchStarredMessageList();
+	},
+	prefetchFolderLists: function () {
+		return Prefetcher.prefetchFolderLists();
 	},
 	startFolderPrefetch: function (oFolder) {
 		Prefetcher.startFolderPrefetch(oFolder);
