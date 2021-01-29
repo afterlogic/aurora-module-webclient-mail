@@ -246,7 +246,7 @@ CMailCache.prototype.init = function ()
 		'FullNameRaw': '__unified__inbox__',
 		'FullNameHash': '',
 		'Delimiter': '/',
-		'Type': Enums.FolderTypes.Inbox,
+		'Type': Enums.FolderTypes.AllInboxes,
 		'AlwaysRefresh': true,
 		'IsSubscribed': true,
 		'IsSelectable': true,

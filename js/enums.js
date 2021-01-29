@@ -26,7 +26,8 @@ Enums.FolderTypes = {
 	'Starred': 7,
 	'Template': 8,
 	'System': 9,
-	'User': 10
+	'User': 10,
+	'AllInboxes': 11
 };
 
 Enums.SortOrder = {

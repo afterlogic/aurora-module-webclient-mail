@@ -32,6 +32,20 @@ function CAccountUnifiedMailboxFormView()
 	
 	this.includeInUnifiedMailbox = ko.observable(false);
 	this.showUnifiedMailboxLabel = ko.observable(false);
+	this.showUnifiedMailboxLabel.subscribe(function () {
+		if (this.showUnifiedMailboxLabel())
+		{
+			if (this.unifiedMailboxLabelText() === '')
+			{
+				var oEditedAccount = AccountList.getEdited();
+				this.unifiedMailboxLabelText(oEditedAccount.email());
+			}
+			if (this.unifiedMailboxLabelColor() === '')
+			{
+				this.unifiedMailboxLabelColor('#f09650');
+			}
+		}
+	}, this);
 	this.unifiedMailboxLabelText = ko.observable('');
 	this.unifiedMailboxLabelColor = ko.observable('');
 
