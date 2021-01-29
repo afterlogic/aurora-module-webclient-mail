@@ -38,6 +38,7 @@ require("jquery-ui/ui/widgets/datepicker");
  */
 function CMessageListView(fOpenMessageInNewWindowBound)
 {
+	this.isUnifiedFolderCurrent = MailCache.oUnifiedInbox.selected;
 	this.bVisibleSortByTool = Settings.MessagesSortBy.Allow && Settings.MessagesSortBy.List.length > 0;
 	this.sSortBy = Settings.MessagesSortBy.DefaultSortBy;
 	this.iSortOrder = Settings.MessagesSortBy.DefaultSortOrder;
