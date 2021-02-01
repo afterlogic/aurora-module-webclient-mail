@@ -203,8 +203,8 @@ function CMessagePaneView()
 	}, this);
 
 	this.sAttachmentsSwitcherViewTemplate = App.isMobile() ? '%ModuleName%_Message_AttachmentsSwitcherView' : '';
-	this.sQuickReplyViewTemplate = App.isMobile() ? '' : '%ModuleName%_Message_QuickReplyView';
-	
+	this.sQuickReplyViewTemplate = App.isMobile() || !Settings.AllowQuickReply ? '' : '%ModuleName%_Message_QuickReplyView';
+
 	this.attachments = ko.observableArray([]);
 	this.notInlineAttachments = ko.computed(function () {
 		return _.filter(this.attachments(), function (oAttach) {
