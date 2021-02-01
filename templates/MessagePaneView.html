@@ -152,6 +152,11 @@
 </div>
 <div class="panel_bottom">
 	<!-- ko template: {name: sQuickReplyViewTemplate} --><!-- /ko -->
+	<!-- ko foreach: bottomControllers -->
+		<!-- ko if: $data.ViewTemplate -->
+			<!-- ko template: { name: $data.ViewTemplate, data: $data} --><!-- /ko -->
+		<!-- /ko -->
+	<!-- /ko -->
 </div>
 
 <!-- ko template: {name: '%ModuleName%_PrintMessageView'} --><!-- /ko -->

@@ -188,8 +188,9 @@ function CMessagePaneView()
 
 	this.topControllers = ko.observableArray();
 	this.bodyControllers = ko.observableArray();
+	this.bottomControllers = ko.observableArray();
 	this.controllers = ko.computed(function () {
-		return _.union(this.topControllers(), this.bodyControllers());
+		return _.union(this.topControllers(), this.bodyControllers(), this.bottomControllers());
 	}, this);
 	App.broadcastEvent('%ModuleName%::RegisterMessagePaneController', _.bind(function (oController, sPlace) {
 		this.registerController(oController, sPlace);
@@ -1049,6 +1050,9 @@ CMessagePaneView.prototype.registerController = function (oController, sPlace) {
 		case 'BeforeMessageBody':
 			this.bodyControllers.push(oController);
 			break
+		case 'AfterMessageBody':
+			this.bottomControllers.push(oController);
+			break;
 	}
 	
 	if ($.isFunction(oController.assignMessagePaneExtInterface))
