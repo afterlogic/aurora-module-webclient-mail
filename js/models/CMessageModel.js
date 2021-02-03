@@ -767,4 +767,12 @@ CMessageModel.prototype.toJSON = function ()
 	};
 };
 
+CMessageModel.prototype.getHeaderValue = function (sHeaderName) {
+	var
+		reg = new RegExp(sHeaderName + ':\s*(.+)(\n|$)', 'gm'),
+		aResult = reg.exec(this.sourceHeaders())
+	;
+	return $.trim(Types.pString(aResult && aResult[1]));
+}
+
 module.exports = CMessageModel;
