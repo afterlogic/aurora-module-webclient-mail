@@ -645,18 +645,21 @@ CMailCache.prototype.executeCheckMail = function (bAbortPrevious)
 				Ajax.send('GetUnifiedRelevantFoldersInformation', oParameters, this.onGetRelevantFoldersInformationResponse, this);
 			}
 		}
-		else if (aFolders.length > 0)
+		else
 		{
 			aFolders = this.getNamesOfFoldersToRefresh(this.currentAccountId());
-			oParameters = {
-				'AccountID': iCurrentAccountId,
-				'Folders': aFolders,
-				'UseListStatusIfPossible': this.getUseListStatusIfPossibleValue(iCurrentAccountId, aFolders.length)
-			};
+			if (aFolders.length > 0)
+			{
+				oParameters = {
+					'AccountID': iCurrentAccountId,
+					'Folders': aFolders,
+					'UseListStatusIfPossible': this.getUseListStatusIfPossibleValue(iCurrentAccountId, aFolders.length)
+				};
 
-			this.checkMailStarted(true);
-			this.checkMailStartedAccountId(iCurrentAccountId);
-			Ajax.send('GetRelevantFoldersInformation', oParameters, this.onGetRelevantFoldersInformationResponse, this);
+				this.checkMailStarted(true);
+				this.checkMailStartedAccountId(iCurrentAccountId);
+				Ajax.send('GetRelevantFoldersInformation', oParameters, this.onGetRelevantFoldersInformationResponse, this);
+			}
 		}
 	}
 };
