@@ -10,27 +10,27 @@
 			</span>
 		</div>
 
-		<div class="row">
+		<div class="row" data-bind="css: {'disabled': !includeInUnifiedMailbox()}">
 			<span class="value offset">
 				<label class="custom_checkbox" data-bind="css: {'checked': showUnifiedMailboxLabel}">
 					<span class="icon"></span>
-					<input type="checkbox" id="showUnifiedMailboxLabel" data-bind="checked: showUnifiedMailboxLabel" />
+					<input type="checkbox" id="showUnifiedMailboxLabel" data-bind="checked: showUnifiedMailboxLabel, enable: includeInUnifiedMailbox" />
 				</label>
 				<label for="showUnifiedMailboxLabel" data-bind="i18n: {'key': '%MODULENAME%/LABEL_ACCOUNT_SHOW_UNIFIED_MAILBOX_LABEL'}"></label>
 			</span>
 		</div>
 
-		<div class="row" data-bind="css: {'disabled': !showUnifiedMailboxLabel()}">
+		<div class="row" data-bind="css: {'disabled': !showUnifiedMailboxLabel() || !includeInUnifiedMailbox()}">
 			<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_ACCOUNT_UNIFIED_MAILBOX_LABEL_TEXT'}"></span>
 			<input class="value input" spellcheck="false" type="text" maxlength="65"
-				   data-bind="value: unifiedMailboxLabelText, valueUpdate: 'afterkeydown', onEnter: save, enable: showUnifiedMailboxLabel"/>
+				   data-bind="value: unifiedMailboxLabelText, valueUpdate: 'afterkeydown', onEnter: save, enable: showUnifiedMailboxLabel() && includeInUnifiedMailbox()"/>
 		</div>
 
-		<div class="row" data-bind="css: {'disabled': !showUnifiedMailboxLabel()}">
+		<div class="row" data-bind="css: {'disabled': !showUnifiedMailboxLabel() || !includeInUnifiedMailbox()}">
 			<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_ACCOUNT_UNIFIED_MAILBOX_LABEL_COLOR'}"></span>
 			<span class="colors" data-bind="foreach: aColors">
 					<span class="item color_pick" data-bind="style: {backgroundColor: $data}, css: {'selected': $parent.unifiedMailboxLabelColor() === $data},
-						 click: function () { if ($parent.showUnifiedMailboxLabel()) { $parent.setColor($data); } }"></span>
+						 click: function () { if ($parent.showUnifiedMailboxLabel() && $parent.includeInUnifiedMailbox()) { $parent.setColor($data); } }"></span>
 				</span>
 		</div>
     </div>

@@ -27,7 +27,7 @@ function CAccountUnifiedMailboxFormView()
 	CAbstractSettingsFormView.call(this, Settings.ServerModuleName);
 
 	this.visibleTab = ko.computed(function () {
-		return Settings.AllowUnifiedInbox;
+		return Settings.AllowUnifiedInbox && (Settings.AllowMultiAccounts && Settings.AllowAddAccounts || AccountList.collection().length > 1);
 	}, this);
 	
 	this.includeInUnifiedMailbox = ko.observable(false);
