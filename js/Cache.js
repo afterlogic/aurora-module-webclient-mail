@@ -146,7 +146,7 @@ function CMailCache()
 				oCurrMessage = _.find(this.messages(), function (oMessage) {
 					return oMessage.sUniq === this.currentMessage().sUniq;
 				}.bind(this)),
-				oFolder = this.getFolderByFullName(this.currentMessage().accountId(), this.currentMessage().folder())
+				oFolder = oCurrMessage ? this.getFolderByFullName(oCurrMessage.accountId(), oCurrMessage.folder()) : null
 			;
 			if (oFolder && !oCurrMessage) {
 				oFolder.getCompletelyFilledMessage(this.currentMessage().uid(), null, null, true);
@@ -276,7 +276,7 @@ CMailCache.prototype.calcNextMessageUid = function ()
 		bThreadLevel = false
 	;
 	
-	if (this.currentMessage())
+	if (this.currentMessage() && _.isFunction(this.currentMessage().uid))
 	{
 		bThreadLevel = this.currentMessage().threadPart() && this.currentMessage().threadParentUid() !== '';
 		oFolder = this.getFolderByFullName(this.currentMessage().accountId(), this.currentMessage().folder());
@@ -330,7 +330,7 @@ CMailCache.prototype.calcPrevMessageUid = function ()
 		bThreadLevel = false
 	;
 
-	if (this.currentMessage())
+	if (this.currentMessage() && _.isFunction(this.currentMessage().uid))
 	{
 		bThreadLevel = this.currentMessage().threadPart() && this.currentMessage().threadParentUid() !== '';
 		oFolder = this.getFolderByFullName(this.currentMessage().accountId(), this.currentMessage().folder());
@@ -760,20 +760,25 @@ CMailCache.prototype.changeCurrentMessageList = function (sFolder, iPage, sSearc
 CMailCache.prototype.requestCurrentMessageList = function (sFolder, iPage, sSearch, sFilter, sSortBy, iSortOrder, bFillMessages)
 {
 	var
-		oRequestData = this.requestMessageList(sFolder, iPage, sSearch, sFilter || '', sSortBy, iSortOrder, true, (bFillMessages || false)),
-		iCheckmailIntervalMilliseconds = UserSettings.AutoRefreshIntervalMinutes * 60 * 1000,
-		iFolderUpdateDiff = oRequestData.Folder.oRelevantInformationLastMoment ? moment().diff(oRequestData.Folder.oRelevantInformationLastMoment) : iCheckmailIntervalMilliseconds + 1
+		oRequestData = this.requestMessageList(sFolder, iPage, sSearch, sFilter || '', sSortBy, iSortOrder, true, (bFillMessages || false))
 	;
-	
-	this.uidList(oRequestData.UidList);
-	this.page(iPage);
-	
-	this.messagesLoading(oRequestData.RequestStarted);
-	this.messagesLoadingError(false);
-	
-	if (!oRequestData.RequestStarted && iCheckmailIntervalMilliseconds > 0 && iFolderUpdateDiff > iCheckmailIntervalMilliseconds)
+	if (oRequestData)
 	{
-		this.executeCheckMail(true);
+		var
+			iCheckmailIntervalMilliseconds = UserSettings.AutoRefreshIntervalMinutes * 60 * 1000,
+			iFolderUpdateDiff = oRequestData.Folder.oRelevantInformationLastMoment ? moment().diff(oRequestData.Folder.oRelevantInformationLastMoment) : iCheckmailIntervalMilliseconds + 1
+		;
+
+		this.uidList(oRequestData.UidList);
+		this.page(iPage);
+
+		this.messagesLoading(oRequestData.RequestStarted);
+		this.messagesLoadingError(false);
+
+		if (!oRequestData.RequestStarted && iCheckmailIntervalMilliseconds > 0 && iFolderUpdateDiff > iCheckmailIntervalMilliseconds)
+		{
+			this.executeCheckMail(true);
+		}
 	}
 };
 
@@ -794,8 +799,23 @@ CMailCache.prototype.requestMessageList = function (sFolder, iPage, sSearch, sFi
 	// This case is used for Prefetcher work.
 	bDoNotRequest = Types.pBool(bDoNotRequest, false);
 
+	var oFolder = this.getFolderByFullName(this.currentAccountId(), sFolder);
+	if (!oFolder)
+	{
+		Utils.log('requestMessageList, error: folder not found ', JSON.stringify({
+			'currentAccountId': this.currentAccountId(),
+			'sFolder': sFolder,
+			'iPage': iPage,
+			'sSearch': sSearch,
+			'sFilters': sFilters,
+			'sSortBy': sSortBy,
+			'iSortOrder': iSortOrder,
+			'bCurrent': bCurrent,
+			'bFillMessages': bFillMessages
+		}));
+		return null;
+	}
 	var
-		oFolder = this.getFolderByFullName(this.currentAccountId(), sFolder),
 		bFolderWithoutThreads = oFolder && oFolder.withoutThreads(),
 		oAccount = AccountList.getCurrent(),
 		bUseThreading = oAccount && oAccount.threadingIsAvailable() && !bFolderWithoutThreads && sSearch === '' && sFilters === '',
