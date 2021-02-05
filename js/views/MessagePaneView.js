@@ -831,7 +831,7 @@ CMessagePaneView.prototype.executeSave = function ()
 {
 	if (this.isEnableSave() && this.currentMessage())
 	{
-		UrlUtils.downloadByUrl(this.currentMessage().sDownloadAsEmlUrl);
+		UrlUtils.downloadByUrl(this.currentMessage().sDownloadAsEmlUrl, true);
 	}
 };
 
@@ -962,6 +962,12 @@ CMessagePaneView.prototype.onShow = function ()
 CMessagePaneView.prototype.onHide = function ()
 {
 	this.bShown = false;
+	_.each(this.controllers(), _.bind(function (oController) {
+		if ($.isFunction(oController.onHide))
+		{
+			oController.onHide();
+		}
+	}, this));
 };
 
 /**
