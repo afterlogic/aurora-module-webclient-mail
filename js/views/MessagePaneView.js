@@ -1077,8 +1077,7 @@ CMessagePaneView.prototype.getExtInterface = function ()
 			var oMessage = this.currentMessage();
 			if (oMessage && this.isCurrentMessageLoaded())
 			{
-				oMessage.text(sText);
-				oMessage.$text = null;
+				oMessage.changeText(sText);
 				this.setMessageBody();
 			}
 		}, this)

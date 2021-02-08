@@ -515,6 +515,13 @@ CMessageModel.prototype.parse = function (oData, iAccountId, bThreadPart, bTrust
 	}
 };
 
+CMessageModel.prototype.changeText = function (sNewText)
+{
+	this.text(sNewText);
+	this.textRaw(sNewText);
+	this.$text = null;
+};
+
 CMessageModel.prototype.updateMomentDate = function ()
 {
 	this.date(this.oDateModel.getShortDate(moment().clone().subtract(1, 'days').format('L') ===
