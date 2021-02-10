@@ -280,7 +280,7 @@ CMailCache.prototype.calcNextMessageUid = function ()
 	{
 		bThreadLevel = this.currentMessage().threadPart() && this.currentMessage().threadParentUid() !== '';
 		oFolder = this.getFolderByFullName(this.currentMessage().accountId(), this.currentMessage().folder());
-		sCurrentUid = this.currentMessage().uid();
+		sCurrentUid = this.oUnifiedInbox.selected() ? this.currentMessage().unifiedUid() : this.currentMessage().uid();
 		if (this.bInThreadLevel || bThreadLevel)
 		{
 			this.bInThreadLevel = !!MainTab;
@@ -323,7 +323,7 @@ CMailCache.prototype.calcNextMessageUid = function ()
 CMailCache.prototype.calcPrevMessageUid = function ()
 {
 	var
-		sCurrentUid = this.currentMessage() ? this.currentMessage().uid() : '',
+		sCurrentUid = '',
 		sPrevUid = '',
 		oFolder = null,
 		oParentMessage = null,
@@ -334,7 +334,7 @@ CMailCache.prototype.calcPrevMessageUid = function ()
 	{
 		bThreadLevel = this.currentMessage().threadPart() && this.currentMessage().threadParentUid() !== '';
 		oFolder = this.getFolderByFullName(this.currentMessage().accountId(), this.currentMessage().folder());
-		sCurrentUid = this.currentMessage().uid();
+		sCurrentUid = this.oUnifiedInbox.selected() ? this.currentMessage().unifiedUid() : this.currentMessage().uid();
 		if (this.bInThreadLevel || bThreadLevel)
 		{
 			this.bInThreadLevel = true;

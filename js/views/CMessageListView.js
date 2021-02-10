@@ -832,10 +832,9 @@ CMessageListView.prototype.executeCopyToFolder = function (sToFolder)
  */
 CMessageListView.prototype.onDeletePress = function (aMessages)
 {
-	var aUids = _.map(aMessages, function (oMessage)
-	{
-		return oMessage.uid();
-	});
+	var aUids = MailCache.oUnifiedInbox.selected() ?
+				_.map(aMessages, function (oMessage) { return oMessage.unifiedUid(); }) :
+				_.map(aMessages, function (oMessage) { return oMessage.uid(); });
 
 	if (aUids.length > 0)
 	{
@@ -861,7 +860,7 @@ CMessageListView.prototype.deleteMessages = function (aUids)
 		oMessageToOpenAfter = null
 	;
 	
-	if (aUids.length === 1 && MailCache.currentMessage() && aUids[0] === MailCache.currentMessage().uid())
+	if (aUids.length === 1 && MailCache.currentMessage() && (aUids[0] === MailCache.currentMessage().uid() || aUids[0] === MailCache.currentMessage().unifiedUid()))
 	{
 		sUidToOpenAfter = MailCache.prevMessageUid();
 		if (sUidToOpenAfter === '')
@@ -876,7 +875,7 @@ CMessageListView.prototype.deleteMessages = function (aUids)
 			if (sUidToOpenAfter !== '')
 			{
 				oMessageToOpenAfter = _.find(this.collection(), function (oMessage) {
-					return oMessage.uid() === sUidToOpenAfter;
+					return oMessage && _.isFunction(oMessage.uid) && (oMessage.uid() === sUidToOpenAfter || oMessage.unifiedUid() === sUidToOpenAfter);
 				});
 				if (oMessageToOpenAfter)
 				{

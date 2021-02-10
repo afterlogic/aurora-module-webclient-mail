@@ -316,20 +316,23 @@ Prefetcher.startMessagesPrefetchForFolder = function (oPrefetchFolder, bFolderSe
 		oParameters = null,
 		iJsonSizeOf1Message = 2048,
 		fFillUids = function (oMsg) {
-			var
-				bFromThisAccount = oMsg.accountId() === iAccountId,
-				bNotFilled = (!oMsg.deleted() && !oMsg.completelyFilled()),
-				bUidNotAdded = !_.find(aUids, function (sUid) {
-					return sUid === oMsg.uid();
-				}, this),
-				bHasNotBeenRequested = !oPrefetchFolder.hasUidBeenRequested(oMsg.uid()),
-				iTextSize = oMsg.textSize() < Settings.MessageBodyTruncationThreshold ? oMsg.textSize() : Settings.MessageBodyTruncationThreshold
-			;
-
-			if (iTotalSize < iMaxSize && bFromThisAccount && bNotFilled && bUidNotAdded && bHasNotBeenRequested)
+			if (oMsg && _.isFunction(oMsg.uid))
 			{
-				aUids.push(oMsg.uid());
-				iTotalSize += iTextSize + iJsonSizeOf1Message;
+				var
+					bFromThisAccount = oMsg.accountId() === iAccountId,
+					bNotFilled = (!oMsg.deleted() && !oMsg.completelyFilled()),
+					bUidNotAdded = !_.find(aUids, function (sUid) {
+						return sUid === oMsg.uid();
+					}, this),
+					bHasNotBeenRequested = !oPrefetchFolder.hasUidBeenRequested(oMsg.uid()),
+					iTextSize = oMsg.textSize() < Settings.MessageBodyTruncationThreshold ? oMsg.textSize() : Settings.MessageBodyTruncationThreshold
+				;
+
+				if (iTotalSize < iMaxSize && bFromThisAccount && bNotFilled && bUidNotAdded && bHasNotBeenRequested)
+				{
+					aUids.push(oMsg.uid());
+					iTotalSize += iTextSize + iJsonSizeOf1Message;
+				}
 			}
 		}
 	;
