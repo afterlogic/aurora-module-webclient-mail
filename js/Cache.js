@@ -131,8 +131,15 @@ function CMailCache()
 	this.editedFolderList = ko.observable(new CFolderListModel());
 
 	this.newMessagesCount = ko.computed(function () {
-		var oInbox = this.folderList().inboxFolder();
-		return oInbox ? oInbox.unseenMessageCount() : 0;
+		if (this.oUnifiedInbox.selected())
+		{
+			return this.oUnifiedInbox.unseenMessageCount();
+		}
+		else
+		{
+			var oInbox = this.folderList().inboxFolder();
+			return oInbox ? oInbox.unseenMessageCount() : 0;
+		}
 	}, this);
 
 	this.messages = ko.observableArray([]);
