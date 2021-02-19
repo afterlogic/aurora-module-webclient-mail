@@ -518,7 +518,6 @@ CMessageModel.prototype.parse = function (oData, iAccountId, bThreadPart, bTrust
 CMessageModel.prototype.changeText = function (sNewText)
 {
 	this.text(sNewText);
-	this.textRaw(sNewText);
 	this.$text = null;
 };
 
