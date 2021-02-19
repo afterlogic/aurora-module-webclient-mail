@@ -121,7 +121,7 @@ CComposeViewAutoEncrypt.prototype.groupAllRecipients = function (aRecipients)
 	;
 	_.each(aRecipients, function (sRecipient) {
 		var oRecipientInfo = this.recipientsInfo()[sRecipient];
-		if (oRecipientInfo.hasKey)
+		if (oRecipientInfo && oRecipientInfo.hasKey)
 		{
 			if (oRecipientInfo.encryptMessage)
 			{
