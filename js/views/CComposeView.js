@@ -1005,10 +1005,13 @@ CComposeView.prototype.triggerToolbarControllersAfterPopulatingMessage = functio
 				bDraft: bDraft,
 				bPlain: bPlain,
 				sRawText: sRawText,
-				iSensitivity: iSensitivity
+				iSensitivity: iSensitivity,
+				fRecipientsEmpty: function () {
+					return this.toAddr().length === 0 && this.ccAddr().length === 0 && this.bccAddr().length === 0;
+				}.bind(this)
 			});
 		}
-	});
+	}.bind(this));
 };
 
 /**
