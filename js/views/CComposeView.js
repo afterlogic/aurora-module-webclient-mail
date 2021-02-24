@@ -1005,10 +1005,7 @@ CComposeView.prototype.triggerToolbarControllersAfterPopulatingMessage = functio
 				bDraft: bDraft,
 				bPlain: bPlain,
 				sRawText: sRawText,
-				iSensitivity: iSensitivity,
-				fRecipientsEmpty: function () {
-					return this.toAddr().length === 0 && this.ccAddr().length === 0 && this.bccAddr().length === 0;
-				}.bind(this)
+				iSensitivity: iSensitivity
 			});
 		}
 	}.bind(this));
@@ -2005,7 +2002,31 @@ CComposeView.prototype.getExtInterface = function ()
 		undoHtml: _.bind(this.oHtmlEditor.undoAndClearRedo, this.oHtmlEditor),
 		getSubject: _.bind(function () {
 			return this.subject();
-		}, this)
+		}, this),
+		getAutoEncryptSignMessage: function () {
+			return this.autoEncryptSignMessage();
+		}.bind(this),
+		getRecipientsEmpty: function () {
+			return this.toAddr().length === 0 && this.ccAddr().length === 0 && this.bccAddr().length === 0;
+		}.bind(this),
+		getSendSaveParameters: function () {
+			return this.getSendSaveParameters();
+		}.bind(this),
+		getDraftFolderFullName: function (iAccountID) {
+			var oFolderList = MailCache.oFolderListItems[iAccountID];
+			return oFolderList ? oFolderList.draftsFolderFullName() : '';
+		},
+		commitAndClose: function () {
+			this.commit();
+			if (_.isFunction(this.closePopup))
+			{
+				this.closePopup();
+			}
+			else
+			{
+				this.executeBackToList();
+			}
+		}.bind(this)
 	};
 };
 
