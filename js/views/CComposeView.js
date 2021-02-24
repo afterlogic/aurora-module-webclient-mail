@@ -2016,6 +2016,16 @@ CComposeView.prototype.getExtInterface = function ()
 			var oFolderList = MailCache.oFolderListItems[iAccountID];
 			return oFolderList ? oFolderList.draftsFolderFullName() : '';
 		},
+		clearFolderCache: function (iAccountId, sDraftFolder) {
+			if (MainTab)
+			{
+				MainTab.removeMessagesFromCacheForFolder(iAccountId, sDraftFolder);
+			}
+			else
+			{
+				MailCache.removeMessagesFromCacheForFolder(iAccountId, sDraftFolder);
+			}
+		},
 		commitAndClose: function () {
 			this.commit();
 			if (_.isFunction(this.closePopup))
