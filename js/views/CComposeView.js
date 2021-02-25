@@ -936,7 +936,14 @@ CComposeView.prototype.onMessageResponse = function (oMessage)
 				}
 				else
 				{
-	                this.draftUid(oMessage.uid());
+					var
+						oFolderList = MailCache.oFolderListItems[oMessage.accountId()],
+						sDraftFolder = oFolderList ? oFolderList.draftsFolderFullName() : ''
+					;
+					if (sDraftFolder === oMessage.folder())
+					{
+						this.draftUid(oMessage.uid());
+					}
 				}
 				this.setDataFromMessage(oMessage);
 				break;
@@ -957,6 +964,30 @@ CComposeView.prototype.onMessageResponse = function (oMessage)
 	_.defer(_.bind(function () {
 		this.focusAfterFilling();
 	}, this));
+
+	if (oMessage)
+	{
+		var oParams = {
+			AccountId: oMessage.accountId(),
+			FolderFullName: oMessage.folder(),
+			MessageUid: oMessage.uid(),
+			Compose: this
+		};
+		if (this.allAttachmentsUploaded())
+		{
+			App.broadcastEvent('%ModuleName%::ComposeMessageLoaded', oParams);
+		}
+		else
+		{
+			var oSubscription = this.allAttachmentsUploaded.subscribe(function () {
+				if (this.allAttachmentsUploaded())
+				{
+					App.broadcastEvent('%ModuleName%::ComposeMessageLoaded', oParams);
+				}
+				oSubscription.dispose();
+			}, this);
+		}
+	}
 };
 
 /**

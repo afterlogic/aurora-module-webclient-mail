@@ -1090,7 +1090,9 @@ CMessagePaneView.prototype.doAfterPopulatingMessage = function ()
 		oMessage = this.currentMessage(),
 		bLoaded = oMessage && !this.isLoading(),
 		oMessageProps = bLoaded ? {
+			iAccountId: oMessage.accountId(),
 			sFolderFullName: oMessage.folder(),
+			sMessageUid: oMessage.uid(),
 			aToEmails: oMessage.oTo.getEmails(),
 			bPlain: oMessage.isPlain(),
 			sRawText: oMessage.textRaw(),

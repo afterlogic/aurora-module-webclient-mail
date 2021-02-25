@@ -220,6 +220,10 @@ module.exports = function (oAppData) {
 				removeMessageFromCurrentList: function (iAccountId, sFolder, sUid) {
 					return Cache.removeMessageFromCurrentList(iAccountId, sFolder, sUid);
 				},
+				deleteMessages: function (iAccountId, sFolderFullName, aUids) {
+					var oFolder = Cache.getFolderByFullName(iAccountId, sFolderFullName);
+					Cache.deleteMessagesFromFolder(oFolder, aUids);
+				},
 				getAllAccountsFullEmails: function () {
 					return AccountList.getAllFullEmails();
 				},
