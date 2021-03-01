@@ -1922,7 +1922,7 @@ CMailCache.prototype.removeMessageFromCurrentList = function (iAccountId, sFolde
 {
 	var
 		oFolder = this.getFolderByFullName(iAccountId, sFolder),
-		oMessage = oFolder.getMessageByUid(sUid)
+		oMessage = oFolder ? oFolder.getMessageByUid(sUid) : null
 	;
 	if (oMessage)
 	{

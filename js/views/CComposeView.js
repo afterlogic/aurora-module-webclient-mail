@@ -2043,10 +2043,17 @@ CComposeView.prototype.getExtInterface = function ()
 		getSendSaveParameters: function () {
 			return this.getSendSaveParameters();
 		}.bind(this),
+		isEnableSending: function () {
+			return this.isEnableSending();
+		}.bind(this),
+		isEnableSaving: function () {
+			return this.isEnableSaving();
+		}.bind(this),
 		getDraftFolderFullName: function (iAccountID) {
 			var oFolderList = MailCache.oFolderListItems[iAccountID];
 			return oFolderList ? oFolderList.draftsFolderFullName() : '';
 		},
+		koAllAttachmentsUploaded: this.allAttachmentsUploaded,
 		clearFolderCache: function (iAccountId, sDraftFolder) {
 			if (MainTab)
 			{
