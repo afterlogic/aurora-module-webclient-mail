@@ -94,7 +94,20 @@ function CFolderModel(iAccountId, bIsUnifiedInbox)
 	this.oRelevantInformationLastMoment = null;
 	
 	this.bSubscribtionsInitialized = false;
+
+	this.disableMoveTo = ko.observable(this.bVirtual || this.bIsUnifiedInbox);
+	this.disableMoveFrom = ko.observable(this.bIsUnifiedInbox);
 }
+
+CFolderModel.prototype.setDisableMoveTo = function (bDisable)
+{
+	this.disableMoveTo(this.bVirtual || this.bIsUnifiedInbox || bDisable);
+};
+
+CFolderModel.prototype.setDisableMoveFrom = function (bDisable)
+{
+	this.disableMoveFrom(this.bIsUnifiedInbox || bDisable);
+};
 
 CFolderModel.prototype.requireMailCache = function ()
 {
@@ -1107,6 +1120,9 @@ CFolderModel.prototype.initComputedFields = function ()
 		}
 		return this.name();
 	}, this);
+
+	this.setDisableMoveTo(false);
+	this.setDisableMoveFrom(false);
 };
 
 /**

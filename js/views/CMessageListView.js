@@ -38,7 +38,10 @@ require("jquery-ui/ui/widgets/datepicker");
  */
 function CMessageListView(fOpenMessageInNewWindowBound)
 {
-	this.isUnifiedFolderCurrent = MailCache.oUnifiedInbox.selected;
+	this.disableMoveMessages = ko.computed(function () {
+		var oFolder = MailCache.getCurrentFolder();
+		return oFolder ? oFolder.disableMoveFrom() : true;
+	}, this);
 	this.bVisibleSortByTool = Settings.MessagesSortBy.Allow && Settings.MessagesSortBy.List.length > 0;
 	this.sSortBy = Settings.MessagesSortBy.DefaultSortBy;
 	this.iSortOrder = Settings.MessagesSortBy.DefaultSortOrder;
