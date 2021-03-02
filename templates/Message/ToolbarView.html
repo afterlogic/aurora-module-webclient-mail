@@ -48,7 +48,7 @@
 							<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_DOWNLOAD_EML'}"></span>
 						</span>
 
-						<span class="item forward" data-bind="command: forwardAsAttachment">
+						<span class="item forward" data-bind="command: forwardAsAttachment, visible: isVisibleForwardTool">
 							<span class="icon"></span>
 							<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_FORWARD_AS_ATTACHMENT'}"></span>
 						</span>

@@ -140,9 +140,32 @@ function CMessagePaneView()
 		return !!oCurrFolder && oCurrFolder.fullName().length > 0 && oCurrFolder.type() !== Enums.FolderTypes.Drafts;
 	}, this);
 
-	this.isVisibleReplyTool = this.isCurrentNotDraftOrSent;
-	this.isVisibleResendTool = this.isCurrentSentFolder;
-	this.isVisibleForwardTool = this.isCurrentNotDraftFolder;
+	this.topControllers = ko.observableArray();
+	this.bodyControllers = ko.observableArray();
+	this.bottomControllers = ko.observableArray();
+	this.controllers = ko.computed(function () {
+		return _.union(this.topControllers(), this.bodyControllers(), this.bottomControllers());
+	}, this);
+
+	this.disableAllSendTools = ko.computed(function () {
+		var bDisable = false;
+		_.each(this.controllers(), function (oController) {
+			if (_.isFunction(oController.disableAllSendTools) && oController.disableAllSendTools())
+			{
+				bDisable = true;
+			}
+		});
+		return bDisable;
+	}, this);
+	this.isVisibleReplyTool = ko.computed(function () {
+		return !this.disableAllSendTools() && this.isCurrentNotDraftOrSent();
+	}, this);
+	this.isVisibleResendTool = ko.computed(function () {
+		return !this.disableAllSendTools() && this.isCurrentSentFolder();
+	}, this);
+	this.isVisibleForwardTool = ko.computed(function () {
+		return !this.disableAllSendTools() && this.isCurrentNotDraftFolder();
+	}, this);
 
 	this.accountId = ko.observable(0);
 	this.folder = ko.observable('');
@@ -186,16 +209,10 @@ function CMessagePaneView()
 	
 	this.contentHasFocus = ko.observable(false);
 
-	this.topControllers = ko.observableArray();
-	this.bodyControllers = ko.observableArray();
-	this.bottomControllers = ko.observableArray();
-	this.controllers = ko.computed(function () {
-		return _.union(this.topControllers(), this.bodyControllers(), this.bottomControllers());
-	}, this);
 	App.broadcastEvent('%ModuleName%::RegisterMessagePaneController', _.bind(function (oController, sPlace) {
 		this.registerController(oController, sPlace);
 	}, this));
-	
+
 	this.fakeHeader = ko.computed(function () {
 		var topControllersVisible = !!_.find(this.topControllers(), function (oController) {
 			return !!oController.visible && oController.visible();
