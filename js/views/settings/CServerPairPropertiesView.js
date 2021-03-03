@@ -56,6 +56,11 @@ function CServerPairPropertiesView(sPairId, bAdminEdit, iServersPerPage)
 			this.externalAccessSmtpServer(oSelectedServer.sExternalAccessSmtpServer);
 			this.externalAccessSmtpPort(oSelectedServer.iExternalAccessSmtpPort);
 
+			this.oauthEnable(oSelectedServer.bOauthEnable);
+			this.oauthName(oSelectedServer.sOauthName);
+			this.oauthType(oSelectedServer.sOauthType);
+			this.oauthIconUrl(oSelectedServer.sOauthIconUrl);
+
 			this.tenantId(oSelectedServer.iTenantId);
 			this.name(oSelectedServer.sName);
 			this.oIncoming.set(oSelectedServer.sIncomingServer, oSelectedServer.iIncomingPort, oSelectedServer.bIncomingUseSsl);
@@ -80,6 +85,11 @@ function CServerPairPropertiesView(sPairId, bAdminEdit, iServersPerPage)
 			this.externalAccessImapPort(this.oLastEditableServer.iExternalAccessImapPort);
 			this.externalAccessSmtpServer(this.oLastEditableServer.sExternalAccessSmtpServer);
 			this.externalAccessSmtpPort(this.oLastEditableServer.iExternalAccessSmtpPort);
+
+			this.oauthEnable(this.oLastEditableServer.bOauthEnable);
+			this.oauthName(this.oLastEditableServer.sOauthName);
+			this.oauthType(this.oLastEditableServer.sOauthType);
+			this.oauthIconUrl(this.oLastEditableServer.sOauthIconUrl);
 
 			this.tenantId(0);
 			this.name(this.oLastEditableServer.sName);
@@ -148,6 +158,11 @@ function CServerPairPropertiesView(sPairId, bAdminEdit, iServersPerPage)
 			this.externalAccessSmtpPort(this.oOutgoing.port());
 		}
 	}, this);
+
+	this.oauthEnable = ko.observable(false);
+	this.oauthName = ko.observable('');
+	this.oauthType = ko.observable('');
+	this.oauthIconUrl = ko.observable('');
 }
 
 CServerPairPropertiesView.prototype.ViewTemplate = '%ModuleName%_Settings_ServerPairPropertiesView';
@@ -258,7 +273,11 @@ CServerPairPropertiesView.prototype.setCurrentValues = function ()
 			this.externalAccessImapServer(),
 			this.externalAccessImapPort(),
 			this.externalAccessSmtpServer(),
-			this.externalAccessSmtpPort()
+			this.externalAccessSmtpPort(),
+			this.oauthEnable(),
+			this.oauthName(),
+			this.oauthType(),
+			this.oauthIconUrl()
 		]
 	;
 	
@@ -312,7 +331,8 @@ CServerPairPropertiesView.prototype.getParametersForSave = function ()
 		'SievePort': this.sievePort(),
 		'EnableThreading': this.enableThreading(),
 		'UseFullEmailAddressAsLogin': this.useFullEmailAddressAsLogin(),
-		'SetExternalAccessServers': this.setExternalAccessServers()
+		'SetExternalAccessServers': this.setExternalAccessServers(),
+		'OAuthEnable': this.oauthEnable()
 	};
 	if (this.setExternalAccessServers())
 	{
@@ -320,6 +340,12 @@ CServerPairPropertiesView.prototype.getParametersForSave = function ()
 		oParameters['ExternalAccessImapPort'] = this.externalAccessImapPort();
 		oParameters['ExternalAccessSmtpServer'] = this.externalAccessSmtpServer();
 		oParameters['ExternalAccessSmtpPort'] = this.externalAccessSmtpPort();
+	}
+	if (this.oauthEnable())
+	{
+		oParameters['OAuthName'] = this.oauthName();
+		oParameters['OAuthType'] = this.oauthType();
+		oParameters['OAuthIconUrl'] = this.oauthIconUrl();
 	}
 	return oParameters;
 };

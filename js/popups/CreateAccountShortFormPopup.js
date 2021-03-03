@@ -4,12 +4,12 @@ var
 	_ = require('underscore'),
 	$ = require('jquery'),
 	ko = require('knockout'),
-	
+
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	ValidationUtils = require('%PathToCoreWebclientModule%/js/utils/Validation.js'),
 	UrlUtils = require('%PathToCoreWebclientModule%/js/utils/Url.js'),
-	
+
 	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
 	CAbstractPopup = require('%PathToCoreWebclientModule%/js/popups/CAbstractPopup.js'),
 	CoreAjax = require('%PathToCoreWebclientModule%/js/Ajax.js'),
@@ -31,6 +31,10 @@ function CreateAccountShortFormPopup()
 {
 	CAbstractPopup.call(this);
 
+	this.oauthOptions = ko.observableArray([]);
+	this.oauthOptionsVisible = ko.observable(false);
+	this.bOAuthCallbackExecuted = false;
+
 	this.loading = ko.observable(false);
 
 	this.friendlyName = ko.observable('');
@@ -39,29 +43,6 @@ function CreateAccountShortFormPopup()
 	this.password = ko.observable('');
 	this.password.focused = ko.observable(false);
 	this.aRequiredFields = [this.email, this.password];
-
-	this.bRunCallback = false;
-	window.googleConnectCallback = _.bind(function (oResult, sErrorCode, sModule) {
-		this.bRunCallback = true;
-		if (!oResult)
-		{
-			Api.showErrorByCode({'ErrorCode': Types.pInt(sErrorCode), 'Module': sModule}, '', true);
-		}
-		else
-		{
-			CoreAjax.send('OAuthIntegratorWebclient', 'CreateMailAccount', { 'OAuthAccountData': oResult }, function (oResponse) {
-				if (!oResponse || !oResponse.Result)
-				{
-					Api.showErrorByCode(oResponse);
-				}
-				else
-				{
-					Screens.showReport('Account created. Please reload the page');
-					this.closePopup();
-				}
-			}, this);
-		}
-	}, this);
 }
 
 _.extendOwn(CreateAccountShortFormPopup.prototype, CAbstractPopup.prototype);
@@ -78,13 +59,27 @@ CreateAccountShortFormPopup.prototype.init = function ()
 /**
  * @param {Function=} fCallback
  */
-CreateAccountShortFormPopup.prototype.onOpen = function (fCallback)
+CreateAccountShortFormPopup.prototype.onOpen = function (aOAuthOptions, fCallback)
 {
+	this.oauthOptions(aOAuthOptions);
+	this.oauthOptionsVisible(this.oauthOptions().length > 0);
 	this.fCallback = fCallback;
-	
+
 	this.init();
 	
 	this.focusFieldToEdit();
+};
+
+CreateAccountShortFormPopup.prototype.selectAuthOption = function (sType)
+{
+	if (sType === '')
+	{
+		this.oauthOptionsVisible(false);
+	}
+	else
+	{
+		this.getOAuthData(sType);
+	}
 };
 
 CreateAccountShortFormPopup.prototype.focusFieldToEdit = function ()
@@ -108,7 +103,7 @@ CreateAccountShortFormPopup.prototype.onClose = function ()
 	this.init();
 };
 
-CreateAccountShortFormPopup.prototype.gmail = function ()
+CreateAccountShortFormPopup.prototype.getOAuthData = function (sType)
 {
 	var
 		sScopes = $.cookie('oauth-scopes'),
@@ -118,19 +113,32 @@ CreateAccountShortFormPopup.prototype.gmail = function ()
 	aScopes = _.unique(aScopes);
 	$.removeCookie('oauth-scopes');
 	$.cookie('oauth-scopes', aScopes.join('|'));
-	this.bRunCallback = false;
+
+	this.bOAuthCallbackExecuted = false;
+	window.googleConnectCallback = function (oResult, sErrorCode, sModule) {
+		this.bOAuthCallbackExecuted = true;
+		if (!oResult)
+		{
+			Api.showErrorByCode({'ErrorCode': Types.pInt(sErrorCode), 'Module': sModule}, '', true);
+		}
+		else
+		{
+			CoreAjax.send('OAuthIntegratorWebclient', 'CreateMailAccount', { 'OAuthAccountData': oResult }, this.onAccountCreateResponse, this);
+		}
+	}.bind(this);
+
 	var
-		oWin = WindowOpener.open(UrlUtils.getAppPath() + '?oauth=gmail', 'Google'),
-		iIntervalId = setInterval(_.bind(function() {
+		oWin = WindowOpener.open(UrlUtils.getAppPath() + '?oauth=' + sType, 'OAuth'),
+		iIntervalId = setInterval(function() {
 			if (oWin.closed)
 			{
 				clearInterval(iIntervalId);
-				if (!this.bRunCallback)
+				if (!this.bOAuthCallbackExecuted)
 				{
 					window.location.reload();
 				}
 			}
-		}, this), 1000)
+		}.bind(this), 1000)
 	;
 };
 

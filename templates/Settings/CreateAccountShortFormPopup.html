@@ -6,7 +6,20 @@
 
 		<span class="popup_heading" data-bind="i18n: {'key': '%MODULENAME%/HEADING_ADD_NEW_ACCOUNT'}"></span>
 
-		<div class="fields">
+		<div class="fields" data-bind="visible: oauthOptionsVisible">
+			<div class="fieldset">
+				<div class="items_list simple_list">
+					<div data-bind="foreach: oauthOptions">
+						<div class="item account" data-bind="click: function () { $parent.selectAuthOption(Type); }">
+							<img class="icon_oauth" data-bind="attr: { 'src': IconUrl }" />
+							<span class="title title_oauth" data-bind="text: Name"></span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="fields" data-bind="visible: !oauthOptionsVisible()">
 			<div class="fieldset">
 				<div class="row name">
 					<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_YOUR_NAME'}"></span>
@@ -29,7 +42,6 @@
 			</div>
 
 			<div class="buttons">
-				<span class="button" data-bind="text: 'Gmail', click: gmail"></span>
 				<span class="button" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ADD'}, click: save, visible: !loading()"></span>
 				<span class="button" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ADD_IN_PROGRESS'}, visible: loading()"></span>
 				<span class="button secondary_button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_CANCEL'}, click: cancelPopup"></span>

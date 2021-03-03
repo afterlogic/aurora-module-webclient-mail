@@ -3,22 +3,25 @@
 var
 	_ = require('underscore'),
 	ko = require('knockout'),
-	
+
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
-	
+
+	App = require('%PathToCoreWebclientModule%/js/App.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
 	Screens = require('%PathToCoreWebclientModule%/js/Screens.js'),
-	
+
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
 	CreateAccountShortFormPopup = require('modules/%ModuleName%/js/popups/CreateAccountShortFormPopup.js'),
 	CreateIdentityPopup = require('modules/%ModuleName%/js/popups/CreateIdentityPopup.js'),
 	CreateFetcherPopup = require('modules/%ModuleName%/js/popups/CreateFetcherPopup.js'),
 	CreateAliasPopup = require('modules/%ModuleName%/js/popups/CreateAliasPopup.js'),
-	
+
+	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
+	CServerModel = require('modules/%ModuleName%/js/models/CServerModel.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
-	
+
 	AccountAutoresponderSettingsFormView = require('modules/%ModuleName%/js/views/settings/AccountAutoresponderSettingsFormView.js'),
 	AccountFiltersSettingsFormView = require('modules/%ModuleName%/js/views/settings/AccountFiltersSettingsFormView.js'),
 	AccountFoldersPaneView = require('modules/%ModuleName%/js/views/settings/AccountFoldersPaneView.js'),
@@ -288,7 +291,54 @@ CAccountsSettingsPaneView.prototype.getAutoselectedTab = function ()
 
 CAccountsSettingsPaneView.prototype.addAccount = function ()
 {
-	Popups.showPopup(CreateAccountShortFormPopup, [_.bind(function (iAccountId) {
+	var iTenantId = _.isFunction(App.getTenantId) ? App.getTenantId() : null;
+	if (iTenantId !== null)
+	{
+		Ajax.send('GetServers', {
+			'TenantId': iTenantId
+		}, function (oResponse) {
+			var aOAuthOptions = [];
+			if (_.isArray(oResponse && oResponse.Result && oResponse.Result.Items))
+			{
+				_.each(oResponse.Result.Items, function (oServerData) {
+					var oServer = new CServerModel(oServerData);
+					if (oServer.bOauthEnable)
+					{
+						var oAccount = _.find(AccountList.collection(), function (oAccount) {
+							return oAccount.serverId() === oServer.iId;
+						});
+						if (!oAccount) // only one account with oauth could be added
+						{
+							aOAuthOptions.push({
+								'Name': oServer.sOauthName,
+								'Type': oServer.sOauthType,
+								'IconUrl': oServer.sOauthIconUrl
+							});
+						}
+					}
+				});
+
+				if (aOAuthOptions.length > 0)
+				{
+					aOAuthOptions.push({
+						'Name': 'Other',
+						'Type': '',
+						'IconUrl': 'static/styles/images/logo_140x140.png'
+					});
+				}
+			}
+			this.openCreateAccountShortFormPopup(aOAuthOptions);
+		}, this);
+	}
+	else
+	{
+		this.openCreateAccountShortFormPopup([]);
+	}
+};
+
+CAccountsSettingsPaneView.prototype.openCreateAccountShortFormPopup = function (aOAuthOptions)
+{
+	Popups.showPopup(CreateAccountShortFormPopup, [aOAuthOptions, _.bind(function (iAccountId) {
 		var oAccount = AccountList.getAccount(iAccountId);
 		if (oAccount)
 		{

@@ -79,6 +79,33 @@
 							</div>
 						</div>
 
+						<div class="fieldset" data-bind="visible: oServerPairPropertiesView.bAdminEdit, with: oServerPairPropertiesView">
+							<div class="row">
+								<div>
+									<label class="custom_checkbox" data-bind="css: {'checked': oauthEnable}">
+										<span class="icon"></span>
+										<input type="checkbox" id="oauthEnable" data-bind="checked: oauthEnable" />
+									</label>
+									<label for="oauthEnable" data-bind="i18n: {'key': '%MODULENAME%/LABEL_ADMIN_OAUTH_ENABLE'}"></label>
+								</div>
+							</div>
+							<div class="row">
+								<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_ADMIN_OAUTH_NAME'}, css: {'disabled': !oauthEnable()}"></span>
+								<input class="value input server" spellcheck="false" type="text"
+								       data-bind="enable: oauthEnable, value: oauthName, valueUpdate: 'afterkeydown', onEnter: save, css: {'disabled': !oauthEnable()}"/>
+							</div>
+							<div class="row">
+								<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_ADMIN_OAUTH_TYPE'}, css: {'disabled': !oauthEnable()}"></span>
+								<input class="value input server" spellcheck="false" type="text"
+								       data-bind="enable: oauthEnable, value: oauthType, valueUpdate: 'afterkeydown', onEnter: save, css: {'disabled': !oauthEnable()}"/>
+							</div>
+							<div class="row">
+								<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_ADMIN_OAUTH_ICON_URL'}, css: {'disabled': !oauthEnable()}"></span>
+								<input class="value input server" spellcheck="false" type="text"
+								       data-bind="enable: oauthEnable, value: oauthIconUrl, valueUpdate: 'afterkeydown', onEnter: save, css: {'disabled': !oauthEnable()}"/>
+							</div>
+						</div>
+
 						<div class="buttons">
 							<span class="button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_SAVE'}, click: save, visible: !createMode() && !isSaving()"></span>
 							<span class="button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_SAVE_IN_PROGRESS'}, visible: !createMode() && isSaving()"></span>

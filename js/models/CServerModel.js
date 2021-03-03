@@ -31,6 +31,11 @@ function CServerModel(oServer)
 	this.bAllowToDelete = Types.pBool(oServer && oServer.AllowToDelete, true);
 	this.bAllowEditDomains = Types.pBool(oServer && oServer.AllowEditDomains, true);
 	this.sOwnerType = oServer ? Types.pString(oServer.OwnerType) : '';
+
+	this.bOauthEnable = Types.pBool(oServer && oServer.OAuthEnable, false);
+	this.sOauthName = Types.pString(oServer && oServer.OAuthName, '');
+	this.sOauthType = Types.pString(oServer && oServer.OAuthType, '');
+	this.sOauthIconUrl = Types.pString(oServer && oServer.OAuthIconUrl, '');
 }
 
 module.exports = CServerModel;
