@@ -49,7 +49,7 @@ function CreateAccountShortFormPopup()
 		}
 		else
 		{
-			CoreAjax.send('OAuthIntegratorWebclient', 'CreateMailAccount', oResult, function (oResponse) {
+			CoreAjax.send('OAuthIntegratorWebclient', 'CreateMailAccount', { 'OAuthAccountData': oResult }, function (oResponse) {
 				if (!oResponse || !oResponse.Result)
 				{
 					Api.showErrorByCode(oResponse);
