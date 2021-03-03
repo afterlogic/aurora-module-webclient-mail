@@ -29,6 +29,7 @@
 			</div>
 
 			<div class="buttons">
+				<span class="button" data-bind="text: 'Gmail', click: gmail"></span>
 				<span class="button" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ADD'}, click: save, visible: !loading()"></span>
 				<span class="button" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ADD_IN_PROGRESS'}, visible: loading()"></span>
 				<span class="button secondary_button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_CANCEL'}, click: cancelPopup"></span>

@@ -8,13 +8,16 @@ var
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	ValidationUtils = require('%PathToCoreWebclientModule%/js/utils/Validation.js'),
+	UrlUtils = require('%PathToCoreWebclientModule%/js/utils/Url.js'),
 	
 	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
 	CAbstractPopup = require('%PathToCoreWebclientModule%/js/popups/CAbstractPopup.js'),
+	CoreAjax = require('%PathToCoreWebclientModule%/js/Ajax.js'),
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
 	CreateAccountPopup = require('modules/%ModuleName%/js/popups/CreateAccountPopup.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
-	
+	WindowOpener = require('%PathToCoreWebclientModule%/js/WindowOpener.js'),
+
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
 	CAccountModel = require('modules/%ModuleName%/js/models/CAccountModel.js'),
@@ -36,6 +39,29 @@ function CreateAccountShortFormPopup()
 	this.password = ko.observable('');
 	this.password.focused = ko.observable(false);
 	this.aRequiredFields = [this.email, this.password];
+
+	this.bRunCallback = false;
+	window.googleConnectCallback = _.bind(function (oResult, sErrorCode, sModule) {
+		this.bRunCallback = true;
+		if (!oResult)
+		{
+			Api.showErrorByCode({'ErrorCode': Types.pInt(sErrorCode), 'Module': sModule}, '', true);
+		}
+		else
+		{
+			CoreAjax.send('OAuthIntegratorWebclient', 'CreateMailAccount', oResult, function (oResponse) {
+				if (!oResponse || !oResponse.Result)
+				{
+					Api.showErrorByCode(oResponse);
+				}
+				else
+				{
+					Screens.showReport('Account created. Please reload the page');
+					this.closePopup();
+				}
+			}, this);
+		}
+	}, this);
 }
 
 _.extendOwn(CreateAccountShortFormPopup.prototype, CAbstractPopup.prototype);
@@ -80,6 +106,32 @@ CreateAccountShortFormPopup.prototype.focusFieldToEdit = function ()
 CreateAccountShortFormPopup.prototype.onClose = function ()
 {
 	this.init();
+};
+
+CreateAccountShortFormPopup.prototype.gmail = function ()
+{
+	var
+		sScopes = $.cookie('oauth-scopes'),
+		aScopes = sScopes.split('|')
+	;
+	aScopes.push('mail');
+	aScopes = _.unique(aScopes);
+	$.removeCookie('oauth-scopes');
+	$.cookie('oauth-scopes', aScopes.join('|'));
+	this.bRunCallback = false;
+	var
+		oWin = WindowOpener.open(UrlUtils.getAppPath() + '?oauth=gmail', 'Google'),
+		iIntervalId = setInterval(_.bind(function() {
+			if (oWin.closed)
+			{
+				clearInterval(iIntervalId);
+				if (!this.bRunCallback)
+				{
+					window.location.reload();
+				}
+			}
+		}, this), 1000)
+	;
 };
 
 CreateAccountShortFormPopup.prototype.save = function ()

@@ -27,6 +27,7 @@ var
  */
 function CServerPairPropertiesView(sPairId, bAdminEdit, iServersPerPage)
 {
+	this.rnd = Math.random();
 	this.iServersPerPage = Types.pInt(iServersPerPage, 0);
 	this.totalServersCount = ko.observable(0);
 	this.servers = ko.observableArray([]);
