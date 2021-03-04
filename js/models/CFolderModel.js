@@ -1024,13 +1024,15 @@ CFolderModel.prototype.initComputedFields = function ()
 	this.unseenMessagesCountToShow = ko.computed(function () {
 		return (!App.isMobile() && this.canExpand()) ? this.unseenMessageCount() + this.subfoldersMessagesCount() : this.unseenMessageCount();
 	}, this);
-	
+
+	this.showTotalInsteadUnseenCount = ko.observable(false);
+
 	this.showUnseenMessagesCount = ko.computed(function () {
-		return this.unseenMessagesCountToShow() > 0 && this.type() !== Enums.FolderTypes.Drafts;
+		return this.unseenMessagesCountToShow() > 0 && this.type() !== Enums.FolderTypes.Drafts && !this.showTotalInsteadUnseenCount();
 	}, this);
 	
 	this.showMessagesCount = ko.computed(function () {
-		return this.messageCount() > 0 && (this.type() === Enums.FolderTypes.Drafts || Settings.AllowShowMessagesCountInFolderList && Settings.showMessagesCountInFolderList());
+		return this.messageCount() > 0 && (this.type() === Enums.FolderTypes.Drafts || this.showTotalInsteadUnseenCount() || Settings.AllowShowMessagesCountInFolderList && Settings.showMessagesCountInFolderList());
 	}, this);
 	
 	this.visible = ko.computed(function () {
@@ -1123,6 +1125,11 @@ CFolderModel.prototype.initComputedFields = function ()
 
 	this.setDisableMoveTo(false);
 	this.setDisableMoveFrom(false);
+};
+
+CFolderModel.prototype.setShowTotalInsteadUnseenCount = function (bShowTotalInsteadUnseenCount)
+{
+	this.showTotalInsteadUnseenCount(bShowTotalInsteadUnseenCount);
 };
 
 /**
