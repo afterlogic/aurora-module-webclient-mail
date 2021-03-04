@@ -6,7 +6,9 @@
 					<!-- ko template: {name: sPopupButtonsViewTemplate} --><!-- /ko -->
 					
 					<!-- ko foreach: toolbarControllers -->
-						<!-- ko template: { name: $data.ViewTemplate, data: $data} --><!-- /ko -->
+						<!-- ko if: !bSendButton -->
+							<!-- ko template: { name: $data.ViewTemplate, data: $data} --><!-- /ko -->
+						<!-- /ko -->
 					<!-- /ko -->
 				</span>
 			</div>

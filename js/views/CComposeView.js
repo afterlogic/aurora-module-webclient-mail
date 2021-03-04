@@ -1948,7 +1948,12 @@ CComposeView.prototype.registerOwnToolbarControllers = function ()
 		ViewTemplate: '%ModuleName%_Compose_SendButtonView',
 		sId: 'send',
 		bAllowMobile: true,
-		sendCommand: this.sendCommand
+		sendCommand: this.sendCommand,
+		toolbarControllers: ko.computed(function () {
+			return _.filter(this.toolbarControllers(), function (oController) {
+				return oController.bSendButton;
+			})
+		}, this)
 	});
 	this.registerToolbarController({
 		ViewTemplate: '%ModuleName%_Compose_SaveButtonView',
@@ -1988,6 +1993,7 @@ CComposeView.prototype.registerToolbarController = function (oController)
 	
 	if (bAllowRegister)
 	{
+		oController.bSendButton = !!oController.bSendButton;
 		this.toolbarControllers.push(oController);
 		this.toolbarControllers(_.sortBy(this.toolbarControllers(), function (oContr) {
 			var iIndex = _.indexOf(Settings.ComposeToolbarOrder, oContr.sId);
