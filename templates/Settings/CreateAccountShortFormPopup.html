@@ -8,7 +8,7 @@
 
 		<div class="fields" data-bind="visible: oauthOptionsVisible">
 			<div class="fieldset">
-				<div class="items_list simple_list">
+				<div class="items_list simple_list" style="margin: 0">
 					<div data-bind="foreach: oauthOptions">
 						<div class="item account" data-bind="click: function () { $parent.selectAuthOption(Type); }">
 							<img class="icon_oauth" data-bind="attr: { 'src': IconUrl }" />

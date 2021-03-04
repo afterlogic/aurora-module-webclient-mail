@@ -27,7 +27,15 @@ var
  */
 function CServerPairPropertiesView(sPairId, bAdminEdit, iServersPerPage)
 {
-	this.rnd = Math.random();
+	var oParams = {
+		aOauthConnectorsData: []
+	};
+	App.broadcastEvent('%ModuleName%::GetOauthConnectorsData', oParams);
+	this.bVisibleOauthSettings =  bAdminEdit && Types.isNonEmptyArray(oParams.aOauthConnectorsData);
+	this.aOauthConnectorsData = Types.pArray(oParams.aOauthConnectorsData);
+	this.oauthSelectedConnector = ko.observable('');
+
+
 	this.iServersPerPage = Types.pInt(iServersPerPage, 0);
 	this.totalServersCount = ko.observable(0);
 	this.servers = ko.observableArray([]);
@@ -56,10 +64,7 @@ function CServerPairPropertiesView(sPairId, bAdminEdit, iServersPerPage)
 			this.externalAccessSmtpServer(oSelectedServer.sExternalAccessSmtpServer);
 			this.externalAccessSmtpPort(oSelectedServer.iExternalAccessSmtpPort);
 
-			this.oauthEnable(oSelectedServer.bOauthEnable);
-			this.oauthName(oSelectedServer.sOauthName);
-			this.oauthType(oSelectedServer.sOauthType);
-			this.oauthIconUrl(oSelectedServer.sOauthIconUrl);
+			this.oauthSelectedConnector(oSelectedServer.bOauthEnable ? oSelectedServer.sOauthType : '');
 
 			this.tenantId(oSelectedServer.iTenantId);
 			this.name(oSelectedServer.sName);
@@ -86,10 +91,7 @@ function CServerPairPropertiesView(sPairId, bAdminEdit, iServersPerPage)
 			this.externalAccessSmtpServer(this.oLastEditableServer.sExternalAccessSmtpServer);
 			this.externalAccessSmtpPort(this.oLastEditableServer.iExternalAccessSmtpPort);
 
-			this.oauthEnable(this.oLastEditableServer.bOauthEnable);
-			this.oauthName(this.oLastEditableServer.sOauthName);
-			this.oauthType(this.oLastEditableServer.sOauthType);
-			this.oauthIconUrl(this.oLastEditableServer.sOauthIconUrl);
+			this.oauthSelectedConnector(this.oLastEditableServer.bOauthEnable ? this.oLastEditableServer.sOauthType : '');
 
 			this.tenantId(0);
 			this.name(this.oLastEditableServer.sName);
@@ -158,11 +160,6 @@ function CServerPairPropertiesView(sPairId, bAdminEdit, iServersPerPage)
 			this.externalAccessSmtpPort(this.oOutgoing.port());
 		}
 	}, this);
-
-	this.oauthEnable = ko.observable(false);
-	this.oauthName = ko.observable('');
-	this.oauthType = ko.observable('');
-	this.oauthIconUrl = ko.observable('');
 }
 
 CServerPairPropertiesView.prototype.ViewTemplate = '%ModuleName%_Settings_ServerPairPropertiesView';
@@ -274,10 +271,7 @@ CServerPairPropertiesView.prototype.setCurrentValues = function ()
 			this.externalAccessImapPort(),
 			this.externalAccessSmtpServer(),
 			this.externalAccessSmtpPort(),
-			this.oauthEnable(),
-			this.oauthName(),
-			this.oauthType(),
-			this.oauthIconUrl()
+			this.oauthSelectedConnector()
 		]
 	;
 	
@@ -331,8 +325,7 @@ CServerPairPropertiesView.prototype.getParametersForSave = function ()
 		'SievePort': this.sievePort(),
 		'EnableThreading': this.enableThreading(),
 		'UseFullEmailAddressAsLogin': this.useFullEmailAddressAsLogin(),
-		'SetExternalAccessServers': this.setExternalAccessServers(),
-		'OAuthEnable': this.oauthEnable()
+		'SetExternalAccessServers': this.setExternalAccessServers()
 	};
 	if (this.setExternalAccessServers())
 	{
@@ -341,12 +334,18 @@ CServerPairPropertiesView.prototype.getParametersForSave = function ()
 		oParameters['ExternalAccessSmtpServer'] = this.externalAccessSmtpServer();
 		oParameters['ExternalAccessSmtpPort'] = this.externalAccessSmtpPort();
 	}
-	if (this.oauthEnable())
+
+	var oOAuthConnector = _.find(this.aOauthConnectorsData, function (oConnectorData) {
+		return oConnectorData.Type === this.oauthSelectedConnector();
+	}, this);
+	oParameters['OAuthEnable'] = !!oOAuthConnector;
+	if (oOAuthConnector)
 	{
-		oParameters['OAuthName'] = this.oauthName();
-		oParameters['OAuthType'] = this.oauthType();
-		oParameters['OAuthIconUrl'] = this.oauthIconUrl();
+		oParameters['OAuthName'] = oOAuthConnector.Name;
+		oParameters['OAuthType'] = oOAuthConnector.Type;
+		oParameters['OAuthIconUrl'] = oOAuthConnector.IconUrl;
 	}
+
 	return oParameters;
 };
 

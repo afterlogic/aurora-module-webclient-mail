@@ -3,10 +3,9 @@
 var
 	_ = require('underscore'),
 	ko = require('knockout'),
-	
+
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
-	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
-	
+
 	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
 	App = require('%PathToCoreWebclientModule%/js/App.js'),
 	CPageSwitcherView = require('%PathToCoreWebclientModule%/js/views/CPageSwitcherView.js'),
@@ -94,7 +93,7 @@ function CServersAdminSettingsPaneView()
 	this.isSearchFocused = ko.observable(false);
 	this.newSearchValue = ko.observable('');
 	this.searchValue = ko.observable('');
-	
+
 	this.updateSavedState();
 }
 

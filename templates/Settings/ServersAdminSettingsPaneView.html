@@ -79,30 +79,23 @@
 							</div>
 						</div>
 
-						<div class="fieldset" data-bind="visible: oServerPairPropertiesView.bAdminEdit, with: oServerPairPropertiesView">
+						<div class="fieldset" data-bind="visible: oServerPairPropertiesView.bVisibleOauthSettings, with: oServerPairPropertiesView">
 							<div class="row">
-								<div>
-									<label class="custom_checkbox" data-bind="css: {'checked': oauthEnable}">
-										<span class="icon"></span>
-										<input type="checkbox" id="oauthEnable" data-bind="checked: oauthEnable" />
-									</label>
-									<label for="oauthEnable" data-bind="i18n: {'key': '%MODULENAME%/LABEL_ADMIN_OAUTH_ENABLE'}"></label>
-								</div>
+								<span class="label" style="width: auto" data-bind="i18n: {'key': '%MODULENAME%/INFO_ADMIN_OAUTH'}"></span>
 							</div>
 							<div class="row">
-								<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_ADMIN_OAUTH_NAME'}, css: {'disabled': !oauthEnable()}"></span>
-								<input class="value input server" spellcheck="false" type="text"
-								       data-bind="enable: oauthEnable, value: oauthName, valueUpdate: 'afterkeydown', onEnter: save, css: {'disabled': !oauthEnable()}"/>
+								<label class="custom_radio" data-bind="css: {'checked': '' === oauthSelectedConnector()}">
+									<span class="icon"></span>
+									<input type="radio" value="" id="oauthSelectedConnector_none" data-bind="checked: oauthSelectedConnector" />
+								</label>
+								<label for="oauthSelectedConnector_none" data-bind="i18n: {'key': '%MODULENAME%/LABEL_ADMIN_OAUTH_NOTHING_SELECTED'}"></label>
 							</div>
-							<div class="row">
-								<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_ADMIN_OAUTH_TYPE'}, css: {'disabled': !oauthEnable()}"></span>
-								<input class="value input server" spellcheck="false" type="text"
-								       data-bind="enable: oauthEnable, value: oauthType, valueUpdate: 'afterkeydown', onEnter: save, css: {'disabled': !oauthEnable()}"/>
-							</div>
-							<div class="row">
-								<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_ADMIN_OAUTH_ICON_URL'}, css: {'disabled': !oauthEnable()}"></span>
-								<input class="value input server" spellcheck="false" type="text"
-								       data-bind="enable: oauthEnable, value: oauthIconUrl, valueUpdate: 'afterkeydown', onEnter: save, css: {'disabled': !oauthEnable()}"/>
+							<div class="row" data-bind="foreach: aOauthConnectorsData">
+								<label class="custom_radio" data-bind="css: {'checked': Type === $parent.oauthSelectedConnector()}">
+									<span class="icon"></span>
+									<input type="radio" data-bind="checked: $parent.oauthSelectedConnector, attr: { 'value': Type, 'id': 'oauthSelectedConnector_' + Type }" />
+								</label>
+								<label data-bind="text: Name, attr: { 'for': 'oauthSelectedConnector_' + Type }"></label>
 							</div>
 						</div>
 
