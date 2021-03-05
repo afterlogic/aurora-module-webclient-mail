@@ -304,17 +304,11 @@ CAccountsSettingsPaneView.prototype.addAccount = function ()
 					var oServer = new CServerModel(oServerData);
 					if (oServer.bOauthEnable)
 					{
-						var oAccount = _.find(AccountList.collection(), function (oAccount) {
-							return oAccount.serverId() === oServer.iId;
+						aOAuthOptions.push({
+							'Name': oServer.sOauthName,
+							'Type': oServer.sOauthType,
+							'IconUrl': oServer.sOauthIconUrl
 						});
-						if (!oAccount) // only one account with oauth could be added
-						{
-							aOAuthOptions.push({
-								'Name': oServer.sOauthName,
-								'Type': oServer.sOauthType,
-								'IconUrl': oServer.sOauthIconUrl
-							});
-						}
 					}
 				});
 
