@@ -1,4 +1,6 @@
 .buttons {
+	margin-left: 7px;
+
 	.add_account_button {
 		.button_mixin(@theme-add-account-button-color);
 	}
@@ -22,15 +24,43 @@
 		}
 	}
 
-	&.buttons_send_arrow {
+	.item.buttons_send_arrow {
 		padding-left: 0 !important;
-		margin-left: -20px;
+		margin-left: -11px !important;
 
 		.button {
-			padding: 7px;
+			height: 100%;
+			padding: 0 7px;
+			vertical-align: middle;
+		}
 
-			.arrow:before {
-				font-family: 'afterlogic';
+		.arrow {
+			margin-top: 7px;
+			font-family: 'afterlogic';
+		}
+	}
+
+	.dropdown_content {
+		background: @theme-buttons-primary-background;
+		border: 1px solid darken(@theme-buttons-primary-background, 10%);
+		color: #ffffff;
+
+		.item {
+			text-align: left;
+			color: inherit;
+			font-size: 16px;
+			opacity: 1 !important;
+
+			&:hover {
+				background: darken(@theme-buttons-primary-background, 5%);
+				color: inherit;
+			}
+
+			&.disabled {
+				color: mix(@theme-buttons-primary-background, #fff, 50%);
+				&:hover {
+					background: @theme-buttons-primary-background;
+				}
 			}
 		}
 	}
