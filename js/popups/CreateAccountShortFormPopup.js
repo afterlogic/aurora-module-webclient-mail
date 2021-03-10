@@ -107,7 +107,7 @@ CreateAccountShortFormPopup.prototype.getOAuthData = function (sType)
 {
 	var
 		sScopes = $.cookie('oauth-scopes'),
-		aScopes = sScopes.split('|')
+		aScopes = !_.isUndefined(sScopes) ? sScopes.split('|') : []
 	;
 	aScopes.push('mail');
 	aScopes = _.unique(aScopes);
@@ -115,7 +115,7 @@ CreateAccountShortFormPopup.prototype.getOAuthData = function (sType)
 	$.cookie('oauth-scopes', aScopes.join('|'));
 
 	this.bOAuthCallbackExecuted = false;
-	window.googleConnectCallback = function (oResult, sErrorCode, sModule) {
+	window.gmailConnectCallback = function (oResult, sErrorCode, sModule) {
 		this.bOAuthCallbackExecuted = true;
 		if (!oResult)
 		{
@@ -128,7 +128,7 @@ CreateAccountShortFormPopup.prototype.getOAuthData = function (sType)
 	}.bind(this);
 
 	var
-		oWin = WindowOpener.open(UrlUtils.getAppPath() + '?oauth=' + sType, 'OAuth'),
+		oWin = WindowOpener.open(UrlUtils.getAppPath() + '?oauth=' + sType + '-connect', 'OAuth'),
 		iIntervalId = setInterval(function() {
 			if (oWin.closed)
 			{
