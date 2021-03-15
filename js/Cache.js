@@ -1248,7 +1248,7 @@ CMailCache.prototype.setCurrentMessage = function (iAccountId, sFolder, sUid)
 	if (oMessage && !oMessage.deleted())
 	{
 		this.currentMessage(oMessage);
-		if (!this.currentMessage().seen())
+		if (Settings.MarkMessageSeenWhenViewing && !this.currentMessage().seen())
 		{
 			this.executeGroupOperation('SetMessagesSeen', [this.getMessageUid(this.currentMessage())], 'seen', true);
 		}

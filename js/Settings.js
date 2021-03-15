@@ -66,6 +66,7 @@ module.exports = {
 	DisableRtlRendering: false,
 	AllowQuickReply: false,
 	AllowQuickSendOnCompose: false,
+	MarkMessageSeenWhenViewing: true,
 
 	userMailAccountsCount: ko.observable(0),
 	mailAccountsEmails: ko.observableArray([]),
@@ -147,6 +148,7 @@ module.exports = {
 			this.DisableRtlRendering = Types.pBool(oAppDataMailWebclientSection.DisableRtlRendering, this.DisableRtlRendering);
 			this.AllowQuickReply = Types.pBool(oAppDataMailWebclientSection.AllowQuickReply, this.AllowQuickReply);
 			this.AllowQuickSendOnCompose = Types.pBool(oAppDataMailWebclientSection.AllowQuickSendOnCompose, this.AllowQuickSendOnCompose);
+			this.MarkMessageSeenWhenViewing = Types.pBool(oAppDataMailWebclientSection.MarkMessageSeenWhenViewing, this.MarkMessageSeenWhenViewing);
 		}
 		
 		if (!_.isEmpty(oAppDataFetchersSection))

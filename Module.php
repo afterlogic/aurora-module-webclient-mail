@@ -62,7 +62,8 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			'HorizontalLayoutByDefault' => $this->getConfig('HorizontalLayoutByDefault', false),
 			'DisableRtlRendering' => $this->getConfig('DisableRtlRendering', false),
             'AllowQuickReply' => $this->getConfig('AllowQuickReply', false),
-            'AllowQuickSendOnCompose' => $this->getConfig('AllowQuickSendOnCompose', false),
+			'AllowQuickSendOnCompose' => $this->getConfig('AllowQuickSendOnCompose', false),
+			'MarkMessageSeenWhenViewing' => $this->getConfig('MarkMessageSeenWhenViewing', true),
 		);
 		
 		$oUser = \Aurora\System\Api::getAuthenticatedUser();

@@ -90,5 +90,9 @@
 	"AllowQuickSendOnCompose": [
 		false,
 		"bool"
+	],
+	"MarkMessageSeenWhenViewing": [
+		true,
+		"bool"
 	]
 }
