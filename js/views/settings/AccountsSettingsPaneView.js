@@ -317,7 +317,7 @@ CAccountsSettingsPaneView.prototype.addAccount = function ()
 					aOAuthOptions.push({
 						'Name': 'Other',
 						'Type': '',
-						'IconUrl': 'static/styles/images/logo_140x140.png'
+						'IconUrl': 'static/styles/images/modules/%ModuleName%/logo_other.png'
 					});
 				}
 			}
