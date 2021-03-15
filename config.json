@@ -94,5 +94,9 @@
 	"MarkMessageSeenWhenViewing": [
 		true,
 		"bool"
+	],
+	"MarkMessageSeenWhenAnswerForward": [
+		false,
+		"bool"
 	]
 }

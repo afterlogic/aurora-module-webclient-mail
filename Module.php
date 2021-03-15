@@ -64,6 +64,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
             'AllowQuickReply' => $this->getConfig('AllowQuickReply', false),
 			'AllowQuickSendOnCompose' => $this->getConfig('AllowQuickSendOnCompose', false),
 			'MarkMessageSeenWhenViewing' => $this->getConfig('MarkMessageSeenWhenViewing', true),
+			'MarkMessageSeenWhenAnswerForward' => $this->getConfig('MarkMessageSeenWhenAnswerForward', false),
 		);
 		
 		$oUser = \Aurora\System\Api::getAuthenticatedUser();

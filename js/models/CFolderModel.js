@@ -557,7 +557,10 @@ CFolderModel.prototype.hasListBeenRequested = function (oParams)
  */
 CFolderModel.prototype.markMessageReplied = function (sUid, sReplyType)
 {
-	var oMessage = this.getMessageByUid(sUid);
+	var
+		oMessage = this.getMessageByUid(sUid),
+		oFolder = oMessage ? MailCache.getFolderByFullName(oMessage.accountId(), oMessage.folder()) : null;
+	;
 	
 	if (oMessage)
 	{
@@ -566,10 +569,18 @@ CFolderModel.prototype.markMessageReplied = function (sUid, sReplyType)
 			case Enums.ReplyType.Reply:
 			case Enums.ReplyType.ReplyAll:
 				oMessage.answered(true);
+				if (Settings.MarkMessageSeenWhenAnswerForward && oFolder && !oMessage.seen())
+				{
+					MailCache.executeGroupOperationForFolder('SetMessagesSeen', oFolder, [MailCache.getMessageUid(oMessage)], 'seen', true);
+				}
 				break;
 			case Enums.ReplyType.Forward:
 			case Enums.ReplyType.ForwardAsAttach:
 				oMessage.forwarded(true);
+				if (Settings.MarkMessageSeenWhenAnswerForward && oFolder && !oMessage.seen())
+				{
+					MailCache.executeGroupOperationForFolder('SetMessagesSeen', oFolder, [MailCache.getMessageUid(oMessage)], 'seen', true);
+				}
 				break;
 		}
 	}
