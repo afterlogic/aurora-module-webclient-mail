@@ -68,6 +68,7 @@ module.exports = {
 	AllowQuickSendOnCompose: false,
 	MarkMessageSeenWhenViewing: true,
 	MarkMessageSeenWhenAnswerForward: false,
+	UserLoginPartInAccountDropdown: false,
 
 	userMailAccountsCount: ko.observable(0),
 	mailAccountsEmails: ko.observableArray([]),
@@ -151,6 +152,7 @@ module.exports = {
 			this.AllowQuickSendOnCompose = Types.pBool(oAppDataMailWebclientSection.AllowQuickSendOnCompose, this.AllowQuickSendOnCompose);
 			this.MarkMessageSeenWhenViewing = Types.pBool(oAppDataMailWebclientSection.MarkMessageSeenWhenViewing, this.MarkMessageSeenWhenViewing);
 			this.MarkMessageSeenWhenAnswerForward = Types.pBool(oAppDataMailWebclientSection.MarkMessageSeenWhenAnswerForward, this.MarkMessageSeenWhenAnswerForward);
+			this.UserLoginPartInAccountDropdown = Types.pBool(oAppDataMailWebclientSection.UserLoginPartInAccountDropdown, this.UserLoginPartInAccountDropdown);
 		}
 		
 		if (!_.isEmpty(oAppDataFetchersSection))

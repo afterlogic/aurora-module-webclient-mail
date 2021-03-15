@@ -98,5 +98,9 @@
 	"MarkMessageSeenWhenAnswerForward": [
 		false,
 		"bool"
+	],
+	"UserLoginPartInAccountDropdown": [
+		false,
+		"bool"
 	]
 }
