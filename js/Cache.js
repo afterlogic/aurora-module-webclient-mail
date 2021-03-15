@@ -1271,7 +1271,7 @@ CMailCache.prototype.setCurrentMessage = function (iAccountId, sFolder, sUid)
  */
 CMailCache.prototype.onCurrentMessageResponse = function (oMessage, sUid, oResponse)
 {
-	var sCurrentUid = this.currentMessage() ? this.currentMessage().uid() : '';
+	var sCurrentUid = this.currentMessage() && this.currentMessage().uid ? this.currentMessage().uid() : '';
 	if (oMessage === null && MainTab && oResponse)
 	{
 		Api.showErrorByCode(oResponse, '', true);
@@ -1996,7 +1996,7 @@ CMailCache.prototype.onMoveMessagesResponse = function (oResponse, oRequest)
 	else if (oFolder)
 	{
 		this.messages(_.filter(this.messages(), function (oMessage) {
-			return _.indexOf(aUids, oMessage.uid()) === -1;
+			return _.indexOf(aUids, oMessage && oMessage.uid && oMessage.uid()) === -1;
 		}));
 		oFolder.commitDeleted(aUids);
 		_.each(aUids, function (sUid) {
