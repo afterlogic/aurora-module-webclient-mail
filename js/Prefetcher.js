@@ -285,24 +285,27 @@ Prefetcher.startMessagesPrefetch = function (oFolder)
 {
 	var
 		oPrefetchFolder = oFolder ? oFolder : MailCache.getCurrentFolder(),
-		bPrefetchStarted = false;
+		bPrefetchStarted = false
 	;
 
-	if (oPrefetchFolder && !oPrefetchFolder.bIsUnifiedInbox)
+	if (oPrefetchFolder)
 	{
-		bPrefetchStarted = this.startMessagesPrefetchForFolder(oPrefetchFolder, oPrefetchFolder.selected());
+		if (oPrefetchFolder.bIsUnifiedInbox)
+		{
+			_.each(AccountList.unifiedMailboxAccounts(), function (oAccount) {
+				var oInbox  = MailCache.oUnifiedInbox.getUnifiedInbox(oAccount.id());
+				if (oInbox)
+				{
+					bPrefetchStarted = bPrefetchStarted || this.startMessagesPrefetchForFolder(oInbox, MailCache.oUnifiedInbox.selected());
+				}
+			}, this);
+		}
+		else
+		{
+			bPrefetchStarted = this.startMessagesPrefetchForFolder(oPrefetchFolder, oPrefetchFolder.selected());
+		}
 	}
 
-	if (!bPrefetchStarted && AccountList.unifiedInboxReady())
-	{
-		_.each(AccountList.unifiedMailboxAccounts(), function (oAccount) {
-			var oInbox  = MailCache.oUnifiedInbox.getUnifiedInbox(oAccount.id());
-			if (oInbox)
-			{
-				bPrefetchStarted = bPrefetchStarted || this.startMessagesPrefetchForFolder(oInbox, MailCache.oUnifiedInbox.selected());
-			}
-		}, this);
-	}
 	return bPrefetchStarted;
 };
 
