@@ -2003,8 +2003,9 @@ CMailCache.prototype.onMoveMessagesResponse = function (oResponse, oRequest)
 			Routing.replaceHashWithoutMessageUid(sUid);
 		});
 	}
-	
-	if (oFolder && sCurrFolderFullName === oFolder.fullName() || oToFolder && sCurrFolderFullName === oToFolder.fullName())
+
+	if (oFolder && sCurrFolderFullName === oFolder.fullName() || oToFolder && sCurrFolderFullName === oToFolder.fullName() ||
+		oCurrFolder.bIsUnifiedInbox && (oFolder && oFolder.type() === Enums.FolderTypes.Inbox || oToFolder && oToFolder.type() === Enums.FolderTypes.Inbox))
 	{
 		oCurrFolder.markHasChanges();
 		switch (this.uidList().filters())
