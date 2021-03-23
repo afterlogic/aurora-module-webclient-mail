@@ -31,13 +31,13 @@
 			<div class="message_info" data-bind="visible: !detailsVisible()">
 				<div class="message_info_line">
 					<span class="from contact address_capsule">
-						<span class="control address" data-bind="text: currentAccountEmail() === fromEmail() ? meSender : from, 
+						<span class="control address" data-bind="text: sMeSender && currentAccountEmail() === fromEmail() ? sMeSender : from,
 								attr: {'data-email': fromEmail, 'data-name': oFromAddr() ? oFromAddr().sName : ''}"></span>
 					</span>
 					<span class="to_arrow" data-bind="visible: allRecipients().length > 0">&#8594;</span>
 					<span data-bind="foreach: allRecipients">
 						<span class="contact address_capsule">
-							<span class="address" data-bind="text: $parent.currentAccountEmail() === sEmail ? $parent.meRecipient : sDisplay, 
+							<span class="address" data-bind="text: $parent.sMeRecipient && $parent.currentAccountEmail() === sEmail ? $parent.sMeRecipient : sDisplay,
 									attr: {'data-email': sEmail, 'data-name': sName}">
 							</span>
 						</span>

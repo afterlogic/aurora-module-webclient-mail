@@ -21,7 +21,8 @@ var
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	MailCache = null,
 	MessagesDictionary = require('modules/%ModuleName%/js/MessagesDictionary.js'),
-	
+	Settings = require('modules/%ModuleName%/js/Settings.js'),
+
 	CAttachmentModel = require('modules/%ModuleName%/js/models/CAttachmentModel.js')
 ;
 
@@ -293,9 +294,10 @@ CMessageModel.prototype.fillFromOrToText = function ()
 	if (oFolder && (oFolder.type() === Enums.FolderTypes.Drafts || oFolder.type() === Enums.FolderTypes.Sent))
 	{
 		var
-			sToDisplay = this.oTo.getDisplay(TextUtils.i18n('%MODULENAME%/LABEL_ME_RECIPIENT'), this.accountEmail()),
-			sCcDisplay = this.oCc.getDisplay(TextUtils.i18n('%MODULENAME%/LABEL_ME_RECIPIENT'), this.accountEmail()),
-			sBccDisplay = this.oBcc.getDisplay(TextUtils.i18n('%MODULENAME%/LABEL_ME_RECIPIENT'), this.accountEmail()),
+			sMeRecipientReplacement = Settings.UseMeRecipientForMessages ? TextUtils.i18n('%MODULENAME%/LABEL_ME_RECIPIENT') : null,
+			sToDisplay = this.oTo.getDisplay(sMeRecipientReplacement, this.accountEmail()),
+			sCcDisplay = this.oCc.getDisplay(sMeRecipientReplacement, this.accountEmail()),
+			sBccDisplay = this.oBcc.getDisplay(sMeRecipientReplacement, this.accountEmail()),
 			aDisplay = []
 		;
 		if (Types.isNonEmptyString(sToDisplay)) {
@@ -311,7 +313,8 @@ CMessageModel.prototype.fillFromOrToText = function ()
 	}
 	else
 	{
-		this.fromOrToText(this.oFrom.getDisplay(TextUtils.i18n('%MODULENAME%/LABEL_ME_SENDER'), this.accountEmail()));
+		var sMeSenderReplacement = Settings.UseMeRecipientForMessages ? TextUtils.i18n('%MODULENAME%/LABEL_ME_SENDER') : null;
+		this.fromOrToText(this.oFrom.getDisplay(sMeSenderReplacement, this.accountEmail()));
 	}
 };
 

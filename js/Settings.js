@@ -69,6 +69,7 @@ module.exports = {
 	MarkMessageSeenWhenViewing: true,
 	MarkMessageSeenWhenAnswerForward: false,
 	UserLoginPartInAccountDropdown: false,
+	UseMeRecipientForMessages: true,
 
 	userMailAccountsCount: ko.observable(0),
 	mailAccountsEmails: ko.observableArray([]),
@@ -153,6 +154,7 @@ module.exports = {
 			this.MarkMessageSeenWhenViewing = Types.pBool(oAppDataMailWebclientSection.MarkMessageSeenWhenViewing, this.MarkMessageSeenWhenViewing);
 			this.MarkMessageSeenWhenAnswerForward = Types.pBool(oAppDataMailWebclientSection.MarkMessageSeenWhenAnswerForward, this.MarkMessageSeenWhenAnswerForward);
 			this.UserLoginPartInAccountDropdown = Types.pBool(oAppDataMailWebclientSection.UserLoginPartInAccountDropdown, this.UserLoginPartInAccountDropdown);
+			this.UseMeRecipientForMessages = Types.pBool(oAppDataMailWebclientSection.UseMeRecipientForMessages, this.UseMeRecipientForMessages);
 		}
 		
 		if (!_.isEmpty(oAppDataFetchersSection))

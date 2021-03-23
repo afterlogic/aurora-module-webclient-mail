@@ -196,8 +196,8 @@ function CMessagePaneView()
 	this.aBccAddr = ko.observableArray([]);
 	this.allRecipients = ko.observableArray([]);
 	this.currentAccountEmail = ko.observable();
-	this.meSender = TextUtils.i18n('%MODULENAME%/LABEL_ME_SENDER');
-	this.meRecipient = TextUtils.i18n('%MODULENAME%/LABEL_ME_RECIPIENT');
+	this.sMeSender = Settings.UseMeRecipientForMessages ? TextUtils.i18n('%MODULENAME%/LABEL_ME_SENDER') : null;
+	this.sMeRecipient = Settings.UseMeRecipientForMessages ? TextUtils.i18n('%MODULENAME%/LABEL_ME_RECIPIENT') : null;
 	
 	this.fullDate = ko.observable('');
 	this.midDate = ko.observable('');

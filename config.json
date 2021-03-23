@@ -102,5 +102,9 @@
 	"UserLoginPartInAccountDropdown": [
 		false,
 		"bool"
+	],
+	"UseMeRecipientForMessages": [
+		true,
+		"bool"
 	]
 }
