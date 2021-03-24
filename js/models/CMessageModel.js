@@ -217,6 +217,15 @@ function CMessageModel()
 	}, this);
 	
 	this.Custom = {};
+
+	this.customLabelText = ko.observable('');
+	this.customLabelClass = ko.observable('');
+}
+
+CMessageModel.prototype.setCustomLabel = function (sCustomLabelText, sCustomLabelClass)
+{
+	this.customLabelText(sCustomLabelText || '');
+	this.customLabelClass(sCustomLabelClass || '');
 }
 
 CMessageModel.prototype.requireMailCache = function ()
@@ -510,6 +519,12 @@ CMessageModel.prototype.parse = function (oData, iAccountId, bThreadPart, bTrust
 			this.completelyFilled(true);
 
 			App.broadcastEvent('MailWebclient::ParseMessage::after', {
+				msg: this
+			});
+		}
+		else
+		{
+			App.broadcastEvent('MailWebclient::ParseMessageListItem::after', {
 				msg: this
 			});
 		}

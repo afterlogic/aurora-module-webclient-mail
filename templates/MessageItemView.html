@@ -17,6 +17,7 @@
 			<span class="size" data-bind="text: friendlySize()"></span>
 			<span class="date" data-bind="text: date"></span>
 			<span class="unified_marker" data-bind="visible: showUnifiedMailboxLabel, text: unifiedMailboxLabelText, style: {'background': unifiedMailboxLabelColor}"></span>
+			<span class="custom_marker" data-bind="visible: customLabelText, text: customLabelText, css: customLabelClass"></span>
 			<span class="attachments has_attachments" data-bind="visible: hasAttachments(),
 				css: {'has_ical_attachment': hasIcalAttachment(), 'has_vcard_attachment': hasVcardAttachment()}"></span>
 			<span class="marker"></span>
