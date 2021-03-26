@@ -3,8 +3,8 @@
 		 css: 'item folder-level' + (getDisplayedLevel() + 1) + ' ' + name() + (selected() ? ' selected' : '') + 
 					(canBeSelected() ? ' canSelect' : ' canNotSelect') + (bExists ? ' exists' : '') + 
 					(subscribed() ? ' subscribed' : '') + (isSystem() ? ' system' : ' user') + 
-					(virtualEmpty() ? ' virtualEmpty' : '') + (subfolders().length !== 0 ? ' accordion' : '') + 
-					(expanded() ? ' expanded' : ' collapsed')">
+					(virtualEmpty() ? ' virtualEmpty' : '') + (subfolders().length !== 0 ? ' accordion' : ' folder_no_subfolders') +
+					(expanded() ? ' expanded' : ' collapsed') + (hasExtendedInfo() && messageCount() === 0 ? ' folder_no_messages' : '')">
 		<a class="title" href="javascript: void(0);" data-bind="
 			css: {'recivedAnim': recivedAnim()},
 			attr: {href: routingHash},
