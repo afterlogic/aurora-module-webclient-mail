@@ -108,6 +108,19 @@ function CMessagePaneView()
 	this.printCommand = Utils.createCommand(this, this.executePrint, this.isEnablePrint);
 	this.saveCommand = Utils.createCommand(this, this.executeSave, this.isEnableSave);
 	this.forwardAsAttachment = Utils.createCommand(this, this.executeForwardAsAttachment, this.isCurrentMessageLoaded);
+	this.otherToolbarCommands = ko.observableArray([]);
+	App.broadcastEvent('%ModuleName%::AddPreviewPaneToolbarCommand', {
+		AddPreviewPaneToolbarCommand: _.bind(function (oCommand) {
+			var oNewCommand = _.extend({
+				'Text': '', 'CssClass': '', 'Handler': function () {
+				}
+			}, oCommand);
+			oNewCommand.Command = Utils.createCommand(this, oNewCommand.Handler, this.isCurrentMessageLoaded);
+			this.otherToolbarCommands.push(oNewCommand);
+		}, this),
+		View: this
+	});
+
 	this.moreCommand = Utils.createCommand(this, null, this.isCurrentMessageLoaded);
 	this.moreSectionCommands = ko.observableArray([]);
 	App.broadcastEvent('%ModuleName%::AddMoreSectionCommand', _.bind(function (oCommand) {

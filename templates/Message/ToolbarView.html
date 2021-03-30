@@ -23,7 +23,14 @@
 		
 		<!-- ko template: {name: '%ModuleName%_Message_ForwardButtonView'} --><!-- /ko -->
 
-		<a class="item new_window" href="javascript: void(0);" 
+		<!-- ko foreach: otherToolbarCommands -->
+			<span class="item" data-bind="command: Command, css: CssClass">
+				<span class="icon" data-bind="customTooltip: Text"></span>
+				<span class="text" data-bind="text: Text"></span>
+			</span>
+		<!-- /ko -->
+
+		<a class="item new_window" href="javascript: void(0);"
 			data-bind="click: openInNewWindow, visible: !bNewTab">
 			<span class="icon" data-bind="customTooltip: '%MODULENAME%/ACTION_OPEN_IN_NEW_WINDOW'"></span>
 			<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_OPEN_IN_NEW_WINDOW'}"></span>
