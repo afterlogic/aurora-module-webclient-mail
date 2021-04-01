@@ -40,6 +40,13 @@
 		<!-- ko template: {name: '%ModuleName%_Messages_SpamButtonsView'} --><!-- /ko -->
 		
 		<!-- ko template: {name: '%ModuleName%_Messages_SortButtonView'} --><!-- /ko -->
-		
+
+		<!-- ko foreach: otherToolbarCommands -->
+			<span class="item" data-bind="command: Command, css: CssClass">
+				<span class="icon" data-bind="customTooltip: Text"></span>
+				<span class="text" data-bind="text: Text"></span>
+			</span>
+		<!-- /ko -->
+
 	</span>
 </div>

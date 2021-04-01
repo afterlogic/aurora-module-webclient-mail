@@ -106,6 +106,19 @@ function CMailView()
 	this.spamCommand = Utils.createCommand(this.oMessageList, this.oMessageList.executeSpam, this.isEnableGroupOperations);
 	this.notSpamCommand = Utils.createCommand(this.oMessageList, this.oMessageList.executeNotSpam, this.isEnableGroupOperations);
 
+	this.otherToolbarCommands = ko.observableArray([]);
+	App.broadcastEvent('%ModuleName%::AddMessageListToolbarCommand', {
+		AddPreviewPaneToolbarCommand: _.bind(function (oCommand) {
+			var oNewCommand = _.extend({
+				'Text': '', 'CssClass': '', 'Handler': function () {
+				}
+			}, oCommand);
+			oNewCommand.Command = Utils.createCommand(this, oNewCommand.Handler, this.isCurrentMessageLoaded);
+			this.otherToolbarCommands.push(oNewCommand);
+		}, this),
+		View: this
+	});
+
 	this.isVisibleReplyTool = ko.computed(function () {
 		return (MailCache.getCurrentFolder() &&
 			MailCache.getCurrentFolderFullname().length > 0 &&
