@@ -8,7 +8,7 @@
 	</div>
 	<div class="panel_center unselectable" data-bind="customScrollbar: {'reset': listChangedThrottle(), x: false}">
 		<div class="scroll-inner message_list_scroll">
-			<div class="items_list message_list" data-bind="initDom: messagesContainer">
+			<div class="items_list message_list" data-bind="initDom: messagesContainer, css: folderFullName">
 				<span>
 					<span class="list_notification" data-bind="visible: visibleInfoSearchLoading">
 						<span class="link" data-bind="i18n: {'key': '%MODULENAME%/ACTION_STOP_SEARCH'}, click: onStopSearchClick"></span>
