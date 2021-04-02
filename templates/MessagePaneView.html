@@ -35,13 +35,13 @@
 								attr: {'data-email': fromEmail, 'data-name': oFromAddr() ? oFromAddr().sName : ''}"></span>
 					</span>
 					<span class="to_arrow" data-bind="visible: allRecipients().length > 0">&#8594;</span>
-					<span data-bind="foreach: allRecipients">
+					<!-- ko foreach: allRecipients -->
 						<span class="contact address_capsule">
 							<span class="address" data-bind="text: $parent.sMeRecipient && $parent.currentAccountEmail() === sEmail ? $parent.sMeRecipient : sDisplay,
 									attr: {'data-email': sEmail, 'data-name': sName}">
 							</span>
 						</span>
-					</span>
+					<!-- /ko -->
 				</div>
 			</div>
 
