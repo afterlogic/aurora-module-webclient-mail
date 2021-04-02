@@ -79,7 +79,10 @@ SendingUtils.send = function (sMethod, oParameters, bShowLoading, fSendMessageRe
 			sLoadingMessage = TextUtils.i18n('COREWEBCLIENT/INFO_SENDING');
 			if (bAddToSentFolder)
 			{
-				oParameters.SentFolder = sSentFolder;
+				if (!Types.isNonEmptyString(oParameters.SentFolder))
+				{
+					oParameters.SentFolder = sSentFolder;
+				}
 				if (oParameters.DraftUid !== '')
 				{
 					oParameters.DraftFolder = sDraftFolder;
