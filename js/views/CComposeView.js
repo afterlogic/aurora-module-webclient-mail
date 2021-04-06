@@ -627,6 +627,8 @@ CComposeView.prototype.reset = function ()
  */
 CComposeView.prototype.onRoute = function (aParams)
 {
+	this.setDataFromMessage(new CMessageModel()); // clear before filling up
+
 	var oParams = LinksUtils.parseCompose(aParams);
 
 	if (App.isNewTab())
