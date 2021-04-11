@@ -40,7 +40,7 @@ function CMessageModel()
 	this.unifiedMailboxLabelText = ko.observable('');
 	this.unifiedMailboxLabelColor = ko.observable('');
 	ko.computed(function () {
-		var oAccount = AccountList.getAccount(this.accountId());
+		var oAccount = this.accountId ? AccountList.getAccount(this.accountId()) : null;
 		if (oAccount)
 		{
 			this.showUnifiedMailboxLabel(oAccount.showUnifiedMailboxLabel());
