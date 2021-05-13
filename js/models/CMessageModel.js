@@ -218,14 +218,31 @@ function CMessageModel()
 	
 	this.Custom = {};
 
-	this.customLabelText = ko.observable('');
-	this.customLabelClass = ko.observable('');
+	this.customLabels = ko.observableArray([]);
 }
 
-CMessageModel.prototype.setCustomLabel = function (sCustomLabelText, sCustomLabelClass)
+CMessageModel.prototype.setCustomLabels = function (aCustomLabels)
 {
-	this.customLabelText(sCustomLabelText || '');
-	this.customLabelClass(sCustomLabelClass || '');
+	this.customLabels.removeAll();
+	_.each(aCustomLabels, function (oCustomLabel) {
+		this.addCustomLabel(oCustomLabel);
+	}, this);
+}
+
+CMessageModel.prototype.addCustomLabel = function (oCustomLabel)
+{
+	if (Types.isNonEmptyString(oCustomLabel.text) && Types.isString(oCustomLabel.cssClass))
+	{
+		this.customLabels.push(oCustomLabel);
+	}
+}
+
+CMessageModel.prototype.removeCustomLabel = function (sText)
+{
+	console.log('removeCustomLabel', this.uid(), sText);
+	this.customLabels(_.filter(this.customLabels(), function (oCustomLabel) {
+		return oCustomLabel.text !== sText;
+	}));
 }
 
 CMessageModel.prototype.requireMailCache = function ()
