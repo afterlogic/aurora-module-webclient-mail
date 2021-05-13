@@ -239,7 +239,6 @@ CMessageModel.prototype.addCustomLabel = function (oCustomLabel)
 
 CMessageModel.prototype.removeCustomLabel = function (sText)
 {
-	console.log('removeCustomLabel', this.uid(), sText);
 	this.customLabels(_.filter(this.customLabels(), function (oCustomLabel) {
 		return oCustomLabel.text !== sText;
 	}));
