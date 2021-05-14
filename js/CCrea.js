@@ -166,7 +166,7 @@ CCrea.prototype.start = function (bEditable)
                 sHtml = oEvent.clipboardData.getData('text/html'),
                 aHtml
             ;
-			
+
             if (self.oOptions.alwaysTryUseImageWhilePasting && self.pasteImage(oEvent))
             {
                 oEvent.preventDefault();
@@ -192,7 +192,6 @@ CCrea.prototype.start = function (bEditable)
                     {
                         sHtml = aHtml[1];
                     }
-                    sHtml = self.replacePToBr(sHtml);
 
                     self.execCom('insertHTML', sHtml);
                 }
@@ -309,9 +308,9 @@ CCrea.prototype.editableSave = function ()
         oLastSaved = _.last(this.aEditableAreaHtml),
         sLastSaved = oLastSaved ? oLastSaved[0] : ''
     ;
-	
+
     if (sEditableHtml !== sLastSaved)
-    { 
+    {
         this.clearRedo();
         this.aEditableAreaHtml.push([sEditableHtml, this.getCaretPos(this.$editableArea[0])]);
         this.iUndoRedoPosition = this.aEditableAreaHtml.length - 1;
@@ -774,15 +773,6 @@ CCrea.prototype.setBasicStyles = function (sFontName, sFontSize, sDirection)
 };
 
 /**
- * @param {string} sText
- * @returns {string}
- */
-CCrea.prototype.replacePToBr = function (sText)
-{
-    return sText.replace(/<\/p>/gi, '<br />').replace(/<p [^>]*>/gi, '').replace(/<p>/gi, '');
-};
-
-/**
  * Gets plain text from rich editor.
  *
  * @return {string}
@@ -808,7 +798,7 @@ CCrea.prototype.getPlainText = function ()
             .replace(/&quot;/g, '"')
         ;
     }
-  
+
     return sVal;
 };
 
@@ -834,7 +824,6 @@ CCrea.prototype.getText = function (bRemoveSignatureAnchor)
         }
 
         sVal = this.$editableArea.html();
-        sVal = this.replacePToBr(sVal);
         sVal = '<div data-crea="font-wrapper" style="font-family: ' + this.getFontNameWithFamily(this.sBasicFontName) + '; font-size: ' + this.sBasicFontSize + '; direction: ' + this.sBasicDirection + '">' + sVal + '</div>';
     }
 
@@ -951,7 +940,7 @@ CCrea.prototype.changeSignatureContent = function (sNewSignatureContent, sOldSig
             }
         }
     }
-	
+
     this.editableSave();
 };
 
@@ -1834,7 +1823,7 @@ CCrea.prototype.checkAnchorNode = function ()
         if (oSel.anchorNode && (oSel.anchorNode.parentElement || oSel.anchorNode.parentNode))
         {
             oCurrLink = oSel.anchorNode.parentElement || oSel.anchorNode.parentNode;
-			
+
 			if (oCurrLink.parentNode.tagName === 'A')
 			{
 				oCurrLink = oCurrLink.parentNode;
