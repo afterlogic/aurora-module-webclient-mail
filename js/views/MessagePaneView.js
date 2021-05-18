@@ -4,12 +4,12 @@ var
 	_ = require('underscore'),
 	$ = require('jquery'),
 	ko = require('knockout'),
-	
+
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	UrlUtils = require('%PathToCoreWebclientModule%/js/utils/Url.js'),
 	Utils = require('%PathToCoreWebclientModule%/js/utils/Common.js'),
-	
+
 	App = require('%PathToCoreWebclientModule%/js/App.js'),
 	MainTabExtMethods = require('modules/%ModuleName%/js/MainTabExtMethods.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
@@ -18,21 +18,21 @@ var
 	Storage = require('%PathToCoreWebclientModule%/js/Storage.js'),
 	UserSettings = require('%PathToCoreWebclientModule%/js/Settings.js'),
 	WindowOpener = require('%PathToCoreWebclientModule%/js/WindowOpener.js'),
-	
+
 	CAbstractScreenView = require('%PathToCoreWebclientModule%/js/views/CAbstractScreenView.js'),
-	
+
 	ComposeUtils = require('modules/%ModuleName%/js/utils/Compose.js'),
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
 	MailUtils = require('modules/%ModuleName%/js/utils/Mail.js'),
 	SendingUtils = require('modules/%ModuleName%/js/utils/Sending.js'),
-	
+
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
 	MailCache  = require('modules/%ModuleName%/js/Cache.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
-	
+
 	CAttachmentModel = require('modules/%ModuleName%/js/models/CAttachmentModel.js'),
-	
+
 	MainTab = App.isNewTab() && window.opener && window.opener.MainTabMailMethods
 ;
 
@@ -42,10 +42,10 @@ var
 function CMessagePaneView()
 {
 	CAbstractScreenView.call(this, '%ModuleName%');
-	
+
 	this.bNewTab = App.isNewTab();
 	this.isLoading = ko.observable(false);
-	
+
 	this.bAllowSearchMessagesBySubject = Settings.AllowSearchMessagesBySubject;
 
 	MailCache.folderList.subscribe(this.onFolderListSubscribe, this);
@@ -56,7 +56,7 @@ function CMessagePaneView()
 	UserSettings.timeFormat.subscribe(this.onCurrentMessageSubscribe, this);
 	UserSettings.dateFormat.subscribe(this.onCurrentMessageSubscribe, this);
 	this.displayedMessageUid = ko.observable('');
-	
+
 	this.browserTitle = ko.computed(function () {
 		var
 			oMessage = this.currentMessage(),
@@ -65,19 +65,19 @@ function CMessagePaneView()
 		;
 		return sPrefix + AccountList.getEmail() + ' - ' + TextUtils.i18n('%MODULENAME%/HEADING_MESSAGE_BROWSER_TAB');
 	}, this);
-	
+
 	this.isCurrentMessage = ko.computed(function () {
 		return !!this.currentMessage();
 	}, this);
-	
+
 	this.isCurrentMessageLoaded = ko.computed(function () {
 		return this.isCurrentMessage() && !this.isLoading();
 	}, this);
-	
+
 	this.visibleNoMessageSelectedText = ko.computed(function () {
 		return this.messages().length > 0 && !this.isCurrentMessage();
 	}, this);
-	
+
 	this.prevMessageUid = MailCache.prevMessageUid;
 	this.nextMessageUid = MailCache.nextMessageUid;
 
@@ -87,7 +87,7 @@ function CMessagePaneView()
 	this.isEnableNextMessage = ko.computed(function () {
 		return App.isNewTab() && Types.isNonEmptyString(this.nextMessageUid());
 	}, this);
-	
+
 	this.isEnableDelete = this.isCurrentMessage;
 	this.isEnableReply = this.isCurrentMessageLoaded;
 	this.isEnableReplyAll = this.isCurrentMessageLoaded;
@@ -97,7 +97,7 @@ function CMessagePaneView()
 	this.isEnableSave = function () {
 		return this.isCurrentMessage() && this.currentMessage().sDownloadAsEmlUrl !== '';
 	};
-	
+
 	this.deleteCommand = Utils.createCommand(this, this.executeDeleteMessage, this.isEnableDelete);
 	this.prevMessageCommand = Utils.createCommand(this, this.executePrevMessage, this.isEnablePrevMessage);
 	this.nextMessageCommand = Utils.createCommand(this, this.executeNextMessage, this.isEnableNextMessage);
@@ -112,8 +112,10 @@ function CMessagePaneView()
 	App.broadcastEvent('%ModuleName%::AddPreviewPaneToolbarCommand', {
 		AddPreviewPaneToolbarCommand: _.bind(function (oCommand) {
 			var oNewCommand = _.extend({
-				'Text': '', 'CssClass': '', 'Handler': function () {
-				}
+				'Text': '',
+				'CssClass': '',
+				'Handler': function () {},
+				'Visible': true
 			}, oCommand);
 			oNewCommand.Command = Utils.createCommand(this, oNewCommand.Handler, this.isCurrentMessageLoaded);
 			this.otherToolbarCommands.push(oNewCommand);
@@ -124,18 +126,23 @@ function CMessagePaneView()
 	this.moreCommand = Utils.createCommand(this, null, this.isCurrentMessageLoaded);
 	this.moreSectionCommands = ko.observableArray([]);
 	App.broadcastEvent('%ModuleName%::AddMoreSectionCommand', _.bind(function (oCommand) {
-		var oNewCommand = _.extend({'Text': '', 'CssClass': '', 'Handler': function () {}}, oCommand);
+		var oNewCommand = _.extend({
+			'Text': '',
+			'CssClass': '',
+			'Handler': function () {},
+			'Visible': true
+		}, oCommand);
 		oNewCommand.Command = Utils.createCommand(this, oNewCommand.Handler, this.isCurrentMessageLoaded);
 		this.moreSectionCommands.push(oNewCommand);
 	}, this));
 
 	this.visiblePicturesControl = ko.observable(false);
 	this.visibleShowPicturesLink = ko.observable(false);
-	
+
 	this.visibleConfirmationControl = ko.computed(function () {
 		return (this.currentMessage() && this.currentMessage().readingConfirmationAddressee() !== '' && this.currentMessage() && this.currentMessage().readingConfirmationAddressee() !== AccountList.getEmail());
 	}, this);
-	
+
 	this.isCurrentNotDraftOrSent = ko.computed(function () {
 		var oCurrFolder = MailCache.getCurrentFolder();
 		return (oCurrFolder && oCurrFolder.fullName().length > 0 &&
@@ -211,7 +218,7 @@ function CMessagePaneView()
 	this.currentAccountEmail = ko.observable();
 	this.sMeSender = Settings.UseMeRecipientForMessages ? TextUtils.i18n('%MODULENAME%/LABEL_ME_SENDER') : null;
 	this.sMeRecipient = Settings.UseMeRecipientForMessages ? TextUtils.i18n('%MODULENAME%/LABEL_ME_RECIPIENT') : null;
-	
+
 	this.fullDate = ko.observable('');
 	this.midDate = ko.observable('');
 
@@ -219,7 +226,7 @@ function CMessagePaneView()
 	this.textBodyForNewWindow = ko.observable('');
 	this.domTextBody = ko.observable(null);
 	this.rtlMessage = ko.observable(false);
-	
+
 	this.contentHasFocus = ko.observable(false);
 
 	App.broadcastEvent('%ModuleName%::RegisterMessagePaneController', _.bind(function (oController, sPlace) {
@@ -247,7 +254,7 @@ function CMessagePaneView()
 			return oAttachment.fileName();
 		}, this).join(', ');
 	}, this);
-	
+
 	this.allAttachmentsDownloadMethods = ko.observableArray([]);
 	this.visibleDownloadAllAttachmentsSeparately = ko.computed(function () {
 		return this.notInlineAttachments().length > 1;
@@ -258,7 +265,7 @@ function CMessagePaneView()
 	App.broadcastEvent('%ModuleName%::AddAllAttachmentsDownloadMethod', _.bind(function (oMethod) {
 		this.allAttachmentsDownloadMethods.push(oMethod);
 	}, this));
-	
+
 	this.detailsVisible = ko.observable(Storage.getData('MessageDetailsVisible') === '1');
 	this.detailsTooltip = ko.computed(function () {
 		return this.detailsVisible() ? TextUtils.i18n('COREWEBCLIENT/ACTION_HIDE_DETAILS') : TextUtils.i18n('COREWEBCLIENT/ACTION_SHOW_DETAILS');
@@ -267,15 +274,15 @@ function CMessagePaneView()
 	this.hasNotInlineAttachments = ko.computed(function () {
 		return this.notInlineAttachments().length > 0;
 	}, this);
-	
+
 	this.hasBodyText = ko.computed(function () {
 		return this.textBody().length > 0;
 	}, this);
 
 	this.visibleAddMenu = ko.observable(false);
-	
+
 	// Quick Reply Part
-	
+
 	this.replyText = ko.observable('');
 	this.replyTextFocus = ko.observable(false);
 	this.replyPaneVisible = ko.computed(function () {
@@ -299,7 +306,7 @@ function CMessagePaneView()
 	this.sendButtonText = ko.computed(function () {
 		return this.hasReplyAllCcAddrs() ? TextUtils.i18n('%MODULENAME%/ACTION_SEND_ALL') : TextUtils.i18n('%MODULENAME%/ACTION_SEND');
 	}, this);
-	
+
 	ko.computed(function () {
 		if (!this.replyTextFocus() || this.replyAutoSavingStarted() || this.replySavingStarted() || this.replySendingStarted())
 		{
@@ -310,7 +317,7 @@ function CMessagePaneView()
 			this.startAutosaveTimer();
 		}
 	}, this);
-	
+
 	this.saveButtonText = ko.computed(function () {
 		return this.replyAutoSavingStarted() ? TextUtils.i18n('%MODULENAME%/ACTION_SAVE_IN_PROGRESS') : TextUtils.i18n('%MODULENAME%/ACTION_SAVE');
 	}, this);
@@ -326,29 +333,29 @@ function CMessagePaneView()
 		}
 		return '';
 	}, this);
-	
+
 	this.isEnableSendQuickReply = ko.computed(function () {
 		return this.isCurrentMessageLoaded() && this.replyText() !== '' && !this.replySendingStarted();
 	}, this);
 	this.isEnableSaveQuickReply = ko.computed(function () {
 		return this.isEnableSendQuickReply() && !this.replySavingStarted() && !this.replyAutoSavingStarted();
 	}, this);
-	
+
 	this.saveQuickReplyCommand = Utils.createCommand(this, this.executeSaveQuickReply, this.isEnableSaveQuickReply);
 	this.sendQuickReplyCommand = Utils.createCommand(this, this.executeSendQuickReply, this.isEnableSendQuickReply);
 
 	this.domMessageHeader = ko.observable(null);
 	this.domQuickReply = ko.observable(null);
-	
+
 	this.domMessageForPrint = ko.observable(null);
-	
+
 	// to have time to take action "Open full reply form" before the animation starts
 	this.replyTextFocusThrottled = ko.observable(false).extend({'throttle': 50});
-	
+
 	this.replyTextFocus.subscribe(function () {
 		this.replyTextFocusThrottled(this.replyTextFocus());
 	}, this);
-	
+
 	this.isQuickReplyActive = ko.computed(function () {
 		return this.replyText().length > 0 || this.replyTextFocusThrottled();
 	}, this);
@@ -356,7 +363,7 @@ function CMessagePaneView()
 	//*** Quick Reply Part
 
 	this.jqPanelHelper = null;
-	
+
 	this.visibleAttachments = ko.observable(false);
 	this.showMessage = function () {
 		this.visibleAttachments(false);
@@ -364,11 +371,11 @@ function CMessagePaneView()
 	this.showAttachments = function () {
 		this.visibleAttachments(true);
 	};
-	
+
 	this.sDefaultFontName = Settings.DefaultFontName;
-	
+
 	Pulse.registerDayOfMonthFunction(_.bind(this.updateMomentDate, this));
-	
+
 	App.broadcastEvent('%ModuleName%::ConstructView::after', {'Name': 'CMessagePaneView', 'View': this});
 }
 
@@ -441,7 +448,7 @@ CMessagePaneView.prototype.passReplyDataToNewTab = function (sUniq)
 			'ReplyText': this.replyText(),
 			'ReplyDraftUid': this.replyDraftUid()
 		});
-		
+
 		this.replyText('');
 		this.replyDraftUid('');
 	}
@@ -454,7 +461,7 @@ CMessagePaneView.prototype.onCurrentMessageSubscribe = function ()
 		oAccount = oMessage ? AccountList.getAccount(oMessage.accountId()) : null,
 		oReplyData = null
 	;
-	
+
 	if (MainTab && oMessage)
 	{
 		oReplyData = MainTab.getReplyData(oMessage.sUniq);
@@ -469,11 +476,11 @@ CMessagePaneView.prototype.onCurrentMessageSubscribe = function ()
 		this.replyText('');
 		this.replyDraftUid('');
 	}
-	
+
 	if (oMessage && this.uid() === oMessage.uid())
 	{
 		this.hasReplyAllCcAddrs(SendingUtils.hasReplyAllCcAddrs(oMessage));
-		
+
 		this.subject(oMessage.subject());
 		this.importance(oMessage.importance());
 		this.from(oMessage.oFrom.getDisplay());
@@ -488,7 +495,7 @@ CMessagePaneView.prototype.onCurrentMessageSubscribe = function ()
 		{
 			this.oFromAddr(null);
 		}
-		
+
 		this.to(oMessage.oTo.getFull());
 		this.aToAddr(oMessage.oTo.aCollection);
 		this.cc(oMessage.oCc.getFull());
@@ -503,9 +510,9 @@ CMessagePaneView.prototype.onCurrentMessageSubscribe = function ()
 		this.fullDate(oMessage.oDateModel.getFullDate());
 
 		this.isLoading(oMessage.uid() !== '' && !oMessage.completelyFilled());
-		
+
 		this.setMessageBody();
-		
+
 		if (!Settings.DisableRtlRendering)
 		{
 			this.rtlMessage(oMessage.rtl());
@@ -522,7 +529,7 @@ CMessagePaneView.prototype.onCurrentMessageSubscribe = function ()
 				oCopy.copyProperties(oAttach);
 				aAtachments.push(oCopy);
 			}, this));
-			
+
 			this.attachments(aAtachments);
 		}
 		else
@@ -558,19 +565,19 @@ CMessagePaneView.prototype.onCurrentMessageSubscribe = function ()
 	else
 	{
 		this.hasReplyAllCcAddrs(false);
-		
+
 		this.isLoading(false);
 		$(this.domTextBody()).empty().data('displayed-message-uid', '');
 		this.displayedMessageUid('');
 		this.rtlMessage(false);
-		
-		// cannot use removeAll, because the attachments of messages are passed by reference 
+
+		// cannot use removeAll, because the attachments of messages are passed by reference
 		// and the call to removeAll removes attachments from message in the cache too.
 		this.attachments([]);
 		this.visiblePicturesControl(false);
 		this.visibleShowPicturesLink(false);
 	}
-	
+
 	this.doAfterPopulatingMessage();
 };
 
@@ -600,7 +607,7 @@ CMessagePaneView.prototype.setMessageBody = function ()
 		;
 
 		this.textBody(sText);
-		
+
 		if ($body.data('displayed-message-uid') === oMessage.uid())
 		{
 			aCollapsedStatuses = this.getBlockquotesStatus();
@@ -638,16 +645,16 @@ CMessagePaneView.prototype.setMessageBody = function ()
 CMessagePaneView.prototype.getBlockquotesStatus = function ()
 {
 	var aCollapsedStatuses = [];
-	
+
 	$($('blockquote', $(this.domTextBody())).get()).each(function () {
 		var $blockquote = $(this);
-		
+
 		if ($blockquote.hasClass('blockquote_before_toggle'))
 		{
 			aCollapsedStatuses.push($blockquote.hasClass('collapsed'));
 		}
 	});
-	
+
 	return aCollapsedStatuses;
 };
 
@@ -661,7 +668,7 @@ CMessagePaneView.prototype.doHidingBlockquotes = function (aCollapsedStatuses)
 		iHiddenHeight = 80,
 		iStatusIndex = 0
 	;
-	
+
 	$($('blockquote', $(this.domTextBody())).get()).each(function () {
 		var
 			$blockquote = $(this),
@@ -691,7 +698,7 @@ CMessagePaneView.prototype.doHidingBlockquotes = function (aCollapsedStatuses)
 						$switchButton.html(TextUtils.i18n('%MODULENAME%/ACTION_SHOW_QUOTED_TEXT'));
 						bHidden = true;
 					}
-					
+
 					$blockquote.toggleClass('collapsed', bHidden);
 				});
 				if (iStatusIndex < aCollapsedStatuses.length)
@@ -716,10 +723,10 @@ CMessagePaneView.prototype.onRoute = function (aParams)
 		sFolder = oParams.Folder,
 		sUid = oParams.Uid
 	;
-	
+
 	AccountList.changeCurrentAccountByHash(oParams.AccountHash);
 	iMessageAccountId = MailCache.currentAccountId();
-	
+
 	if (sFolder === MailCache.oUnifiedInbox.fullName() && Types.isNonEmptyString(sUid))
 	{
 		var aParts = sUid.split(':');
@@ -727,7 +734,7 @@ CMessagePaneView.prototype.onRoute = function (aParams)
 		sFolder = 'INBOX';
 		sUid = Types.pString(aParts[1]);
 	}
-	
+
 	if (this.replyText() !== '' && this.uid() !== sUid)
 	{
 		this.saveReplyMessage(false);
@@ -737,7 +744,7 @@ CMessagePaneView.prototype.onRoute = function (aParams)
 	this.uid(sUid);
 	this.folder(sFolder);
 	MailCache.setCurrentMessage(this.accountId(), this.folder(), this.uid());
-	
+
 	this.contentHasFocus(true);
 };
 
@@ -780,10 +787,10 @@ CMessagePaneView.prototype.executeReplyOrForward = function (sReplyType)
 	if (this.currentMessage())
 	{
 		SendingUtils.setReplyData(this.getReplyHtmlText(), this.replyDraftUid());
-		
+
 		this.replyText('');
 		this.replyDraftUid('');
-		
+
 		ComposeUtils.composeMessageAsReplyOrForward(sReplyType, this.currentMessage().accountId(), this.currentMessage().folder(), this.currentMessage().uid());
 	}
 };
@@ -912,7 +919,7 @@ CMessagePaneView.prototype.executeSendQuickReply = function ()
 	{
 		this.replySendingStarted(true);
 		this.requiresPostponedSending(this.replyAutoSavingStarted());
-		SendingUtils.sendReplyMessage('SendMessage', this.getReplyHtmlText(), this.replyDraftUid(), 
+		SendingUtils.sendReplyMessage('SendMessage', this.getReplyHtmlText(), this.replyDraftUid(),
 			this.onSendOrSaveMessageResponse, this, this.requiresPostponedSending());
 
 		this.replyTextFocus(false);
@@ -939,7 +946,7 @@ CMessagePaneView.prototype.saveReplyMessage = function (bAutosave)
 		{
 			this.replySavingStarted(true);
 		}
-		SendingUtils.sendReplyMessage('SaveMessage', this.getReplyHtmlText(), this.replyDraftUid(), 
+		SendingUtils.sendReplyMessage('SaveMessage', this.getReplyHtmlText(), this.replyDraftUid(),
 			this.onSendOrSaveMessageResponse, this);
 	}
 };
@@ -1013,7 +1020,7 @@ CMessagePaneView.prototype.onBind = function ($MailViewDom)
 	}, this)]);
 
 	this.$MailViewDom = _.isUndefined($MailViewDom) ? this.$viewDom : $MailViewDom;
-	
+
 	this.$MailViewDom.on('mousedown', 'a', function (oEvent) {
 		if (oEvent && 3 !== oEvent['which'])
 		{
@@ -1090,7 +1097,7 @@ CMessagePaneView.prototype.registerController = function (oController, sPlace) {
 			this.bottomControllers.push(oController);
 			break;
 	}
-	
+
 	if ($.isFunction(oController.assignMessagePaneExtInterface))
 	{
 		oController.assignMessagePaneExtInterface(this.getExtInterface());
@@ -1133,14 +1140,14 @@ CMessagePaneView.prototype.doAfterPopulatingMessage = function ()
 			aExtend: oMessage.aExtend
 		} : null
 	;
-	
+
 	_.each(this.controllers(), _.bind(function (oController) {
 		if ($.isFunction(oController.doAfterPopulatingMessage))
 		{
 			oController.doAfterPopulatingMessage(oMessageProps);
 		}
 	}, this));
-	
+
 	ModulesManager.run('ContactsWebclient', 'applyContactsCards', [this.$MailViewDom.find('span.address')]);
 };
 
