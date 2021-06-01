@@ -36,18 +36,27 @@
         </q-btn>
       </div>
     </div>
+    <UnsavedChangesDialog ref="unsavedChangesDialog" />
   </q-scroll-area>
 </template>
 
 <script>
+import _ from 'lodash'
+
 import errors from 'src/utils/errors'
 import notification from 'src/utils/notification'
 import webApi from 'src/utils/web-api'
 
-import settings from "src/../../../MailWebclient/vue/settings"
+import settings from 'src/../../../MailWebclient/vue/settings'
+
+import UnsavedChangesDialog from 'src/components/UnsavedChangesDialog'
 
 export default {
   name: 'MailAdminSettings',
+
+  components: {
+    UnsavedChangesDialog,
+  },
 
   data() {
     return {
@@ -63,17 +72,36 @@ export default {
     }
   },
 
+  beforeRouteLeave (to, from, next) {
+    if (this.hasChanges() && _.isFunction(this?.$refs?.unsavedChangesDialog?.openConfirmDiscardChangesDialog)) {
+      this.$refs.unsavedChangesDialog.openConfirmDiscardChangesDialog(next)
+    } else {
+      next()
+    }
+  },
+
   mounted () {
-    const data = settings.getEditableByAdmin()
-    console.log('data', data)
-    this.autocreateMailAccountOnNewUserFirstLogin = data.autocreateMailAccountOnNewUserFirstLogin
-    this.allowMultiAccounts = data.allowMultiAccounts
-    this.allowHorizontalLayout = data.allowHorizontalLayout
-    this.horizontalLayoutByDefault = data.horizontalLayoutByDefault
     this.saving = false
+    this.populate()
   },
 
   methods: {
+    populate () {
+      const data = settings.getEditableByAdmin()
+      this.autocreateMailAccountOnNewUserFirstLogin = data.autocreateMailAccountOnNewUserFirstLogin
+      this.allowMultiAccounts = data.allowMultiAccounts
+      this.allowHorizontalLayout = data.allowHorizontalLayout
+      this.horizontalLayoutByDefault = data.horizontalLayoutByDefault
+    },
+
+    hasChanges () {
+      const data = settings.getEditableByAdmin()
+      return this.autocreateMailAccountOnNewUserFirstLogin !== data.autocreateMailAccountOnNewUserFirstLogin ||
+          this.allowMultiAccounts !== data.allowMultiAccounts ||
+          this.allowHorizontalLayout !== data.allowHorizontalLayout ||
+          this.horizontalLayoutByDefault !== data.horizontalLayoutByDefault
+    },
+
     save () {
       if (!this.saving) {
         this.saving = true
@@ -94,6 +122,7 @@ export default {
               allowMultiAccounts: parameters.AllowAddAccounts,
               horizontalLayoutByDefault: parameters.HorizontalLayoutByDefault,
             })
+            this.populate()
             notification.showReport(this.$t('COREWEBCLIENT.REPORT_SETTINGS_UPDATE_SUCCESS'))
           } else {
             notification.showError(this.$t('COREWEBCLIENT.ERROR_SAVING_SETTINGS_FAILED'))
