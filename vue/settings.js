@@ -10,6 +10,7 @@ class MailSettings {
     if (!_.isEmpty(mailData)) {
       this.allowMultiAccounts = typesUtils.pBool(mailData.AllowMultiAccounts)
       this.autocreateMailAccountOnNewUserFirstLogin = typesUtils.pBool(mailData.AutocreateMailAccountOnNewUserFirstLogin)
+      this.smtpAuthTypeEnum = typesUtils.pObject(mailData.SmtpAuthType)
     }
 
     if (!_.isEmpty(mailWebclientData)) {
@@ -43,5 +44,9 @@ export default {
 
   saveEditableByAdmin (data) {
     settings.saveEditableByAdmin(data)
+  },
+
+  getSmtpAuthTypeEnum () {
+    return settings.smtpAuthTypeEnum
   },
 }
