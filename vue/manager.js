@@ -15,7 +15,7 @@ export default {
 			},
 			{
 				name: 'mail-servers',
-				pathes: [
+				paths: [
 					'mail-servers',
 					'mail-servers/id/:id',
 					'mail-servers/create',

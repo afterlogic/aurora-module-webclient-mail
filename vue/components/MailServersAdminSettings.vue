@@ -14,11 +14,14 @@
           <q-item clickable :class="currentServerId === server.id ? 'bg-grey-4' : 'bg-white'"
                   v-for="server in servers" :key="server.name" @click="route(server.id)">
             <q-item-section>
-              <q-item-label class="text-weight-medium">{{ server.name }}</q-item-label>
+              <q-item-label>
+                {{ server.name }}
+                <span v-show="server.tenantName" class="text-grey-6">{{ $t('MAILWEBCLIENT.LABEL_HINT_SERVERS_TENANTNAME', { TENANTNAME: server.tenantName }) }}</span>
+              </q-item-label>
             </q-item-section>
             <q-item-section side>
               <q-btn dense flat no-caps color="primary" :label="$t('COREWEBCLIENT.ACTION_DELETE')"
-                     @click.native.stop="deleteServer"/>
+                     @click.native.stop="askDeleteServer(server.name, server.id, server.tenantId)"/>
             </q-item-section>
           </q-item>
         </q-list>
@@ -30,7 +33,15 @@
           </q-input>
           <q-pagination flat active-color="primary" color="grey-6" v-model="selectedPage" :max="pagesCount" v-show="showPagination" />
         </div>
-        <div v-show="servers.length === 0" style="height: 150px;"></div>
+        <div v-show="servers.length === 0 && loadingServers" style="height: 150px;"></div>
+        <q-card flat bordered class="card-edit-settings"
+                v-show="servers.length === 0 && !loadingServers && search === ''">
+          <q-card-section v-t="'MAILWEBCLIENT.INFO_NO_SERVERS'" />
+        </q-card>
+        <q-card flat bordered class="card-edit-settings"
+                v-show="servers.length === 0 && !loadingServers && search !== ''">
+          <q-card-section v-t="'MAILWEBCLIENT.INFO_NO_SERVERS_FOUND'" />
+        </q-card>
         <q-inner-loading :showing="loadingServers">
           <q-spinner size="50px" color="primary" />
         </q-inner-loading>
@@ -108,7 +119,7 @@
                     <q-input outlined dense class="bg-white" v-model="smtpLogin" :placeholder="$t('COREWEBCLIENT.LABEL_LOGIN')"></q-input>
                   </q-item-section>
                   <q-item-section>
-                    <q-input outlined dense class="bg-white" v-model="smtpPassword" :placeholder="$t('COREWEBCLIENT.LABEL_PASSWORD')"></q-input>
+                    <q-input outlined dense class="bg-white" type="password" v-model="smtpPassword" :placeholder="$t('COREWEBCLIENT.LABEL_PASSWORD')"></q-input>
                   </q-item-section>
                 </q-item>
                 <q-item tag="label">
@@ -153,10 +164,12 @@
         </q-card-section>
       </q-card>
       <div class="q-pa-md text-right" v-if="showServerFields">
-        <q-btn unelevated no-caps dense class="q-px-sm" :ripple="false"
-               color="primary" label="Save" />
+        <q-btn unelevated no-caps dense class="q-px-sm" :ripple="false" color="primary" @click="save"
+               :label="saving ? $t('COREWEBCLIENT.ACTION_SAVE_IN_PROGRESS') : $t('COREWEBCLIENT.ACTION_SAVE')">
+        </q-btn>
       </div>
     </div>
+    <ConfirmDialog ref="confirmDialog" />
     <UnsavedChangesDialog ref="unsavedChangesDialog" />
   </q-scroll-area>
 </template>
@@ -172,12 +185,14 @@ import webApi from 'src/utils/web-api'
 import settings from 'src/../../../MailWebclient/vue/settings'
 import cache from 'src/../../../MailWebclient/vue/cache'
 
+import ConfirmDialog from 'src/components/ConfirmDialog'
 import UnsavedChangesDialog from 'src/components/UnsavedChangesDialog'
 
 export default {
   name: 'MailAdminSettings',
 
   components: {
+    ConfirmDialog,
     UnsavedChangesDialog,
   },
 
@@ -198,6 +213,7 @@ export default {
       selectedPage: 1,
 
       currentServerId: 0,
+      currentServerTenantId: 0,
 
       editMode: true,
       showServerFields: false,
@@ -276,7 +292,10 @@ export default {
       const selectedPage = (this.search !== this.enteredSearch) ? 1 : this.selectedPage
       const pageRoute = selectedPage > 1 ? ('/page/' + selectedPage) : ''
       const idRoute = serverId > 0 ? ('/id/' + serverId) : ''
-      this.$router.push('/system/mail-servers' + searchRoute + pageRoute + idRoute)
+      const path = '/system/mail-servers' + searchRoute + pageRoute + idRoute
+      if (path !== this.$route.path) {
+        this.$router.push('/system/mail-servers' + searchRoute + pageRoute + idRoute)
+      }
     },
 
     populate () {
@@ -302,6 +321,7 @@ export default {
       })
       this.showServerFields = !!server
       if (this.showServerFields) {
+        this.currentServerTenantId = server.tenantId
         this.serverName = server.name
         this.domains = server.domains
         this.imapServer = server.incomingServer
@@ -321,29 +341,65 @@ export default {
     },
 
     hasChanges () {
-      return false
+      const server = this.getServer(this.currentServerId)
+      if (server) {
+        return server.name !== this.serverName || server.incomingServer !== this.imapServer ||
+            server.incomingPort !== this.imapPort || server.incomingUseSsl !== this.imapSsl ||
+            server.outgoingServer !== this.smtpServer || server.outgoingPort !== this.smtpPort ||
+            server.outgoingUseSsl !== this.smtpSsl || server.domains !== this.domains ||
+            server.smtpAuthType !== this.smtpAuthentication || server.smtpLogin !== this.smtpLogin ||
+            server.smtpPassword !== this.smtpPassword || server.enableSieve !== this.enableSieve ||
+            server.sievePort !== this.sievePort || server.enableThreading !== this.useThreading ||
+            server.useFullEmailAddressAsLogin !== this.useFullEmail
+      } else {
+        return false
+      }
+    },
+
+    getServer (id) {
+      return this.servers.find(server => {
+        return server.id === id
+      })
+    },
+
+    updateServer (parameters) {
+      const server = this.getServer(parameters.ServerId)
+      if (server) {
+        server.update(parameters)
+      }
     },
 
     save () {
       if (!this.saving) {
         this.saving = true
         const parameters = {
-          AutocreateMailAccountOnNewUserFirstLogin: this.autocreateMailAccountOnNewUserFirstLogin,
-          AllowAddAccounts: this.allowMultiAccounts,
-          HorizontalLayoutByDefault: this.horizontalLayoutByDefault,
+          ServerId: this.currentServerId,
+          TenantId: this.currentServerTenantId,
+          Name: this.serverName,
+          IncomingServer: this.imapServer,
+          IncomingPort: this.imapPort,
+          IncomingUseSsl: this.imapSsl,
+          OutgoingServer: this.smtpServer,
+          OutgoingPort: this.smtpPort,
+          OutgoingUseSsl: this.smtpSsl,
+          Domains: this.domains,
+          SmtpAuthType: this.smtpAuthentication,
+          SmtpLogin: this.smtpLogin,
+          SmtpPassword: this.smtpPassword,
+          EnableSieve: this.enableSieve,
+          SievePort: this.sievePort,
+          EnableThreading: this.useThreading,
+          UseFullEmailAddressAsLogin: this.useFullEmail,
         }
         webApi.sendRequest({
           moduleName: 'Mail',
-          methodName: 'UpdateSettings',
+          methodName: 'UpdateServer',
           parameters,
         }).then(result => {
           this.saving = false
           if (result === true) {
-            settings.saveEditableByAdmin({
-              autocreateMailAccountOnNewUserFirstLogin: parameters.AutocreateMailAccountOnNewUserFirstLogin,
-              allowMultiAccounts: parameters.AllowAddAccounts,
-              horizontalLayoutByDefault: parameters.HorizontalLayoutByDefault,
-            })
+            this.updateServer(parameters)
+            this.populateServer()
             this.populate()
             notification.showReport(this.$t('COREWEBCLIENT.REPORT_SETTINGS_UPDATE_SUCCESS'))
           } else {
@@ -355,7 +411,41 @@ export default {
         })
       }
     },
-    deleteServer() {
+    askDeleteServer(name, id, tenantId) {
+      if (_.isFunction(this?.$refs?.confirmDialog?.openDialog)) {
+        this.$refs.confirmDialog.openDialog({
+          title: name,
+          message: this.$t('MAILWEBCLIENT.CONFIRM_REMOVE_SERVER'),
+          okHandler: this.deleteServer.bind(this, id, tenantId)
+        })
+      }
+    },
+    deleteServer(id, tenantId) {
+      this.loadingServers = true
+      webApi.sendRequest({
+        moduleName: 'Mail',
+        methodName: 'DeleteServer',
+        parameters: {
+          ServerId: id,
+          TenantId: tenantId,
+          DeletionConfirmedByAdmin: true
+        },
+      }).then(result => {
+        this.loadingServers = false
+        if (result === true) {
+          if (this.servers.length > 1 || this.selectedPage === 1) {
+            this.populate()
+          } else {
+            this.selectedPage -= 1
+            this.route()
+          }
+        } else {
+          notification.showError(this.$t('MAILWEBCLIENT.ERROR_DELETE_MAIL_SERVER'))
+        }
+      }, error => {
+        this.loadingServers = false
+        notification.showError(errors.getTextFromResponse(error, this.$t('MAILWEBCLIENT.ERROR_DELETE_MAIL_SERVER')))
+      })
     },
   },
 }

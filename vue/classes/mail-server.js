@@ -1,5 +1,7 @@
 import typesUtils from 'src/utils/types'
 
+import core from 'src/core'
+
 import settings from 'src/../../../MailWebclient/vue/settings'
 
 const smtpAuthTypeEnum = settings.getSmtpAuthTypeEnum()
@@ -8,6 +10,7 @@ class MailServer {
   constructor(serverData) {
     this.id = typesUtils.pInt(serverData?.EntityId) || typesUtils.pInt(serverData?.ServerId)
     this.tenantId = typesUtils.pInt(serverData?.TenantId)
+    this.tenantName = core.getTenantName(this.tenantId)
     this.name = typesUtils.pString(serverData?.Name)
     this.incomingServer = typesUtils.pString(serverData?.IncomingServer)
     this.incomingPort = typesUtils.pInt(serverData?.IncomingPort)
@@ -36,6 +39,24 @@ class MailServer {
     this.oauthName = typesUtils.pString(serverData?.OAuthName)
     this.oauthType = typesUtils.pString(serverData?.OAuthType)
     this.oauthIconUrl = typesUtils.pString(serverData?.OAuthIconUrl)
+  }
+
+  update (parameters) {
+    this.name = parameters.Name
+    this.incomingServer = parameters.IncomingServer
+    this.incomingPort = parameters.IncomingPort
+    this.incomingUseSsl = parameters.IncomingUseSsl
+    this.outgoingServer = parameters.OutgoingServer
+    this.outgoingPort = parameters.OutgoingPort
+    this.outgoingUseSsl = parameters.OutgoingUseSsl
+    this.domains = parameters.Domains
+    this.smtpAuthType = parameters.SmtpAuthType
+    this.smtpLogin = parameters.SmtpLogin
+    this.smtpPassword = parameters.SmtpPassword
+    this.enableSieve = parameters.EnableSieve
+    this.sievePort = parameters.SievePort
+    this.enableThreading = parameters.EnableThreading
+    this.useFullEmailAddressAsLogin = parameters.UseFullEmailAddressAsLogin
   }
 }
 
