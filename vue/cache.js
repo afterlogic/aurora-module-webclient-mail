@@ -7,53 +7,31 @@ import webApi from 'src/utils/web-api'
 
 import MailServer from 'src/../../../MailWebclient/vue/classes/mail-server'
 
-class MailCache {
-  constructor(appData) {
-    this.servers = null
-    this.totalServersCount = 0
-  }
-
-  setServers (result) {
-    if (_.isArray(result?.Items)) {
-      this.servers = _.map(result.Items, function (serverData) {
-        return new MailServer(serverData)
-      })
-      this.totalServersCount = typesUtils.pInt(result.Count)
-    } else {
-      this.servers = []
-    }
-  }
-
-  requestServers () {
+export default {
+  getServers (search, page, limit) {
     return new Promise((resolve, reject) => {
       webApi.sendRequest({
         moduleName: 'Mail',
         methodName: 'GetServers',
-        parameters: {},
+        parameters: {
+          Search: search,
+          Offset: limit * (page - 1),
+          Limit: limit,
+        },
       }).then(result => {
-        this.setServers(result)
-        resolve()
+        if (_.isArray(result?.Items)) {
+          const servers = _.map(result.Items, function (serverData) {
+            return new MailServer(serverData)
+          })
+          const totalCount = typesUtils.pInt(result.Count)
+          resolve({ servers, totalCount, search, page, limit })
+        } else {
+          resolve({ servers: [], totalCount: 0, search, page, limit })
+        }
       }, response => {
         notification.showError(errors.getTextFromResponse(response))
-        this.servers = []
-        resolve()
+        resolve({ servers: [], totalCount: 0, search, page, limit })
       })
-    })
-  }
-}
-
-let cache = new MailCache()
-
-export default {
-  getServers () {
-    return new Promise((resolve, reject) => {
-      if (typesUtils.isNonEmptyArray(cache.servers)) {
-        resolve(cache.servers)
-      } else {
-        cache.requestServers().then(() => {
-          resolve(cache.servers)
-        })
-      }
     })
   },
 }

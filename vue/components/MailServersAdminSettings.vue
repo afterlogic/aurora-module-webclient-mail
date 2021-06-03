@@ -8,21 +8,33 @@
                  color="primary" :label="$t('MAILWEBCLIENT.ACTION_ADD_NEW_SERVER')" />
         </div>
       </div>
-      <q-list dense bordered separator class="rounded-borders q-mb-md" style="overflow: hidden" v-show="servers.length > 0">
-        <q-item clickable
-                :class="currentServerId === server.id ? 'bg-grey-4' : 'bg-white'"
-                v-for="server in servers" :key="server.name"
-                @click="editServer(server.id)"
-        >
-          <q-item-section>
-            <q-item-label class="text-weight-medium">{{ server.name }}</q-item-label>
-          </q-item-section>
-          <q-item-section side>
-            <q-btn dense flat no-caps color="primary" :label="$t('COREWEBCLIENT.ACTION_DELETE')"
-                   @click.native.stop="deleteServer"/>
-          </q-item-section>
-        </q-item>
-      </q-list>
+      <div class="relative-position">
+        <q-list dense bordered separator class="rounded-borders q-mb-md" style="overflow: hidden"
+                v-show="servers.length > 0">
+          <q-item clickable :class="currentServerId === server.id ? 'bg-grey-4' : 'bg-white'"
+                  v-for="server in servers" :key="server.name" @click="route(server.id)">
+            <q-item-section>
+              <q-item-label class="text-weight-medium">{{ server.name }}</q-item-label>
+            </q-item-section>
+            <q-item-section side>
+              <q-btn dense flat no-caps color="primary" :label="$t('COREWEBCLIENT.ACTION_DELETE')"
+                     @click.native.stop="deleteServer"/>
+            </q-item-section>
+          </q-item>
+        </q-list>
+        <div class="flex flex-left q-mb-lg" v-show="showSearch || showPagination">
+          <q-input rounded outlined dense class="bg-white" v-model="enteredSearch" v-show="showSearch" @keyup.enter="route">
+            <template v-slot:append>
+              <q-btn dense flat :ripple="false" icon="search" @click="route" />
+            </template>
+          </q-input>
+          <q-pagination flat active-color="primary" color="grey-6" v-model="selectedPage" :max="pagesCount" v-show="showPagination" />
+        </div>
+        <div v-show="servers.length === 0" style="height: 150px;"></div>
+        <q-inner-loading :showing="loadingServers">
+          <q-spinner size="50px" color="primary" />
+        </q-inner-loading>
+      </div>
 
       <q-card flat bordered class="card-edit-settings" v-if="showServerFields">
         <q-card-section>
@@ -38,18 +50,18 @@
               <q-item-label caption v-t="'MAILWEBCLIENT.LABEL_HINT_DISPLAY_NAME'" />
             </div>
           </div>
-          <div class="row">
+          <div class="row" v-show="allowEditDomainsInServer || editMode">
             <div class="col-1 required-field" v-t="'MAILWEBCLIENT.LABEL_DOMAINS'"></div>
             <div class="col-3">
-              <q-input outlined dense class="bg-white" type="textarea" rows="2" v-model="domains" />
+              <q-input outlined dense class="bg-white" type="textarea" rows="2" v-model="domains" :disable="!allowEditDomainsInServer" />
             </div>
           </div>
           <div class="row q-mt-sm q-mb-lg">
             <div class="col-1"></div>
-            <div class="col-9">
-<!--              <q-item-label caption v-t="'MAILWEBCLIENT.LABEL_HINT_DOMAINS'" />-->
-<!--              <q-item-label caption v-t="'MAILWEBCLIENT.LABEL_HINT_DOMAINS_WILDCARD'" />-->
-              <q-item-label caption v-html="$t('MAILWEBCLIENT.LABEL_HINT_DOMAINS_CANNOT_EDIT_HTML')" />
+            <div class="col-9" v-show="allowEditDomainsInServer || editMode">
+              <q-item-label caption v-t="'MAILWEBCLIENT.LABEL_HINT_DOMAINS'" v-show="allowEditDomainsInServer" />
+              <q-item-label caption v-t="'MAILWEBCLIENT.LABEL_HINT_DOMAINS_WILDCARD'" v-show="allowEditDomainsInServer" />
+              <q-item-label caption v-html="$t('MAILWEBCLIENT.LABEL_HINT_DOMAINS_CANNOT_EDIT_HTML')" v-show="!allowEditDomainsInServer" />
             </div>
           </div>
           <div class="row q-mb-md">
@@ -110,8 +122,7 @@
           <div class="row q-mb-md">
             <div class="col-1"></div>
             <div class="col-9">
-              <q-checkbox dense v-model="enableSieve"
-                          :label="$t('MAILWEBCLIENT.LABEL_ENABLE_SIEVE')" />
+              <q-checkbox dense v-model="enableSieve" :label="$t('MAILWEBCLIENT.LABEL_ENABLE_SIEVE')" />
             </div>
           </div>
           <div class="row q-mb-md">
@@ -123,8 +134,7 @@
           <div class="row q-mb-md">
             <div class="col-1"></div>
             <div class="col-9">
-              <q-checkbox dense v-model="useThreading"
-                          :label="$t('MAILWEBCLIENT.LABEL_USE_THREADING')" />
+              <q-checkbox dense v-model="useThreading" :label="$t('MAILWEBCLIENT.LABEL_USE_THREADING')" />
             </div>
           </div>
           <div class="row q-mb-sm">
@@ -174,11 +184,22 @@ export default {
   data() {
     return {
       smtpAuthTypeEnum: settings.getSmtpAuthTypeEnum(),
+      allowEditDomainsInServer: settings.getAllowEditDomainsInServer(),
 
-      allServers: [],
+      page: 1,
+      search: '',
+      limit: 10,
       servers: [],
+      totalCount: 0,
+      loadingServers: false,
+
+      showSearch: false,
+      enteredSearch: '',
+      selectedPage: 1,
+
       currentServerId: 0,
 
+      editMode: true,
       showServerFields: false,
 
       serverName: '',
@@ -201,11 +222,39 @@ export default {
     }
   },
 
+  computed: {
+    showPagination () {
+      return this.servers.length < this.totalCount
+    },
+    pagesCount () {
+      return Math.ceil(this.totalCount / this.limit)
+    },
+  },
+
   watch: {
-    $route(to, from) {
-      this.currentServerId = typesUtils.pInt(this.$route?.params?.id)
-      this.populateServer()
-    }
+    $route (to, from) {
+      const search = typesUtils.pString(this.$route?.params?.search)
+      const page = typesUtils.pPositiveInt(this.$route?.params?.page)
+
+      if (this.search !== search || this.page !== page) {
+        this.search = search
+        this.enteredSearch = search
+        this.page = page
+        this.selectedPage = page
+        this.populate()
+      }
+
+      const serverId = typesUtils.pNonNegativeInt(this.$route?.params?.id)
+      if (this.currentServerId !== serverId) {
+        this.currentServerId = serverId
+        this.populateServer()
+      }
+    },
+    selectedPage () {
+      if (this.selectedPage !== this.page) {
+        this.route()
+      }
+    },
   },
 
   beforeRouteLeave (to, from, next) {
@@ -222,10 +271,28 @@ export default {
   },
 
   methods: {
+    route (serverId = 0) {
+      const searchRoute = this.enteredSearch !== '' ? ('/search/' + this.enteredSearch) : ''
+      const selectedPage = (this.search !== this.enteredSearch) ? 1 : this.selectedPage
+      const pageRoute = selectedPage > 1 ? ('/page/' + selectedPage) : ''
+      const idRoute = serverId > 0 ? ('/id/' + serverId) : ''
+      this.$router.push('/system/mail-servers' + searchRoute + pageRoute + idRoute)
+    },
+
     populate () {
-      cache.getServers().then(servers => {
-        this.servers = servers
-        this.allServers = servers
+      this.loadingServers = true
+      cache.getServers(this.search, this.page, this.limit).then(({ servers, totalCount, page, search }) => {
+        if (page === this.page && search === this.search) {
+          this.servers = servers
+          this.totalCount = totalCount
+          if (this.search === '') {
+            this.showSearch = totalCount > this.limit
+          }
+          this.loadingServers = false
+          if (this.currentServerId !== 0) {
+            this.populateServer()
+          }
+        }
       })
     },
 
@@ -289,9 +356,6 @@ export default {
       }
     },
     deleteServer() {
-    },
-    editServer(id) {
-      this.$router.push('/system/mail-servers/page/1/id/' + id)
     },
   },
 }
