@@ -3,20 +3,20 @@
     <div class="q-pa-lg ">
       <div class="row q-mb-md">
         <div class="col text-h5" v-t="'MAILWEBCLIENT.HEADING_SERVERS_SETTINGS'"></div>
-        <div class="col text-right">
-          <q-btn unelevated no-caps dense class="q-px-sm" :ripple="false"
-                 color="primary" :label="$t('MAILWEBCLIENT.ACTION_ADD_NEW_SERVER')" />
+        <div class="col text-right" v-if="!createMode">
+          <q-btn unelevated no-caps dense class="q-px-sm" :ripple="false" color="primary" @click="addNewServer"
+                 :label="$t('MAILWEBCLIENT.ACTION_ADD_NEW_SERVER')" />
         </div>
       </div>
-      <div class="relative-position">
+      <div class="relative-position" v-if="!createMode">
         <q-list dense bordered separator class="rounded-borders q-mb-md" style="overflow: hidden"
-                v-show="servers.length > 0">
+                v-if="servers.length > 0">
           <q-item clickable :class="currentServerId === server.id ? 'bg-grey-4' : 'bg-white'"
-                  v-for="server in servers" :key="server.name" @click="route(server.id)">
+                  v-for="server in servers" :key="server.id" @click="route(server.id)">
             <q-item-section>
               <q-item-label>
                 {{ server.name }}
-                <span v-show="server.tenantName" class="text-grey-6">{{ $t('MAILWEBCLIENT.LABEL_HINT_SERVERS_TENANTNAME', { TENANTNAME: server.tenantName }) }}</span>
+                <span v-if="server.tenantName" class="text-grey-6">{{ $t('MAILWEBCLIENT.LABEL_HINT_SERVERS_TENANTNAME', { TENANTNAME: server.tenantName }) }}</span>
               </q-item-label>
             </q-item-section>
             <q-item-section side>
@@ -25,34 +25,34 @@
             </q-item-section>
           </q-item>
         </q-list>
-        <div class="flex flex-left q-mb-lg" v-show="showSearch || showPagination">
-          <q-input rounded outlined dense class="bg-white" v-model="enteredSearch" v-show="showSearch" @keyup.enter="route">
+        <div class="flex flex-left q-mb-lg" v-if="showSearch || showPagination">
+          <q-input rounded outlined dense class="bg-white" v-model="enteredSearch" v-if="showSearch" @keyup.enter="route">
             <template v-slot:append>
               <q-btn dense flat :ripple="false" icon="search" @click="route" />
             </template>
           </q-input>
-          <q-pagination flat active-color="primary" color="grey-6" v-model="selectedPage" :max="pagesCount" v-show="showPagination" />
+          <q-pagination flat active-color="primary" color="grey-6" v-model="selectedPage" :max="pagesCount" v-if="showPagination" />
         </div>
-        <div v-show="servers.length === 0 && loadingServers" style="height: 150px;"></div>
+        <div v-if="servers.length === 0 && loadingServers" style="height: 150px;"></div>
         <q-card flat bordered class="card-edit-settings"
-                v-show="servers.length === 0 && !loadingServers && search === ''">
-          <q-card-section v-t="'MAILWEBCLIENT.INFO_NO_SERVERS'" />
+                v-if="servers.length === 0 && !loadingServers && search === ''">
+          <q-card-section class="text-caption" v-t="'MAILWEBCLIENT.INFO_NO_SERVERS'" />
         </q-card>
         <q-card flat bordered class="card-edit-settings"
-                v-show="servers.length === 0 && !loadingServers && search !== ''">
-          <q-card-section v-t="'MAILWEBCLIENT.INFO_NO_SERVERS_FOUND'" />
+                v-if="servers.length === 0 && !loadingServers && search !== ''">
+          <q-card-section class="text-caption" v-t="'MAILWEBCLIENT.INFO_NO_SERVERS_FOUND'" />
         </q-card>
         <q-inner-loading :showing="loadingServers">
           <q-spinner size="50px" color="primary" />
         </q-inner-loading>
       </div>
 
-      <q-card flat bordered class="card-edit-settings" v-if="showServerFields">
+      <q-card flat bordered class="card-edit-settings" v-if="showServerFields || createMode">
         <q-card-section>
           <div class="row">
             <div class="col-1 q-my-sm required-field" v-t="'MAILWEBCLIENT.LABEL_DISPLAY_NAME'"></div>
             <div class="col-3">
-              <q-input outlined dense class="bg-white" v-model="serverName"></q-input>
+              <q-input outlined dense class="bg-white" v-model="serverName" ref="serverName"></q-input>
             </div>
           </div>
           <div class="row q-mt-sm q-mb-lg">
@@ -61,7 +61,7 @@
               <q-item-label caption v-t="'MAILWEBCLIENT.LABEL_HINT_DISPLAY_NAME'" />
             </div>
           </div>
-          <div class="row" v-show="allowEditDomainsInServer || editMode">
+          <div class="row" v-if="allowEditDomainsInServer || !createMode">
             <div class="col-1 required-field" v-t="'MAILWEBCLIENT.LABEL_DOMAINS'"></div>
             <div class="col-3">
               <q-input outlined dense class="bg-white" type="textarea" rows="2" v-model="domains" :disable="!allowEditDomainsInServer" />
@@ -69,20 +69,21 @@
           </div>
           <div class="row q-mt-sm q-mb-lg">
             <div class="col-1"></div>
-            <div class="col-9" v-show="allowEditDomainsInServer || editMode">
-              <q-item-label caption v-t="'MAILWEBCLIENT.LABEL_HINT_DOMAINS'" v-show="allowEditDomainsInServer" />
-              <q-item-label caption v-t="'MAILWEBCLIENT.LABEL_HINT_DOMAINS_WILDCARD'" v-show="allowEditDomainsInServer" />
-              <q-item-label caption v-html="$t('MAILWEBCLIENT.LABEL_HINT_DOMAINS_CANNOT_EDIT_HTML')" v-show="!allowEditDomainsInServer" />
+            <div class="col-9" v-if="allowEditDomainsInServer || !createMode">
+              <q-item-label caption v-t="'MAILWEBCLIENT.LABEL_HINT_DOMAINS'" v-if="allowEditDomainsInServer" />
+              <q-item-label caption class="text-weight-bold q-mt-md" v-t="'MAILWEBCLIENT.LABEL_HINT_DOMAINS_WILDCARD'" v-if="allowEditDomainsInServer" />
+              <q-item-label caption v-html="$t('MAILWEBCLIENT.LABEL_HINT_DOMAINS_CANNOT_EDIT_HTML')" v-if="!allowEditDomainsInServer" />
             </div>
           </div>
           <div class="row q-mb-md">
             <div class="col-1 q-my-sm required-field" v-t="'MAILWEBCLIENT.LABEL_IMAP_SERVER'"></div>
             <div class="col-3">
-              <q-input outlined dense class="bg-white" v-model="imapServer"></q-input>
+              <q-input outlined dense class="bg-white" v-model="imapServer" ref="imapServer"
+                       @blur="fillUpSmtpServerFromImapServer"></q-input>
             </div>
             <div class="col-1 q-my-sm text-right q-pr-md required-field" v-t="'MAILWEBCLIENT.LABEL_PORT'"></div>
             <div class="col-1">
-              <q-input outlined dense class="bg-white" v-model="imapPort"></q-input>
+              <q-input outlined dense class="bg-white" v-model="imapPort" ref="imapPort"></q-input>
             </div>
             <div class="col-1 q-my-sm q-pl-md">
               <q-checkbox dense v-model="imapSsl" label="SSL" />
@@ -91,11 +92,11 @@
           <div class="row q-mb-md">
             <div class="col-1 q-my-sm required-field" v-t="'MAILWEBCLIENT.LABEL_SMTP_SERVER'"></div>
             <div class="col-3">
-              <q-input outlined dense class="bg-white" v-model="smtpServer"></q-input>
+              <q-input outlined dense class="bg-white" v-model="smtpServer" ref="smtpServer"></q-input>
             </div>
             <div class="col-1 q-my-sm text-right q-pr-md required-field" v-t="'MAILWEBCLIENT.LABEL_PORT'"></div>
             <div class="col-1">
-              <q-input outlined dense class="bg-white" v-model="smtpPort"></q-input>
+              <q-input outlined dense class="bg-white" v-model="smtpPort" ref="smtpPort"></q-input>
             </div>
             <div class="col-1 q-my-sm q-pl-md">
               <q-checkbox dense v-model="smtpSsl" :label="$t('MAILWEBCLIENT.LABEL_SSL')" />
@@ -163,9 +164,15 @@
           </div>
         </q-card-section>
       </q-card>
-      <div class="q-pa-md text-right" v-if="showServerFields">
-        <q-btn unelevated no-caps dense class="q-px-sm" :ripple="false" color="primary" @click="save"
+      <div class="q-pa-md text-right" v-if="showServerFields || createMode">
+        <q-btn unelevated no-caps dense class="q-px-sm" :ripple="false" color="primary" @click="save" v-if="!createMode"
                :label="saving ? $t('COREWEBCLIENT.ACTION_SAVE_IN_PROGRESS') : $t('COREWEBCLIENT.ACTION_SAVE')">
+        </q-btn>
+        <q-btn unelevated no-caps dense class="q-px-sm" :ripple="false" color="primary" @click="create" v-if="createMode"
+               :label="creating ? $t('COREWEBCLIENT.ACTION_CREATE_IN_PROGRESS') : $t('COREWEBCLIENT.ACTION_CREATE')">
+        </q-btn>
+        <q-btn unelevated no-caps dense class="q-px-sm q-ml-md" :ripple="false" color="secondary" @click="cancelCreate"
+               v-if="createMode" :label="$t('COREWEBCLIENT.ACTION_CANCEL')">
         </q-btn>
       </div>
     </div>
@@ -215,7 +222,7 @@ export default {
       currentServerId: 0,
       currentServerTenantId: 0,
 
-      editMode: true,
+      createMode: false,
       showServerFields: false,
 
       serverName: '',
@@ -235,6 +242,7 @@ export default {
       useFullEmail: false,
 
       saving: false,
+      creating: false,
     }
   },
 
@@ -249,26 +257,52 @@ export default {
 
   watch: {
     $route (to, from) {
-      const search = typesUtils.pString(this.$route?.params?.search)
-      const page = typesUtils.pPositiveInt(this.$route?.params?.page)
-
-      if (this.search !== search || this.page !== page) {
-        this.search = search
-        this.enteredSearch = search
-        this.page = page
-        this.selectedPage = page
-        this.populate()
-      }
-
-      const serverId = typesUtils.pNonNegativeInt(this.$route?.params?.id)
-      if (this.currentServerId !== serverId) {
-        this.currentServerId = serverId
+      if (this.$route.path === '/system/mail-servers/create') {
+        this.createMode = true
+        this.showServerFields = false
         this.populateServer()
+      } else {
+        this.createMode = false
+
+        const search = typesUtils.pString(this.$route?.params?.search)
+        const page = typesUtils.pPositiveInt(this.$route?.params?.page)
+        if (this.search !== search || this.page !== page) {
+          this.search = search
+          this.enteredSearch = search
+          this.page = page
+          this.selectedPage = page
+          this.populate()
+        }
+
+        const serverId = typesUtils.pNonNegativeInt(this.$route?.params?.id)
+        if (this.currentServerId !== serverId) {
+          this.currentServerId = serverId
+          this.populateServer()
+        }
       }
     },
+
     selectedPage () {
       if (this.selectedPage !== this.page) {
         this.route()
+      }
+    },
+
+    imapSsl () {
+      if (this.imapSsl && this.imapPort === 143) {
+        this.imapPort = 993
+      }
+      if (!this.imapSsl && this.imapPort === 993) {
+        this.imapPort = 143
+      }
+    },
+
+    smtpSsl () {
+      if (this.smtpSsl && this.smtpPort === 25) {
+        this.smtpPort = 465
+      }
+      if (!this.smtpSsl && this.smtpPort === 465) {
+        this.smtpPort = 25
       }
     },
   },
@@ -283,6 +317,7 @@ export default {
 
   mounted () {
     this.saving = false
+    this.creating = false
     this.populate()
   },
 
@@ -316,43 +351,77 @@ export default {
     },
 
     populateServer () {
-      const server = _.find(this.servers, server => {
-        return server.id === this.currentServerId
-      })
-      this.showServerFields = !!server
-      if (this.showServerFields) {
-        this.currentServerTenantId = server.tenantId
-        this.serverName = server.name
-        this.domains = server.domains
-        this.imapServer = server.incomingServer
-        this.imapPort = server.incomingPort
-        this.imapSsl = server.incomingUseSsl
-        this.smtpServer = server.outgoingServer
-        this.smtpPort = server.outgoingPort
-        this.smtpSsl = server.outgoingUseSsl
-        this.smtpAuthentication = server.smtpAuthType
-        this.smtpLogin = server.smtpLogin
-        this.smtpPassword = server.smtpPassword
-        this.enableSieve = server.enableSieve
-        this.sievePort = server.sievePort
-        this.useThreading = server.enableThreading
-        this.useFullEmail = server.useFullEmailAddressAsLogin
+      if (this.createMode) {
+        this.currentServerId = 0
+        this.currentServerTenantId = 0
+        this.serverName = ''
+        this.domains = ''
+        this.imapServer = ''
+        this.imapPort = 143
+        this.imapSsl = false
+        this.smtpServer = ''
+        this.smtpPort = 25
+        this.smtpSsl = false
+        this.smtpAuthentication = this.smtpAuthTypeEnum.UseUserCredentials
+        this.smtpLogin = ''
+        this.smtpPassword = ''
+        this.enableSieve = false
+        this.sievePort = 4190
+        this.useThreading = true
+        this.useFullEmail = true
+      } else {
+        const server = _.find(this.servers, server => {
+          return server.id === this.currentServerId
+        })
+        this.showServerFields = !!server
+        if (this.showServerFields) {
+          this.currentServerTenantId = server.tenantId
+          this.serverName = server.name
+          this.domains = server.domains
+          this.imapServer = server.incomingServer
+          this.imapPort = server.incomingPort
+          this.imapSsl = server.incomingUseSsl
+          this.smtpServer = server.outgoingServer
+          this.smtpPort = server.outgoingPort
+          this.smtpSsl = server.outgoingUseSsl
+          this.smtpAuthentication = server.smtpAuthType
+          this.smtpLogin = server.smtpLogin
+          this.smtpPassword = server.smtpPassword
+          this.enableSieve = server.enableSieve
+          this.sievePort = server.sievePort
+          this.useThreading = server.enableThreading
+          this.useFullEmail = server.useFullEmailAddressAsLogin
+        }
+      }
+    },
+
+    fillUpSmtpServerFromImapServer () {
+      if (_.isEmpty(this.smtpServer)) {
+        this.smtpServer = this.imapServer
       }
     },
 
     hasChanges () {
-      const server = this.getServer(this.currentServerId)
-      if (server) {
-        return server.name !== this.serverName || server.incomingServer !== this.imapServer ||
-            server.incomingPort !== this.imapPort || server.incomingUseSsl !== this.imapSsl ||
-            server.outgoingServer !== this.smtpServer || server.outgoingPort !== this.smtpPort ||
-            server.outgoingUseSsl !== this.smtpSsl || server.domains !== this.domains ||
-            server.smtpAuthType !== this.smtpAuthentication || server.smtpLogin !== this.smtpLogin ||
-            server.smtpPassword !== this.smtpPassword || server.enableSieve !== this.enableSieve ||
-            server.sievePort !== this.sievePort || server.enableThreading !== this.useThreading ||
-            server.useFullEmailAddressAsLogin !== this.useFullEmail
+      if (this.createMode) {
+        return this.serverName !== '' || this.domains !== '' || this.imapServer !== '' || this.imapPort !== 143 ||
+            this.imapSsl !== false || this.smtpServer !== '' || this.smtpPort !== 25 || this.smtpSsl !== false ||
+            this.smtpAuthentication !== this.smtpAuthTypeEnum.UseUserCredentials || this.smtpLogin !== '' ||
+            this.smtpPassword !== '' || this.enableSieve !== false || this.sievePort !== 4190 ||
+            this.useThreading !== true || this.useFullEmail !== true
       } else {
-        return false
+        const server = this.getServer(this.currentServerId)
+        if (server) {
+          return server.name !== this.serverName || server.incomingServer !== this.imapServer ||
+              server.incomingPort !== this.imapPort || server.incomingUseSsl !== this.imapSsl ||
+              server.outgoingServer !== this.smtpServer || server.outgoingPort !== this.smtpPort ||
+              server.outgoingUseSsl !== this.smtpSsl || server.domains !== this.domains ||
+              server.smtpAuthType !== this.smtpAuthentication || server.smtpLogin !== this.smtpLogin ||
+              server.smtpPassword !== this.smtpPassword || server.enableSieve !== this.enableSieve ||
+              server.sievePort !== this.sievePort || server.enableThreading !== this.useThreading ||
+              server.useFullEmailAddressAsLogin !== this.useFullEmail
+        } else {
+          return false
+        }
       }
     },
 
@@ -369,28 +438,56 @@ export default {
       }
     },
 
+    getSaveParameters () {
+      return {
+        Name: this.serverName,
+        IncomingServer: this.imapServer,
+        IncomingPort: this.imapPort,
+        IncomingUseSsl: this.imapSsl,
+        OutgoingServer: this.smtpServer,
+        OutgoingPort: this.smtpPort,
+        OutgoingUseSsl: this.smtpSsl,
+        Domains: this.domains,
+        SmtpAuthType: this.smtpAuthentication,
+        SmtpLogin: this.smtpLogin,
+        SmtpPassword: this.smtpPassword,
+        EnableSieve: this.enableSieve,
+        SievePort: this.sievePort,
+        EnableThreading: this.useThreading,
+        UseFullEmailAddressAsLogin: this.useFullEmail,
+      }
+    },
+
+    isDataValid () {
+      let emptyField = ''
+      if (_.isEmpty(_.trim(this.serverName))) {
+        emptyField = 'serverName'
+      } else if (_.isEmpty(_.trim(this.imapServer))) {
+        emptyField = 'imapServer'
+      } else if (_.isEmpty(_.trim(this.imapPort))) {
+        emptyField = 'imapPort'
+      } else if (_.isEmpty(_.trim(this.smtpServer))) {
+        emptyField = 'smtpServer'
+      } else if (_.isEmpty(_.trim(this.smtpPort))) {
+        emptyField = 'smtpPort'
+      }
+      if (!_.isEmpty(emptyField)) {
+        if (_.isFunction(this.$refs[emptyField]?.$el?.focus)) {
+          this.$refs[emptyField].$el.focus()
+        }
+        notification.showError(this.$t('COREWEBCLIENT.ERROR_REQUIRED_FIELDS_EMPTY'))
+        return false
+      }
+      return true
+    },
+
     save () {
-      if (!this.saving) {
+      if (!this.saving && this.isDataValid()) {
         this.saving = true
-        const parameters = {
+        const parameters = _.extend(this.getSaveParameters(), {
           ServerId: this.currentServerId,
           TenantId: this.currentServerTenantId,
-          Name: this.serverName,
-          IncomingServer: this.imapServer,
-          IncomingPort: this.imapPort,
-          IncomingUseSsl: this.imapSsl,
-          OutgoingServer: this.smtpServer,
-          OutgoingPort: this.smtpPort,
-          OutgoingUseSsl: this.smtpSsl,
-          Domains: this.domains,
-          SmtpAuthType: this.smtpAuthentication,
-          SmtpLogin: this.smtpLogin,
-          SmtpPassword: this.smtpPassword,
-          EnableSieve: this.enableSieve,
-          SievePort: this.sievePort,
-          EnableThreading: this.useThreading,
-          UseFullEmailAddressAsLogin: this.useFullEmail,
-        }
+        })
         webApi.sendRequest({
           moduleName: 'Mail',
           methodName: 'UpdateServer',
@@ -411,6 +508,39 @@ export default {
         })
       }
     },
+
+    addNewServer () {
+      this.$router.push('/system/mail-servers/create')
+    },
+
+    cancelCreate () {
+      this.$router.push('/system/mail-servers')
+    },
+
+    create () {
+      if (!this.creating && this.isDataValid()) {
+        this.creating = true
+        webApi.sendRequest({
+          moduleName: 'Mail',
+          methodName: 'CreateServer',
+          parameters: this.getSaveParameters(),
+        }).then(result => {
+          this.creating = false
+          if (_.isSafeInteger(result)) {
+            this.populateServer()
+            this.populate()
+            this.$router.push('/system/mail-servers/id/' + result)
+            notification.showReport(this.$t('COREWEBCLIENT.REPORT_SETTINGS_UPDATE_SUCCESS'))
+          } else {
+            notification.showError(this.$t('COREWEBCLIENT.ERROR_SAVING_SETTINGS_FAILED'))
+          }
+        }, error => {
+          this.creating = false
+          notification.showError(errors.getTextFromResponse(error, this.$t('COREWEBCLIENT.ERROR_SAVING_SETTINGS_FAILED')))
+        })
+      }
+    },
+
     askDeleteServer(name, id, tenantId) {
       if (_.isFunction(this?.$refs?.confirmDialog?.openDialog)) {
         this.$refs.confirmDialog.openDialog({
@@ -420,7 +550,8 @@ export default {
         })
       }
     },
-    deleteServer(id, tenantId) {
+
+    deleteServer (id, tenantId) {
       this.loadingServers = true
       webApi.sendRequest({
         moduleName: 'Mail',

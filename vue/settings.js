@@ -9,7 +9,7 @@ class MailSettings {
 
     if (!_.isEmpty(mailData)) {
       this.allowMultiAccounts = typesUtils.pBool(mailData.AllowMultiAccounts)
-      this.allowEditDomainsInServer = typesUtils.pBool(mailData.AllowEditDomainsInServer)
+      this.allowEditDomainsInServer = typesUtils.pBool(mailData.AllowEditDomainsInServer, true)
       this.autocreateMailAccountOnNewUserFirstLogin = typesUtils.pBool(mailData.AutocreateMailAccountOnNewUserFirstLogin)
       this.smtpAuthTypeEnum = typesUtils.pObject(mailData.SmtpAuthType)
     }
