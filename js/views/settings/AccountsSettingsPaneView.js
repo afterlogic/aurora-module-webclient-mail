@@ -45,9 +45,9 @@ function CAccountsSettingsPaneView()
 	this.bAllowIdentities = !!Settings.AllowIdentities;
 	this.bAllowFetchers = !!Settings.AllowFetchers;
 	this.bAllowAliases = !!Settings.AllowAliases;
-	
+
 	this.accounts = AccountList.collection;
-	
+
 	this.editedAccountId = AccountList.editedId;
 	this.editedFetcher = ko.observable(null);
 	this.editedFetcherId = ko.computed(function () {
@@ -67,7 +67,7 @@ function CAccountsSettingsPaneView()
 	this.allowAutoresponder = ko.observable(false);
 	this.allowFilters = ko.observable(false);
 	this.allowSignature = ko.observable(false);
-	
+
 	this.aAccountTabs = [
 		{
 			name: 'properties',
@@ -112,7 +112,7 @@ function CAccountsSettingsPaneView()
 			visible: this.allowSignature
 		}
 	];
-	
+
 	this.aIdentityTabs = [
 		{
 			name: 'properties',
@@ -127,7 +127,7 @@ function CAccountsSettingsPaneView()
 			visible: ko.observable(true)
 		}
 	];
-	
+
 	this.aFetcherTabs = [
 		{
 			name: 'incoming',
@@ -163,7 +163,7 @@ function CAccountsSettingsPaneView()
 			visible: ko.observable(true)
 		}
 	];
-	
+
 	this.currentTab = ko.observable(null);
 	this.tabs = ko.computed(function () {
 		if (this.editedIdentity())
@@ -180,7 +180,7 @@ function CAccountsSettingsPaneView()
 		}
 		return this.aAccountTabs;
 	}, this);
-	
+
 	AccountList.editedId.subscribe(function () {
 		this.populate();
 	}, this);
@@ -241,7 +241,7 @@ CAccountsSettingsPaneView.prototype.showTab = function (aParams)
 	this.editedIdentity(sType === 'identity' ? (AccountList.getIdentityByHash(sHash) || null) : null);
 	this.editedFetcher(sType === 'fetcher' ? (AccountList.getFetcherByHash(sHash) || null) : null);
 	this.editedAlias(sType === 'alias' ? (AccountList.getAliasByHash(sHash) || null) : null);
-	
+
 	if (sType === 'account')
 	{
 		if (aParams[1] === 'create' && !AccountList.hasAccount())
@@ -271,7 +271,7 @@ CAccountsSettingsPaneView.prototype.showTab = function (aParams)
 			}
 		}
 	}
-	
+
 	this.changeTab(sTab || this.getAutoselectedTab().name);
 };
 
@@ -280,12 +280,12 @@ CAccountsSettingsPaneView.prototype.getAutoselectedTab = function ()
 	var oCurrentTab = _.find(this.tabs(), function (oTab) {
 		return oTab.visible();
 	});
-	
+
 	if (!oCurrentTab)
 	{
 		oCurrentTab = this.tabs()[0];
 	}
-	
+
 	return oCurrentTab;
 };
 
@@ -449,7 +449,7 @@ CAccountsSettingsPaneView.prototype.changeTab = function (sName)
 		}.bind(this),
 		bShow = true
 	;
-	
+
 	if (oNewTab)
 	{
 		if (oCurrentTab && _.isFunction(oCurrentTab.view.hide))
@@ -472,14 +472,14 @@ CAccountsSettingsPaneView.prototype.changeTab = function (sName)
 	{
 		oNewTab = this.getAutoselectedTab();
 	}
-	
+
 	if (!oCurrentTab)
 	{
 		_.delay(_.bind(function () {
 			this.changeRoute(oNewTab.name);
 		}, this));
 	}
-	
+
 	if (bShow)
 	{
 		fShowNewTab();
@@ -489,15 +489,15 @@ CAccountsSettingsPaneView.prototype.changeTab = function (sName)
 CAccountsSettingsPaneView.prototype.populate = function ()
 {
 	var oAccount = AccountList.getEdited();
-	
+
 	if (oAccount)
 	{
-		this.allowFolders(true);
+		this.allowFolders(oAccount.allowManageFolders());
 		this.allowForward(oAccount.allowForward());
 		this.allowAutoresponder(oAccount.allowAutoresponder());
 		this.allowFilters(oAccount.allowFilters());
 		this.allowSignature(!Settings.AllowIdentities);
-		
+
 		if (!this.currentTab() || !this.currentTab().visible())
 		{
 			this.currentTab(this.getAutoselectedTab());
