@@ -49,6 +49,13 @@
 
       <q-card flat bordered class="card-edit-settings" v-if="showServerFields || createMode">
         <q-card-section>
+          <div class="row q-mb-md" v-if="createMode">
+            <div class="col-1 q-my-sm required-field" v-t="'MAILWEBCLIENT.LABEL_TENANT'"></div>
+            <div class="col-3">
+              <q-select outlined dense class="bg-white" v-model="selectedTenantId"
+                        emit-value map-options :options="tenantOptions" />
+            </div>
+          </div>
           <div class="row">
             <div class="col-1 q-my-sm required-field" v-t="'MAILWEBCLIENT.LABEL_DISPLAY_NAME'"></div>
             <div class="col-3">
@@ -64,7 +71,8 @@
           <div class="row" v-if="allowEditDomainsInServer || !createMode">
             <div class="col-1 required-field" v-t="'MAILWEBCLIENT.LABEL_DOMAINS'"></div>
             <div class="col-3">
-              <q-input outlined dense class="bg-white" type="textarea" rows="2" v-model="domains" :disable="!allowEditDomainsInServer" />
+              <q-input outlined dense class="bg-white" type="textarea" rows="2" v-model="domains" ref="domains"
+                       :disable="!allowEditDomainsInServer" />
             </div>
           </div>
           <div class="row q-mt-sm q-mb-lg">
@@ -189,6 +197,8 @@ import notification from 'src/utils/notification'
 import typesUtils from 'src/utils/types'
 import webApi from 'src/utils/web-api'
 
+import core from 'src/core'
+
 import settings from 'src/../../../MailWebclient/vue/settings'
 import cache from 'src/../../../MailWebclient/vue/cache'
 
@@ -224,6 +234,9 @@ export default {
 
       createMode: false,
       showServerFields: false,
+
+      selectedTenantId: 0,
+      tenantOptions: [],
 
       serverName: '',
       domains: '',
@@ -319,6 +332,15 @@ export default {
     this.saving = false
     this.creating = false
     this.populate()
+
+    const tenants = core.getTenants()
+    const tenantOptions = [
+      { label: 'system-wide', value: 0 },
+    ]
+    tenants.forEach(tenant => {
+      tenantOptions.push({ label: tenant.name, value: tenant.id })
+    })
+    this.tenantOptions = tenantOptions
   },
 
   methods: {
@@ -353,7 +375,7 @@ export default {
     populateServer () {
       if (this.createMode) {
         this.currentServerId = 0
-        this.currentServerTenantId = 0
+        this.selectedTenantId = (this.tenantOptions.length > 1) ? this.tenantOptions[1].value : 0
         this.serverName = ''
         this.domains = ''
         this.imapServer = ''
@@ -462,6 +484,8 @@ export default {
       let emptyField = ''
       if (_.isEmpty(_.trim(this.serverName))) {
         emptyField = 'serverName'
+      } else if (this.allowEditDomainsInServer && _.isEmpty(_.trim(this.domains))) {
+        emptyField = 'domains'
       } else if (_.isEmpty(_.trim(this.imapServer))) {
         emptyField = 'imapServer'
       } else if (_.isEmpty(_.trim(this.imapPort))) {
@@ -520,10 +544,13 @@ export default {
     create () {
       if (!this.creating && this.isDataValid()) {
         this.creating = true
+        const parameters = _.extend(this.getSaveParameters(), {
+          TenantId: this.selectedTenantId,
+        })
         webApi.sendRequest({
           moduleName: 'Mail',
           methodName: 'CreateServer',
-          parameters: this.getSaveParameters(),
+          parameters,
         }).then(result => {
           this.creating = false
           if (_.isSafeInteger(result)) {
