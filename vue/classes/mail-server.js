@@ -26,11 +26,13 @@ class MailServer {
     this.sievePort = typesUtils.pInt(serverData?.SievePort, 4190)
     this.enableThreading = !!(serverData?.EnableThreading)
     this.useFullEmailAddressAsLogin = !!(serverData?.UseFullEmailAddressAsLogin)
+
     this.setExternalAccessServers = !!(serverData?.SetExternalAccessServers)
     this.externalAccessImapServer = typesUtils.pString(serverData?.ExternalAccessImapServer)
     this.externalAccessImapPort = typesUtils.pInt(serverData?.ExternalAccessImapPort, 143)
     this.externalAccessSmtpServer = typesUtils.pString(serverData?.ExternalAccessSmtpServer)
     this.externalAccessSmtpPort = typesUtils.pInt(serverData?.ExternalAccessSmtpPort, 25)
+
     this.allowToDelete = !!(serverData?.AllowToDelete);
     this.allowEditDomains = !!(serverData?.AllowEditDomains)
     this.ownerType = typesUtils.pString(serverData?.OwnerType)
@@ -57,6 +59,12 @@ class MailServer {
     this.sievePort = parameters.SievePort
     this.enableThreading = parameters.EnableThreading
     this.useFullEmailAddressAsLogin = parameters.UseFullEmailAddressAsLogin
+
+    this.setExternalAccessServers = parameters.SetExternalAccessServers
+    this.externalAccessImapServer = parameters.ExternalAccessImapServer
+    this.externalAccessImapPort = parameters.ExternalAccessImapPort
+    this.externalAccessSmtpServer = parameters.ExternalAccessSmtpServer
+    this.externalAccessSmtpPort = parameters.ExternalAccessSmtpPort
   }
 }
 

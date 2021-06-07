@@ -172,6 +172,51 @@
           </div>
         </q-card-section>
       </q-card>
+
+      <q-card flat bordered class="card-edit-settings q-mt-md" v-if="showServerFields || createMode">
+        <q-card-section>
+          <div class="row q-mb-sm">
+            <div class="col-10">
+              <q-checkbox dense v-model="setExternalAccessServers"
+                          :label="$t('MAILWEBCLIENT.LABEL_ADMIN_EXTERNAL_ACCESS_SERVERS')" />
+            </div>
+          </div>
+          <div class="row q-mb-md">
+            <div class="col-10">
+              <q-item-label caption v-html="$t('MAILWEBCLIENT.LABEL_HINT_ADMIN_EXTERNAL_ACCESS_SERVERS')" />
+            </div>
+          </div>
+          <div class="row q-mb-md">
+            <div class="col-1 q-my-sm" v-t="'MAILWEBCLIENT.LABEL_IMAP_SERVER'"
+                 :class="setExternalAccessServers ? '' : 'disabled'"></div>
+            <div class="col-3">
+              <q-input outlined dense class="bg-white" v-model="externalAccessImapServer"
+                       :disable="!setExternalAccessServers"></q-input>
+            </div>
+            <div class="col-1 q-my-sm text-right q-pr-md" v-t="'MAILWEBCLIENT.LABEL_PORT'"
+                 :class="setExternalAccessServers ? '' : 'disabled'"></div>
+            <div class="col-1">
+              <q-input outlined dense class="bg-white" v-model="externalAccessImapPort"
+                       :disable="!setExternalAccessServers"></q-input>
+            </div>
+          </div>
+          <div class="row q-mb-md">
+            <div class="col-1 q-my-sm" v-t="'MAILWEBCLIENT.LABEL_SMTP_SERVER'"
+                 :class="setExternalAccessServers ? '' : 'disabled'"></div>
+            <div class="col-3">
+              <q-input outlined dense class="bg-white" v-model="externalAccessSmtpServer"
+                       :disable="!setExternalAccessServers"></q-input>
+            </div>
+            <div class="col-1 q-my-sm text-right q-pr-md" v-t="'MAILWEBCLIENT.LABEL_PORT'"
+                 :class="setExternalAccessServers ? '' : 'disabled'"></div>
+            <div class="col-1">
+              <q-input outlined dense class="bg-white" v-model="externalAccessSmtpPort"
+                       :disable="!setExternalAccessServers"></q-input>
+            </div>
+          </div>
+        </q-card-section>
+      </q-card>
+
       <div class="q-pa-md text-right" v-if="showServerFields || createMode">
         <q-btn unelevated no-caps dense class="q-px-sm" :ripple="false" color="primary" @click="save" v-if="!createMode"
                :label="saving ? $t('COREWEBCLIENT.ACTION_SAVE_IN_PROGRESS') : $t('COREWEBCLIENT.ACTION_SAVE')">
@@ -253,6 +298,12 @@ export default {
       sievePort: 0,
       useThreading: false,
       useFullEmail: false,
+
+      setExternalAccessServers: false,
+      externalAccessImapServer: '',
+      externalAccessImapPort: 143,
+      externalAccessSmtpServer: '',
+      externalAccessSmtpPort: 25,
 
       saving: false,
       creating: false,
@@ -391,6 +442,12 @@ export default {
         this.sievePort = 4190
         this.useThreading = true
         this.useFullEmail = true
+
+        this.setExternalAccessServers = false
+        this.externalAccessImapServer = ''
+        this.externalAccessImapPort = 143
+        this.externalAccessSmtpServer = ''
+        this.externalAccessSmtpPort = 25
       } else {
         const server = _.find(this.servers, server => {
           return server.id === this.currentServerId
@@ -413,6 +470,12 @@ export default {
           this.sievePort = server.sievePort
           this.useThreading = server.enableThreading
           this.useFullEmail = server.useFullEmailAddressAsLogin
+
+          this.setExternalAccessServers = server.setExternalAccessServers
+          this.externalAccessImapServer = server.externalAccessImapServer
+          this.externalAccessImapPort = server.externalAccessImapPort
+          this.externalAccessSmtpServer = server.externalAccessSmtpServer
+          this.externalAccessSmtpPort = server.externalAccessSmtpPort
         }
       }
     },
@@ -429,7 +492,9 @@ export default {
             this.imapSsl !== false || this.smtpServer !== '' || this.smtpPort !== 25 || this.smtpSsl !== false ||
             this.smtpAuthentication !== this.smtpAuthTypeEnum.UseUserCredentials || this.smtpLogin !== '' ||
             this.smtpPassword !== '' || this.enableSieve !== false || this.sievePort !== 4190 ||
-            this.useThreading !== true || this.useFullEmail !== true
+            this.useThreading !== true || this.useFullEmail !== true || this.setExternalAccessServers !== false ||
+            this.externalAccessImapServer !== '' || this.externalAccessImapPort !== 143 ||
+            this.externalAccessSmtpServer !== '' || this.externalAccessSmtpPort !== 25
       } else {
         const server = this.getServer(this.currentServerId)
         if (server) {
@@ -440,7 +505,12 @@ export default {
               server.smtpAuthType !== this.smtpAuthentication || server.smtpLogin !== this.smtpLogin ||
               server.smtpPassword !== this.smtpPassword || server.enableSieve !== this.enableSieve ||
               server.sievePort !== this.sievePort || server.enableThreading !== this.useThreading ||
-              server.useFullEmailAddressAsLogin !== this.useFullEmail
+              server.useFullEmailAddressAsLogin !== this.useFullEmail ||
+              server.setExternalAccessServers !== this.setExternalAccessServers ||
+              server.externalAccessImapServer !== this.externalAccessImapServer ||
+              server.externalAccessImapPort !== this.externalAccessImapPort ||
+              server.externalAccessSmtpServer !== this.externalAccessSmtpServer ||
+              server.externalAccessSmtpPort !== this.externalAccessSmtpPort
         } else {
           return false
         }
@@ -477,6 +547,11 @@ export default {
         SievePort: this.sievePort,
         EnableThreading: this.useThreading,
         UseFullEmailAddressAsLogin: this.useFullEmail,
+        SetExternalAccessServers: this.setExternalAccessServers,
+        ExternalAccessImapServer: this.externalAccessImapServer,
+        ExternalAccessImapPort: this.externalAccessImapPort,
+        ExternalAccessSmtpServer: this.externalAccessSmtpServer,
+        ExternalAccessSmtpPort: this.externalAccessSmtpPort,
       }
     },
 
