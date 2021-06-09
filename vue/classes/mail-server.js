@@ -38,9 +38,9 @@ class MailServer {
     this.ownerType = typesUtils.pString(serverData?.OwnerType)
 
     this.oauthEnable = !!(serverData?.OAuthEnable)
-    this.oauthName = typesUtils.pString(serverData?.OAuthName)
-    this.oauthType = typesUtils.pString(serverData?.OAuthType)
-    this.oauthIconUrl = typesUtils.pString(serverData?.OAuthIconUrl)
+    this.oauthName = this.oauthEnable ? typesUtils.pString(serverData?.OAuthName) : ''
+    this.oauthType = this.oauthEnable ? typesUtils.pString(serverData?.OAuthType) : ''
+    this.oauthIconUrl = this.oauthEnable ? typesUtils.pString(serverData?.OAuthIconUrl) : ''
   }
 
   update (parameters) {
@@ -65,6 +65,11 @@ class MailServer {
     this.externalAccessImapPort = parameters.ExternalAccessImapPort
     this.externalAccessSmtpServer = parameters.ExternalAccessSmtpServer
     this.externalAccessSmtpPort = parameters.ExternalAccessSmtpPort
+
+    this.oauthEnable = parameters.OAuthEnable
+    this.oauthName = parameters.OAuthName
+    this.oauthType = parameters.OAuthType
+    this.oauthIconUrl = parameters.OAuthIconUrl
   }
 }
 

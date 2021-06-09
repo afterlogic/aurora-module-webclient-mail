@@ -1,6 +1,7 @@
 import settings from "src/../../../MailWebclient/vue/settings"
 
 export default {
+	name: 'MailWebclient',
 	init (appData) {
 		settings.init(appData)
 	},

@@ -217,6 +217,23 @@
         </q-card-section>
       </q-card>
 
+      <q-card flat bordered class="card-edit-settings q-mt-md" v-if="oauthConnectorsData.length > 0 && (showServerFields || createMode)">
+        <q-card-section>
+          <div class="row q-mb-md">
+            <div class="col-6">
+              <q-item-label v-t="'MAILWEBCLIENT.INFO_ADMIN_OAUTH'" />
+              <q-list dense>
+                <q-item tag="label" v-for="data in oauthConnectorsData" :key="data.type">
+                  <q-item-section class="q-pr-none">
+                    <q-radio v-model="oauthConnector" :val="data.type" :label="data.name" />
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </div>
+          </div>
+        </q-card-section>
+      </q-card>
+
       <div class="q-pa-md text-right" v-if="showServerFields || createMode">
         <q-btn unelevated no-caps dense class="q-px-sm" :ripple="false" color="primary" @click="save" v-if="!createMode"
                :label="saving ? $t('COREWEBCLIENT.ACTION_SAVE_IN_PROGRESS') : $t('COREWEBCLIENT.ACTION_SAVE')">
@@ -305,6 +322,9 @@ export default {
       externalAccessSmtpServer: '',
       externalAccessSmtpPort: 25,
 
+      oauthConnectorsData: [],
+      oauthConnector: '',
+
       saving: false,
       creating: false,
     }
@@ -392,6 +412,8 @@ export default {
       tenantOptions.push({ label: tenant.name, value: tenant.id })
     })
     this.tenantOptions = tenantOptions
+
+    this.populateOauthConnectorsData()
   },
 
   methods: {
@@ -403,6 +425,22 @@ export default {
       const path = '/system/mail-servers' + searchRoute + pageRoute + idRoute
       if (path !== this.$route.path) {
         this.$router.push('/system/mail-servers' + searchRoute + pageRoute + idRoute)
+      }
+    },
+
+    populateOauthConnectorsData () {
+      const params = {
+        oauthConnectorsData: []
+      }
+      this.$eventBus.$emit('MailWebclient::GetOauthConnectorsData', params);
+      this.oauthConnectorsData = _.isArray(params.oauthConnectorsData) ? params.oauthConnectorsData.filter(data => {
+        return typesUtils.isNonEmptyString(data.name) && typesUtils.isNonEmptyString(data.type)
+      }) : []
+      if (this.oauthConnectorsData.length > 0) {
+        this.oauthConnectorsData.unshift({
+          name: this.$t('MAILWEBCLIENT.LABEL_ADMIN_OAUTH_NOTHING_SELECTED'),
+          type: '',
+        })
       }
     },
 
@@ -448,6 +486,8 @@ export default {
         this.externalAccessImapPort = 143
         this.externalAccessSmtpServer = ''
         this.externalAccessSmtpPort = 25
+
+        this.oauthConnector = ''
       } else {
         const server = _.find(this.servers, server => {
           return server.id === this.currentServerId
@@ -476,6 +516,8 @@ export default {
           this.externalAccessImapPort = server.externalAccessImapPort
           this.externalAccessSmtpServer = server.externalAccessSmtpServer
           this.externalAccessSmtpPort = server.externalAccessSmtpPort
+
+          this.oauthConnector = server.oauthType
         }
       }
     },
@@ -494,7 +536,7 @@ export default {
             this.smtpPassword !== '' || this.enableSieve !== false || this.sievePort !== 4190 ||
             this.useThreading !== true || this.useFullEmail !== true || this.setExternalAccessServers !== false ||
             this.externalAccessImapServer !== '' || this.externalAccessImapPort !== 143 ||
-            this.externalAccessSmtpServer !== '' || this.externalAccessSmtpPort !== 25
+            this.externalAccessSmtpServer !== '' || this.externalAccessSmtpPort !== 25 || this.oauthConnector !== ''
       } else {
         const server = this.getServer(this.currentServerId)
         if (server) {
@@ -510,7 +552,7 @@ export default {
               server.externalAccessImapServer !== this.externalAccessImapServer ||
               server.externalAccessImapPort !== this.externalAccessImapPort ||
               server.externalAccessSmtpServer !== this.externalAccessSmtpServer ||
-              server.externalAccessSmtpPort !== this.externalAccessSmtpPort
+              server.externalAccessSmtpPort !== this.externalAccessSmtpPort || server.oauthType !== this.oauthConnector
         } else {
           return false
         }
@@ -531,7 +573,7 @@ export default {
     },
 
     getSaveParameters () {
-      return {
+      const parameters = {
         Name: this.serverName,
         IncomingServer: this.imapServer,
         IncomingPort: this.imapPort,
@@ -553,6 +595,24 @@ export default {
         ExternalAccessSmtpServer: this.externalAccessSmtpServer,
         ExternalAccessSmtpPort: this.externalAccessSmtpPort,
       }
+
+      const isOAuthEnable = this.oauthConnector !== ''
+      const selectedConnector = isOAuthEnable ? this.oauthConnectorsData.find(data => {
+        return data.type === this.oauthConnector
+      }) : null
+      if (selectedConnector) {
+        parameters.OAuthEnable = true
+        parameters.OAuthName = selectedConnector.name
+        parameters.OAuthType = selectedConnector.type
+        parameters.OAuthIconUrl = selectedConnector.iconUrl
+      } else {
+        parameters.OAuthEnable = false
+        parameters.OAuthName = ''
+        parameters.OAuthType = ''
+        parameters.OAuthIconUrl = ''
+      }
+
+      return parameters
     },
 
     isDataValid () {
