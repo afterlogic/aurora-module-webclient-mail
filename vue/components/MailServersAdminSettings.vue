@@ -424,7 +424,7 @@ export default {
       const idRoute = serverId > 0 ? ('/id/' + serverId) : ''
       const path = '/system/mail-servers' + searchRoute + pageRoute + idRoute
       if (path !== this.$route.path) {
-        this.$router.push('/system/mail-servers' + searchRoute + pageRoute + idRoute)
+        this.$router.push(path)
       }
     },
 
