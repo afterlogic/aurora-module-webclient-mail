@@ -20,7 +20,7 @@
               </q-item-label>
             </q-item-section>
             <q-item-section side>
-              <q-btn dense flat no-caps color="primary" :label="$t('COREWEBCLIENT.ACTION_DELETE')"
+              <q-btn dense flat no-caps color="primary" class="no-hover" :label="$t('COREWEBCLIENT.ACTION_DELETE')"
                      @click.native.stop="askDeleteServer(server.name, server.id, server.tenantId)"/>
             </q-item-section>
           </q-item>
