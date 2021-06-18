@@ -241,7 +241,7 @@
         <q-btn unelevated no-caps dense class="q-px-sm" :ripple="false" color="primary" @click="create" v-if="createMode"
                :label="creating ? $t('COREWEBCLIENT.ACTION_CREATE_IN_PROGRESS') : $t('COREWEBCLIENT.ACTION_CREATE')">
         </q-btn>
-        <q-btn unelevated no-caps dense class="q-px-sm q-ml-md" :ripple="false" color="secondary" @click="cancelCreate"
+        <q-btn unelevated no-caps dense class="q-px-sm q-ml-sm" :ripple="false" color="secondary" @click="cancelCreate"
                v-if="createMode" :label="$t('COREWEBCLIENT.ACTION_CANCEL')">
         </q-btn>
       </div>
