@@ -399,6 +399,14 @@ export default {
     }
   },
 
+  beforeRouteUpdate (to, from, next) {
+    if (this.hasChanges() && _.isFunction(this?.$refs?.unsavedChangesDialog?.openConfirmDiscardChangesDialog)) {
+      this.$refs.unsavedChangesDialog.openConfirmDiscardChangesDialog(next)
+    } else {
+      next()
+    }
+  },
+
   mounted () {
     this.saving = false
     this.creating = false
