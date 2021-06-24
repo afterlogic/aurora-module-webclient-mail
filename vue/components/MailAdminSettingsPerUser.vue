@@ -101,35 +101,37 @@ export default {
       })
     },
     updateSettingsForEntity () {
-      this.saving = true
-      const parameters = {
-        Type: 'User',
-        UserId: this.user?.id,
-        TenantId: this.user.tenantId,
-        UserSpaceLimitMb: typesUtils.pInt(this.userSpaceLimitMb),
-      }
-      webApi.sendRequest({
-        moduleName: 'Mail',
-        methodName: 'UpdateEntitySpaceLimits',
-        parameters
-      }).then(result => {
-        this.saving = false
-        if (result) {
-          cache.getUser(parameters.TenantId, parameters.EntityId).then(({ user }) => {
-            user.updateData([{
-              field: 'Mail::UserSpaceLimitMb',
-              value: parameters.UserSpaceLimitMb
-            }])
-            this.populate()
-          })
-          notification.showReport(this.$t('COREWEBCLIENT.REPORT_SETTINGS_UPDATE_SUCCESS'))
-        } else {
-          notification.showError(this.$t('COREWEBCLIENT.ERROR_SAVING_SETTINGS_FAILED'))
+      if (!this.saving) {
+        this.saving = true
+        const parameters = {
+          Type: 'User',
+          UserId: this.user?.id,
+          TenantId: this.user.tenantId,
+          UserSpaceLimitMb: typesUtils.pInt(this.userSpaceLimitMb),
         }
-      }, response => {
-        this.saving = false
-        notification.showError(errors.getTextFromResponse(response, this.$t('COREWEBCLIENT.ERROR_SAVING_SETTINGS_FAILED')))
-      })
+        webApi.sendRequest({
+          moduleName: 'Mail',
+          methodName: 'UpdateEntitySpaceLimits',
+          parameters
+        }).then(result => {
+          this.saving = false
+          if (result) {
+            cache.getUser(parameters.TenantId, parameters.EntityId).then(({ user }) => {
+              user.updateData([{
+                field: 'Mail::UserSpaceLimitMb',
+                value: parameters.UserSpaceLimitMb
+              }])
+              this.populate()
+            })
+            notification.showReport(this.$t('COREWEBCLIENT.REPORT_SETTINGS_UPDATE_SUCCESS'))
+          } else {
+            notification.showError(this.$t('COREWEBCLIENT.ERROR_SAVING_SETTINGS_FAILED'))
+          }
+        }, response => {
+          this.saving = false
+          notification.showError(errors.getTextFromResponse(response, this.$t('COREWEBCLIENT.ERROR_SAVING_SETTINGS_FAILED')))
+        })
+      }
     },
   }
 }
