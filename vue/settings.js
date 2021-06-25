@@ -5,19 +5,15 @@ import typesUtils from 'src/utils/types'
 class MailSettings {
   constructor(appData) {
     const mailData = typesUtils.pObject(appData.Mail)
+    this.allowChangeMailQuotaOnMailServer = typesUtils.pBool(mailData.AllowChangeMailQuotaOnMailServer)
+    this.allowMultiAccounts = typesUtils.pBool(mailData.AllowMultiAccounts)
+    this.allowEditDomainsInServer = typesUtils.pBool(mailData.AllowEditDomainsInServer, true)
+    this.autocreateMailAccountOnNewUserFirstLogin = typesUtils.pBool(mailData.AutocreateMailAccountOnNewUserFirstLogin)
+    this.smtpAuthTypeEnum = typesUtils.pObject(mailData.SmtpAuthType)
+
     const mailWebclientData = typesUtils.pObject(appData.MailWebclient)
-
-    if (!_.isEmpty(mailData)) {
-      this.allowMultiAccounts = typesUtils.pBool(mailData.AllowMultiAccounts)
-      this.allowEditDomainsInServer = typesUtils.pBool(mailData.AllowEditDomainsInServer, true)
-      this.autocreateMailAccountOnNewUserFirstLogin = typesUtils.pBool(mailData.AutocreateMailAccountOnNewUserFirstLogin)
-      this.smtpAuthTypeEnum = typesUtils.pObject(mailData.SmtpAuthType)
-    }
-
-    if (!_.isEmpty(mailWebclientData)) {
-      this.allowHorizontalLayout = typesUtils.pBool(mailWebclientData.AllowHorizontalLayout)
-      this.horizontalLayoutByDefault = this.allowHorizontalLayout && typesUtils.pBool(mailWebclientData.HorizontalLayoutByDefault)
-    }
+    this.allowHorizontalLayout = typesUtils.pBool(mailWebclientData.AllowHorizontalLayout)
+    this.horizontalLayoutByDefault = this.allowHorizontalLayout && typesUtils.pBool(mailWebclientData.HorizontalLayoutByDefault)
   }
 
   saveEditableByAdmin ({ autocreateMailAccountOnNewUserFirstLogin, allowMultiAccounts, horizontalLayoutByDefault }) {
@@ -34,12 +30,16 @@ export default {
     settings = new MailSettings(appData)
   },
 
+  getAllowChangeMailQuotaOnMailServer () {
+    return settings.allowChangeMailQuotaOnMailServer
+  },
+
   getEditableByAdmin () {
     return {
-      allowMultiAccounts: settings?.allowMultiAccounts || false,
-      autocreateMailAccountOnNewUserFirstLogin: settings?.autocreateMailAccountOnNewUserFirstLogin || false,
-      allowHorizontalLayout: settings?.allowHorizontalLayout || false,
-      horizontalLayoutByDefault: settings?.horizontalLayoutByDefault || false,
+      allowMultiAccounts: settings.allowMultiAccounts,
+      autocreateMailAccountOnNewUserFirstLogin: settings.autocreateMailAccountOnNewUserFirstLogin,
+      allowHorizontalLayout: settings.allowHorizontalLayout,
+      horizontalLayoutByDefault: settings.horizontalLayoutByDefault,
     }
   },
 
