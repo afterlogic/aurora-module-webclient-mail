@@ -1,21 +1,21 @@
 <template>
   <q-scroll-area class="full-height full-width">
-    <div class="q-pa-md">
+    <div class="q-pa-lg">
       <div class="row q-mb-md">
-        <div class="col text-h5"> <div class="q-my-sm">{{ $t('MAILWEBCLIENT.HEADING_SETTINGS_TAB') }}</div></div>
+        <div class="col text-h5">{{$t('MAILWEBCLIENT.HEADING_SETTINGS_TAB') }}</div>
       </div>
       <q-card flat bordered class="card-edit-settings">
         <q-card-section>
           <div class="row">
-            <div class="col-3">
+            <div class="col-2">
               <div class="q-my-sm">
                 {{ $t('MAILWEBCLIENT.LABEL_USER_SPACE_LIMIT') }}
               </div>
             </div>
-            <div class="q-ml-md col-8">
-              <div class="flex">
-                <q-input outlined dense class="bg-white q-ml-sm" v-model="userSpaceLimitMb"/>
-                <div class="q-ma-sm" v-t="'COREWEBCLIENT.LABEL_MEGABYTES'"></div>
+            <div class="col-4">
+              <div class="row">
+                <q-input outlined dense class="bg-white col-4" v-model="userSpaceLimitMb"/>
+                <div class="q-ma-sm col-1" v-t="'COREWEBCLIENT.LABEL_MEGABYTES'"></div>
               </div>
             </div>
           </div>

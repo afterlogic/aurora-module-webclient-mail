@@ -50,33 +50,33 @@
       <q-card flat bordered class="card-edit-settings" v-if="showServerFields || createMode">
         <q-card-section>
           <div class="row q-mb-md" v-if="createMode">
-            <div class="col-1 q-my-sm required-field" v-t="'MAILWEBCLIENT.LABEL_TENANT'"></div>
-            <div class="col-3">
+            <div class="col-2 q-my-sm q-pl-sm required-field" v-t="'MAILWEBCLIENT.LABEL_TENANT'"></div>
+            <div class="col-5">
               <q-select outlined dense class="bg-white" v-model="selectedTenantId"
                         emit-value map-options :options="tenantOptions" />
             </div>
           </div>
           <div class="row">
-            <div class="col-1 q-my-sm required-field" v-t="'MAILWEBCLIENT.LABEL_DISPLAY_NAME'"></div>
-            <div class="col-3">
+            <div class="col-2 q-my-sm q-pl-sm required-field" v-t="'MAILWEBCLIENT.LABEL_DISPLAY_NAME'"></div>
+            <div class="col-5">
               <q-input outlined dense class="bg-white" v-model="serverName" ref="serverName"></q-input>
             </div>
           </div>
           <div class="row q-mt-sm q-mb-lg">
-            <div class="col-1"></div>
+            <div class="col-2"></div>
             <div class="col-9">
               <q-item-label caption v-t="'MAILWEBCLIENT.LABEL_HINT_DISPLAY_NAME'" />
             </div>
           </div>
           <div class="row" v-if="allowEditDomainsInServer || !createMode">
-            <div class="col-1 required-field" v-t="'MAILWEBCLIENT.LABEL_DOMAINS'"></div>
+            <div class="col-2 q-pl-sm required-field" v-t="'MAILWEBCLIENT.LABEL_DOMAINS'"></div>
             <div class="col-3">
               <q-input outlined dense class="bg-white" type="textarea" rows="2" v-model="domains" ref="domains"
                        :disable="!allowEditDomainsInServer" />
             </div>
           </div>
           <div class="row q-mt-sm q-mb-lg">
-            <div class="col-1"></div>
+            <div class="col-2"></div>
             <div class="col-9" v-if="allowEditDomainsInServer || !createMode">
               <q-item-label caption v-t="'MAILWEBCLIENT.LABEL_HINT_DOMAINS'" v-if="allowEditDomainsInServer" />
               <q-item-label caption class="text-weight-bold q-mt-md" v-t="'MAILWEBCLIENT.LABEL_HINT_DOMAINS_WILDCARD'" v-if="allowEditDomainsInServer" />
@@ -84,12 +84,12 @@
             </div>
           </div>
           <div class="row q-mb-md">
-            <div class="col-1 q-my-sm required-field" v-t="'MAILWEBCLIENT.LABEL_IMAP_SERVER'"></div>
+            <div class="col-2 q-my-sm q-pl-sm required-field" v-t="'MAILWEBCLIENT.LABEL_IMAP_SERVER'"></div>
             <div class="col-3">
               <q-input outlined dense class="bg-white" v-model="imapServer" ref="imapServer"
                        @blur="fillUpSmtpServerFromImapServer"></q-input>
             </div>
-            <div class="col-1 q-my-sm text-right q-pr-md required-field" v-t="'MAILWEBCLIENT.LABEL_PORT'"></div>
+            <div class="col-1 q-my-sm text-right q-pr-md  q-pl-sm required-field" v-t="'MAILWEBCLIENT.LABEL_PORT'"></div>
             <div class="col-1">
               <q-input outlined dense class="bg-white" v-model="imapPort" ref="imapPort"></q-input>
             </div>
@@ -98,11 +98,11 @@
             </div>
           </div>
           <div class="row q-mb-md">
-            <div class="col-1 q-my-sm required-field" v-t="'MAILWEBCLIENT.LABEL_SMTP_SERVER'"></div>
+            <div class="col-2 q-my-sm q-pl-sm required-field" v-t="'MAILWEBCLIENT.LABEL_SMTP_SERVER'"></div>
             <div class="col-3">
               <q-input outlined dense class="bg-white" v-model="smtpServer" ref="smtpServer"></q-input>
             </div>
-            <div class="col-1 q-my-sm text-right q-pr-md required-field" v-t="'MAILWEBCLIENT.LABEL_PORT'"></div>
+            <div class="col-1 q-my-sm text-right q-pr-md q-pl-sm required-field" v-t="'MAILWEBCLIENT.LABEL_PORT'"></div>
             <div class="col-1">
               <q-input outlined dense class="bg-white" v-model="smtpPort" ref="smtpPort"></q-input>
             </div>
@@ -111,16 +111,16 @@
             </div>
           </div>
           <div class="row q-mb-md">
-            <div class="col-1"></div>
+            <div class="col-2"></div>
             <div class="col-6">
               <q-item-label v-t="'MAILWEBCLIENT.LABEL_SMTP_AUTHENTICATION'" />
-              <q-list dense>
-                <q-item tag="label">
+              <q-list dense >
+                <q-item manual-focus tag="label">
                   <q-item-section class="q-pr-none">
                     <q-radio v-model="smtpAuthentication" :val="smtpAuthTypeEnum.NoAuthentication" :label="$t('MAILWEBCLIENT.LABEL_USE_SPECIFIED_CREDENTIALS')" />
                   </q-item-section>
                 </q-item>
-                <q-item tag="label">
+                <q-item manual-focustag="label">
                   <q-item-section avatar>
                     <q-radio v-model="smtpAuthentication" :val="smtpAuthTypeEnum.UseSpecifiedCredentials" :label="$t('MAILWEBCLIENT.LABEL_USE_SPECIFIED_CREDENTIALS')" />
                   </q-item-section>
@@ -131,7 +131,7 @@
                     <q-input outlined dense class="bg-white" type="password" v-model="smtpPassword" :placeholder="$t('COREWEBCLIENT.LABEL_PASSWORD')"></q-input>
                   </q-item-section>
                 </q-item>
-                <q-item tag="label">
+                <q-item manual-focus tag="label">
                   <q-item-section>
                     <q-radio v-model="smtpAuthentication" :val="smtpAuthTypeEnum.UseUserCredentials" :label="$t('MAILWEBCLIENT.LABEL_USE_USER_CREDENTIALS')" />
                   </q-item-section>
@@ -140,33 +140,33 @@
             </div>
           </div>
           <div class="row q-mb-md">
-            <div class="col-1"></div>
-            <div class="col-9">
+            <div class="col-2"></div>
+            <div class="col-5">
               <q-checkbox dense v-model="enableSieve" :label="$t('MAILWEBCLIENT.LABEL_ENABLE_SIEVE')" />
             </div>
           </div>
           <div class="row q-mb-md">
-            <div class="col-1 q-my-sm" v-t="'MAILWEBCLIENT.LABEL_SIEVE_PORT'"></div>
-            <div class="col-3">
+            <div class="col-2 q-my-sm" v-t="'MAILWEBCLIENT.LABEL_SIEVE_PORT'"></div>
+            <div class="col-5">
               <q-input outlined dense class="bg-white" v-model="sievePort"></q-input>
             </div>
           </div>
           <div class="row q-mb-md">
-            <div class="col-1"></div>
-            <div class="col-9">
+            <div class="col-2"></div>
+            <div class="col-5">
               <q-checkbox dense v-model="useThreading" :label="$t('MAILWEBCLIENT.LABEL_USE_THREADING')" />
             </div>
           </div>
           <div class="row q-mb-sm">
-            <div class="col-1"></div>
-            <div class="col-9">
+            <div class="col-2"></div>
+            <div class="col-5">
               <q-checkbox dense v-model="useFullEmail"
                           :label="$t('MAILWEBCLIENT.LABEL_USE_FULL_EMAIL_ADDRESS_AS_LOGIN')" />
             </div>
           </div>
           <div class="row q-mb-md">
-            <div class="col-1"></div>
-            <div class="col-9">
+            <div class="col-2"></div>
+            <div class="col-5">
               <q-item-label caption v-t="'MAILWEBCLIENT.LABEL_HINT_USE_FULL_EMAIL_ADDRESS_AS_LOGIN'" />
             </div>
           </div>
@@ -187,7 +187,7 @@
             </div>
           </div>
           <div class="row q-mb-md">
-            <div class="col-1 q-my-sm" v-t="'MAILWEBCLIENT.LABEL_IMAP_SERVER'"
+            <div class="col-2 q-my-sm" v-t="'MAILWEBCLIENT.LABEL_IMAP_SERVER'"
                  :class="setExternalAccessServers ? '' : 'disabled'"></div>
             <div class="col-3">
               <q-input outlined dense class="bg-white" v-model="externalAccessImapServer"
@@ -201,7 +201,7 @@
             </div>
           </div>
           <div class="row q-mb-md">
-            <div class="col-1 q-my-sm" v-t="'MAILWEBCLIENT.LABEL_SMTP_SERVER'"
+            <div class="col-2 q-my-sm" v-t="'MAILWEBCLIENT.LABEL_SMTP_SERVER'"
                  :class="setExternalAccessServers ? '' : 'disabled'"></div>
             <div class="col-3">
               <q-input outlined dense class="bg-white" v-model="externalAccessSmtpServer"
@@ -223,7 +223,7 @@
             <div class="col-6">
               <q-item-label v-t="'MAILWEBCLIENT.INFO_ADMIN_OAUTH'" />
               <q-list dense>
-                <q-item tag="label" v-for="data in oauthConnectorsData" :key="data.type">
+                <q-item manual-focus tag="label" v-for="data in oauthConnectorsData" :key="data.type">
                   <q-item-section class="q-pr-none">
                     <q-radio v-model="oauthConnector" :val="data.type" :label="data.name" />
                   </q-item-section>
@@ -234,7 +234,7 @@
         </q-card-section>
       </q-card>
 
-      <div class="q-pa-md text-right" v-if="showServerFields || createMode">
+      <div class="q-pt-md text-right" v-if="showServerFields || createMode">
         <q-btn unelevated no-caps dense class="q-px-sm" :ripple="false" color="primary" @click="save" v-if="!createMode"
                :label="saving ? $t('COREWEBCLIENT.ACTION_SAVE_IN_PROGRESS') : $t('COREWEBCLIENT.ACTION_SAVE')">
         </q-btn>
@@ -435,7 +435,6 @@ export default {
         this.$router.push(path)
       }
     },
-
     populateOauthConnectorsData () {
       const params = {
         oauthConnectorsData: []
