@@ -1,4 +1,3 @@
-import _ from 'lodash'
 
 import typesUtils from 'src/utils/types'
 

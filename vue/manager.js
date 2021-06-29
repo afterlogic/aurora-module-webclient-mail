@@ -61,4 +61,22 @@ export default {
 
     return []
   },
+
+  getAdminTenantTabs () {
+    return [
+      {
+        tabName: 'mail-quota',
+        paths: [
+          'id/:id/mail-quota',
+          'search/:search/id/:id/mail-quota',
+          'page/:page/id/:id/mail-quota',
+          'search/:search/page/:page/id/:id/mail-quota',
+        ],
+        title: 'MAILWEBCLIENT.HEADING_BROWSER_TAB',
+        component () {
+          return import('src/../../../MailWebClient/vue/components/MailAdminSettingsPerTenant')
+        }
+      }
+    ]
+  },
 }
