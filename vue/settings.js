@@ -1,12 +1,23 @@
+import eventBus from 'src/event-bus'
 
 import typesUtils from 'src/utils/types'
+
+function _getAllowEditDomainsInServer (mailData) {
+  let allowEditDomainsInServer = typesUtils.pBool(mailData.AllowEditDomainsInServer, true)
+  const params = { disableEditDomainsInServer: false }
+  eventBus.$emit('MailWebclient::DisableEditDomainsInServer', params)
+  if (params.disableEditDomainsInServer) {
+    allowEditDomainsInServer = false
+  }
+  return allowEditDomainsInServer
+}
 
 class MailSettings {
   constructor(appData) {
     const mailData = typesUtils.pObject(appData.Mail)
     this.allowChangeMailQuotaOnMailServer = typesUtils.pBool(mailData.AllowChangeMailQuotaOnMailServer)
     this.allowMultiAccounts = typesUtils.pBool(mailData.AllowMultiAccounts)
-    this.allowEditDomainsInServer = typesUtils.pBool(mailData.AllowEditDomainsInServer, true)
+    this.allowEditDomainsInServer = _getAllowEditDomainsInServer(mailData)
     this.autocreateMailAccountOnNewUserFirstLogin = typesUtils.pBool(mailData.AutocreateMailAccountOnNewUserFirstLogin)
     this.smtpAuthTypeEnum = typesUtils.pObject(mailData.SmtpAuthType)
 

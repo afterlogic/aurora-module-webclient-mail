@@ -49,7 +49,7 @@
 
       <q-card flat bordered class="card-edit-settings" v-if="showServerFields || createMode">
         <q-card-section>
-          <div class="row q-mb-md" v-if="createMode">
+          <div class="row q-mb-md" v-if="createMode && tenantOptions.length > 1">
             <div class="col-2 q-my-sm q-pl-sm required-field" v-t="'MAILWEBCLIENT.LABEL_TENANT'"></div>
             <div class="col-5">
               <q-select outlined dense class="bg-white" v-model="selectedTenantId"
@@ -75,9 +75,9 @@
                        :disable="!allowEditDomainsInServer" />
             </div>
           </div>
-          <div class="row q-mt-sm q-mb-lg">
+          <div class="row q-mt-sm q-mb-lg" v-if="allowEditDomainsInServer || !createMode">
             <div class="col-2"></div>
-            <div class="col-9" v-if="allowEditDomainsInServer || !createMode">
+            <div class="col-9">
               <q-item-label caption v-t="'MAILWEBCLIENT.LABEL_HINT_DOMAINS'" v-if="allowEditDomainsInServer" />
               <q-item-label caption class="text-weight-bold q-mt-md" v-t="'MAILWEBCLIENT.LABEL_HINT_DOMAINS_WILDCARD'" v-if="allowEditDomainsInServer" />
               <q-item-label caption v-html="$t('MAILWEBCLIENT.LABEL_HINT_DOMAINS_CANNOT_EDIT_HTML')" v-if="!allowEditDomainsInServer" />
@@ -425,9 +425,11 @@ export default {
     const tenantOptions = [
       { label: 'system-wide', value: 0 },
     ]
-    tenants.forEach(tenant => {
-      tenantOptions.push({ label: tenant.name, value: tenant.id })
-    })
+    if (tenants.length > 1) {
+      tenants.forEach(tenant => {
+        tenantOptions.push({ label: tenant.name, value: tenant.id })
+      })
+    }
     this.tenantOptions = tenantOptions
 
     this.populateOauthConnectorsData()
