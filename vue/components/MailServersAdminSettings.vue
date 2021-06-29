@@ -115,14 +115,18 @@
             <div class="col-6">
               <q-item-label v-t="'MAILWEBCLIENT.LABEL_SMTP_AUTHENTICATION'" />
               <q-list dense >
-                <q-item manual-focus tag="label">
+                <q-item manual-focus>
                   <q-item-section class="q-pr-none">
+                    <span>
                     <q-radio v-model="smtpAuthentication" :val="smtpAuthTypeEnum.NoAuthentication" :label="$t('MAILWEBCLIENT.LABEL_USE_SPECIFIED_CREDENTIALS')" />
+                    </span>
                   </q-item-section>
                 </q-item>
-                <q-item manual-focustag="label">
+                <q-item manual-focus>
                   <q-item-section avatar>
-                    <q-radio v-model="smtpAuthentication" :val="smtpAuthTypeEnum.UseSpecifiedCredentials" :label="$t('MAILWEBCLIENT.LABEL_USE_SPECIFIED_CREDENTIALS')" />
+                    <span>
+                      <q-radio v-model="smtpAuthentication" :val="smtpAuthTypeEnum.UseSpecifiedCredentials" :label="$t('MAILWEBCLIENT.LABEL_USE_SPECIFIED_CREDENTIALS')" />
+                    </span>
                   </q-item-section>
                   <q-item-section>
                     <q-input outlined dense class="bg-white" v-model="smtpLogin" :placeholder="$t('COREWEBCLIENT.LABEL_LOGIN')"></q-input>
@@ -131,9 +135,12 @@
                     <q-input outlined dense class="bg-white" type="password" v-model="smtpPassword" :placeholder="$t('COREWEBCLIENT.LABEL_PASSWORD')"></q-input>
                   </q-item-section>
                 </q-item>
-                <q-item manual-focus tag="label">
+                <q-item manual-focus>
                   <q-item-section>
-                    <q-radio v-model="smtpAuthentication" :val="smtpAuthTypeEnum.UseUserCredentials" :label="$t('MAILWEBCLIENT.LABEL_USE_USER_CREDENTIALS')" />
+                    <span>
+                    <q-radio v-model="smtpAuthentication" :val="smtpAuthTypeEnum.UseUserCredentials"
+                             :label="$t('MAILWEBCLIENT.LABEL_USE_USER_CREDENTIALS')"/>
+                    </span>
                   </q-item-section>
                 </q-item>
               </q-list>
@@ -223,9 +230,11 @@
             <div class="col-6">
               <q-item-label v-t="'MAILWEBCLIENT.INFO_ADMIN_OAUTH'" />
               <q-list dense>
-                <q-item manual-focus tag="label" v-for="data in oauthConnectorsData" :key="data.type">
+                <q-item manual-focus v-for="data in oauthConnectorsData" :key="data.type">
                   <q-item-section class="q-pr-none">
-                    <q-radio v-model="oauthConnector" :val="data.type" :label="data.name" />
+                    <span>
+                      <q-radio v-model="oauthConnector" :val="data.type" :label="data.name" />
+                    </span>
                   </q-item-section>
                 </q-item>
               </q-list>
