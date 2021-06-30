@@ -22,13 +22,13 @@ function AddQuotaSettingsView(Settings, ModulesManager, TextUtils)
 
 module.exports = function (oAppData) {
 	require('modules/%ModuleName%/js/enums.js');
-	
+
 	var
 		_ = require('underscore'),
 		ko = require('knockout'),
 
 		TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
-		
+
 		App = require('%PathToCoreWebclientModule%/js/App.js'),
 		ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 
@@ -38,19 +38,19 @@ module.exports = function (oAppData) {
 
 		AccountList = null,
 		ComposeView = null,
-		
+
 		HeaderItemView = null
 	;
-	
+
 	Settings.init(oAppData);
-	
+
 	if (!ModulesManager.isModuleAvailable(Settings.ServerModuleName))
 	{
 		return null;
 	}
-	
+
 	AccountList = require('modules/MailWebclient/js/AccountList.js');
-	
+
 	if (bAdminUser)
 	{
 		return {
@@ -95,7 +95,7 @@ module.exports = function (oAppData) {
 	{
 		var Cache = require('modules/%ModuleName%/js/Cache.js');
 		Cache.init();
-		
+
 		if (App.isNewTab())
 		{
 			var GetComposeView = function() {
@@ -124,6 +124,10 @@ module.exports = function (oAppData) {
 				registerComposeToolbarController: function (oController) {
 					var ComposeView = GetComposeView();
 					ComposeView.registerToolbarController(oController);
+				},
+				registerComposeMessageRowController: function (oController) {
+					var ComposeView = GetComposeView();
+					ComposeView.registerMessageRowController(oController);
 				},
 				getComposeMessageWithData: function () {
 					var
@@ -195,6 +199,10 @@ module.exports = function (oAppData) {
 				registerComposeToolbarController: function (oController) {
 					var ComposePopup = require('modules/%ModuleName%/js/popups/ComposePopup.js');
 					ComposePopup.registerToolbarController(oController);
+				},
+				registerComposeMessageRowController: function (oController) {
+					var ComposePopup = require('modules/%ModuleName%/js/popups/ComposePopup.js');
+					ComposePopup.registerMessageRowController(oController);
 				},
 				getSearchMessagesInInbox: function () {
 					return _.bind(Cache.searchMessagesInInbox, Cache);
@@ -289,7 +297,7 @@ module.exports = function (oAppData) {
 							Settings.userMailAccountsCount(aAuthAcconts.length);
 							Settings.mailAccountsEmails(aAuthAccountsEmails);
 						}, this);
-						
+
 						if (App.getUserRole() === Enums.UserRole.TenantAdmin)
 						{
 							AddQuotaSettingsView(Settings, ModulesManager, TextUtils);
@@ -308,7 +316,7 @@ module.exports = function (oAppData) {
 						{
 							HeaderItemView = require('modules/%ModuleName%/js/views/HeaderItemView.js');
 						}
-						
+
 						return {
 							item: HeaderItemView,
 							name: Settings.HashModuleName
@@ -323,6 +331,6 @@ module.exports = function (oAppData) {
 			return oMethods;
 		}
 	}
-	
+
 	return null;
 };

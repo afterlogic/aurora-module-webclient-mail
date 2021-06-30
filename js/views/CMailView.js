@@ -4,24 +4,24 @@ var
 	_ = require('underscore'),
 	$ = require('jquery'),
 	ko = require('knockout'),
-	
+
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	Utils = require('%PathToCoreWebclientModule%/js/utils/Common.js'),
-	
+
 	App = require('%PathToCoreWebclientModule%/js/App.js'),
 	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
 	WindowOpener = require('%PathToCoreWebclientModule%/js/WindowOpener.js'),
-	
+
 	CAbstractScreenView = require('%PathToCoreWebclientModule%/js/views/CAbstractScreenView.js'),
-	
+
 	ComposeUtils = require('modules/%ModuleName%/js/utils/Compose.js'),
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
-	
+
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	MailCache = require('modules/%ModuleName%/js/Cache.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
-	
+
 	CFolderListView = require('modules/%ModuleName%/js/views/CFolderListView.js'),
 	CMessageListView = require('modules/%ModuleName%/js/views/CMessageListView.js'),
 	MessagePaneView = require('modules/%ModuleName%/js/views/MessagePaneView.js')
@@ -33,22 +33,22 @@ var
 function CMailView()
 {
 	CAbstractScreenView.call(this, '%ModuleName%');
-	
+
 	App.broadcastEvent('%ModuleName%::ConstructView::before', {'Name': this.ViewConstructorName, 'View': this, 'MailCache': MailCache});
-	
+
 	this.browserTitle = ko.computed(function () {
 		return AccountList.getEmail() + ' - ' + TextUtils.i18n('%MODULENAME%/HEADING_BROWSER_TAB');
 	});
-	
+
 	this.folderList = MailCache.folderList;
 	this.domFoldersMoveTo = ko.observable(null);
-	
+
 	this.openMessageInNewWindowBound = _.bind(this.openMessageInNewWindow, this);
-	
+
 	this.oFolderList = new CFolderListView();
 	this.isUnifiedFolderCurrent = MailCache.oUnifiedInbox.selected;
 	this.oMessageList = new CMessageListView(this.openMessageInNewWindowBound);
-	
+
 	this.oBaseMessagePaneView = MessagePaneView;
 	this.messagePane = ko.observable(this.oBaseMessagePaneView);
 	this.messagePane().openMessageInNewWindowBound = this.openMessageInNewWindowBound;
@@ -110,8 +110,10 @@ function CMailView()
 	App.broadcastEvent('%ModuleName%::AddMessageListToolbarCommand', {
 		AddPreviewPaneToolbarCommand: _.bind(function (oCommand) {
 			var oNewCommand = _.extend({
-				'Text': '', 'CssClass': '', 'Handler': function () {
-				}
+				'Text': '',
+				'CssClass': '',
+				'Handler': function () {},
+				'Visible': true
 			}, oCommand);
 			oNewCommand.Command = Utils.createCommand(this, oNewCommand.Handler, this.isCurrentMessageLoaded);
 			this.otherToolbarCommands.push(oNewCommand);
@@ -135,31 +137,31 @@ function CMailView()
 	this.isSpamFolder = ko.computed(function () {
 		return MailCache.getCurrentFolderType() === Enums.FolderTypes.Spam;
 	}, this);
-	
+
 	this.customModulesDisabledSpam = ko.observableArray([]);
 	this.allowedSpamAction = ko.computed(function () {
 		return Settings.AllowSpamFolder && this.folderList().spamFolder() && !this.isSpamFolder() && !Types.isNonEmptyArray(this.customModulesDisabledSpam());
 	}, this);
-	
+
 	this.allowedNotSpamAction = ko.computed(function () {
 		return Settings.AllowSpamFolder && this.isSpamFolder();
 	}, this);
-	
+
 	this.isTrashFolder = ko.computed(function () {
 		return MailCache.getCurrentFolderType() === Enums.FolderTypes.Trash;
 	}, this);
 
 	this.jqPanelHelper = null;
-	
+
 	if (Settings.HorizontalLayout)
 	{
 		$('html').addClass('layout-horiz-split');
 	}
-	
+
 	App.subscribeEvent('CoreWebclient::GetDebugInfo', _.bind(function (oParams) {
 		oParams.Info.push('checkMailStarted: ' + MailCache.checkMailStarted() + ', messagesLoading: ' + MailCache.messagesLoading());
 	}, this));
-	
+
 	App.broadcastEvent('%ModuleName%::ConstructView::after', {'Name': this.ViewConstructorName, 'View': this});
 }
 
@@ -196,10 +198,10 @@ CMailView.prototype.setCustomPreviewPane = function (sModuleName, oPreviewPane)
 		{
 			this.messagePane().onHide();
 		}
-		
+
 		oPreviewPane.__customModuleName = sModuleName;
 		this.messagePane(oPreviewPane);
-		
+
 		if (_.isFunction(this.messagePane().onShow))
 		{
 			this.messagePane().onShow();
@@ -215,9 +217,9 @@ CMailView.prototype.removeCustomPreviewPane = function (sModuleName)
 		{
 			this.messagePane().onHide();
 		}
-		
+
 		this.messagePane(this.oBaseMessagePaneView);
-		
+
 		if (_.isFunction(this.messagePane().onShow))
 		{
 			this.messagePane().onShow();
@@ -348,17 +350,17 @@ CMailView.prototype.onRoute = function (aParams)
 		Routing.replaceHash(['settings', 'mail-accounts', 'account', 'create']);
 		return;
 	}
-	
+
 	var oParams = LinksUtils.parseMailbox(aParams);
-	
+
 	AccountList.changeCurrentAccountByHash(oParams.AccountHash);
-	
+
 	this.oMessageList.onRoute(aParams);
 	if (_.isFunction(this.messagePane().onRoute))
 	{
 		this.messagePane().onRoute(aParams, oParams);
 	}
-	
+
 	if (oParams.MailtoCompose)
 	{
 		if (App.isMobile())
@@ -407,7 +409,7 @@ CMailView.prototype.bindMessagePane = function ()
 CMailView.prototype.onBind = function ()
 {
 	var oMessageList = this.oMessageList;
-	
+
 	this.oMessageList.onBind(this.$viewDom);
 	this.bindMessagePane();
 
@@ -442,7 +444,7 @@ CMailView.prototype.hotKeysBind = function ()
 			oFirstMessage = oList.collection()[0],
 			bGotoSearch = oFirstMessage && MailCache.currentMessage() && oFirstMessage.uid() === MailCache.currentMessage().uid()
 		;
-		
+
 		if (bComputed && sKey === Enums.Key.s || bComputed && bGotoSearch && sKey === Enums.Key.Up)
 		{
 			ev.preventDefault();
@@ -488,7 +490,7 @@ CMailView.prototype.dragAndDropHelper = function (oMessage, bCtrl)
 		aUids = this.oMessageList.checkedOrSelectedUids(),
 		iCount = aUids.length
 	;
-		
+
 	oHelper.data('p7-message-list-folder', MailCache.getCurrentFolderFullname());
 	oHelper.data('p7-message-list-uids', aUids);
 
@@ -525,7 +527,7 @@ CMailView.prototype.messagesDrop = function (oToFolder, oEvent, oUi)
 			{
 				this.oMessageList.executeMoveToFolder(oToFolder.fullName());
 			}
-			
+
 			this.uncheckMessages();
 		}
 	}

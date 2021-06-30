@@ -4,7 +4,7 @@
 			<div class="toolbar">
 				<span class="content">
 					<!-- ko template: {name: sPopupButtonsViewTemplate} --><!-- /ko -->
-					
+
 					<!-- ko foreach: toolbarControllers -->
 						<!-- ko if: !bSendButton -->
 							<!-- ko template: { name: $data.ViewTemplate, data: $data} --><!-- /ko -->
@@ -112,6 +112,11 @@
 													   data-bind="value: subject, hasfocus: subjectFocused, valueUpdate: 'afterkeydown'"/>
 											</td>
 										</tr>
+										<!-- ko if: !headersCompressed() -->
+											<!-- ko foreach: messageRowControllers -->
+												<!-- ko template: { name: $data.ViewTemplate, data: $data} --><!-- /ko -->
+											<!-- /ko -->
+										<!-- /ko -->
 									</table>
 								</div>
 								<div class="panel_center">
