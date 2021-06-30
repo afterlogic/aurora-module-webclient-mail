@@ -4,10 +4,10 @@ import core from 'src/core'
 
 import settings from 'src/../../../MailWebclient/vue/settings'
 
-const smtpAuthTypeEnum = settings.getSmtpAuthTypeEnum()
-
 class MailServer {
   constructor(serverData) {
+    const smtpAuthTypeEnum = settings.getSmtpAuthTypeEnum()
+
     this.id = typesUtils.pInt(serverData?.EntityId) || typesUtils.pInt(serverData?.ServerId)
     this.tenantId = typesUtils.pInt(serverData?.TenantId)
     this.tenantName = core.getTenantName(this.tenantId)
