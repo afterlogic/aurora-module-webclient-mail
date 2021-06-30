@@ -42,7 +42,6 @@ import typesUtils from 'src/utils/types'
 import webApi from 'src/utils/web-api'
 
 import cache from 'src/cache'
-import core from 'src/core'
 
 import UnsavedChangesDialog from 'src/components/UnsavedChangesDialog'
 
@@ -90,7 +89,7 @@ export default {
     },
     populate () {
       this.loading = true
-      const currentTenantId = core.getCurrentTenantId()
+      const currentTenantId = this.$store.getters['tenants/getCurrentTenantId']
       cache.getUser(currentTenantId, this.user.id).then(({ user, userId }) => {
         if (userId === this.user.id) {
           this.loading = false
