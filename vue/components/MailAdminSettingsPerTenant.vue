@@ -8,9 +8,7 @@
         <q-card-section>
           <div class="row q-mb-sm">
             <div class="col-2">
-              <div class="q-my-sm">
-                {{ $t('MAILWEBCLIENT.LABEL_TENANT_SPACE_LIMIT') }}
-              </div>
+              <div class="q-my-sm" v-t="'MAILWEBCLIENT.LABEL_TENANT_SPACE_LIMIT'" />
             </div>
             <div class="col-4">
               <div class="row">
@@ -29,9 +27,7 @@
           </div>
           <div class="row">
             <div class="col-2">
-              <div class="q-my-sm">
-                {{ $t('MAILWEBCLIENT.LABEL_USER_SPACE_LIMIT') }}
-              </div>
+              <div class="q-my-sm" v-t="'MAILWEBCLIENT.LABEL_USER_SPACE_LIMIT'" />
             </div>
             <div class="col-4">
               <div class="row">
@@ -50,9 +46,7 @@
           </div>
           <div class="row">
             <div class="col-2">
-              <div class="q-my-sm">
-                {{ $t('MAILWEBCLIENT.LABEL_ALLOCATED_TENANT_SPACE') }}
-              </div>
+              <div class="q-my-sm" v-t="'MAILWEBCLIENT.LABEL_ALLOCATED_TENANT_SPACE'" />
             </div>
             <div class="col-4">
               <div class="row">
@@ -71,7 +65,6 @@
     </div>
     <UnsavedChangesDialog ref="unsavedChangesDialog"/>
     <q-inner-loading style="justify-content: flex-start;" :showing="loading || saving">
-      <!--      <q-spinner size="50px" color="primary" />-->
       <q-linear-progress query class="q-mt-sm" />
     </q-inner-loading>
   </q-scroll-area>
@@ -119,8 +112,8 @@ export default {
   },
   methods: {
     hasChanges () {
-      const tenantSpaceLimitMb = _.isFunction(this.tenant?.getData) ? this.tenant?.getData('MailWebclient::TenantSpaceLimitMb') : ''
-      const userSpaceLimitMb = _.isFunction(this.tenant?.getData) ? this.tenant?.getData('MailWebclient::UserSpaceLimitMb') : ''
+      const tenantSpaceLimitMb = this.tenant?.completeData['MailWebclient::TenantSpaceLimitMb']
+      const userSpaceLimitMb = this.tenant?.completeData['MailWebclient::UserSpaceLimitMb']
       return this.tenantSpaceLimitMb !== tenantSpaceLimitMb ||
           this.userSpaceLimitMb !== userSpaceLimitMb
     },
