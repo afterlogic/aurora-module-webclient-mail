@@ -18,28 +18,18 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 {
 	/**
 	 * Initializes CoreWebclient Module.
-	 * 
+	 *
 	 * @ignore
 	 */
-	public function init() 
+	public function init()
 	{
-		\Aurora\Modules\Core\Classes\User::extend(
-			self::GetName(),
-			[
-				'AllowChangeInputDirection'		=> array('bool', $this->getConfig('AllowChangeInputDirection', false)),
-				'MailsPerPage'					=> array('int', $this->getConfig('MailsPerPage', 20)),
-				'ShowMessagesCountInFolderList'	=> array('bool', $this->getConfig('ShowMessagesCountInFolderList', false)),
-				'HorizontalLayout'				=> array('bool', $this->getConfig('HorizontalLayoutByDefault', false)),
-			]
-		);		
-		
 		$this->subscribeEvent('Mail::UpdateSettings::after', array($this, 'onAfterUpdateSettings'));
 	}
-	
+
 	public function GetSettings()
 	{
 		\Aurora\System\Api::checkUserRoleIsAtLeast(\Aurora\System\Enums\UserRole::Anonymous);
-		
+
 		$aSettings = array(
 			'AllowAppRegisterMailto' => $this->getConfig('AllowAppRegisterMailto', false),
 			'AllowChangeInputDirection' => $this->getConfig('AllowChangeInputDirection', false),
@@ -68,7 +58,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			'UserLoginPartInAccountDropdown' => $this->getConfig('UserLoginPartInAccountDropdown', false),
 			'UseMeRecipientForMessages' => $this->getConfig('UseMeRecipientForMessages', false),
 		);
-		
+
 		$oUser = \Aurora\System\Api::getAuthenticatedUser();
 		if ($oUser && $oUser->isNormalOrTenant())
 		{
@@ -89,14 +79,14 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 				$aSettings['HorizontalLayout'] = $oUser->{self::GetName().'::HorizontalLayout'};
 			}
 		}
-		
+
 		return $aSettings;
 	}
-	
+
 	public function onAfterUpdateSettings($Args, &$Result)
 	{
 		\Aurora\System\Api::checkUserRoleIsAtLeast(\Aurora\System\Enums\UserRole::NormalUser);
-		
+
 		$oUser = \Aurora\System\Api::getAuthenticatedUser();
 		if ($oUser)
 		{
@@ -105,19 +95,19 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 				$oCoreDecorator = \Aurora\Modules\Core\Module::Decorator();
 				if (isset($Args['MailsPerPage']))
 				{
-					$oUser->{self::GetName().'::MailsPerPage'} = $Args['MailsPerPage'];
+					$oUser->setExtendedProp(self::GetName().'::MailsPerPage', $Args['MailsPerPage']);
 				}
 				if (isset($Args['AllowChangeInputDirection']))
 				{
-					$oUser->{self::GetName().'::AllowChangeInputDirection'} = $Args['AllowChangeInputDirection'];
+					$oUser->setExtendedProp(self::GetName().'::AllowChangeInputDirection', $Args['AllowChangeInputDirection']);
 				}
 				if (isset($Args['ShowMessagesCountInFolderList']))
 				{
-					$oUser->{self::GetName().'::ShowMessagesCountInFolderList'} = $Args['ShowMessagesCountInFolderList'];
+					$oUser->setExtendedProp(self::GetName().'::ShowMessagesCountInFolderList', $Args['ShowMessagesCountInFolderList']);
 				}
 				if ($this->getConfig('AllowHorizontalLayout', false) && isset($Args['HorizontalLayout']))
 				{
-					$oUser->{self::GetName().'::HorizontalLayout'} = $Args['HorizontalLayout'];
+					$oUser->setExtendedProp(self::GetName().'::HorizontalLayout', $Args['HorizontalLayout']);
 				}
 				return $oCoreDecorator->UpdateUserObject($oUser);
 			}
