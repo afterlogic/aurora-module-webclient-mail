@@ -208,6 +208,20 @@
             </div>
           </div>
           <div class="row q-mb-md">
+            <div class="col-2 q-my-sm" v-t="'MAILWEBCLIENT.LABEL_POP3_SERVER'"
+                 :class="setExternalAccessServers ? '' : 'disabled'"></div>
+            <div class="col-3">
+              <q-input outlined dense class="bg-white" v-model="externalAccessPop3Server"
+                       :disable="!setExternalAccessServers"></q-input>
+            </div>
+            <div class="col-1 q-my-sm text-right q-pr-md" v-t="'MAILWEBCLIENT.LABEL_PORT'"
+                 :class="setExternalAccessServers ? '' : 'disabled'"></div>
+            <div class="col-1">
+              <q-input outlined dense class="bg-white" v-model="externalAccessPop3Port"
+                       :disable="!setExternalAccessServers"></q-input>
+            </div>
+          </div>
+          <div class="row q-mb-md">
             <div class="col-2 q-my-sm" v-t="'MAILWEBCLIENT.LABEL_SMTP_SERVER'"
                  :class="setExternalAccessServers ? '' : 'disabled'"></div>
             <div class="col-3">
@@ -328,6 +342,8 @@ export default {
       setExternalAccessServers: false,
       externalAccessImapServer: '',
       externalAccessImapPort: 143,
+      externalAccessPop3Server: '',
+      externalAccessPop3Port: 110,
       externalAccessSmtpServer: '',
       externalAccessSmtpPort: 25,
 
@@ -502,6 +518,8 @@ export default {
         this.setExternalAccessServers = false
         this.externalAccessImapServer = ''
         this.externalAccessImapPort = 143
+        this.externalAccessPop3Server = ''
+        this.externalAccessPop3Port = 110
         this.externalAccessSmtpServer = ''
         this.externalAccessSmtpPort = 25
 
@@ -532,6 +550,8 @@ export default {
           this.setExternalAccessServers = server.setExternalAccessServers
           this.externalAccessImapServer = server.externalAccessImapServer
           this.externalAccessImapPort = server.externalAccessImapPort
+          this.externalAccessPop3Server = server.externalAccessPop3Server
+          this.externalAccessPop3Port = server.externalAccessPop3Port
           this.externalAccessSmtpServer = server.externalAccessSmtpServer
           this.externalAccessSmtpPort = server.externalAccessSmtpPort
 
@@ -554,6 +574,7 @@ export default {
             this.smtpPassword !== '' || this.enableSieve !== false || this.sievePort !== 4190 ||
             this.useThreading !== true || this.useFullEmail !== true || this.setExternalAccessServers !== false ||
             this.externalAccessImapServer !== '' || this.externalAccessImapPort !== 143 ||
+            this.externalAccessPop3Server !== '' || this.externalAccessPop3Port !== 110 ||
             this.externalAccessSmtpServer !== '' || this.externalAccessSmtpPort !== 25 || this.oauthConnector !== ''
       } else {
         const server = this.getServer(this.currentServerId)
@@ -569,6 +590,8 @@ export default {
               server.setExternalAccessServers !== this.setExternalAccessServers ||
               server.externalAccessImapServer !== this.externalAccessImapServer ||
               server.externalAccessImapPort !== this.externalAccessImapPort ||
+              server.externalAccessPop3Server !== this.externalAccessPop3Server ||
+              server.externalAccessPop3Port !== this.externalAccessPop3Port ||
               server.externalAccessSmtpServer !== this.externalAccessSmtpServer ||
               server.externalAccessSmtpPort !== this.externalAccessSmtpPort || server.oauthType !== this.oauthConnector
         } else {
@@ -610,6 +633,8 @@ export default {
         SetExternalAccessServers: this.setExternalAccessServers,
         ExternalAccessImapServer: this.externalAccessImapServer,
         ExternalAccessImapPort: this.externalAccessImapPort,
+        ExternalAccessPop3Server: this.externalAccessPop3Server,
+        ExternalAccessPop3Port: this.externalAccessPop3Port,
         ExternalAccessSmtpServer: this.externalAccessSmtpServer,
         ExternalAccessSmtpPort: this.externalAccessSmtpPort,
       }

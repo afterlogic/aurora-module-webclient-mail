@@ -30,6 +30,8 @@ class MailServer {
     this.setExternalAccessServers = !!(serverData?.SetExternalAccessServers)
     this.externalAccessImapServer = typesUtils.pString(serverData?.ExternalAccessImapServer)
     this.externalAccessImapPort = typesUtils.pInt(serverData?.ExternalAccessImapPort, 143)
+    this.externalAccessPop3Server = typesUtils.pString(serverData?.ExternalAccessPop3Server)
+    this.externalAccessPop3Port = typesUtils.pInt(serverData?.ExternalAccessPop3Port, 110)
     this.externalAccessSmtpServer = typesUtils.pString(serverData?.ExternalAccessSmtpServer)
     this.externalAccessSmtpPort = typesUtils.pInt(serverData?.ExternalAccessSmtpPort, 25)
 
