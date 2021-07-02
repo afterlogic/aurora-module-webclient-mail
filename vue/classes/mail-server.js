@@ -30,10 +30,13 @@ class MailServer {
     this.setExternalAccessServers = !!(serverData?.SetExternalAccessServers)
     this.externalAccessImapServer = typesUtils.pString(serverData?.ExternalAccessImapServer)
     this.externalAccessImapPort = typesUtils.pInt(serverData?.ExternalAccessImapPort, 143)
+    this.externalAccessImapAlterPort = typesUtils.pInt(serverData?.ExternalAccessImapAlterPort, '')
     this.externalAccessPop3Server = typesUtils.pString(serverData?.ExternalAccessPop3Server)
     this.externalAccessPop3Port = typesUtils.pInt(serverData?.ExternalAccessPop3Port, 110)
+    this.externalAccessPop3AlterPort = typesUtils.pInt(serverData?.ExternalAccessPop3AlterPort, '')
     this.externalAccessSmtpServer = typesUtils.pString(serverData?.ExternalAccessSmtpServer)
     this.externalAccessSmtpPort = typesUtils.pInt(serverData?.ExternalAccessSmtpPort, 25)
+    this.externalAccessSmtpAlterPort = typesUtils.pInt(serverData?.ExternalAccessSmtpAlterPort, 25)
 
     this.allowToDelete = !!(serverData?.AllowToDelete);
     this.allowEditDomains = !!(serverData?.AllowEditDomains)
@@ -65,8 +68,13 @@ class MailServer {
     this.setExternalAccessServers = parameters.SetExternalAccessServers
     this.externalAccessImapServer = parameters.ExternalAccessImapServer
     this.externalAccessImapPort = parameters.ExternalAccessImapPort
+    this.externalAccessImapAlterPort = parameters.ExternalAccessImapAlterPort
+    this.externalAccessPop3Server = parameters.ExternalAccessPop3Server
+    this.externalAccessPop3Port = parameters.ExternalAccessPop3Port
+    this.externalAccessPop3AlterPort = parameters.ExternalAccessPop3AlterPort
     this.externalAccessSmtpServer = parameters.ExternalAccessSmtpServer
     this.externalAccessSmtpPort = parameters.ExternalAccessSmtpPort
+    this.externalAccessSmtpAlterPort = parameters.ExternalAccessSmtpAlterPort
 
     this.oauthEnable = parameters.OAuthEnable
     this.oauthName = parameters.OAuthName
