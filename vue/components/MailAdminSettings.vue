@@ -47,7 +47,7 @@ import errors from 'src/utils/errors'
 import notification from 'src/utils/notification'
 import webApi from 'src/utils/web-api'
 
-import settings from 'src/../../../MailWebclient/vue/settings'
+import settings from '../settings'
 
 import UnsavedChangesDialog from 'src/components/UnsavedChangesDialog'
 

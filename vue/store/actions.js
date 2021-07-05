@@ -4,7 +4,7 @@ import errors from 'src/utils/errors'
 import notification from 'src/utils/notification'
 import webApi from 'src/utils/web-api'
 
-import MailServer from 'src/../../../MailWebclient/vue/classes/mail-server'
+import MailServer from '../classes/mail-server'
 
 export function requestTenantServers (context, tenantId) {
   webApi.sendRequest({

@@ -5,7 +5,7 @@ import notification from 'src/utils/notification'
 import typesUtils from 'src/utils/types'
 import webApi from 'src/utils/web-api'
 
-import MailServer from 'src/../../../MailWebclient/vue/classes/mail-server'
+import MailServer from './classes/mail-server'
 
 export default {
   getServers (search, page, limit) {

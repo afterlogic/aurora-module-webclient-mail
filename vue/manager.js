@@ -1,4 +1,4 @@
-import settings from 'src/../../../MailWebclient/vue/settings'
+import settings from './settings'
 
 export default {
   moduleName: 'MailWebclient',
@@ -15,7 +15,7 @@ export default {
         tabName: 'mail',
         title: 'MAILWEBCLIENT.LABEL_SETTINGS_TAB',
         component() {
-          return import('src/../../../MailWebclient/vue/components/MailAdminSettings')
+          return import('./components/MailAdminSettings')
         },
       },
       {
@@ -33,7 +33,7 @@ export default {
         ],
         title: 'MAILWEBCLIENT.LABEL_SERVERS_SETTINGS_TAB',
         component() {
-          return import('src/../../../MailWebclient/vue/components/MailServersAdminSettings')
+          return import('./components/MailServersAdminSettings')
         },
       },
     ]
@@ -53,7 +53,7 @@ export default {
           ],
           title: 'MAILWEBCLIENT.HEADING_BROWSER_TAB',
           component() {
-            return import('src/../../../MailWebClient/vue/components/MailAdminSettingsPerUser')
+            return import('./components/MailAdminSettingsPerUser')
           }
         }
       ]
@@ -74,7 +74,7 @@ export default {
         ],
         title: 'MAILWEBCLIENT.HEADING_BROWSER_TAB',
         component () {
-          return import('src/../../../MailWebClient/vue/components/MailAdminSettingsPerTenant')
+          return import('./components/MailAdminSettingsPerTenant')
         }
       }
     ]

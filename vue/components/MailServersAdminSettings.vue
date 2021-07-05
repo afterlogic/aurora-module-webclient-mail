@@ -304,8 +304,8 @@ import webApi from 'src/utils/web-api'
 
 import core from 'src/core'
 
-import settings from 'src/../../../MailWebclient/vue/settings'
-import cache from 'src/../../../MailWebclient/vue/cache'
+import settings from '../settings'
+import cache from '../cache'
 
 import ConfirmDialog from 'src/components/ConfirmDialog'
 import UnsavedChangesDialog from 'src/components/UnsavedChangesDialog'

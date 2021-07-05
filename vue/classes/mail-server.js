@@ -2,7 +2,7 @@ import typesUtils from 'src/utils/types'
 
 import core from 'src/core'
 
-import settings from 'src/../../../MailWebclient/vue/settings'
+import settings from '../settings'
 
 class MailServer {
   constructor(serverData) {
