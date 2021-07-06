@@ -25,7 +25,7 @@
               </q-item-label>
             </div>
           </div>
-          <div class="row">
+          <div class="row" v-if="allowChangeUserSpaceLimit">
             <div class="col-2">
               <div class="q-my-sm" v-t="'MAILWEBCLIENT.LABEL_USER_SPACE_LIMIT'" />
             </div>
@@ -36,7 +36,7 @@
               </div>
             </div>
           </div>
-          <div class="row q-mb-sm">
+          <div class="row q-mb-sm" v-if="allowChangeUserSpaceLimit">
             <div class="col-2"></div>
             <div class="col-8 q-mt-sm">
               <q-item-label caption>
@@ -100,7 +100,8 @@ export default {
       tenantSpaceLimitMb: 0,
       userSpaceLimitMb: 0,
       allocatedSpace: 0,
-      tenant: null
+      tenant: null,
+      allowChangeUserSpaceLimit: false
     }
   },
   beforeRouteLeave (to, from, next) {
@@ -126,6 +127,7 @@ export default {
           this.tenantSpaceLimitMb = tenant.completeData['MailWebclient::TenantSpaceLimitMb']
           this.userSpaceLimitMb = tenant.completeData['MailWebclient::UserSpaceLimitMb']
           this.allocatedSpace = tenant.completeData['MailWebclient::AllocatedSpaceMb']
+          this.allowChangeUserSpaceLimit = tenant.completeData['MailWebclient::AllowChangeUserSpaceLimit']
         } else {
           this.getSettingsForEntity()
         }
@@ -144,9 +146,10 @@ export default {
         if (result) {
           cache.getTenant(parameters.TenantId, true).then(({ tenant }) => {
             tenant.setCompleteData({
-              'MailWebclient::UserSpaceLimitMb': result.UserSpaceLimitMb,
-              'MailWebclient::TenantSpaceLimitMb': result.TenantSpaceLimitMb,
-              'MailWebclient::AllocatedSpaceMb': result.AllocatedSpaceMb
+              'MailWebclient::UserSpaceLimitMb': result.UserSpaceLimitMb ? result.UserSpaceLimitMb : 0,
+              'MailWebclient::TenantSpaceLimitMb': result.TenantSpaceLimitMb ? result.TenantSpaceLimitMb : 0,
+              'MailWebclient::AllocatedSpaceMb': result.AllocatedSpaceMb ? result.AllocatedSpaceMb : 0,
+              'MailWebclient::AllowChangeUserSpaceLimit': result.AllowChangeUserSpaceLimit,
             })
             this.populate()
           })

@@ -134,7 +134,7 @@
                     <q-input outlined dense class="bg-white" v-model="smtpLogin" :placeholder="$t('COREWEBCLIENT.LABEL_LOGIN')"></q-input>
                   </q-item-section>
                   <q-item-section>
-                    <q-input outlined dense class="bg-white" type="password" v-model="smtpPassword" :placeholder="$t('COREWEBCLIENT.LABEL_PASSWORD')"></q-input>
+                    <q-input outlined dense class="bg-white" type="password" autocomplete="new-password" v-model="smtpPassword" :placeholder="$t('COREWEBCLIENT.LABEL_PASSWORD')"></q-input>
                   </q-item-section>
                 </q-item>
                 <q-item manual-focus>
