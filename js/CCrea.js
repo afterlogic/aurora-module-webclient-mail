@@ -6,6 +6,7 @@ var
 
     Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 
+    App = require('%PathToCoreWebclientModule%/js/App.js'),
     Browser = require('%PathToCoreWebclientModule%/js/Browser.js')
 ;
 
@@ -282,6 +283,8 @@ CCrea.prototype.start = function (bEditable)
 
     this.initContentEditable();
     this.setEditable(bEditable);
+	
+	App.broadcastEvent('%ModuleName%::StartCrea::after', {'EditableArea': this.$editableArea, 'InsertHtmlHandler': this.insertHtml.bind(this)});
 };
 
 CCrea.prototype.clearUndoRedo = function ()
