@@ -2,7 +2,7 @@
 	"name": "afterlogic/aurora-module-webclient-mail",
 	"type": "aurora-module",
 	"require":{
-		"afterlogic/aurora-framework": "~0.10.0",
+		"afterlogic/aurora-framework": "~0.10.0"
 	},
 	"extra": {
 		"installer-name": "MailWebclient"
