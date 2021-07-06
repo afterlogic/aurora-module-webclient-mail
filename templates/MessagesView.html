@@ -1,9 +1,9 @@
 <div class="middle_bar" data-bind="css: {'advanced_search': bAdvancedSearch}">
 	<div class="panel_top">
-		<label class="custom_checkbox" data-bind="css: {'checked': checkAll, 'incomplete': checkAllIncomplite}">
+		<span class="custom_checkbox" data-bind="click: function () { checkAll(!checkAll()); },
+					css: {'checked': checkAll, 'incomplete': checkAllIncomplite}">
 			<span class="icon"></span>
-			<input type="checkbox" data-bind="checked: checkAll" />
-		</label>
+		</span>
 		<!-- ko template: {name: '%ModuleName%_SearchView'} --><!-- /ko -->
 	</div>
 	<div class="panel_center unselectable" data-bind="customScrollbar: {'reset': listChangedThrottle(), x: false}">
