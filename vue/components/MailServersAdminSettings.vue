@@ -547,10 +547,12 @@ export default {
       const params = {
         oauthConnectorsData: []
       }
-      this.$eventBus.$emit('MailWebclient::GetOauthConnectorsData', params);
-      this.oauthConnectorsData = _.isArray(params.oauthConnectorsData) ? params.oauthConnectorsData.filter(data => {
-        return typesUtils.isNonEmptyString(data.name) && typesUtils.isNonEmptyString(data.type)
-      }) : []
+      this.$eventBus.$emit('MailWebclient::GetOauthConnectorsData', params)
+      this.oauthConnectorsData = _.isArray(params.oauthConnectorsData)
+        ? params.oauthConnectorsData.filter(data => {
+          return typesUtils.isNonEmptyString(data.name) && typesUtils.isNonEmptyString(data.type)
+        })
+        : []
       if (this.oauthConnectorsData.length > 0) {
         this.oauthConnectorsData.unshift({
           name: this.$t('MAILWEBCLIENT.LABEL_ADMIN_OAUTH_NOTHING_SELECTED'),
