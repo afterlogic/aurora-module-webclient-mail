@@ -24,7 +24,7 @@
           <div class="row" v-show="allowHorizontalLayout">
             <div class="col-1" v-t="'MAILWEBCLIENT.LABEL_DEFAULT_LAYOUT'"></div>
             <div class="col-5">
-              <q-select outlined dense class="bg-white" v-model="horizontalLayoutByDefault"
+              <q-select outlined dense bg-color="white" v-model="horizontalLayoutByDefault"
                         emit-value map-options :options="layoutOptions" />
             </div>
           </div>
