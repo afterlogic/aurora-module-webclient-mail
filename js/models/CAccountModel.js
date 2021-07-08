@@ -80,6 +80,7 @@ function CAccountModel(oData)
 	this.forward = ko.observable(null);
 	this.allowFilters = ko.observable(Types.pBool(oData.AllowFilters, false));
 	this.filters = ko.observable(null);
+	this.enableAllowBlockLists = ko.observable(Types.pBool(oData.EnableAllowBlockLists));
 
 	// This property is not sent by Mail module but other modules can add it to response with 'Mail::Account::ToResponseArray' event
 	this.allowManageFolders = ko.observable(Types.pBool(oData.AllowManageFolders, true));
