@@ -26,7 +26,7 @@
           </q-item>
         </q-list>
         <div class="flex flex-left q-mb-lg" v-if="showSearch || showPagination">
-          <q-input rounded outlined dense class="bg-white" v-model="enteredSearch" v-if="showSearch" @keyup.enter="route">
+          <q-input rounded outlined dense bg-color="white" v-model="enteredSearch" v-if="showSearch" @keyup.enter="route">
             <template v-slot:append>
               <q-btn dense flat :ripple="false" icon="search" @click="route" />
             </template>
@@ -52,14 +52,14 @@
           <div class="row q-mb-md" v-if="createMode && tenantOptions.length > 1">
             <div class="col-2 q-my-sm q-pl-sm required-field" v-t="'MAILWEBCLIENT.LABEL_TENANT'"></div>
             <div class="col-5">
-              <q-select outlined dense class="bg-white" v-model="selectedTenantId"
+              <q-select outlined dense bg-color="white" v-model="selectedTenantId"
                         emit-value map-options :options="tenantOptions" />
             </div>
           </div>
           <div class="row">
             <div class="col-2 q-my-sm q-pl-sm required-field" v-t="'MAILWEBCLIENT.LABEL_DISPLAY_NAME'"></div>
             <div class="col-5">
-              <q-input outlined dense class="bg-white" v-model="serverName" ref="serverName"></q-input>
+              <q-input outlined dense bg-color="white" v-model="serverName" ref="serverName"></q-input>
             </div>
           </div>
           <div class="row q-mt-sm q-mb-lg">
@@ -71,7 +71,7 @@
           <div class="row" v-if="allowEditDomainsInServer || !createMode">
             <div class="col-2 q-pl-sm required-field" v-t="'MAILWEBCLIENT.LABEL_DOMAINS'"></div>
             <div class="col-3">
-              <q-input outlined dense class="bg-white" type="textarea" rows="2" v-model="domains" ref="domains"
+              <q-input outlined dense bg-color="white" type="textarea" rows="2" v-model="domains" ref="domains"
                        :disable="!allowEditDomainsInServer" />
             </div>
           </div>
@@ -87,12 +87,12 @@
           <div class="row q-mb-md">
             <div class="col-2 q-my-sm q-pl-sm required-field" v-t="'MAILWEBCLIENT.LABEL_IMAP_SERVER'"></div>
             <div class="col-3">
-              <q-input outlined dense class="bg-white" v-model="imapServer" ref="imapServer"
+              <q-input outlined dense bg-color="white" v-model="imapServer" ref="imapServer"
                        @blur="fillUpSmtpServerFromImapServer"></q-input>
             </div>
             <div class="col-1 q-my-sm text-right q-pr-md  q-pl-sm required-field" v-t="'MAILWEBCLIENT.LABEL_PORT'"></div>
             <div class="col-1">
-              <q-input outlined dense class="bg-white" v-model="imapPort" ref="imapPort"></q-input>
+              <q-input outlined dense bg-color="white" v-model="imapPort" ref="imapPort"></q-input>
             </div>
             <div class="col-1 q-my-sm q-pl-md">
               <q-checkbox dense v-model="imapSsl" label="SSL" />
@@ -102,11 +102,11 @@
           <div class="row q-mb-md">
             <div class="col-2 q-my-sm q-pl-sm required-field" v-t="'MAILWEBCLIENT.LABEL_SMTP_SERVER'"></div>
             <div class="col-3">
-              <q-input outlined dense class="bg-white" v-model="smtpServer" ref="smtpServer"></q-input>
+              <q-input outlined dense bg-color="white" v-model="smtpServer" ref="smtpServer"></q-input>
             </div>
             <div class="col-1 q-my-sm text-right q-pr-md q-pl-sm required-field" v-t="'MAILWEBCLIENT.LABEL_PORT'"></div>
             <div class="col-1">
-              <q-input outlined dense class="bg-white" v-model="smtpPort" ref="smtpPort"></q-input>
+              <q-input outlined dense bg-color="white" v-model="smtpPort" ref="smtpPort"></q-input>
             </div>
             <div class="col-1 q-my-sm q-pl-md">
               <q-checkbox dense v-model="smtpSsl" :label="$t('MAILWEBCLIENT.LABEL_SSL')" />
@@ -131,10 +131,10 @@
                     </span>
                   </q-item-section>
                   <q-item-section>
-                    <q-input outlined dense class="bg-white" v-model="smtpLogin" :placeholder="$t('COREWEBCLIENT.LABEL_LOGIN')"></q-input>
+                    <q-input outlined dense bg-color="white" v-model="smtpLogin" :placeholder="$t('COREWEBCLIENT.LABEL_LOGIN')"></q-input>
                   </q-item-section>
                   <q-item-section>
-                    <q-input outlined dense class="bg-white" type="password" autocomplete="new-password" v-model="smtpPassword" :placeholder="$t('COREWEBCLIENT.LABEL_PASSWORD')"></q-input>
+                    <q-input outlined dense bg-color="white" type="password" autocomplete="new-password" v-model="smtpPassword" :placeholder="$t('COREWEBCLIENT.LABEL_PASSWORD')"></q-input>
                   </q-item-section>
                 </q-item>
                 <q-item manual-focus>
@@ -157,7 +157,7 @@
           <div class="row q-mb-md">
             <div class="col-2 q-my-sm" v-t="'MAILWEBCLIENT.LABEL_SIEVE_PORT'"></div>
             <div class="col-5">
-              <q-input outlined dense class="bg-white" v-model="sievePort"></q-input>
+              <q-input outlined dense bg-color="white" v-model="sievePort"></q-input>
             </div>
           </div>
           <div class="row q-mb-md">
@@ -199,19 +199,19 @@
             <div class="col-2 q-my-sm" v-t="'MAILWEBCLIENT.LABEL_IMAP_SERVER'"
                  :class="setExternalAccessServers ? '' : 'disabled'"></div>
             <div class="col-3">
-              <q-input outlined dense class="bg-white" v-model="externalAccessImapServer"
+              <q-input outlined dense bg-color="white" v-model="externalAccessImapServer"
                        :disable="!setExternalAccessServers"></q-input>
             </div>
             <div class="col-1 q-my-sm text-right q-pr-md" v-t="'MAILWEBCLIENT.LABEL_PORT'"
                  :class="setExternalAccessServers ? '' : 'disabled'"></div>
             <div class="col-1">
-              <q-input outlined dense class="bg-white" v-model="externalAccessImapPort"
+              <q-input outlined dense bg-color="white" v-model="externalAccessImapPort"
                        :disable="!setExternalAccessServers"></q-input>
             </div>
             <div class="col-1 q-my-sm text-right q-pr-md" v-t="'MAILWEBCLIENT.LABEL_ALTERNATIVE_PORT'"
                  :class="setExternalAccessServers ? '' : 'disabled'"></div>
             <div class="col-1">
-              <q-input outlined dense class="bg-white" v-model="externalAccessImapAlterPortModel"
+              <q-input outlined dense bg-color="white" v-model="externalAccessImapAlterPortModel"
                        :disable="!setExternalAccessServers"></q-input>
             </div>
           </div>
@@ -219,19 +219,19 @@
             <div class="col-2 q-my-sm" v-t="'MAILWEBCLIENT.LABEL_POP3_SERVER'"
                  :class="setExternalAccessServers ? '' : 'disabled'"></div>
             <div class="col-3">
-              <q-input outlined dense class="bg-white" v-model="externalAccessPop3Server"
+              <q-input outlined dense bg-color="white" v-model="externalAccessPop3Server"
                        :disable="!setExternalAccessServers"></q-input>
             </div>
             <div class="col-1 q-my-sm text-right q-pr-md" v-t="'MAILWEBCLIENT.LABEL_PORT'"
                  :class="setExternalAccessServers ? '' : 'disabled'"></div>
             <div class="col-1">
-              <q-input outlined dense class="bg-white" v-model="externalAccessPop3Port"
+              <q-input outlined dense bg-color="white" v-model="externalAccessPop3Port"
                        :disable="!setExternalAccessServers"></q-input>
             </div>
             <div class="col-1 q-my-sm text-right q-pr-md" v-t="'MAILWEBCLIENT.LABEL_ALTERNATIVE_PORT'"
                  :class="setExternalAccessServers ? '' : 'disabled'"></div>
             <div class="col-1">
-              <q-input outlined dense class="bg-white" v-model="externalAccessPop3AlterPortModel"
+              <q-input outlined dense bg-color="white" v-model="externalAccessPop3AlterPortModel"
                        :disable="!setExternalAccessServers"></q-input>
             </div>
           </div>
@@ -239,19 +239,19 @@
             <div class="col-2 q-my-sm" v-t="'MAILWEBCLIENT.LABEL_SMTP_SERVER'"
                  :class="setExternalAccessServers ? '' : 'disabled'"></div>
             <div class="col-3">
-              <q-input outlined dense class="bg-white" v-model="externalAccessSmtpServer"
+              <q-input outlined dense bg-color="white" v-model="externalAccessSmtpServer"
                        :disable="!setExternalAccessServers"></q-input>
             </div>
             <div class="col-1 q-my-sm text-right q-pr-md" v-t="'MAILWEBCLIENT.LABEL_PORT'"
                  :class="setExternalAccessServers ? '' : 'disabled'"></div>
             <div class="col-1">
-              <q-input outlined dense class="bg-white" v-model="externalAccessSmtpPort"
+              <q-input outlined dense bg-color="white" v-model="externalAccessSmtpPort"
                        :disable="!setExternalAccessServers"></q-input>
             </div>
             <div class="col-1 q-my-sm text-right q-pr-md" v-t="'MAILWEBCLIENT.LABEL_ALTERNATIVE_PORT'"
                  :class="setExternalAccessServers ? '' : 'disabled'"></div>
             <div class="col-1">
-              <q-input outlined dense class="bg-white" v-model="externalAccessSmtpAlterPortModel"
+              <q-input outlined dense bg-color="white" v-model="externalAccessSmtpAlterPortModel"
                        :disable="!setExternalAccessServers"></q-input>
             </div>
           </div>
