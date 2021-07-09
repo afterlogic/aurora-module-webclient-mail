@@ -36,9 +36,9 @@ class MailServer {
     this.externalAccessPop3AlterPort = typesUtils.pInt(serverData?.ExternalAccessPop3AlterPort, '')
     this.externalAccessSmtpServer = typesUtils.pString(serverData?.ExternalAccessSmtpServer)
     this.externalAccessSmtpPort = typesUtils.pInt(serverData?.ExternalAccessSmtpPort, 25)
-    this.externalAccessSmtpAlterPort = typesUtils.pInt(serverData?.ExternalAccessSmtpAlterPort, 25)
+    this.externalAccessSmtpAlterPort = typesUtils.pInt(serverData?.ExternalAccessSmtpAlterPort, '')
 
-    this.allowToDelete = !!(serverData?.AllowToDelete);
+    this.allowToDelete = !!(serverData?.AllowToDelete)
     this.allowEditDomains = !!(serverData?.AllowEditDomains)
     this.ownerType = typesUtils.pString(serverData?.OwnerType)
 
