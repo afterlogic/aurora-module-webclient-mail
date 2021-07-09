@@ -70,7 +70,7 @@
           </div>
           <div class="row" v-if="allowEditDomainsInServer || !createMode">
             <div class="col-2 q-pl-sm required-field" v-t="'MAILWEBCLIENT.LABEL_DOMAINS'"></div>
-            <div class="col-3">
+            <div class="col-3 textarea">
               <q-input outlined dense bg-color="white" type="textarea" rows="2" v-model="domains" ref="domains"
                        :disable="!allowEditDomainsInServer" />
             </div>
