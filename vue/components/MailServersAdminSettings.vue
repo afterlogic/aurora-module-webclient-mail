@@ -657,18 +657,35 @@ export default {
 
     hasChanges () {
       if (this.createMode) {
+        let isExternalAccessChanged = this.setExternalAccessServers !== false
+        if (!isExternalAccessChanged && this.setExternalAccessServers) {
+          isExternalAccessChanged = this.externalAccessImapServer !== '' || this.externalAccessImapPort !== 143 ||
+              this.externalAccessImapAlterPort !== '' || this.externalAccessPop3Server !== '' ||
+              this.externalAccessPop3Port !== 110 || this.externalAccessPop3AlterPort !== '' ||
+              this.externalAccessSmtpServer !== '' || this.externalAccessSmtpPort !== 25 ||
+              this.externalAccessSmtpAlterPort !== ''
+        }
         return this.serverName !== '' || this.domains !== '' || this.imapServer !== '' || this.imapPort !== 143 ||
             this.imapSsl !== false || this.smtpServer !== '' || this.smtpPort !== 25 || this.smtpSsl !== false ||
             this.smtpAuthentication !== this.smtpAuthTypeEnum.UseUserCredentials || this.smtpLogin !== '' ||
             this.smtpPassword !== '' || this.enableSieve !== false || this.sievePort !== 4190 ||
             this.useThreading !== true || this.useFullEmail !== true || this.setExternalAccessServers !== false ||
-            this.externalAccessImapServer !== '' || this.externalAccessImapPort !== 143 || this.externalAccessImapAlterPort !== '' ||
-            this.externalAccessPop3Server !== '' || this.externalAccessPop3Port !== 110 || this.externalAccessPop3AlterPort !== '' ||
-            this.externalAccessSmtpServer !== '' || this.externalAccessSmtpPort !== 25 || this.externalAccessSmtpAlterPort !== '' ||
-            this.oauthConnector !== ''
+            isExternalAccessChanged || this.oauthConnector !== ''
       } else {
         const server = this.getServer(this.currentServerId)
         if (server) {
+          let isExternalAccessChanged = server.setExternalAccessServers !== this.setExternalAccessServers
+          if (!isExternalAccessChanged && this.setExternalAccessServers) {
+            isExternalAccessChanged = server.externalAccessImapServer !== this.externalAccessImapServer ||
+                server.externalAccessImapPort !== this.externalAccessImapPort ||
+                server.externalAccessImapAlterPort !== this.externalAccessImapAlterPort ||
+                server.externalAccessPop3Server !== this.externalAccessPop3Server ||
+                server.externalAccessPop3Port !== this.externalAccessPop3Port ||
+                server.externalAccessPop3AlterPort !== this.externalAccessPop3AlterPort ||
+                server.externalAccessSmtpServer !== this.externalAccessSmtpServer ||
+                server.externalAccessSmtpPort !== this.externalAccessSmtpPort ||
+                server.externalAccessSmtpAlterPort !== this.externalAccessSmtpAlterPort
+          }
           return server.name !== this.serverName || server.incomingServer !== this.imapServer ||
               server.incomingPort !== this.imapPort || server.incomingUseSsl !== this.imapSsl ||
               server.outgoingServer !== this.smtpServer || server.outgoingPort !== this.smtpPort ||
@@ -677,17 +694,7 @@ export default {
               server.smtpPassword !== this.smtpPassword || server.enableSieve !== this.enableSieve ||
               server.sievePort !== this.sievePort || server.enableThreading !== this.useThreading ||
               server.useFullEmailAddressAsLogin !== this.useFullEmail ||
-              server.setExternalAccessServers !== this.setExternalAccessServers ||
-              server.externalAccessImapServer !== this.externalAccessImapServer ||
-              server.externalAccessImapPort !== this.externalAccessImapPort ||
-              server.externalAccessImapAlterPort !== this.externalAccessImapAlterPort ||
-              server.externalAccessPop3Server !== this.externalAccessPop3Server ||
-              server.externalAccessPop3Port !== this.externalAccessPop3Port ||
-              server.externalAccessPop3AlterPort !== this.externalAccessPop3AlterPort ||
-              server.externalAccessSmtpServer !== this.externalAccessSmtpServer ||
-              server.externalAccessSmtpPort !== this.externalAccessSmtpPort ||
-              server.externalAccessSmtpAlterPort !== this.externalAccessSmtpAlterPort ||
-              server.oauthType !== this.oauthConnector
+              isExternalAccessChanged || server.oauthType !== this.oauthConnector
         } else {
           return false
         }
@@ -737,9 +744,11 @@ export default {
       }
 
       const isOAuthEnable = this.oauthConnector !== ''
-      const selectedConnector = isOAuthEnable ? this.oauthConnectorsData.find(data => {
-        return data.type === this.oauthConnector
-      }) : null
+      const selectedConnector = isOAuthEnable
+        ? this.oauthConnectorsData.find(data => {
+          return data.type === this.oauthConnector
+        })
+        : null
       if (selectedConnector) {
         parameters.OAuthEnable = true
         parameters.OAuthName = selectedConnector.name
