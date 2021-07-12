@@ -57,8 +57,8 @@ CAccountAllowBlockListsSettingsFormView.prototype.getParametersForSave = functio
 {
 	return {
 		'AccountID': AccountList.editedId(),
-		'AllowList': this.allowList().split('\n'),
-		'BlockList': this.blockList().split('\n')
+		'AllowList': this.allowList() !== '' ? this.allowList().split('\n') : [],
+		'BlockList': this.blockList() !== '' ? this.blockList().split('\n') : []
 	};
 };
 
@@ -85,7 +85,7 @@ CAccountAllowBlockListsSettingsFormView.prototype.onResponse = function (oRespon
 	}
 	else
 	{
-		Screens.showReport(TextUtils.i18n('%MODULENAME%/REPORT_AUTORESPONDER_UPDATE_SUCCESS'));
+		Screens.showReport(TextUtils.i18n('COREWEBCLIENT/REPORT_SETTINGS_UPDATE_SUCCESS'));
 	}
 };
 
