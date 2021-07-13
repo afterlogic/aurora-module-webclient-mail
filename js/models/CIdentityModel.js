@@ -36,7 +36,7 @@ function CIdentityModel()
  */
 CIdentityModel.prototype.parse = function (oData)
 {
-	if (oData['@Object'] === 'Object/Aurora\\Modules\\Mail\\Classes\\Identity')
+	if (oData['@Object'] === 'Object/Aurora\\Modules\\Mail\\Models\\Identity')
 	{
 		this.bAccountPart = !!oData.AccountPart;
 		this.isDefault(!!oData.Default);
