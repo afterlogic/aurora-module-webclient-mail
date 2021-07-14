@@ -1,6 +1,6 @@
 import typesUtils from 'src/utils/types'
 
-import core from 'src/core'
+import store from 'src/store'
 
 import settings from '../settings'
 
@@ -10,7 +10,7 @@ class MailServer {
 
     this.id = typesUtils.pInt(serverData?.EntityId) || typesUtils.pInt(serverData?.ServerId)
     this.tenantId = typesUtils.pInt(serverData?.TenantId)
-    this.tenantName = core.getTenantName(this.tenantId)
+    this.tenantName = store.getters['tenants/getTenantName'](this.tenantId)
     this.name = typesUtils.pString(serverData?.Name)
     this.incomingServer = typesUtils.pString(serverData?.IncomingServer)
     this.incomingPort = typesUtils.pInt(serverData?.IncomingPort)

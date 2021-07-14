@@ -60,7 +60,7 @@
       <div class="q-pt-md text-right">
         <q-btn unelevated no-caps dense class="q-px-sm" :ripple="false" color="primary"
                :label="saving ? $t('COREWEBCLIENT.ACTION_SAVE_IN_PROGRESS') : $t('COREWEBCLIENT.ACTION_SAVE')"
-               @click="updateEntitySpaceLimits"/>
+               @click="save"/>
       </div>
     </div>
     <UnsavedChangesDialog ref="unsavedChangesDialog"/>
@@ -71,39 +71,50 @@
 </template>
 
 <script>
-import UnsavedChangesDialog from 'src/components/UnsavedChangesDialog'
-import webApi from 'src/utils/web-api'
-import notification from 'src/utils/notification'
-import errors from 'src/utils/errors'
-import cache from 'src/cache'
-import types from '../../../AdminPanelWebclient/vue/src/utils/types'
 import _ from 'lodash'
+
+import errors from 'src/utils/errors'
+import notification from 'src/utils/notification'
+import types from 'src/utils/types'
+import webApi from 'src/utils/web-api'
+
+import UnsavedChangesDialog from 'src/components/UnsavedChangesDialog'
 
 export default {
   name: 'MailAdminSettingsPerTenant',
+
   components: {
     UnsavedChangesDialog
   },
-  computed: {
-    tenantId () {
-      return Number(this.$route?.params?.id)
-    }
-  },
-  mounted () {
-    this.saving = false
-    this.populate()
-  },
+
   data () {
     return {
       saving: false,
       loading: false,
-      tenantSpaceLimitMb: 0,
-      userSpaceLimitMb: 0,
-      allocatedSpace: 0,
+      tenantSpaceLimitMb: '',
+      userSpaceLimitMb: '',
+      allocatedSpace: '',
       tenant: null,
       allowChangeUserSpaceLimit: false
     }
   },
+
+  computed: {
+    tenantId () {
+      return this.$store.getters['tenants/getCurrentTenantId']
+    },
+
+    allTenants () {
+      return this.$store.getters['tenants/getTenants']
+    },
+  },
+
+  watch: {
+    allTenants () {
+      this.populate()
+    },
+  },
+
   beforeRouteLeave (to, from, next) {
     if (this.hasChanges() && _.isFunction(this?.$refs?.unsavedChangesDialog?.openConfirmDiscardChangesDialog)) {
       this.$refs.unsavedChangesDialog.openConfirmDiscardChangesDialog(next)
@@ -111,16 +122,25 @@ export default {
       next()
     }
   },
+
+  mounted () {
+    this.loading = false
+    this.saving = false
+    this.populate()
+  },
+
   methods: {
     hasChanges () {
-      const tenantSpaceLimitMb = this.tenant?.completeData['MailWebclient::TenantSpaceLimitMb']
-      const userSpaceLimitMb = this.tenant?.completeData['MailWebclient::UserSpaceLimitMb']
-      return this.tenantSpaceLimitMb !== tenantSpaceLimitMb ||
-          this.userSpaceLimitMb !== userSpaceLimitMb
+      const tenantCompleteData = types.pObject(this.tenant?.completeData)
+      const tenantSpaceLimitMb = tenantCompleteData['MailWebclient::TenantSpaceLimitMb']
+      const userSpaceLimitMb = tenantCompleteData['MailWebclient::UserSpaceLimitMb']
+      return types.pInt(this.tenantSpaceLimitMb) !== tenantSpaceLimitMb ||
+          (this.allowChangeUserSpaceLimit && types.pInt(this.userSpaceLimitMb) !== userSpaceLimitMb)
     },
+
     populate() {
-      this.loading = true
-      cache.getTenant(this.tenantId).then(({ tenant }) => {
+      const tenant = this.$store.getters['tenants/getTenant'](this.tenantId)
+      if (tenant) {
         if (tenant.completeData['MailWebclient::TenantSpaceLimitMb'] !== undefined) {
           this.loading = false
           this.tenant = tenant
@@ -129,36 +149,12 @@ export default {
           this.allocatedSpace = tenant.completeData['MailWebclient::AllocatedSpaceMb']
           this.allowChangeUserSpaceLimit = tenant.completeData['MailWebclient::AllowChangeUserSpaceLimit']
         } else {
-          this.getSettingsForEntity()
+          this.getSettings()
         }
-      })
-    },
-    getSettingsForEntity () {
-      const parameters = {
-        Type: 'Tenant',
-        TenantId: this.tenantId,
       }
-      webApi.sendRequest({
-        moduleName: 'Mail',
-        methodName: 'GetEntitySpaceLimits',
-        parameters
-      }).then(result => {
-        if (result) {
-          cache.getTenant(parameters.TenantId, true).then(({ tenant }) => {
-            tenant.setCompleteData({
-              'MailWebclient::UserSpaceLimitMb': result.UserSpaceLimitMb ? result.UserSpaceLimitMb : 0,
-              'MailWebclient::TenantSpaceLimitMb': result.TenantSpaceLimitMb ? result.TenantSpaceLimitMb : 0,
-              'MailWebclient::AllocatedSpaceMb': result.AllocatedSpaceMb ? result.AllocatedSpaceMb : 0,
-              'MailWebclient::AllowChangeUserSpaceLimit': result.AllowChangeUserSpaceLimit,
-            })
-            this.populate()
-          })
-        }
-      }, response => {
-        notification.showError(errors.getTextFromResponse(response))
-      })
     },
-    updateEntitySpaceLimits () {
+
+    save () {
       if (!this.saving) {
         this.saving = true
         const parameters = {
@@ -172,16 +168,14 @@ export default {
           methodName: 'UpdateEntitySpaceLimits',
           parameters
         }).then(result => {
-          cache.getTenant(parameters.TenantId, true).then(({ tenant }) => {
-            tenant.setCompleteData({
+          this.saving = false
+          if (result === true) {
+            const data = {
               'MailWebclient::UserSpaceLimitMb': parameters.UserSpaceLimitMb,
               'MailWebclient::TenantSpaceLimitMb': parameters.TenantSpaceLimitMb,
               'MailWebclient::AllocatedSpaceMb': this.allocatedSpace,
-            })
-            this.populate()
-          })
-          this.saving = false
-          if (result) {
+            }
+            this.$store.commit('tenants/setTenantCompleteData', { id: this.tenantId, data })
             notification.showReport(this.$t('COREWEBCLIENT.REPORT_SETTINGS_UPDATE_SUCCESS'))
           } else {
             notification.showError(this.$t('COREWEBCLIENT.ERROR_SAVING_SETTINGS_FAILED'))
@@ -191,7 +185,33 @@ export default {
           notification.showError(errors.getTextFromResponse(response, this.$t('COREWEBCLIENT.ERROR_SAVING_SETTINGS_FAILED')))
         })
       }
-    }
+    },
+
+    getSettings () {
+      this.loading = true
+      const parameters = {
+        Type: 'Tenant',
+        TenantId: this.tenantId,
+      }
+      webApi.sendRequest({
+        moduleName: 'Mail',
+        methodName: 'GetEntitySpaceLimits',
+        parameters
+      }).then(result => {
+        this.loading = false
+        if (result) {
+          const data = {
+            'MailWebclient::UserSpaceLimitMb': types.pInt(result.UserSpaceLimitMb),
+            'MailWebclient::TenantSpaceLimitMb': types.pInt(result.TenantSpaceLimitMb),
+            'MailWebclient::AllocatedSpaceMb': types.pInt(result.AllocatedSpaceMb),
+            'MailWebclient::AllowChangeUserSpaceLimit': types.pBool(result.AllowChangeUserSpaceLimit),
+          }
+          this.$store.commit('tenants/setTenantCompleteData', { id: this.tenantId, data })
+        }
+      }, response => {
+        notification.showError(errors.getTextFromResponse(response))
+      })
+    },
   }
 }
 </script>

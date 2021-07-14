@@ -517,7 +517,7 @@ export default {
     this.creating = false
     this.populate()
 
-    const tenants = core.getTenants()
+    const tenants = this.$store.getters['tenants/getTenants']
     const tenantOptions = [
       { label: 'system-wide', value: 0 },
     ]
