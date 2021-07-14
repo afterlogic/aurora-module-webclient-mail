@@ -14,7 +14,7 @@
             </div>
             <div class="col-4">
               <div class="row">
-                <q-input outlined dense class="bg-white col-4" v-model="userSpaceLimitMb"/>
+                <q-input outlined dense class="col-4" bg-color="white" v-model="userSpaceLimitMb"/>
                 <div class="q-ma-sm col-1" v-t="'COREWEBCLIENT.LABEL_MEGABYTES'"></div>
               </div>
             </div>

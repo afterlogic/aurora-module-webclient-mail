@@ -12,7 +12,7 @@
             </div>
             <div class="col-4">
               <div class="row">
-                <q-input outlined dense class="bg-white  col-5" v-model="tenantSpaceLimitMb"/>
+                <q-input outlined dense class="col-5" bg-color="white" v-model="tenantSpaceLimitMb"/>
                 <div class="q-ma-sm col-1" style="margin-top: 10px" v-t="'COREWEBCLIENT.LABEL_MEGABYTES'"/>
               </div>
             </div>
@@ -31,7 +31,7 @@
             </div>
             <div class="col-4">
               <div class="row">
-                <q-input outlined dense class=" col-5 bg-white" v-model="userSpaceLimitMb"/>
+                <q-input outlined dense class=" col-5" bg-color="white" v-model="userSpaceLimitMb"/>
                 <div class="q-ma-sm col-1" style="margin-top: 10px" v-t="'COREWEBCLIENT.LABEL_MEGABYTES'"/>
               </div>
             </div>
