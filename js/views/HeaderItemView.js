@@ -25,13 +25,13 @@ function CHeaderItemView()
 	}, this);
 	
 	this.accounts = ko.computed(function () {
-		return Settings.ShowEmailAsTabName ? _.map(AccountList.collection(), function (oAccount) {
+		return _.map(AccountList.collection(), function (oAccount) {
 			return {
 				bCurrent: oAccount.isCurrent(),
 				sText: Settings.UserLoginPartInAccountDropdown ? oAccount.email().split('@')[0] : oAccount.email(),
 				changeAccount: oAccount.changeAccount.bind(oAccount)
 			};
-		}) : []
+		})
 	}, this);
 	
 	if (Settings.ShowEmailAsTabName)
