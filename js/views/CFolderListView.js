@@ -50,6 +50,7 @@ function CFolderListView()
 
 	this.quotaProc = ko.observable(-1);
 	this.quotaDesc = ko.observable('');
+	this.bShowQuotaBarTextAsTooltip = UserSettings.ShowQuotaBarTextAsTooltip;
 
 	if (UserSettings.ShowQuotaBar)
 	{
