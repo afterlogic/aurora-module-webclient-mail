@@ -546,9 +546,12 @@ SendingUtils.getClearSignature = function (iAccountId, oFetcherOrIdentity)
 		sSignature = ''
 	;
 
-	if (oFetcherOrIdentity && oFetcherOrIdentity.accountId() === iAccountId && oFetcherOrIdentity.useSignature())
+	if (oFetcherOrIdentity && oFetcherOrIdentity.accountId() === iAccountId)
 	{
-		sSignature = oFetcherOrIdentity.signature();
+		if (oFetcherOrIdentity.useSignature())
+		{
+			sSignature = oFetcherOrIdentity.signature();
+		}
 	}
 	else if (oAccount && oAccount.useSignature())
 	{
