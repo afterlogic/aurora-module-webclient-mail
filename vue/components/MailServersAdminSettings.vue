@@ -733,14 +733,14 @@ export default {
         UseFullEmailAddressAsLogin: this.useFullEmail,
         SetExternalAccessServers: this.setExternalAccessServers,
         ExternalAccessImapServer: this.externalAccessImapServer,
-        ExternalAccessImapPort: this.externalAccessImapPort,
-        ExternalAccessImapAlterPort: this.externalAccessImapAlterPort,
+        ExternalAccessImapPort: typesUtils.pInt(this.externalAccessImapPort),
+        ExternalAccessImapAlterPort: typesUtils.pInt(this.externalAccessImapAlterPort),
         ExternalAccessPop3Server: this.externalAccessPop3Server,
-        ExternalAccessPop3Port: this.externalAccessPop3Port,
-        ExternalAccessPop3AlterPort: this.externalAccessPop3AlterPort,
+        ExternalAccessPop3Port: typesUtils.pInt(this.externalAccessPop3Port),
+        ExternalAccessPop3AlterPort: typesUtils.pInt(this.externalAccessPop3AlterPort),
         ExternalAccessSmtpServer: this.externalAccessSmtpServer,
-        ExternalAccessSmtpPort: this.externalAccessSmtpPort,
-        ExternalAccessSmtpAlterPort: this.externalAccessSmtpAlterPort
+        ExternalAccessSmtpPort: typesUtils.pInt(this.externalAccessSmtpPort),
+        ExternalAccessSmtpAlterPort: typesUtils.pInt(this.externalAccessSmtpAlterPort)
       }
 
       const isOAuthEnable = this.oauthConnector !== ''
