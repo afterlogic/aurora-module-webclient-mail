@@ -290,7 +290,6 @@
       </div>
     </div>
     <ConfirmDialog ref="confirmDialog" />
-    <UnsavedChangesDialog ref="unsavedChangesDialog" />
   </q-scroll-area>
 </template>
 
@@ -302,20 +301,16 @@ import notification from 'src/utils/notification'
 import typesUtils from 'src/utils/types'
 import webApi from 'src/utils/web-api'
 
-import core from 'src/core'
-
 import settings from '../settings'
 import cache from '../cache'
 
 import ConfirmDialog from 'src/components/ConfirmDialog'
-import UnsavedChangesDialog from 'src/components/UnsavedChangesDialog'
 
 export default {
   name: 'MailAdminSettings',
 
   components: {
     ConfirmDialog,
-    UnsavedChangesDialog,
   },
 
   data() {
@@ -497,19 +492,11 @@ export default {
   },
 
   beforeRouteLeave (to, from, next) {
-    if (this.hasChanges() && _.isFunction(this?.$refs?.unsavedChangesDialog?.openConfirmDiscardChangesDialog)) {
-      this.$refs.unsavedChangesDialog.openConfirmDiscardChangesDialog(next)
-    } else {
-      next()
-    }
+    this.doBeforeRouteLeave(to, from, next)
   },
 
   beforeRouteUpdate (to, from, next) {
-    if (this.hasChanges() && _.isFunction(this?.$refs?.unsavedChangesDialog?.openConfirmDiscardChangesDialog)) {
-      this.$refs.unsavedChangesDialog.openConfirmDiscardChangesDialog(next)
-    } else {
-      next()
-    }
+    this.doBeforeRouteLeave(to, from, next)
   },
 
   mounted () {
@@ -655,6 +642,9 @@ export default {
       }
     },
 
+    /**
+     * Method is used in doBeforeRouteLeave mixin
+     */
     hasChanges () {
       if (this.createMode) {
         let isExternalAccessChanged = this.setExternalAccessServers !== false
@@ -699,6 +689,15 @@ export default {
           return false
         }
       }
+    },
+
+    /**
+     * Method is used in doBeforeRouteLeave mixin,
+     * do not use async methods - just simple and plain reverting of values
+     * !! hasChanges method must return true after executing revertChanges method
+     */
+    revertChanges () {
+      this.populateServer()
     },
 
     getServer (id) {

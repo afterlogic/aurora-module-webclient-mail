@@ -43,13 +43,9 @@ import webApi from 'src/utils/web-api'
 
 import cache from 'src/cache'
 
-import UnsavedChangesDialog from 'src/components/UnsavedChangesDialog'
-
 export default {
   name: 'MailAdminSettingsPerUser',
-  components: {
-    UnsavedChangesDialog
-  },
+
   data () {
     return {
       user: null,
@@ -58,26 +54,40 @@ export default {
       saving: false,
     }
   },
+
   watch: {
     $route(to, from) {
       this.parseRoute()
     },
   },
+
   mounted() {
     this.parseRoute()
   },
+
   beforeRouteLeave (to, from, next) {
-    if (this.hasChanges() && _.isFunction(this?.$refs?.unsavedChangesDialog?.openConfirmDiscardChangesDialog)) {
-      this.$refs.unsavedChangesDialog.openConfirmDiscardChangesDialog(next)
-    } else {
-      next()
-    }
+    this.doBeforeRouteLeave(to, from, next)
   },
+
   methods: {
+    /**
+     * Method is used in doBeforeRouteLeave mixin
+     */
     hasChanges () {
       const limit = _.isFunction(this.user?.getData) ? this.user?.getData('Mail::UserSpaceLimitMb') : 0
       return this.userSpaceLimitMb !== limit
     },
+
+    /**
+     * Method is used in doBeforeRouteLeave mixin,
+     * do not use async methods - just simple and plain reverting of values
+     * !! hasChanges method must return true after executing revertChanges method
+     */
+    revertChanges () {
+      const limit = _.isFunction(this.user?.getData) ? this.user?.getData('Mail::UserSpaceLimitMb') : 0
+      this.userSpaceLimitMb = limit
+    },
+
     parseRoute () {
       const userId = typesUtils.pPositiveInt(this.$route?.params?.id)
       if (this.user?.id !== userId) {
