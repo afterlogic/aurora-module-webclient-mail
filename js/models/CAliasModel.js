@@ -34,19 +34,16 @@ function CAliasModel()
  */
 CAliasModel.prototype.parse = function (oData)
 {
-	if (oData['@Object'] === 'Object/Aurora\\Modules\\CpanelIntegrator\\Classes\\Alias')
-	{
-		this.email(Types.pString(oData.Email));
-		this.friendlyName(Types.pString(oData.FriendlyName));
-		this.accountId(Types.pInt(oData.IdAccount));
-		this.id(Types.pInt(oData.EntityId));
-		var sSignature = Types.pString(oData.Signature);
-		if (sSignature.indexOf('<') !== 0) {
-			sSignature = '<div>' + sSignature + '</div>';
-		}
-		this.signature = ko.observable(sSignature);
-		this.useSignature(!!oData.UseSignature);
+	this.email(Types.pString(oData.Email));
+	this.friendlyName(Types.pString(oData.FriendlyName));
+	this.accountId(Types.pInt(oData.IdAccount));
+	this.id(Types.pInt(oData.EntityId));
+	var sSignature = Types.pString(oData.Signature);
+	if (sSignature.indexOf('<') !== 0) {
+		sSignature = '<div>' + sSignature + '</div>';
 	}
+	this.signature = ko.observable(sSignature);
+	this.useSignature(!!oData.UseSignature);
 };
 
 module.exports = CAliasModel;
