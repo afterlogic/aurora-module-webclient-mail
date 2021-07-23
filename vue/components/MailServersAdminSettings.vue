@@ -120,7 +120,7 @@
                 <q-item manual-focus>
                   <q-item-section class="q-pr-none">
                     <span>
-                    <q-radio v-model="smtpAuthentication" :val="smtpAuthTypeEnum.NoAuthentication" :label="$t('MAILWEBCLIENT.LABEL_USE_SPECIFIED_CREDENTIALS')" />
+                    <q-radio v-model="smtpAuthentication" :val="smtpAuthTypeEnum.NoAuthentication" :label="$t('MAILWEBCLIENT.LABEL_NO_AUTHENTICATION')" />
                     </span>
                   </q-item-section>
                 </q-item>
