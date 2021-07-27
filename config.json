@@ -35,6 +35,10 @@
 		true,
 		"bool"
 	],
+	"AllowHorizontalLineButton": [
+		false,
+		"bool"
+	],
     "Disabled": [
 		false,
 		"bool"

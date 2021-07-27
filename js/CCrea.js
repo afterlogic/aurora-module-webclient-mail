@@ -1254,8 +1254,16 @@ CCrea.prototype.bullets = function ()
 /**
  * Inserts horizontal line.
  */
-CCrea.prototype.horizontalLine = function ()
+CCrea.prototype.insertHorizontalLine = function ()
 {
+    if (!this.isFocused())
+    {
+        this.setFocus(true);
+    }
+    else
+    {
+        this.restoreSelectionPosition();
+    }
     this.execCom('InsertHorizontalRule');
 };
 

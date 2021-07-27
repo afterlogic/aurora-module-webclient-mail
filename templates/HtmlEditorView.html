@@ -68,6 +68,14 @@
 
 			<span class="separator"></span>
 			
+			<a href="javascript:void(0);" class="item hline" data-bind="click: insertHorizontalLine,
+					visible: bAllowHorizontalLineButton,
+					customTooltip: '%MODULENAME%/ACTION_INSERT_HLINE'">
+				<span class="icon"></span>
+			</a>
+
+			<span class="separator" data-bind="visible: bAllowHorizontalLineButton"></span>
+			
 			<a href="javascript:void(0);" class="item link" data-bind="click: insertLink, 
 			   css: {'expand': visibleInsertLinkPopup}, initDom: insertLinkDropdownDom, customTooltip: '%MODULENAME%/ACTION_INSERT_LINK'">
 				<span class="icon"></span>
