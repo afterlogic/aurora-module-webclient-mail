@@ -23,7 +23,18 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 	 */
 	public function init()
 	{
+		\Aurora\Modules\Core\Classes\User::extend(
+			self::GetName(),
+			[
+				'AllowChangeInputDirection'		=> array('bool', $this->getConfig('AllowChangeInputDirection', false)),
+				'MailsPerPage'					=> array('int', $this->getConfig('MailsPerPage', 20)),
+				'ShowMessagesCountInFolderList'	=> array('bool', $this->getConfig('ShowMessagesCountInFolderList', false)),
+				'HorizontalLayout'				=> array('bool', $this->getConfig('HorizontalLayoutByDefault', false)),
+			]
+		);
+
 		$this->subscribeEvent('Mail::UpdateSettings::after', array($this, 'onAfterUpdateSettings'));
+
 	}
 
 	public function GetSettings()
