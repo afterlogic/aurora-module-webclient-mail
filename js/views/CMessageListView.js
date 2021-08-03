@@ -128,6 +128,8 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 		'write': this._search,
 		'owner': this
 	});
+	
+	this.messageListParamsChanged = ko.observable(false).extend({'autoResetToFalse': 100});
 
 	this.isEmptyList = ko.computed(function () {
 		return this.collection().length === 0;
@@ -550,6 +552,7 @@ CMessageListView.prototype.onRoute = function (aParams)
 			MailCache.waitForUnseenMessages(true);
 		}
 		this.requestMessageList();
+		this.messageListParamsChanged(true);
 	}
 
 	this.highlightTrigger.notifySubscribers(true);
