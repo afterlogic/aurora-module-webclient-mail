@@ -23,6 +23,7 @@ var
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 
 	AccountAutoresponderSettingsFormView = require('modules/%ModuleName%/js/views/settings/AccountAutoresponderSettingsFormView.js'),
+	AccountAllowBlockListsSettingsFormView = require('modules/%ModuleName%/js/views/settings/AccountAllowBlockListsSettingsFormView.js'),
 	AccountFiltersSettingsFormView = require('modules/%ModuleName%/js/views/settings/AccountFiltersSettingsFormView.js'),
 	AccountFoldersPaneView = require('modules/%ModuleName%/js/views/settings/AccountFoldersPaneView.js'),
 	AccountForwardSettingsFormView = require('modules/%ModuleName%/js/views/settings/AccountForwardSettingsFormView.js'),
@@ -67,6 +68,7 @@ function CAccountsSettingsPaneView()
 	this.allowAutoresponder = ko.observable(false);
 	this.allowFilters = ko.observable(false);
 	this.allowSignature = ko.observable(false);
+	this.visibleAllowBlockLists = ko.observable(false);
 
 	this.aAccountTabs = [
 		{
@@ -110,6 +112,12 @@ function CAccountsSettingsPaneView()
 			title: TextUtils.i18n('%MODULENAME%/LABEL_SIGNATURE_TAB'),
 			view: SignatureSettingsFormView,
 			visible: this.allowSignature
+		},
+		{
+			name: 'allow-block-lists',
+			title: TextUtils.i18n('%MODULENAME%/LABEL_ALLOW_BLOCK_LISTS_TAB'),
+			view: AccountAllowBlockListsSettingsFormView,
+			visible: this.visibleAllowBlockLists
 		}
 	];
 
@@ -497,6 +505,7 @@ CAccountsSettingsPaneView.prototype.populate = function ()
 		this.allowAutoresponder(oAccount.allowAutoresponder());
 		this.allowFilters(oAccount.allowFilters());
 		this.allowSignature(!Settings.AllowIdentities);
+		this.visibleAllowBlockLists(oAccount.enableAllowBlockLists());
 
 		if (!this.currentTab() || !this.currentTab().visible())
 		{

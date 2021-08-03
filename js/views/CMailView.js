@@ -54,6 +54,16 @@ function CMailView()
 	this.messagePane().openMessageInNewWindowBound = this.openMessageInNewWindowBound;
 	this.messagePane.subscribe(function () {
 		this.bindMessagePane();
+		this.messagePane().expandMessagePaneWidth = this.expandMessagePaneWidth;
+	}, this);
+	
+	this.expandListPaneWidth = ko.observable(false);
+	this.expandMessagePaneWidth = ko.observable(false);
+	this.messagePane().expandMessagePaneWidth = this.expandMessagePaneWidth;
+	MailCache.currentMessage.subscribe(function () {
+		if (!MailCache.currentMessage()) {
+			this.expandMessagePaneWidth(false);
+		}
 	}, this);
 
 	this.isEnableGroupOperations = this.oMessageList.isEnableGroupOperations;
@@ -150,8 +160,6 @@ function CMailView()
 	this.isTrashFolder = ko.computed(function () {
 		return MailCache.getCurrentFolderType() === Enums.FolderTypes.Trash;
 	}, this);
-
-	this.jqPanelHelper = null;
 
 	if (Settings.HorizontalLayout)
 	{
@@ -322,22 +330,9 @@ CMailView.prototype.openMessageInNewWindow = function (oMessage)
  */
 CMailView.prototype.resizeDblClick = function (oData, oEvent)
 {
-	oEvent.preventDefault();
-	if (oEvent.stopPropagation)
-	{
-		oEvent.stopPropagation();
-	}
-	else
-	{
-		oEvent.cancelBubble = true;
-	}
-
+	Utils.calmEvent(oEvent);
 	Utils.removeSelection();
-	if (!this.jqPanelHelper)
-	{
-		this.jqPanelHelper = $('.MailLayout .panel_helper');
-	}
-	this.jqPanelHelper.trigger('resize', [600, 'max']);
+	this.expandListPaneWidth(!this.expandListPaneWidth());
 };
 
 /**

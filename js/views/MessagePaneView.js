@@ -42,7 +42,7 @@ var
 function CMessagePaneView()
 {
 	CAbstractScreenView.call(this, '%ModuleName%');
-
+	
 	this.bNewTab = App.isNewTab();
 	this.isLoading = ko.observable(false);
 
@@ -56,7 +56,7 @@ function CMessagePaneView()
 	UserSettings.timeFormat.subscribe(this.onCurrentMessageSubscribe, this);
 	UserSettings.dateFormat.subscribe(this.onCurrentMessageSubscribe, this);
 	this.displayedMessageUid = ko.observable('');
-
+	
 	this.browserTitle = ko.computed(function () {
 		var
 			oMessage = this.currentMessage(),
@@ -190,12 +190,6 @@ function CMessagePaneView()
 	this.accountId = ko.observable(0);
 	this.folder = ko.observable('');
 	this.uid = ko.observable('');
-	this.folder.subscribe(function () {
-		if (this.jqPanelHelper)
-		{
-			this.jqPanelHelper.trigger('resize', [null, 'min', null, true]);
-		}
-	}, this);
 	this.subject = ko.observable('');
 	this.emptySubject = ko.computed(function () {
 		return ($.trim(this.subject()) === '');
@@ -362,8 +356,6 @@ function CMessagePaneView()
 
 	//*** Quick Reply Part
 
-	this.jqPanelHelper = null;
-
 	this.visibleAttachments = ko.observable(false);
 	this.showMessage = function () {
 		this.visibleAttachments(false);
@@ -394,11 +386,9 @@ CMessagePaneView.prototype.resizeDblClick = function (oData, oEvent)
 	{
 		Utils.calmEvent(oEvent);
 		Utils.removeSelection();
-		if (!this.jqPanelHelper)
-		{
-			this.jqPanelHelper = $('.MailLayout .panel_helper');
+		if (this.expandMessagePaneWidth) {
+			this.expandMessagePaneWidth(!this.expandMessagePaneWidth());
 		}
-		this.jqPanelHelper.trigger('resize', [5, 'min', true]);
 	}
 };
 

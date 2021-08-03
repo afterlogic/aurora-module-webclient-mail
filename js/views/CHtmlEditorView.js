@@ -64,6 +64,7 @@ function CHtmlEditorView(bInsertImageAsBase64, oParent)
 	this.bInsertImageAsBase64 = bInsertImageAsBase64;
 	this.bAllowFileUpload = !(bInsertImageAsBase64 && window.File === undefined);
 	this.bAllowInsertImage = Settings.AllowInsertImage;
+	this.bAllowHorizontalLineButton = Settings.AllowHorizontalLineButton;
 	this.lockFontSubscribing = ko.observable(false);
 	this.bAllowImageDragAndDrop = !Browser.ie10AndAbove;
 
@@ -1219,6 +1220,15 @@ CHtmlEditorView.prototype.bullets = function ()
         this.oCrea.bullets();
         this.isEnumeration(false);
         this.isBullets(!this.isBullets());
+    }
+	return false;
+};
+
+CHtmlEditorView.prototype.insertHorizontalLine = function ()
+{
+    if (!this.inactive())
+	{
+        this.oCrea.insertHorizontalLine();
     }
 	return false;
 };

@@ -50,6 +50,7 @@ module.exports = {
 	DefaultFontName: 'Tahoma',
 	DefaultFontSize: 3,
 	AlwaysTryUseImageWhilePasting: true,
+	AllowHorizontalLineButton: false,
 	JoinReplyPrefixes: true,
 	MailsPerPage: 20,
 	MaxMessagesBodiesSizeToPrefetch: 50000,
@@ -135,6 +136,7 @@ module.exports = {
 			this.DefaultFontName = Types.pString(oAppDataMailWebclientSection.DefaultFontName, this.DefaultFontName);
 			this.DefaultFontSize = Types.pPositiveInt(oAppDataMailWebclientSection.DefaultFontSize, this.DefaultFontSize);
 			this.AlwaysTryUseImageWhilePasting = Types.pBool(oAppDataMailWebclientSection.AlwaysTryUseImageWhilePasting, this.AlwaysTryUseImageWhilePasting);
+			this.AllowHorizontalLineButton = Types.pBool(oAppDataMailWebclientSection.AllowHorizontalLineButton, this.AllowHorizontalLineButton);
 			this.JoinReplyPrefixes = Types.pBool(oAppDataMailWebclientSection.JoinReplyPrefixes, this.JoinReplyPrefixes);
 			this.MailsPerPage = Types.pPositiveInt(oAppDataMailWebclientSection.MailsPerPage, this.MailsPerPage);
 			this.MaxMessagesBodiesSizeToPrefetch = Types.pNonNegativeInt(oAppDataMailWebclientSection.MaxMessagesBodiesSizeToPrefetch, this.MaxMessagesBodiesSizeToPrefetch);
