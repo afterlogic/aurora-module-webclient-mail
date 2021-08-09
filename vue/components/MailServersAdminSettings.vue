@@ -120,14 +120,14 @@
                 <q-item manual-focus>
                   <q-item-section class="q-pr-none">
                     <span>
-                    <q-radio v-model="smtpAuthentication" :val="smtpAuthTypeEnum.NoAuthentication" :label="$t('MAILWEBCLIENT.LABEL_NO_AUTHENTICATION')" />
+                    <q-radio dense v-model="smtpAuthentication" :val="smtpAuthTypeEnum.NoAuthentication" :label="$t('MAILWEBCLIENT.LABEL_NO_AUTHENTICATION')" />
                     </span>
                   </q-item-section>
                 </q-item>
                 <q-item manual-focus>
                   <q-item-section avatar>
                     <span>
-                      <q-radio v-model="smtpAuthentication" :val="smtpAuthTypeEnum.UseSpecifiedCredentials" :label="$t('MAILWEBCLIENT.LABEL_USE_SPECIFIED_CREDENTIALS')" />
+                      <q-radio dense v-model="smtpAuthentication" :val="smtpAuthTypeEnum.UseSpecifiedCredentials" :label="$t('MAILWEBCLIENT.LABEL_USE_SPECIFIED_CREDENTIALS')" />
                     </span>
                   </q-item-section>
                   <q-item-section>
@@ -144,7 +144,7 @@
                 <q-item manual-focus>
                   <q-item-section>
                     <span>
-                    <q-radio v-model="smtpAuthentication" :val="smtpAuthTypeEnum.UseUserCredentials"
+                    <q-radio dense v-model="smtpAuthentication" :val="smtpAuthTypeEnum.UseUserCredentials"
                              :label="$t('MAILWEBCLIENT.LABEL_USE_USER_CREDENTIALS')"/>
                     </span>
                   </q-item-section>
@@ -271,7 +271,7 @@
                 <q-item manual-focus v-for="data in oauthConnectorsData" :key="data.type">
                   <q-item-section class="q-pr-none">
                     <span>
-                      <q-radio v-model="oauthConnector" :val="data.type" :label="data.name" />
+                      <q-radio dense v-model="oauthConnector" :val="data.type" :label="data.name" />
                     </span>
                   </q-item-section>
                 </q-item>
