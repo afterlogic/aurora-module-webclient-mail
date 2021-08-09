@@ -69,7 +69,7 @@
             </div>
           </div>
           <div class="row" v-if="allowEditDomainsInServer || !createMode">
-            <div class="col-2 q-pl-sm required-field" v-t="'MAILWEBCLIENT.LABEL_DOMAINS'"></div>
+            <div class="col-2" v-t="'MAILWEBCLIENT.LABEL_DOMAINS'"></div>
             <div class="col-3 textarea">
               <q-input outlined dense bg-color="white" type="textarea" rows="2" v-model="domains" ref="domains"
                        :disable="!allowEditDomainsInServer" />
@@ -771,8 +771,6 @@ export default {
       let emptyField = ''
       if (_.isEmpty(_.trim(this.serverName))) {
         emptyField = 'serverName'
-      } else if (this.allowEditDomainsInServer && _.isEmpty(_.trim(this.domains))) {
-        emptyField = 'domains'
       } else if (_.isEmpty(_.trim(this.imapServer))) {
         emptyField = 'imapServer'
       } else if (_.isEmpty(_.trim(this.imapPort))) {
