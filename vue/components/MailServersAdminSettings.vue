@@ -134,11 +134,8 @@
                     <q-input outlined dense bg-color="white" v-model="smtpLogin" :placeholder="$t('COREWEBCLIENT.LABEL_LOGIN')"></q-input>
                   </q-item-section>
                   <q-item-section>
-                    <!-- fake fields are a workaround to prevent auto-filling and saving passwords in Firefox -->
-                    <input style="display:none" type="text" name="fakeusernameremembered"/>
-                    <input style="display:none" type="password" name="fakepasswordremembered"/>
-                    <q-input outlined dense bg-color="white" type="password" autocomplete="off" v-model="smtpPassword"
-                             :placeholder="$t('COREWEBCLIENT.LABEL_PASSWORD')"></q-input>
+                    <q-input outlined dense bg-color="white" type="password" autocomplete="new-password"
+                             v-model="smtpPassword" :placeholder="$t('COREWEBCLIENT.LABEL_PASSWORD')" />
                   </q-item-section>
                 </q-item>
                 <q-item manual-focus>
