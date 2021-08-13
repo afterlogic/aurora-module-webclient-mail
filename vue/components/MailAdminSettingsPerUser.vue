@@ -23,7 +23,7 @@
       </q-card>
       <div class="q-pt-md text-right">
         <q-btn unelevated no-caps dense class="q-px-sm" :ripple="false" color="primary"
-               :label="saving ? $t('COREWEBCLIENT.ACTION_SAVE_IN_PROGRESS') : $t('COREWEBCLIENT.ACTION_SAVE')" @click="updateSettingsForEntity"/>
+               :label="$t('COREWEBCLIENT.ACTION_SAVE')" @click="updateSettingsForEntity"/>
       </div>
     </div>
     <q-inner-loading style="justify-content: flex-start;" :showing="loading || saving">
