@@ -16,12 +16,12 @@
               <q-item-label caption v-html="$t('MAILWEBCLIENT.LABEL_HINT_ALLOW_AUTO_PROVISIONING_NEW_USERS_HTML')"></q-item-label>
             </div>
           </div>
-          <div class="row q-mb-md">
+          <div class="row">
             <div class="col-5">
               <q-checkbox dense v-model="allowMultiAccounts" :label="$t('MAILWEBCLIENT.LABEL_ALLOW_USERS_ADD_MAILBOXES')" />
             </div>
           </div>
-          <div class="row" v-show="allowHorizontalLayout">
+          <div class="row q-mt-md" v-show="allowHorizontalLayout">
             <div class="col-1" v-t="'MAILWEBCLIENT.LABEL_DEFAULT_LAYOUT'"></div>
             <div class="col-5">
               <q-select outlined dense bg-color="white" v-model="horizontalLayoutByDefault"

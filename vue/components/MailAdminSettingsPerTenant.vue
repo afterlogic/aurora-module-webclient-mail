@@ -45,14 +45,10 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-2">
-              <div class="q-my-sm" v-t="'MAILWEBCLIENT.LABEL_ALLOCATED_TENANT_SPACE'" />
-            </div>
+            <div class="col-2" v-t="'MAILWEBCLIENT.LABEL_ALLOCATED_TENANT_SPACE'" />
             <div class="col-4">
-              <div class="row">
-                <span class="q-mt-sm">{{ allocatedSpace }}</span>
-                <div class="q-ma-sm q-pb-sm col-1" v-t="'COREWEBCLIENT.LABEL_MEGABYTES'"/>
-              </div>
+              <span>{{ allocatedSpace }}</span>
+              <span class="q-mx-sm q-pb-sm col-1" v-t="'COREWEBCLIENT.LABEL_MEGABYTES'" />
             </div>
           </div>
         </q-card-section>

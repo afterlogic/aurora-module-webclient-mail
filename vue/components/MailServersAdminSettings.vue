@@ -172,7 +172,7 @@
                             :label="$t('MAILWEBCLIENT.LABEL_USE_FULL_EMAIL_ADDRESS_AS_LOGIN')" />
               </div>
             </div>
-            <div class="row q-mb-md">
+            <div class="row">
               <div class="col-2"></div>
               <div class="col-5">
                 <q-item-label caption v-t="'MAILWEBCLIENT.LABEL_HINT_USE_FULL_EMAIL_ADDRESS_AS_LOGIN'" />
@@ -234,7 +234,7 @@
                          :disable="!setExternalAccessServers"></q-input>
               </div>
             </div>
-            <div class="row q-mb-md">
+            <div class="row">
               <div class="col-2 q-my-sm" v-t="'MAILWEBCLIENT.LABEL_SMTP_SERVER'"
                    :class="setExternalAccessServers ? '' : 'disabled'"></div>
               <div class="col-3">
@@ -259,7 +259,7 @@
 
         <q-card flat bordered class="card-edit-settings q-mt-md" v-if="oauthConnectorsData.length > 0 && (showServerFields || createMode)">
           <q-card-section>
-            <div class="row q-mb-md">
+            <div class="row">
               <div class="col-6">
                 <q-item-label v-t="'MAILWEBCLIENT.INFO_ADMIN_OAUTH'" />
                 <q-list dense>
