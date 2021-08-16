@@ -281,11 +281,11 @@ SendingUtils.onSendOrSaveMessageResponse = function (oResponse, oRequest, bRequi
 				{
 					if (-1 !== $.inArray(oRequest.Parameters.DraftFolder, MailCache.getCurrentTemplateFolders()))
 					{
-						Api.showErrorByCode(oResponse, TextUtils.i18n('%MODULENAME%/ERROR_TEMPLATE_SAVING'));
+						Api.showErrorByCode(oResponse, TextUtils.i18n('%MODULENAME%/ERROR_TEMPLATE_SAVING'), true);
 					}
 					else
 					{
-						Api.showErrorByCode(oResponse, TextUtils.i18n('%MODULENAME%/ERROR_MESSAGE_SAVING'));
+						Api.showErrorByCode(oResponse, TextUtils.i18n('%MODULENAME%/ERROR_MESSAGE_SAVING'), true);
 					}
 				}
 			}
@@ -312,7 +312,7 @@ SendingUtils.onSendOrSaveMessageResponse = function (oResponse, oRequest, bRequi
 		case 'SendMessage':
 			if (!bResult)
 			{
-				Api.showErrorByCode(oResponse, TextUtils.i18n('%MODULENAME%/ERROR_MESSAGE_SENDING'));
+				Api.showErrorByCode(oResponse, TextUtils.i18n('%MODULENAME%/ERROR_MESSAGE_SENDING'), true);
 			}
 			else
 			{
