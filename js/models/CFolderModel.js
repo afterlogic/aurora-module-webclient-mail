@@ -1096,6 +1096,10 @@ CFolderModel.prototype.initComputedFields = function ()
 		return this.canDelete() ? TextUtils.i18n('%MODULENAME%/ACTION_DELETE_FOLDER') : '';
 	}, this);
 	
+	this.editButtonHint = ko.computed(function () {
+		return !this.isSystem() && this.bSelectable ? TextUtils.i18n('%MODULENAME%/LABEL_EDIT_FOLDER') : '';
+	}, this);
+	
 	this.usedAs = ko.computed(function () {
 		switch (this.type())
 		{
@@ -1551,6 +1555,15 @@ CFolderModel.prototype.onSetTemplateFolderType = function (oResponse)
 	{
 		Api.showErrorByCode(oResponse, TextUtils.i18n('%MODULENAME%/ERROR_SETUP_SPECIAL_FOLDERS'));
 		MailCache.getFolderList(AccountList.editedId());
+	}
+};
+
+CFolderModel.prototype.openEditFolderPopup = function ()
+{
+	if (!this.isSystem() && this.bSelectable)
+	{
+		var EditFolderPopup = require('modules/%ModuleName%/js/popups/EditFolderPopup.js');
+		Popups.showPopup(EditFolderPopup, [this]);
 	}
 };
 

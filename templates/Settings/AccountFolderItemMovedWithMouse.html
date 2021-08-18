@@ -1,5 +1,8 @@
 <span class="title" data-bind="css: {'cannotDrag': $parent.subfolders && $parent.subfolders().length === 1}">
 	<span class="controls">
+		<span class="button" data-bind="customTooltip: editButtonHint(),
+			css: {'edit-folder': !isSystem() && bSelectable},
+			click: openEditFolderPopup"></span>
 		<span class="button always-refresh" data-bind="customTooltip: alwaysRefreshButtonHint, 
 			css: {'turned-on': isAlwaysRefresh()}, 
 			click: triggerAlwaysRefreshState, visible: bAllowAlwaysRefreshFolders"></span>
@@ -14,11 +17,7 @@
 	<span class="count" data-bind="text: messageCount"></span>
 	<span class="name">
 		<span class="icon" data-bind="css: 'type' + type()"></span>
-		<span class="text" data-bind="css: {'link': canRename}, text: name, visible: !edited(), 
-			click: function(){if (canRename()) edited(true);}"></span>
-		<input type="text" spellcheck="false" class="input" maxlength="30" data-bind="value: nameForEdit, 
-			visible: edited, hasfocus: edited, onEnter: applyNameEdit, valueUpdate: 'afterkeydown', 
-			onEsc: cancelNameEdit">
+		<span class="text" data-bind="text: name, visible: !edited()"></span>
 		<span class="text" data-bind="text: usedAs()"></span>
 	</span>
 </span>

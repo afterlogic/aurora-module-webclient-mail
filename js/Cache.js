@@ -1519,13 +1519,6 @@ CMailCache.prototype.onGetFoldersResponse = function (oResponse, oRequest)
 		
 		this.__oldFolderList = this.oFolderListItems[iAccountId];
 		this.oFolderListItems[iAccountId] = oFolderList;
-		
-		// Destroy the old folder list to free up used memory.
-		if (this.__oldFolderList)
-		{
-			this.__oldFolderList.destroyFolders();
-			Utils.destroyObjectWithObservables(this, '__oldFolderList');
-		}
 
 		if (this.currentAccountId() === iAccountId)
 		{
@@ -1534,6 +1527,13 @@ CMailCache.prototype.onGetFoldersResponse = function (oResponse, oRequest)
 		if (this.editedAccountId() === iAccountId)
 		{
 			this.editedFolderList(oFolderList);
+		}
+		
+		// Destroy the old folder list to free up used memory.
+		if (this.__oldFolderList)
+		{
+			this.__oldFolderList.destroyFolders();
+			Utils.destroyObjectWithObservables(this, '__oldFolderList');
 		}
 
 		this.requirePrefetcher();
