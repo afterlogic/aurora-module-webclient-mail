@@ -627,7 +627,7 @@ CFolderModel.prototype.removeAllMessages = function ()
 	oUidListsToRemove = null;
 };
 
-CFolderModel.prototype.removeAllMessageListsFromCacheIfHasChanges = function ()
+CFolderModel.prototype.removeAllMessageListsFromCacheIfHasChanges = function (oCurrentUidList)
 {
 	if (this.hasChanges())
 	{
@@ -635,6 +635,11 @@ CFolderModel.prototype.removeAllMessageListsFromCacheIfHasChanges = function ()
 		this.requestedLists = [];
 		this.aRequestedThreadUids = [];
 		this.hasChanges(false);
+		if (oCurrentUidList) {
+			oCurrentUidList.hasChanges(true);
+			var sIndex = JSON.stringify([oCurrentUidList.search(), oCurrentUidList.filters(), oCurrentUidList.sortBy(), oCurrentUidList.sortOrder()]);
+			this.oUids[sIndex] = oCurrentUidList;
+		}
 	}
 };
 
@@ -845,15 +850,16 @@ CFolderModel.prototype.commitDeleted = function (aUids)
  * @param {string} sFilters
  * @param {string} sSortBy
  * @param {number} iSortOrder
+ * @param {boolean} bCheckChanges
  */
-CFolderModel.prototype.getUidList = function (sSearch, sFilters, sSortBy, iSortOrder)
+CFolderModel.prototype.getUidList = function (sSearch, sFilters, sSortBy, iSortOrder, bCheckChanges)
 {
 	var
 		sIndex = JSON.stringify([sSearch, sFilters, sSortBy, iSortOrder]),
 		oUidList = null
 	;
 	
-	if (this.oUids[sIndex] === undefined)
+	if (this.oUids[sIndex] === undefined || bCheckChanges && this.oUids[sIndex].hasChanges())
 	{
 		oUidList = new CUidListModel();
 		oUidList.iAccountId = this.iAccountId;

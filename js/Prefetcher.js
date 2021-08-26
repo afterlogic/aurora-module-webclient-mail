@@ -94,6 +94,7 @@ Prefetcher.prefetchMessageList = function (oFolder, iPage, sSearch, sFilters)
 
 Prefetcher.prefetchStarredMessageList = function ()
 {
+	return false;
 	var
 		oFolderList = MailCache.folderList(),
 		oInbox = oFolderList ? oFolderList.inboxFolder() : null,

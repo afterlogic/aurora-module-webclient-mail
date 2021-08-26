@@ -55,16 +55,23 @@
 					</span>
 				</span>
 
+				<span class="list_notification" data-bind="visible: visibleInfoLoading() && isLoadingOnTop()" style="border-bottom: 1px solid #e8e8e8;">
+					<span class="description" data-bind="i18n: {'key': '%MODULENAME%/INFO_LOADING_MESSAGE_LIST'}"></span>
+				</span>
+				<span class="list_notification" data-bind="visible: visibleInfoSearchLoading() && isLoadingOnTop()" style="border-bottom: 1px solid #e8e8e8;">
+					<span class="description" data-bind="i18n: {'key': '%MODULENAME%/INFO_SEARCHING_FOR_MESSAGES'}"></span>
+				</span>
+
 				<div class="items_sub_list message_sub_list" data-bind="foreach: collection, 
 					 draggablePlace: disableMoveMessages() ? null : function (oMessage, bCtrl) {return $root.dragAndDropHelper(oMessage, bCtrl);},
 					 css: {'not_use_threads': !useThreading(), 'use_threads': useThreading}">
 					<!-- ko template: {name: $parent.customMessageItemViewTemplate() || '%ModuleName%_MessageItemView'} --><!-- /ko -->
 				</div>
 
-				<span class="list_notification" data-bind="visible: visibleInfoLoading()">
+				<span class="list_notification" data-bind="visible: visibleInfoLoading() && !isLoadingOnTop()">
 					<span class="description" data-bind="i18n: {'key': '%MODULENAME%/INFO_LOADING_MESSAGE_LIST'}"></span>
 				</span>
-				<span class="list_notification" data-bind="visible: visibleInfoSearchLoading()">
+				<span class="list_notification" data-bind="visible: visibleInfoSearchLoading() && !isLoadingOnTop()">
 					<span class="description" data-bind="i18n: {'key': '%MODULENAME%/INFO_SEARCHING_FOR_MESSAGES'}"></span>
 				</span>
 				<div class="uploader_mask" data-bind="initDom: uploaderArea, css: {'active': bDragActiveComp}, visible: folderType() !== Enums.FolderTypes.Spam">
@@ -74,5 +81,5 @@
 		</div>
 	</div>
 
-	<div class="panel_bottom unselectable" data-bind="visible: oPageSwitcher.pages().length > 0, template: {name: oPageSwitcher.ViewTemplate, data: oPageSwitcher}"></div>
+	<!--<div class="panel_bottom unselectable" data-bind="visible: oPageSwitcher.pages().length > 0, template: {name: oPageSwitcher.ViewTemplate, data: oPageSwitcher}"></div>-->
 </div>

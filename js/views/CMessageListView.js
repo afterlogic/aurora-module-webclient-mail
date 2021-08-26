@@ -31,6 +31,17 @@ var
 
 require("jquery-ui/ui/widgets/datepicker");
 
+ko.subscribable.fn.subscribeExtended = function (callback) {
+    var oldValue;
+    this.subscribe(function (_oldValue) {
+        oldValue = _oldValue;
+    }, this, 'beforeChange');
+
+    this.subscribe(function (newValue) {
+        callback(newValue, oldValue);
+    });
+};
+
 /**
  * @constructor
  * 
@@ -87,6 +98,7 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 	this.folderType = ko.observable(Enums.FolderTypes.User);
 	this.filters = ko.observable('');
 
+	this.totalCount = ko.observable(0);
 	this.uidList = MailCache.uidList;
 	this.uidList.subscribe(function () {
 		if (this.uidList().searchCountSubscription)
@@ -97,12 +109,14 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 		this.uidList().searchCountSubscription = this.uidList().resultCount.subscribe(function () {
 			if (this.uidList().resultCount() >= 0)
 			{
+				this.totalCount(this.uidList().resultCount());
 				this.oPageSwitcher.setCount(this.uidList().resultCount());
 			}
 		}, this);
 		
 		if (this.uidList().resultCount() >= 0)
 		{
+			this.totalCount(this.uidList().resultCount());
 			this.oPageSwitcher.setCount(this.uidList().resultCount());
 		}
 	}, this);
@@ -118,7 +132,46 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 		return oAccount && oAccount.threadingIsAvailable() && !bFolderWithoutThreads && bNotSearchOrFilters;
 	}, this);
 
+	this.lockScroll = ko.observable(false);
+	this.lockPages = ko.observableArray(MailCache.pages());
 	this.collection = MailCache.messages;
+	this.collection.subscribeExtended(function (aNewMessage, aOldMessages) {
+		var aNewUids = _.map(aNewMessage, function (oMessage) {
+			return oMessage.uid();
+		});
+		_.each(aOldMessages, function (oMessage) {
+			if (oMessage.checked() && _.indexOf(aNewUids, oMessage.uid()) === -1) {
+				oMessage.checked(false);
+			}
+		});
+
+		var bNewListHasCurrentMessage = !!this.currentMessage() && (_.indexOf(aNewUids, this.currentMessage().uid()) !== -1);
+		if (bNewListHasCurrentMessage && !this.currentMessage().selected()) {
+			this.currentMessage().selected(true);
+		}
+
+		if (this.lockScroll() && !this.isLoading()) {
+			var
+				oMessageListDom = $('.message_list', this.$viewDom),
+				oMessageListScrollDom = $('.message_list_scroll', this.$viewDom),
+				iLockedPagesSum = _.reduce(this.lockPages(), function(memo, num){ return memo + num; }, 0),
+				iCurrPagesSum = _.reduce(MailCache.pages(), function(memo, num){ return memo + num; }, 0)
+			;
+
+			if (iLockedPagesSum < iCurrPagesSum) {
+				// The last scroll was to bottom
+				if (this.lockPages().length === 1) {
+					// It was the first scroll, do nothing
+				} else {
+					oMessageListScrollDom.scrollTop(oMessageListScrollDom.scrollTop() - (oMessageListDom.height() / 2));
+				}
+			} else if (oMessageListScrollDom.scrollTop() === 0) {
+				oMessageListScrollDom.scrollTop(10);
+			}
+			this.lockScroll(false);
+			this.lockPages(MailCache.pages());
+		}
+	}.bind(this));
 	
 	this._search = ko.observable('');
 	this.search = ko.computed({
@@ -148,6 +201,7 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 	}, this);
 
 	this.isLoading = MailCache.messagesLoading;
+	this.isLoadingOnTop = ko.observable(false);
 
 	this.isError = MailCache.messagesLoadingError;
 
@@ -551,7 +605,8 @@ CMessageListView.prototype.onRoute = function (aParams)
 		{
 			MailCache.waitForUnseenMessages(true);
 		}
-		this.requestMessageList();
+		MailCache.resetCurrentPage();
+		this.requestMessageList(1);
 		this.messageListParamsChanged(true);
 	}
 
@@ -564,12 +619,16 @@ CMessageListView.prototype.setCurrentFolder = function ()
 	this.folderType(MailCache.getCurrentFolderType());
 };
 
-CMessageListView.prototype.requestMessageList = function ()
+CMessageListView.prototype.requestMessageList = function (iPage)
 {
 	var
-		sFullName = MailCache.getCurrentFolderFullname(),
-		iPage = this.oPageSwitcher.currentPage()
+		sFullName = MailCache.getCurrentFolderFullname()
+//		iPage = this.oPageSwitcher.currentPage()
 	;
+	
+	if (iPage === undefined) {
+		iPage = MailCache.page();
+	}
 	
 	if (sFullName.length > 0)
 	{
@@ -740,6 +799,7 @@ CMessageListView.prototype.routeForMessage = function (oMessage)
  */
 CMessageListView.prototype.onBind = function ($viewDom)
 {
+	this.$viewDom = $viewDom;
 	var
 		self = this,
 		fStopPopagation = _.bind(function (oEvent) {
@@ -750,7 +810,8 @@ CMessageListView.prototype.onBind = function ($viewDom)
 		}, this)
 	;
 
-	$('.message_list', $viewDom)
+	var messageListDom = $('.message_list', $viewDom);
+	messageListDom
 		.on('click', function ()
 		{
 			self.isFocused(false);
@@ -768,6 +829,32 @@ CMessageListView.prototype.onBind = function ($viewDom)
 		.on('dblclick', '.message_sub_list .item .thread-pin', fStopPopagation)
 	;
 
+	var oMessageListScrollDom = $('.message_list_scroll', $viewDom);
+	oMessageListScrollDom
+		.on('scroll', function () {
+			var
+				iScrollTop = oMessageListScrollDom.scrollTop(),
+				bScrollAtTop = iScrollTop < 20,
+				bScrollAtBottom = (messageListDom.height() - (iScrollTop + oMessageListScrollDom.height())) < 20
+			;
+			this.isLoadingOnTop(bScrollAtTop && !bScrollAtBottom);
+			if (bScrollAtTop && !bScrollAtBottom) {
+				if (MailCache.page() > 1 && !this.lockScroll()) {
+					// load prev page
+					this.lockScroll(true);
+					this.lockPages(MailCache.pages());
+					this.requestMessageList(MailCache.page() - 1);
+				}
+			} else if (bScrollAtBottom && !bScrollAtTop) {
+				if (MailCache.page() * Settings.MailsPerPage < this.totalCount() && !this.lockScroll()) {
+					// load next page
+					this.lockScroll(true);
+					this.lockPages(MailCache.pages());
+					this.requestMessageList(MailCache.page() + 1);
+				}
+			}
+		}.bind(this));
+
 	this.selector.initOnApplyBindings(
 		'.message_sub_list .item',
 		'.message_sub_list .item.selected',
@@ -775,6 +862,12 @@ CMessageListView.prototype.onBind = function ($viewDom)
 		$('.message_list', $viewDom),
 		$('.message_list_scroll.scroll-inner', $viewDom)
 	);
+	
+//	$(window).scroll(function() {
+//		if($(window).scrollTop() == $(document).height() - $(window).height()) {
+//			   // ajax call get data from server and append to the div
+//		}
+//	});
 
 	this.initUploader();
 };

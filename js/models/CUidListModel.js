@@ -27,6 +27,8 @@ function CUidListModel()
 	this.sortBy = ko.observable(Settings.MessagesSortBy.DefaultSortBy);
 	this.sortOrder = ko.observable(Settings.MessagesSortBy.DefaultSortOrder);
 	
+	this.hasChanges = ko.observable(false);
+	
 	this.resultCount = ko.observable(-1);
 	this.collection = ko.observableArray([]);
 	this.threadUids = {};
@@ -76,7 +78,7 @@ CUidListModel.prototype.setUidsAndCount = function (iOffset, oResult)
 /**
  * @param {number} iOffset
  */
-CUidListModel.prototype.getUidsForOffset = function (iOffset)
+CUidListModel.prototype.getUidsForOffset = function (iOffset, iLimit)
 {
 	this.requireMailCache();
 	
@@ -93,7 +95,7 @@ CUidListModel.prototype.getUidsForOffset = function (iOffset)
 	
 	for(; iIndex < iLen; iIndex++)
 	{
-		if (iIndex >= iOffset && iExistsCount < Settings.MailsPerPage)
+		if (iIndex >= iOffset && iExistsCount < iLimit)
 		{
 			sUid = this.collection()[iIndex];
 			var sUidForDict = sUid;

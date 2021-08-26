@@ -163,6 +163,14 @@ function CMailCache()
 	
 	this.uidList = ko.observable(new CUidListModel());
 	this.page = ko.observable(1);
+	this.prevPage = ko.observable(1);
+	this.pages = ko.observableArray([1]);
+	this.limit = ko.computed(function () {
+		return Settings.MailsPerPage * this.pages().length;
+	}, this);
+	this.offset = ko.computed(function () {
+		return Settings.MailsPerPage * (_.min(this.pages()) - 1);
+	}, this);
 	
 	this.messagesLoading = ko.observable(false);
 	this.messagesLoadingError = ko.observable(false);
@@ -535,10 +543,11 @@ CMailCache.prototype.getMessagesWithThreads = function (sFolderFullName, oUidLis
  * @param {number} iOffset
  * @param {boolean} bFillMessages
  */
-CMailCache.prototype.setMessagesFromUidList = function (oUidList, iOffset, bFillMessages)
+CMailCache.prototype.setMessagesFromUidList = function (oUidList, iOffset, bFillMessages, bStopLoading)
 {
 	var
-		aUids = oUidList.getUidsForOffset(iOffset),
+		iLimit = bFillMessages ? this.limit() : Settings.MailsPerPage,
+		aUids = oUidList.getUidsForOffset(iOffset, iLimit),
 		aMessages = _.map(aUids, function (sUid) {
 			var
 				iAccountId = oUidList.iAccountId,
@@ -558,18 +567,21 @@ CMailCache.prototype.setMessagesFromUidList = function (oUidList, iOffset, bFill
 	
 	if (bFillMessages)
 	{
-		this.messages(this.getMessagesWithThreads(this.getCurrentFolderFullname(), oUidList, aMessages));
-		
-		if ((iOffset + iMessagesCount < oUidList.resultCount()) &&
-			(iMessagesCount < Settings.MailsPerPage) &&
+		if (!bStopLoading && (iOffset + iMessagesCount < oUidList.resultCount()) &&
+			(iMessagesCount < this.limit()) &&
 			(oUidList.filters() !== Enums.FolderFilter.Unseen || this.waitForUnseenMessages()))
 		{
 			this.messagesLoading(true);
 		}
 
+		if (!this.messagesLoading() || _.isEmpty(this.messages()) || _.isEmpty(aMessages)) {
+			this.messages(this.getMessagesWithThreads(this.getCurrentFolderFullname(), oUidList, aMessages));
+		}
+		
 		if (this.currentMessage() && (this.currentMessage().deleted() ||
 			this.currentMessage().folder() !== this.getCurrentFolderFullname() && !this.oUnifiedInbox.selected()))
 		{
+			this.currentMessage().selected(false);
 			this.currentMessage(null);
 		}
 	}
@@ -756,6 +768,25 @@ CMailCache.prototype.changeCurrentMessageList = function (sFolder, iPage, sSearc
 };
 
 /**
+ * Resets pages parameters if messages list parameters were changed (e.x. folder changed)
+ */
+CMailCache.prototype.resetCurrentPage = function ()
+{
+	this.prevPage(1);
+	this.page(1);
+	this.pages([1]);
+};
+
+CMailCache.prototype.changeCurrentPage = function (iPage)
+{
+	if (iPage !== this.page()) {
+		this.prevPage(this.page());
+		this.page(iPage);
+		this.pages(_.uniq([this.page(), this.prevPage()]).sort());
+	}
+};
+
+/**
  * @param {string} sFolder
  * @param {number} iPage
  * @param {string} sSearch
@@ -766,6 +797,7 @@ CMailCache.prototype.changeCurrentMessageList = function (sFolder, iPage, sSearc
  */
 CMailCache.prototype.requestCurrentMessageList = function (sFolder, iPage, sSearch, sFilter, sSortBy, iSortOrder, bFillMessages)
 {
+	this.changeCurrentPage(iPage);
 	var
 		oRequestData = this.requestMessageList(sFolder, iPage, sSearch, sFilter || '', sSortBy, iSortOrder, true, (bFillMessages || false))
 	;
@@ -777,7 +809,6 @@ CMailCache.prototype.requestCurrentMessageList = function (sFolder, iPage, sSear
 		;
 
 		this.uidList(oRequestData.UidList);
-		this.page(iPage);
 
 		this.messagesLoading(oRequestData.RequestStarted);
 		this.messagesLoadingError(false);
@@ -827,12 +858,13 @@ CMailCache.prototype.requestMessageList = function (sFolder, iPage, sSearch, sFi
 		oAccount = AccountList.getCurrent(),
 		bUseThreading = oAccount && oAccount.threadingIsAvailable() && !bFolderWithoutThreads && sSearch === '' && sFilters === '',
 		oUidList = (oFolder) ? oFolder.getUidList(sSearch, sFilters, sSortBy, iSortOrder) : null,
+		bHasChanges = oFolder.hasChanges() || oUidList.hasChanges(),
 		bCacheIsEmpty = oUidList && oUidList.resultCount() === -1,
 		iOffset = (iPage - 1) * Settings.MailsPerPage,
 		oParameters = {
 			'Folder': sFolder,
-			'Offset': iOffset,
-			'Limit': Settings.MailsPerPage,
+			'Offset': bHasChanges ? 0 : iOffset,
+			'Limit': bHasChanges ? iOffset + Settings.MailsPerPage : Settings.MailsPerPage,
 			'Search': sSearch,
 			'Filters': sFilters,
 			'SortBy': sSortBy,
@@ -872,7 +904,7 @@ CMailCache.prototype.requestMessageList = function (sFolder, iPage, sSearch, sFi
 	}
 	if (oUidList)
 	{
-		aUids = this.setMessagesFromUidList(oUidList, iOffset, bFillMessages);
+		aUids = this.setMessagesFromUidList(oUidList, bFillMessages ? this.offset() : iOffset, bFillMessages);
 		oFolder.updateLastAccessTime(aUids);
 	}
 	
@@ -880,7 +912,7 @@ CMailCache.prototype.requestMessageList = function (sFolder, iPage, sSearch, sFi
 	{
 		bDataExpected = 
 			(bCacheIsEmpty) ||
-			((iOffset + aUids.length < oUidList.resultCount()) && (aUids.length < Settings.MailsPerPage))
+			((iOffset + aUids.length < oUidList.resultCount()) && (aUids.length < this.limit()))
 		;
 		bStartRequest = !bDoNotRequest && (oFolder.hasChanges() || bDataExpected);
 	}
@@ -1085,8 +1117,8 @@ CMailCache.prototype.copyMessagesToFolder = function (sToFolderFullName, aUids)
 CMailCache.prototype.excludeDeletedMessages = function ()
 {
 	_.delay(_.bind(function () {
-		var iOffset = (this.page() - 1) * Settings.MailsPerPage;
-		this.setMessagesFromUidList(this.uidList(), iOffset, true);
+//		var iOffset = (this.page() - 1) * Settings.MailsPerPage;
+		this.setMessagesFromUidList(this.uidList(), this.offset(), true);
 	}, this), 500);
 };
 
@@ -1408,7 +1440,7 @@ CMailCache.prototype.executeGroupOperationForFolder = function (sMethod, oFolder
 			'Uids': aUids.join(','),
 			'SetAction': bSetAction
 		},
-		iOffset = (this.page() - 1) * Settings.MailsPerPage,
+//		iOffset = (this.page() - 1) * Settings.MailsPerPage,
 		iUidsCount = aUids.length,
 		iStarredCount = oFolderList.oStarredFolder ? oFolderList.oStarredFolder.messageCount() : 0,
 		oStarredUidList = oFolder.getUidList('', Enums.FolderFilter.Flagged, Settings.MessagesSortBy.DefaultSortBy, Settings.MessagesSortBy.DefaultSortOrder),
@@ -1460,7 +1492,7 @@ CMailCache.prototype.executeGroupOperationForFolder = function (sMethod, oFolder
 
 	if (this.uidList().filters() !== Enums.FolderFilter.Unseen || this.waitForUnseenMessages())
 	{
-		this.setMessagesFromUidList(this.uidList(), iOffset, true);
+		this.setMessagesFromUidList(this.uidList(), this.offset(), true);
 	}
 };
 
@@ -1862,10 +1894,11 @@ CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 				this.uidList().filters() === oResult.Filters &&
 				this.uidList().sortBy() === oParameters.SortBy &&
 				this.uidList().sortOrder() === oParameters.SortOrder,
-		bCurrentPage = this.page() === ((oParameters.Offset / Settings.MailsPerPage) + 1), // !!!
+		iOffset = oParameters.Offset === 0 ? oParameters.Limit - Settings.MailsPerPage : oParameters.Offset,
+		bCurrentPage = this.page() === ((iOffset / Settings.MailsPerPage) + 1),
 		aNewFolderMessages = []
 	;
-	
+
 	this.showNotificationsForNewMessages(oResponse);
 	
 	if (oResult !== false && oResult['@Object'] === 'Collection/MessageCollection')
@@ -1877,7 +1910,7 @@ CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 			oResult.MessageCount, oResult.MessageUnseenCount, bCurrentFolder && !bCurrentList);
 		bHasFolderChanges = oFolder.hasChanges();
 		oFolder.removeAllMessageListsFromCacheIfHasChanges();
-		oUidList = oFolder.getUidList(oResult.Search, oResult.Filters, oParameters.SortBy, oParameters.SortOrder);
+		oUidList = oFolder.getUidList(oResult.Search, oResult.Filters, oParameters.SortBy, oParameters.SortOrder, true);
 		oUidList.setUidsAndCount(oParameters.Offset, oResult);
 		this.parseAndCacheMessages(oResult['@Collection'], oFolder, bTrustThreadInfo, aNewFolderMessages);
 		
@@ -1888,7 +1921,7 @@ CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 			{
 				this.messagesLoading(false);
 				this.waitForUnseenMessages(false);
-				this.setMessagesFromUidList(oUidList, oParameters.Offset, true);
+				this.setMessagesFromUidList(oUidList, this.offset(), true, true);
 				if (!this.messagesLoading())
 				{
 					this.setAutocheckmailTimer();
@@ -2146,7 +2179,7 @@ CMailCache.prototype.clearMessagesCache = function (iAccountId)
 	
 	_.each(oFolderList.collection(), function (oFolder) {
 		oFolder.markHasChanges();
-		oFolder.removeAllMessageListsFromCacheIfHasChanges();
+		oFolder.removeAllMessageListsFromCacheIfHasChanges(this.uidList());
 	}, this);
 	
 	if (iAccountId === this.currentAccountId())
