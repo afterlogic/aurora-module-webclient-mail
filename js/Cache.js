@@ -861,6 +861,7 @@ CMailCache.prototype.requestMessageList = function (sFolder, iPage, sSearch, sFi
 		bHasChanges = oFolder.hasChanges() || oUidList.hasChanges(),
 		bCacheIsEmpty = oUidList && oUidList.resultCount() === -1,
 		iOffset = (iPage - 1) * Settings.MailsPerPage,
+		iUidsOffset =  bFillMessages ? this.offset() : iOffset,
 		oParameters = {
 			'Folder': sFolder,
 			'Offset': bHasChanges ? 0 : iOffset,
@@ -902,17 +903,14 @@ CMailCache.prototype.requestMessageList = function (sFolder, iPage, sSearch, sFi
 	{
 		oUidList = this.uidList();
 	}
-	if (oUidList)
-	{
-		aUids = this.setMessagesFromUidList(oUidList, bFillMessages ? this.offset() : iOffset, bFillMessages);
-		oFolder.updateLastAccessTime(aUids);
-	}
 	
 	if (oUidList)
 	{
+		aUids = this.setMessagesFromUidList(oUidList, iUidsOffset, bFillMessages);
+		oFolder.updateLastAccessTime(aUids);
 		bDataExpected = 
 			(bCacheIsEmpty) ||
-			((iOffset + aUids.length < oUidList.resultCount()) && (aUids.length < this.limit()))
+			((iUidsOffset + aUids.length < oUidList.resultCount()) && (aUids.length < this.limit()))
 		;
 		bStartRequest = !bDoNotRequest && (oFolder.hasChanges() || bDataExpected);
 	}

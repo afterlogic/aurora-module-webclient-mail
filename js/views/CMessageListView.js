@@ -834,8 +834,8 @@ CMessageListView.prototype.onBind = function ($viewDom)
 		.on('scroll', function () {
 			var
 				iScrollTop = oMessageListScrollDom.scrollTop(),
-				bScrollAtTop = iScrollTop < 20,
-				bScrollAtBottom = (messageListDom.height() - (iScrollTop + oMessageListScrollDom.height())) < 20
+				bScrollAtTop = iScrollTop < 200,
+				bScrollAtBottom = (messageListDom.height() - (iScrollTop + oMessageListScrollDom.height())) < 200
 			;
 			this.isLoadingOnTop(bScrollAtTop && !bScrollAtBottom);
 			if (bScrollAtTop && !bScrollAtBottom) {
