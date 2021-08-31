@@ -835,15 +835,16 @@ CMessageListView.prototype.onBind = function ($viewDom)
 			var
 				iScrollTop = oMessageListScrollDom.scrollTop(),
 				bScrollAtTop = iScrollTop < 200,
-				bScrollAtBottom = (messageListDom.height() - (iScrollTop + oMessageListScrollDom.height())) < 200
+				bScrollAtBottom = (messageListDom.height() - (iScrollTop + oMessageListScrollDom.height())) < 200,
+				bLoadingOnTop = false
 			;
-			this.isLoadingOnTop(bScrollAtTop && !bScrollAtBottom);
 			if (bScrollAtTop && !bScrollAtBottom) {
 				if (MailCache.page() > 1 && !this.lockScroll()) {
 					// load prev page
 					this.lockScroll(true);
 					this.lockPages(MailCache.pages());
 					this.requestMessageList(MailCache.page() - 1);
+					bLoadingOnTop = true;
 				}
 			} else if (bScrollAtBottom && !bScrollAtTop) {
 				if (MailCache.page() * Settings.MailsPerPage < this.totalCount() && !this.lockScroll()) {
@@ -853,6 +854,7 @@ CMessageListView.prototype.onBind = function ($viewDom)
 					this.requestMessageList(MailCache.page() + 1);
 				}
 			}
+			this.isLoadingOnTop(bLoadingOnTop);
 		}.bind(this));
 
 	this.selector.initOnApplyBindings(

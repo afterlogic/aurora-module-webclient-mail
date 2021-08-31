@@ -319,7 +319,11 @@ CMailCache.prototype.calcNextMessageUid = function ()
 		}
 		else
 		{
-			_.each(this.uidList().collection(), function (sUid, iIndex, aCollection) {
+			var aUids = _.filter(this.uidList().collection(), function (sUid) {
+				var oMessage = oFolder.getMessageByUid(sUid);
+				return oMessage && !oMessage.deleted();
+			});
+			_.each(aUids, function (sUid, iIndex, aCollection) {
 				if (sUid === sCurrentUid && iIndex > 0)
 				{
 					sNextUid = aCollection[iIndex - 1] || '';
@@ -373,7 +377,11 @@ CMailCache.prototype.calcPrevMessageUid = function ()
 		}
 		else
 		{
-			_.each(this.uidList().collection(), function (sUid, iIndex, aCollection) {
+			var aUids = _.filter(this.uidList().collection(), function (sUid) {
+				var oMessage = oFolder.getMessageByUid(sUid);
+				return oMessage && !oMessage.deleted();
+			})
+			_.each(aUids, function (sUid, iIndex, aCollection) {
 				if (sUid === sCurrentUid && (iIndex + 1) < aCollection.length)
 				{
 					sPrevUid = aCollection[iIndex + 1] || '';
