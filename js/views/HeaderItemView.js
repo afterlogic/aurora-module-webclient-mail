@@ -28,10 +28,10 @@ function CHeaderItemView()
 		return _.map(AccountList.collection(), function (oAccount) {
 			return {
 				bCurrent: oAccount.isCurrent(),
-				sText: Settings.UserLoginPartInAccountDropdown ? oAccount.email().split('@')[0] : oAccount.email(),
+				sText: oAccount.friendlyName() || oAccount.email().split('@')[0],
 				changeAccount: oAccount.changeAccount.bind(oAccount)
 			};
-		})
+		});
 	}, this);
 	
 	if (Settings.ShowEmailAsTabName)
@@ -39,7 +39,7 @@ function CHeaderItemView()
 		this.linkText = ko.computed(function () {
 			var oCurrent = _.find(this.accounts(), function (oAccountData) {
 				return oAccountData.bCurrent;
-			})
+			});
 			return oCurrent ? oCurrent.sText : TextUtils.i18n('%MODULENAME%/HEADING_BROWSER_TAB');
 		}, this);
 	}
