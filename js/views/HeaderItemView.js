@@ -28,7 +28,7 @@ function CHeaderItemView()
 		return _.map(AccountList.collection(), function (oAccount) {
 			return {
 				bCurrent: oAccount.isCurrent(),
-				sText: oAccount.friendlyName() || oAccount.email().split('@')[0],
+				sText: oAccount.mailboxName() || oAccount.email().split('@')[0],
 				changeAccount: oAccount.changeAccount.bind(oAccount)
 			};
 		});

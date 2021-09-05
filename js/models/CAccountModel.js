@@ -37,6 +37,7 @@ function CAccountModel(oData)
 	this.id = ko.observable(Types.pInt(oData.AccountID));
 	this.email = ko.observable(Types.pString(oData.Email));
 	this.friendlyName = ko.observable(Types.pString(oData.FriendlyName));
+	this.mailboxName = ko.observable(Types.pString(oData.MailboxName));
 	this.incomingLogin = ko.observable(Types.pString(oData.IncomingLogin));
 	this.passwordMightBeIncorrect = ko.observable(false);
 	this.passwordMightBeIncorrect.subscribe(function () {
@@ -112,6 +113,7 @@ CAccountModel.prototype.updateFromServer = function (oData)
 {
 	this.email(Types.pString(oData.Email));
 	this.friendlyName(Types.pString(oData.FriendlyName));
+	this.mailboxName(Types.pString(oData.MailboxName));
 	this.incomingLogin(Types.pString(oData.IncomingLogin));
 	this.serverId(Types.pInt(oData.ServerId));
 	this.oServer = new CServerModel(oData.Server);

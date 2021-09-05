@@ -41,6 +41,7 @@ function CAccountSettingsFormView()
 	this.isDefaultAccount = ko.observable(false);
 	this.isServerOwner = ko.observable(false);
 	this.friendlyName = ko.observable('');
+	this.mailboxName = ko.observable('');
 	this.email = ko.observable('');
 	this.incomingLogin = ko.observable('');
 	this.incomingPassword = ko.observable('');
@@ -114,6 +115,7 @@ CAccountSettingsFormView.prototype.getCurrentValues = function ()
 		aMain = [
 			this.useToAuthorize(),
 			this.friendlyName(),
+			this.mailboxName(),
 			this.email(),
 			this.incomingLogin(),
 			this.incomingPassword(),
@@ -136,6 +138,7 @@ CAccountSettingsFormView.prototype.getParametersForSave = function ()
 		'AccountID': oAccount.id(),
 		'UseToAuthorize': this.useToAuthorize(),
 		'FriendlyName': this.friendlyName(),
+		'MailboxName': this.mailboxName(),
 		'Email': $.trim(this.email()),
 		'IncomingLogin': $.trim(this.incomingLogin()),
 		'IncomingPassword': sIncomingPassword === this.sFakePass ? '' : sIncomingPassword,
@@ -163,6 +166,7 @@ CAccountSettingsFormView.prototype.populate = function ()
 	if (oAccount)
 	{	
 		this.friendlyName(oAccount.friendlyName());
+		this.mailboxName(oAccount.mailboxName());
 		this.email(oAccount.email());
 		this.incomingLogin(oAccount.incomingLogin());
 		this.incomingPassword(this.sFakePass);
@@ -187,6 +191,7 @@ CAccountSettingsFormView.prototype.populate = function ()
 	else
 	{
 		this.friendlyName('');
+		this.mailboxName('');
 		this.email('');
 		this.incomingLogin('');
 		this.incomingPassword('');
