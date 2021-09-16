@@ -365,6 +365,7 @@ CFolderListModel.prototype.parseRecursively = function (aRawCollection, oNamedFo
 			
 			if (oSubFolders === null && oFolder.type() === Enums.FolderTypes.Inbox)
 			{
+				oFolder.subfolders([]);
 				this.createStarredFolder(oFolder.fullName(), iLevel);
 				if (this.oStarredFolder)
 				{
@@ -400,6 +401,10 @@ CFolderListModel.prototype.parseRecursively = function (aRawCollection, oNamedFo
 					}
 				}
 				oFolder.subfolders(aSubfolders);
+			}
+			else
+			{
+				oFolder.subfolders([]);
 			}
 		}
 
