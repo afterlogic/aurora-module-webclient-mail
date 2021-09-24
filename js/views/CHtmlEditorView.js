@@ -127,7 +127,7 @@ function CHtmlEditorView(bInsertImageAsBase64, oParent)
 	
 	this.textChanged = ko.observable(false);
 
-	this.actualTextСhanged = ko.observable(false);
+	this.actualTextChanged = ko.observable(false);
 	
 	this.templates = ko.observableArray([]);
 	
@@ -419,7 +419,7 @@ CHtmlEditorView.prototype.init = function (sText, bPlain, sTabIndex, sPlaceholde
 				if (this.oCrea.bEditing)
 				{
 					this.textChanged(true);
-					this.actualTextСhanged.valueHasMutated();
+					this.actualTextChanged.valueHasMutated();
 				}
 			}, this),
 			'onCursorMove': _.bind(this.setFontValuesFromText, this),
