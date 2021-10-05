@@ -1,3 +1,4 @@
+// Attention: draggable and droppable are commented out because they conflict with our draggable and droppable
 // knockout-sortable 1.1.0 | (c) 2017 Ryan Niemeyer |  http://www.opensource.org/licenses/mit-license
 ;(function(factory) {
     if (typeof define === "function" && define.amd) {
@@ -389,99 +390,100 @@
         options: {}
     };
 
-    //create a draggable that is appropriate for dropping into a sortable
-    ko.bindingHandlers.draggable = {
-        init: function(element, valueAccessor, allBindingsAccessor, data, context) {
-            var value = unwrap(valueAccessor()) || {},
-                options = value.options || {},
-                draggableOptions = ko.utils.extend({}, ko.bindingHandlers.draggable.options),
-                templateOptions = prepareTemplateOptions(valueAccessor, "data"),
-                connectClass = value.connectClass || ko.bindingHandlers.draggable.connectClass,
-                isEnabled = value.isEnabled !== undefined ? value.isEnabled : ko.bindingHandlers.draggable.isEnabled;
-
-            value = "data" in value ? value.data : value;
-
-            //set meta-data
-            dataSet(element, DRAGKEY, value);
-
-            //override global options with override options passed in
-            ko.utils.extend(draggableOptions, options);
-
-            //setup connection to a sortable
-            draggableOptions.connectToSortable = connectClass ? "." + connectClass : false;
-
-            //initialize draggable
-            $(element).draggable(draggableOptions);
-
-            //handle enabling/disabling sorting
-            if (isEnabled !== undefined) {
-                ko.computed({
-                    read: function() {
-                        $(element).draggable(unwrap(isEnabled) ? "enable" : "disable");
-                    },
-                    disposeWhenNodeIsRemoved: element
-                });
-            }
-
-            //handle disposal
-            ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
-                $(element).draggable("destroy");
-            });
-
-            return ko.bindingHandlers.template.init(element, function() { return templateOptions; }, allBindingsAccessor, data, context);
-        },
-        update: function(element, valueAccessor, allBindingsAccessor, data, context) {
-            var templateOptions = prepareTemplateOptions(valueAccessor, "data");
-
-            return ko.bindingHandlers.template.update(element, function() { return templateOptions; }, allBindingsAccessor, data, context);
-        },
-        connectClass: ko.bindingHandlers.sortable.connectClass,
-        options: {
-            helper: "clone"
-        }
-    };
-
-    // Simple Droppable Implementation
-    // binding that updates (function or observable)
-    ko.bindingHandlers.droppable = {
-        init: function(element, valueAccessor, allBindingsAccessor, data, context) {
-            var value = unwrap(valueAccessor()) || {},
-                options = value.options || {},
-                droppableOptions = ko.utils.extend({}, ko.bindingHandlers.droppable.options),
-                isEnabled = value.isEnabled !== undefined ? value.isEnabled : ko.bindingHandlers.droppable.isEnabled;
-
-            //override global options with override options passed in
-            ko.utils.extend(droppableOptions, options);
-
-            //get reference to drop method
-            value = "data" in value ? value.data : valueAccessor();
-
-            //set drop method
-            droppableOptions.drop = function(event, ui) {
-                var droppedItem = dataGet(ui.draggable[0], DRAGKEY) || dataGet(ui.draggable[0], ITEMKEY);
-                value(droppedItem);
-            };
-
-            //initialize droppable
-            $(element).droppable(droppableOptions);
-
-            //handle enabling/disabling droppable
-            if (isEnabled !== undefined) {
-                ko.computed({
-                    read: function() {
-                        $(element).droppable(unwrap(isEnabled) ? "enable": "disable");
-                    },
-                    disposeWhenNodeIsRemoved: element
-                });
-            }
-
-            //handle disposal
-            ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
-                $(element).droppable("destroy");
-            });
-        },
-        options: {
-            accept: "*"
-        }
-    };
+//    //create a draggable that is appropriate for dropping into a sortable
+//    ko.bindingHandlers.draggable = {
+//        init: function(element, valueAccessor, allBindingsAccessor, data, context) {
+//            var value = unwrap(valueAccessor()) || {},
+//                options = value.options || {},
+//                draggableOptions = ko.utils.extend({}, ko.bindingHandlers.draggable.options),
+//                templateOptions = prepareTemplateOptions(valueAccessor, "data"),
+//                connectClass = value.connectClass || ko.bindingHandlers.draggable.connectClass,
+//                isEnabled = value.isEnabled !== undefined ? value.isEnabled : ko.bindingHandlers.draggable.isEnabled;
+//
+//            value = "data" in value ? value.data : value;
+//
+//            //set meta-data
+//            dataSet(element, DRAGKEY, value);
+//
+//            //override global options with override options passed in
+//            ko.utils.extend(draggableOptions, options);
+//
+//            //setup connection to a sortable
+//            draggableOptions.connectToSortable = connectClass ? "." + connectClass : false;
+//
+//            //initialize draggable
+//            $(element).draggable(draggableOptions);
+//
+//            //handle enabling/disabling sorting
+//            if (isEnabled !== undefined) {
+//                ko.computed({
+//                    read: function() {
+//                        $(element).draggable(unwrap(isEnabled) ? "enable" : "disable");
+//                    },
+//                    disposeWhenNodeIsRemoved: element
+//                });
+//            }
+//
+//            //handle disposal
+//            ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
+//                $(element).draggable("destroy");
+//            });
+//
+//            return ko.bindingHandlers.template.init(element, function() { return templateOptions; }, allBindingsAccessor, data, context);
+//        },
+//        update: function(element, valueAccessor, allBindingsAccessor, data, context) {
+//            var templateOptions = prepareTemplateOptions(valueAccessor, "data");
+//
+//            return ko.bindingHandlers.template.update(element, function() { return templateOptions; }, allBindingsAccessor, data, context);
+//        },
+//        connectClass: ko.bindingHandlers.sortable.connectClass,
+//        options: {
+//            helper: "clone"
+//        }
+//    };
+//
+//    // Simple Droppable Implementation
+//    // binding that updates (function or observable)
+//    ko.bindingHandlers.droppable = {
+//        init: function(element, valueAccessor, allBindingsAccessor, data, context) {
+//			console.log('valueAccessor()', valueAccessor());
+//            var value = unwrap(valueAccessor()) || {},
+//                options = value.options || {},
+//                droppableOptions = ko.utils.extend({}, ko.bindingHandlers.droppable.options),
+//                isEnabled = value.isEnabled !== undefined ? value.isEnabled : ko.bindingHandlers.droppable.isEnabled;
+//
+//            //override global options with override options passed in
+//            ko.utils.extend(droppableOptions, options);
+//console.log('value', value);
+//            //get reference to drop method
+//            value = "data" in value ? value.data : valueAccessor();
+//console.log('value', value);
+//            //set drop method
+//            droppableOptions.drop = function(event, ui) {
+//                var droppedItem = dataGet(ui.draggable[0], DRAGKEY) || dataGet(ui.draggable[0], ITEMKEY);
+//                value(droppedItem);
+//            };
+//
+//            //initialize droppable
+//            $(element).droppable(droppableOptions);
+//
+//            //handle enabling/disabling droppable
+//            if (isEnabled !== undefined) {
+//                ko.computed({
+//                    read: function() {
+//                        $(element).droppable(unwrap(isEnabled) ? "enable": "disable");
+//                    },
+//                    disposeWhenNodeIsRemoved: element
+//                });
+//            }
+//
+//            //handle disposal
+//            ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
+//                $(element).droppable("destroy");
+//            });
+//        },
+//        options: {
+//            accept: "*"
+//        }
+//    };
 });
