@@ -42,8 +42,9 @@ var
 function CMessagePaneView()
 {
 	CAbstractScreenView.call(this, '%ModuleName%');
-	
+
 	this.bNewTab = App.isNewTab();
+	this.bNotPopup = this instanceof CMessagePaneView;
 	this.isLoading = ko.observable(false);
 
 	this.bAllowSearchMessagesBySubject = Settings.AllowSearchMessagesBySubject;
@@ -224,7 +225,7 @@ function CMessagePaneView()
 	this.contentHasFocus = ko.observable(false);
 
 	App.broadcastEvent('%ModuleName%::RegisterMessagePaneController', _.bind(function (oController, sPlace) {
-		this.registerController(oController, sPlace);
+		return this.registerController(oController, sPlace);
 	}, this));
 
 	this.fakeHeader = ko.computed(function () {
@@ -995,6 +996,15 @@ CMessagePaneView.prototype.onHide = function ()
 			oController.onHide();
 		}
 	}, this));
+	if (!this.bNotPopup)
+	{
+		_.each(this.controllers(), _.bind(function (oController) {
+			if ($.isFunction(oController.onClose))
+			{
+				oController.onHide();
+			}
+		}, this));
+	}
 };
 
 /**
@@ -1010,20 +1020,24 @@ CMessagePaneView.prototype.onBind = function ($MailViewDom)
 	}, this)]);
 
 	this.$MailViewDom = _.isUndefined($MailViewDom) ? this.$viewDom : $MailViewDom;
+	var $viewDom = this.bNotPopup ? this.$MailViewDom : this.$popupDom;
 
-	this.$MailViewDom.on('mousedown', 'a', function (oEvent) {
-		if (oEvent && 3 !== oEvent['which'])
-		{
-			var sHref = $(this).attr('href');
-			if (sHref && 'mailto:' === sHref.toString().toLowerCase().substr(0, 7))
+	if ($viewDom)
+	{
+		$viewDom.on('mousedown', 'a', function (oEvent) {
+			if (oEvent && 3 !== oEvent['which'])
 			{
-				ComposeUtils.composeMessageToAddresses(sHref.toString());
-				return false;
+				var sHref = $(this).attr('href');
+				if (sHref && 'mailto:' === sHref.toString().toLowerCase().substr(0, 7))
+				{
+					ComposeUtils.composeMessageToAddresses(sHref.toString());
+					return false;
+				}
 			}
-		}
 
-		return true;
-	});
+			return true;
+		});
+	}
 
 	if (!App.isMobile())
 	{
@@ -1071,10 +1085,12 @@ CMessagePaneView.prototype.switchDetailsVisibility = function ()
 };
 
 /**
- * @param {Object} oController
+ * @param {Object} mController
  * @param {string} sPlace
  */
-CMessagePaneView.prototype.registerController = function (oController, sPlace) {
+CMessagePaneView.prototype.registerController = function (mController, sPlace) {
+	var oController = _.isFunction(mController) ? new mController() : mController;
+
 	switch (sPlace)
 	{
 		case 'BeforeMessageHeaders':
@@ -1092,6 +1108,8 @@ CMessagePaneView.prototype.registerController = function (oController, sPlace) {
 	{
 		oController.assignMessagePaneExtInterface(this.getExtInterface());
 	}
+	
+	return oController;
 };
 
 /**
@@ -1138,7 +1156,11 @@ CMessagePaneView.prototype.doAfterPopulatingMessage = function ()
 		}
 	}, this));
 
-	ModulesManager.run('ContactsWebclient', 'applyContactsCards', [this.$MailViewDom.find('span.address')]);
+	var $viewDom = this.$popupDom || this.$MailViewDom;
+	if ($viewDom)
+	{
+		ModulesManager.run('ContactsWebclient', 'applyContactsCards', [$viewDom.find('span.address')]);
+	}
 };
 
 CMessagePaneView.prototype.searchBySubject = function ()
@@ -1189,4 +1211,12 @@ CMessagePaneView.prototype.searchBySubject = function ()
 	}
 };
 
-module.exports = new CMessagePaneView();
+CMessagePaneView.prototype.close = function ()
+{
+	if (!this.bNotPopup && !this.bNewTab)
+	{
+		this.cancelPopup();
+	}
+};
+
+module.exports = CMessagePaneView;

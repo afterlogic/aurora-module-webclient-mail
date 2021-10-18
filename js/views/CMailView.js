@@ -24,7 +24,9 @@ var
 
 	CFolderListView = require('modules/%ModuleName%/js/views/CFolderListView.js'),
 	CMessageListView = require('modules/%ModuleName%/js/views/CMessageListView.js'),
-	MessagePaneView = require('modules/%ModuleName%/js/views/MessagePaneView.js')
+	CMessagePaneView = require('modules/%ModuleName%/js/views/CMessagePaneView.js'),
+	
+	MessagePaneView = new CMessagePaneView();
 ;
 
 /**

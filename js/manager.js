@@ -114,7 +114,8 @@ module.exports = function (oAppData) {
 				getScreens: function () {
 					var oScreens = {};
 					oScreens[Settings.HashModuleName + '-view'] = function () {
-						return require('modules/%ModuleName%/js/views/MessagePaneView.js');
+						var CMessagePaneView = require('modules/%ModuleName%/js/views/CMessagePaneView.js');
+						return new CMessagePaneView();
 					};
 					oScreens[Settings.HashModuleName + '-compose'] = function () {
 						return GetComposeView();

@@ -14,7 +14,9 @@ var
 	Browser = require('%PathToCoreWebclientModule%/js/Browser.js'),
 	CJua = require('%PathToCoreWebclientModule%/js/CJua.js'),
 	CSelector = require('%PathToCoreWebclientModule%/js/CSelector.js'),
+	MessagePanePopup = require('modules/%ModuleName%/js/popups/MessagePanePopup.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
+	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
 	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
 	Screens = require('%PathToCoreWebclientModule%/js/Screens.js'),
 	
@@ -466,14 +468,25 @@ CMessageListView.prototype.changeRoutingForMessageList = function (sFolder, iPag
  */
 CMessageListView.prototype.onEnterPress = function (oMessage)
 {
-	if (oMessage.threadNextLoadingVisible())
+	if (oMessage)
 	{
-		oMessage.loadNextMessages();
+		var
+			iAccountId = oMessage.accountId(),
+			sFolder = oMessage.folder(),
+			sUid = oMessage.uid(),
+			aParams = LinksUtils.getViewMessage(iAccountId, sFolder, sUid)
+		;
+		aParams.shift();
+		Popups.showPopup(MessagePanePopup, [aParams]);
 	}
-	else
-	{
-		oMessage.openThread();
-	}
+//	if (oMessage.threadNextLoadingVisible())
+//	{
+//		oMessage.loadNextMessages();
+//	}
+//	else
+//	{
+//		oMessage.openThread();
+//	}
 };
 
 /**

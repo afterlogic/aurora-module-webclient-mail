@@ -1,0 +1,12 @@
+<div class="message_pane_popup popup" style="display: none;">
+	<div class="mask" data-bind="click: cancelPopup"></div>
+	<div class="popup_panel">
+		<span class="close" data-bind="click: cancelPopup"></span>
+		<div class="panel item_viewer message_viewer">
+			<div class="panel_content">
+				<div class="middle_bar" data-bind="template: {name: $data.ViewTemplate}"></div>
+			</div>
+		</div>
+	</div>
+	<span class="helper"></span>
+</div>
