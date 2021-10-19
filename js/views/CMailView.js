@@ -157,7 +157,9 @@ function CMailView()
 
 	this.customModulesDisabledSpam = ko.observableArray([]);
 	this.allowedSpamAction = ko.computed(function () {
-		return Settings.AllowSpamFolder && this.folderList().spamFolder() && !this.isSpamFolder() && !Types.isNonEmptyArray(this.customModulesDisabledSpam());
+		return Settings.AllowSpamFolder && this.folderList().spamFolder() && !this.isSpamFolder() &&
+				!Types.isNonEmptyArray(this.customModulesDisabledSpam()) &&
+				!this.oMessageList.isEverywhereSearch();
 	}, this);
 
 	this.allowedNotSpamAction = ko.computed(function () {

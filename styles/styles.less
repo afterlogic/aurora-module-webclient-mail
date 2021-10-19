@@ -56,3 +56,19 @@
 		width: 300px;
 	}
 }
+
+.message_list_search_everywhere {
+	background: #f2f6fe;
+	
+	.list_notification {
+		background: inherit;
+	}
+	
+	.item:not(.selected):not(.checked) {
+		background: inherit;
+		
+		&.unseen {
+			background: #d6dce8;
+		}
+	}
+}

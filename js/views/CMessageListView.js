@@ -198,6 +198,10 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 		return this.search().length > 0;
 	}, this);
 
+	this.isEverywhereSearch = ko.computed(function () {
+		return this.isSearch() && this.folderFullName() === this.folderList().allMailsFolderFullName();
+	}, this);
+
 	this.isUnseenFilter = ko.computed(function () {
 		return this.filters() === Enums.FolderFilter.Unseen;
 	}, this);
@@ -244,7 +248,7 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 	}, this);
 	this.folderBeforeSearchEverywhere = ko.observable('');
 	this.searchText = ko.computed(function () {
-		if (this.searchEverywhere())
+		if (this.isEverywhereSearch())
 		{
 			return TextUtils.i18n('%MODULENAME%/INFO_SEARCH_EVERYWHERE_RESULT', {
 				'SEARCH': this.calculateSearchStringForDescription()
@@ -753,9 +757,9 @@ CMessageListView.prototype.onClearSearchClick = function ()
 		iPage = 1
 	;
 
-	if (this.searchEverywhere())
+	if (this.isEverywhereSearch())
 	{
-		sFolder = this.folderBeforeSearchEverywhere();
+		sFolder = this.folderBeforeSearchEverywhere() || this.folderList().inboxFolderFullName();
 		sUid = '';
 	}
 	this.clearAdvancedSearch();

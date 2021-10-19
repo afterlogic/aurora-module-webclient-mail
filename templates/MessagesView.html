@@ -7,7 +7,7 @@
 		<!-- ko template: {name: '%ModuleName%_SearchView'} --><!-- /ko -->
 	</div>
 	<div class="panel_center unselectable" data-bind="customScrollbar: {'reset': listChangedThrottle(), x: false}">
-		<div class="scroll-inner message_list_scroll">
+		<div class="scroll-inner message_list_scroll" data-bind="css: {'message_list_search_everywhere': isEverywhereSearch}">
 			<div class="items_list message_list" data-bind="initDom: messagesContainer, css: folderFullName">
 				<span>
 					<span class="list_notification" data-bind="visible: visibleInfoSearchLoading">
