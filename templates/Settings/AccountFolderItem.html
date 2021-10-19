@@ -1,5 +1,5 @@
 <div class="item canSelect" data-bind="css: {'canSubscribe': canSubscribe, 'canRename': canRename, 'canDelete': canDelete},
-	 visible: !bVirtual">
+	 visible: !bVirtual && !hideEverywhere()">
 	<span class="title">
 		<span class="controls">
 			<span class="button always-refresh" data-bind="customTooltip: alwaysRefreshButtonHint, 

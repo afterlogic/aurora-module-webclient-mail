@@ -58,6 +58,7 @@ function CFolderListModel()
 
 	this.currentFolder = ko.observable(null);
 
+	this.allMailsFolder = ko.observable(null);
 	this.inboxFolder = ko.observable(null);
 	this.sentFolder = ko.observable(null);
 	this.draftsFolder = ko.observable(null);
@@ -79,6 +80,7 @@ function CFolderListModel()
 	this.spamFolder.subscribe(fSetSystemType(Enums.FolderTypes.Spam));
 	this.trashFolder.subscribe(fSetSystemType(Enums.FolderTypes.Trash));
 	
+	this.allMailsFolderFullName = ko.computed(fFullNameHelper(this.allMailsFolder));
 	this.inboxFolderFullName = ko.computed(fFullNameHelper(this.inboxFolder));
 	this.sentFolderFullName = ko.computed(fFullNameHelper(this.sentFolder));
 	this.draftsFolderFullName = ko.computed(fFullNameHelper(this.draftsFolder));
@@ -358,6 +360,12 @@ CFolderListModel.prototype.parseRecursively = function (aRawCollection, oNamedFo
 					this.aTemplateFolders.push(oFolder.fullName());
 					break;
 			}
+			
+			if (Settings.AllMailsFolder === oFolder.fullName())
+			{
+				this.allMailsFolder(oFolder);
+				oFolder.hideEverywhere(true);
+			}
 
 			this.oNamedCollection[oFolder.fullName()] = oFolder;
 			this.aLinedCollection.push(oFolder);
@@ -474,7 +482,8 @@ CFolderListModel.prototype.getOptions = function (sFirstItem, bEnableSystem, bHi
 	;
 	
 	_.each(this.aLinedCollection, function (oFolder) {
-		if (oFolder && !oFolder.bVirtual && (!bHideInbox || Enums.FolderTypes.Inbox !== oFolder.type()) && (!bIgnoreUnsubscribed || oFolder.subscribed()))
+		var bVisible = oFolder && !oFolder.bVirtual && !oFolder.hideEverywhere();
+		if (bVisible && (!bHideInbox || Enums.FolderTypes.Inbox !== oFolder.type()) && (!bIgnoreUnsubscribed || oFolder.subscribed()))
 		{
 			var sPrefix = (new Array(oFolder.getDisplayedLevel() + 1)).join(sDeepPrefix);
 			var bDisable = false;

@@ -72,6 +72,7 @@ module.exports = {
 	UserLoginPartInAccountDropdown: false,
 	UseMeRecipientForMessages: true,
 	openMessagesInPopup: ko.observable(false),
+	AllMailsFolder: '',
 
 	userMailAccountsCount: ko.observable(0),
 	mailAccountsEmails: ko.observableArray([]),
@@ -159,6 +160,7 @@ module.exports = {
 			this.UserLoginPartInAccountDropdown = Types.pBool(oAppDataMailWebclientSection.UserLoginPartInAccountDropdown, this.UserLoginPartInAccountDropdown);
 			this.UseMeRecipientForMessages = Types.pBool(oAppDataMailWebclientSection.UseMeRecipientForMessages, this.UseMeRecipientForMessages);
 			this.openMessagesInPopup(Types.pBool(oAppDataMailWebclientSection.OpenMessagesInPopup, this.openMessagesInPopup()));
+			this.AllMailsFolder = Types.pString(oAppDataMailWebclientSection.AllMailsFolder, this.AllMailsFolder);
 		}
 		
 		if (!_.isEmpty(oAppDataFetchersSection))

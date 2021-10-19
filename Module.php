@@ -69,6 +69,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			'MarkMessageSeenWhenAnswerForward' => $this->getConfig('MarkMessageSeenWhenAnswerForward', false),
 			'UserLoginPartInAccountDropdown' => $this->getConfig('UserLoginPartInAccountDropdown', false),
 			'UseMeRecipientForMessages' => $this->getConfig('UseMeRecipientForMessages', false),
+			'AllMailsFolder' => $this->getConfig('AllMailsFolder', false),
 		);
 		
 		$oUser = \Aurora\System\Api::getAuthenticatedUser();

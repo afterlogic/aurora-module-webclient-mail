@@ -110,5 +110,9 @@
 	"UseMeRecipientForMessages": [
 		true,
 		"bool"
+	],
+	"AllMailsFolder": [
+		"All Mails",
+		"string"
 	]
 }

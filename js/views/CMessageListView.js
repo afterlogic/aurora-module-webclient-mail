@@ -238,13 +238,22 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 		return this.isUnseenFilter() && this.isEmptyList() && !this.isError() && !this.isLoading();
 	}, this);
 
+	this.searchEverywhere = ko.observable(false);
+	this.allowSearchEverywhere = ko.computed(function () {
+		return !!this.folderList().allMailsFolder();
+	}, this);
+	this.folderBeforeSearchEverywhere = ko.observable('');
 	this.searchText = ko.computed(function () {
-
+		if (this.searchEverywhere())
+		{
+			return TextUtils.i18n('%MODULENAME%/INFO_SEARCH_EVERYWHERE_RESULT', {
+				'SEARCH': this.calculateSearchStringForDescription()
+			});
+		}
 		return TextUtils.i18n('%MODULENAME%/INFO_SEARCH_RESULT', {
 			'SEARCH': this.calculateSearchStringForDescription(),
 			'FOLDER': MailCache.getCurrentFolder() ? TextUtils.encodeHtml(MailCache.getCurrentFolder().displayName()) : ''
 		});
-		
 	}, this);
 
 	this.unseenFilterText = ko.computed(function () {
@@ -382,12 +391,7 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 
 	this.bAdvancedSearch = ko.observable(false);
 	this.searchAttachmentsCheckbox = ko.observable(false);
-	this.searchAttachments = ko.observable('');
-	this.searchAttachments.subscribe(function(sText) {
-		this.searchAttachmentsCheckbox(!!sText);
-	}, this);
 	
-	this.searchAttachmentsFocus = ko.observable(false);
 	this.searchFromFocus = ko.observable(false);
 	this.searchSubjectFocus = ko.observable(false);
 	this.searchToFocus = ko.observable(false);
@@ -725,6 +729,13 @@ CMessageListView.prototype.onSearchClick = function ()
 		this.searchInput(sSearch);
 		this.bAdvancedSearch(false);
 	}
+
+	if (this.allowSearchEverywhere() && this.searchEverywhere() && sFolder !== this.folderList().allMailsFolderFullName())
+	{
+		this.folderBeforeSearchEverywhere(sFolder);
+		sFolder = this.folderList().allMailsFolderFullName();
+	}
+	
 	this.changeRoutingForMessageList(sFolder, iPage, '', sSearch, this.filters());
 };
 
@@ -742,6 +753,11 @@ CMessageListView.prototype.onClearSearchClick = function ()
 		iPage = 1
 	;
 
+	if (this.searchEverywhere())
+	{
+		sFolder = this.folderBeforeSearchEverywhere();
+		sUid = '';
+	}
 	this.clearAdvancedSearch();
 	this.changeRoutingForMessageList(sFolder, iPage, sUid, sSearch, this.filters(), this.sSortBy, this.iSortOrder);
 };
@@ -1086,9 +1102,9 @@ CMessageListView.prototype.clearAdvancedSearch = function ()
 	this.searchInputText('');
 	this.bAdvancedSearch(false);
 	this.searchAttachmentsCheckbox(false);
-	this.searchAttachments('');
 	this.searchDateStart('');
 	this.searchDateEnd('');
+	this.searchEverywhere(false);
 };
 
 CMessageListView.prototype.onAdvancedSearchClick = function ()

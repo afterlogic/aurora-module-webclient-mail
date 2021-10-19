@@ -97,6 +97,8 @@ function CFolderModel(iAccountId, bIsUnifiedInbox)
 
 	this.disableMoveTo = ko.observable(this.bVirtual || this.bIsUnifiedInbox);
 	this.disableMoveFrom = ko.observable(this.bIsUnifiedInbox);
+	
+	this.hideEverywhere = ko.observable(false);
 }
 
 CFolderModel.prototype.setDisableMoveTo = function (bDisable)
@@ -1053,7 +1055,7 @@ CFolderModel.prototype.initComputedFields = function ()
 	}, this);
 	
 	this.visible = ko.computed(function () {
-		return this.subscribed() || this.isSystem() || this.hasSubscribedSubfolders();
+		return !this.hideEverywhere() && (this.subscribed() || this.isSystem() || this.hasSubscribedSubfolders());
 	}, this);
 
 	this.canBeSelected = ko.computed(function () {
