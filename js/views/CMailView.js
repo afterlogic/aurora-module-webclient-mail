@@ -10,6 +10,7 @@ var
 	Utils = require('%PathToCoreWebclientModule%/js/utils/Common.js'),
 
 	App = require('%PathToCoreWebclientModule%/js/App.js'),
+	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
 	WindowOpener = require('%PathToCoreWebclientModule%/js/WindowOpener.js'),
 
@@ -51,6 +52,10 @@ function CMailView()
 	this.isUnifiedFolderCurrent = MailCache.oUnifiedInbox.selected;
 	this.oMessageList = new CMessageListView(this.openMessageInNewWindowBound);
 
+	this.allowPreviewPane = ko.computed(function () {
+		var bInNotes = ModulesManager.isModuleAvailable('MailNotesPlugin') && MailCache.getCurrentFolderFullname() === 'Notes';
+		return !Settings.openMessagesInPopup() || bInNotes;
+	});
 	this.oBaseMessagePaneView = MessagePaneView;
 	this.messagePane = ko.observable(this.oBaseMessagePaneView);
 	this.messagePane().openMessageInNewWindowBound = this.openMessageInNewWindowBound;

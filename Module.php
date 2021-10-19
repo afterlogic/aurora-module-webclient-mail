@@ -30,6 +30,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 				'MailsPerPage'					=> array('int', $this->getConfig('MailsPerPage', 20)),
 				'ShowMessagesCountInFolderList'	=> array('bool', $this->getConfig('ShowMessagesCountInFolderList', false)),
 				'HorizontalLayout'				=> array('bool', $this->getConfig('HorizontalLayoutByDefault', false)),
+				'OpenMessagesInPopup'			=> array('bool', false),
 			]
 		);		
 		
@@ -89,6 +90,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			{
 				$aSettings['HorizontalLayout'] = $oUser->{self::GetName().'::HorizontalLayout'};
 			}
+			$aSettings['OpenMessagesInPopup'] = $oUser->{self::GetName().'::OpenMessagesInPopup'};
 		}
 		
 		return $aSettings;
