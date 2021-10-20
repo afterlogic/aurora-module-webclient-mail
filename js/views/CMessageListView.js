@@ -215,7 +215,7 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 		return !this.isSearch() && this.isLoading();
 	}, this);
 	this.visibleInfoSearchLoading = ko.computed(function () {
-		return this.isSearch() && this.isLoading();
+		return this.isSearch() && !this.isUnseenFilter() && this.isLoading();
 	}, this);
 	this.visibleInfoSearchList = ko.computed(function () {
 		return this.isSearch() && !this.isUnseenFilter() && !this.isLoading() && !this.isEmptyList();
@@ -247,6 +247,7 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 		return !!this.folderList().allMailsFolder();
 	}, this);
 	this.folderBeforeSearchEverywhere = ko.observable('');
+	this.filtersBeforeSearchEverywhere = ko.observable('');
 	this.searchText = ko.computed(function () {
 		if (this.isEverywhereSearch())
 		{
@@ -724,7 +725,8 @@ CMessageListView.prototype.onSearchClick = function ()
 	var
 		sFolder = MailCache.getCurrentFolderFullname(),
 		iPage = 1,
-		sSearch = this.searchInput()
+		sSearch = this.searchInput(),
+		sFilters = this.filters()
 	;
 	
 	if (this.bAdvancedSearch())
@@ -737,10 +739,12 @@ CMessageListView.prototype.onSearchClick = function ()
 	if (this.allowSearchEverywhere() && this.searchEverywhere() && sFolder !== this.folderList().allMailsFolderFullName())
 	{
 		this.folderBeforeSearchEverywhere(sFolder);
+		this.filtersBeforeSearchEverywhere(sFilters);
 		sFolder = this.folderList().allMailsFolderFullName();
+		sFilters = '';
 	}
-	
-	this.changeRoutingForMessageList(sFolder, iPage, '', sSearch, this.filters());
+
+	this.changeRoutingForMessageList(sFolder, iPage, '', sSearch, sFilters);
 };
 
 CMessageListView.prototype.onRetryClick = function ()
@@ -754,16 +758,18 @@ CMessageListView.prototype.onClearSearchClick = function ()
 		sFolder = MailCache.getCurrentFolderFullname(),
 		sUid = this.currentMessage() ? this.currentMessage().uid() : '',
 		sSearch = '',
+		sFilters = this.filters(),
 		iPage = 1
 	;
 
 	if (this.isEverywhereSearch())
 	{
 		sFolder = this.folderBeforeSearchEverywhere() || this.folderList().inboxFolderFullName();
+		sFilters = this.filtersBeforeSearchEverywhere() || '';
 		sUid = '';
 	}
 	this.clearAdvancedSearch();
-	this.changeRoutingForMessageList(sFolder, iPage, sUid, sSearch, this.filters(), this.sSortBy, this.iSortOrder);
+	this.changeRoutingForMessageList(sFolder, iPage, sUid, sSearch, sFilters, this.sSortBy, this.iSortOrder);
 };
 
 CMessageListView.prototype.onClearFilterClick = function ()
