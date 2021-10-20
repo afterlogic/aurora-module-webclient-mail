@@ -54,7 +54,7 @@ function CMailView()
 
 	this.allowPreviewPane = ko.computed(function () {
 		var bInNotes = ModulesManager.isModuleAvailable('MailNotesPlugin') && MailCache.getCurrentFolderFullname() === 'Notes';
-		return !Settings.openMessagesInPopup() || bInNotes;
+		return !Settings.OpenMessagesInPopup || bInNotes;
 	});
 	this.oBaseMessagePaneView = MessagePaneView;
 	this.messagePane = ko.observable(this.oBaseMessagePaneView);

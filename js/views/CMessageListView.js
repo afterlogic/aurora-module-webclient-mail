@@ -478,7 +478,7 @@ CMessageListView.prototype.changeRoutingForMessageList = function (sFolder, iPag
 CMessageListView.prototype.onEnterPress = function (oMessage)
 {
 	var bInNotes = ModulesManager.isModuleAvailable('MailNotesPlugin') && MailCache.getCurrentFolderFullname() === 'Notes';
-	if (!bInNotes && Settings.openMessagesInPopup() && oMessage)
+	if (!bInNotes && Settings.OpenMessagesInPopup && oMessage)
 	{
 		var
 			iAccountId = oMessage.accountId(),

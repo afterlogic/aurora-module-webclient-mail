@@ -1,6 +1,7 @@
 <div class="screen MailLayout" style="display: none;">
-	<div class="panels" data-bind="splitterFlex: { name: 'message_list', sizes: [20, 30, 50],
-				expandSecondPaneWidth: expandListPaneWidth, expandThirdPaneWidth: expandMessagePaneWidth }">
+	<div class="panels" data-bind="splitterFlex: allowPreviewPane()
+			? { name: 'message_list', sizes: [20, 30, 50], expandSecondPaneWidth: expandListPaneWidth , expandThirdPaneWidth: expandMessagePaneWidth }
+			: { name: 'message_list_two', sizes: [20, 80] }">
 		<div class="panel left_panel folders_panel">
 			<div class="panel_content">
 				<!-- ko template: {name: oFolderList.ViewTemplate, data: oFolderList} --><!-- /ko -->

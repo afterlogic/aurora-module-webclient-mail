@@ -71,7 +71,7 @@ module.exports = {
 	MarkMessageSeenWhenAnswerForward: false,
 	UserLoginPartInAccountDropdown: false,
 	UseMeRecipientForMessages: true,
-	openMessagesInPopup: ko.observable(false),
+	OpenMessagesInPopup: false,
 	AllMailsFolder: '',
 
 	userMailAccountsCount: ko.observable(0),
@@ -159,7 +159,7 @@ module.exports = {
 			this.MarkMessageSeenWhenAnswerForward = Types.pBool(oAppDataMailWebclientSection.MarkMessageSeenWhenAnswerForward, this.MarkMessageSeenWhenAnswerForward);
 			this.UserLoginPartInAccountDropdown = Types.pBool(oAppDataMailWebclientSection.UserLoginPartInAccountDropdown, this.UserLoginPartInAccountDropdown);
 			this.UseMeRecipientForMessages = Types.pBool(oAppDataMailWebclientSection.UseMeRecipientForMessages, this.UseMeRecipientForMessages);
-			this.openMessagesInPopup(Types.pBool(oAppDataMailWebclientSection.OpenMessagesInPopup, this.openMessagesInPopup()));
+			this.OpenMessagesInPopup = Types.pBool(oAppDataMailWebclientSection.OpenMessagesInPopup, this.OpenMessagesInPopup);
 			this.AllMailsFolder = Types.pString(oAppDataMailWebclientSection.AllMailsFolder, this.AllMailsFolder);
 		}
 		
@@ -205,11 +205,6 @@ module.exports = {
 		this.AutocreateMailAccountOnNewUserFirstLogin = Types.pBool(bAutocreateMailAccountOnNewUserFirstLogin, this.AutocreateMailAccountOnNewUserFirstLogin);
 		this.AllowAddAccounts = Types.pBool(bAllowAddAccounts, this.AllowAddAccounts);
 		this.HorizontalLayoutByDefault = Types.pBool(bHorizontalLayoutByDefault, this.HorizontalLayoutByDefault);
-	},
-	
-	updateOpenMessagesInPopup: function (bOpenMessagesInPopup)
-	{
-		this.openMessagesInPopup(bOpenMessagesInPopup);
 	},
 	
 	disableEditDomainsInServer: function ()
