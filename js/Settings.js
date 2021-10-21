@@ -61,9 +61,6 @@ module.exports = {
 	showMessagesCountInFolderList: ko.observable(false),
 	AllowSearchMessagesBySubject: false,
 	PrefixesToRemoveBeforeSearchMessagesBySubject: [],
-	AllowHorizontalLayout: false,
-	HorizontalLayout: false,
-	HorizontalLayoutByDefault: false,
 	DisableRtlRendering: false,
 	AllowQuickReply: false,
 	AllowQuickSendOnCompose: false,
@@ -71,6 +68,8 @@ module.exports = {
 	MarkMessageSeenWhenAnswerForward: false,
 	UserLoginPartInAccountDropdown: false,
 	UseMeRecipientForMessages: true,
+	MessageListItemSize: 'big',
+	PreviewPanePosition: 'right',
 	OpenMessagesInPopup: false,
 	AllMailsFolder: '',
 
@@ -149,9 +148,6 @@ module.exports = {
 			this.showMessagesCountInFolderList(Types.pBool(oAppDataMailWebclientSection.ShowMessagesCountInFolderList, this.showMessagesCountInFolderList()));
 			this.AllowSearchMessagesBySubject = Types.pBool(oAppDataMailWebclientSection.AllowSearchMessagesBySubject, this.AllowSearchMessagesBySubject);
 			this.PrefixesToRemoveBeforeSearchMessagesBySubject = Types.pArray(oAppDataMailWebclientSection.PrefixesToRemoveBeforeSearchMessagesBySubject, this.PrefixesToRemoveBeforeSearchMessagesBySubject);
-			this.AllowHorizontalLayout = Types.pBool(oAppDataMailWebclientSection.AllowHorizontalLayout, this.AllowHorizontalLayout);
-			this.HorizontalLayout = this.AllowHorizontalLayout && Types.pBool(oAppDataMailWebclientSection.HorizontalLayout, this.HorizontalLayout);
-			this.HorizontalLayoutByDefault = this.AllowHorizontalLayout && Types.pBool(oAppDataMailWebclientSection.HorizontalLayoutByDefault, this.HorizontalLayoutByDefault);
 			this.DisableRtlRendering = Types.pBool(oAppDataMailWebclientSection.DisableRtlRendering, this.DisableRtlRendering);
 			this.AllowQuickReply = Types.pBool(oAppDataMailWebclientSection.AllowQuickReply, this.AllowQuickReply);
 			this.AllowQuickSendOnCompose = Types.pBool(oAppDataMailWebclientSection.AllowQuickSendOnCompose, this.AllowQuickSendOnCompose);
@@ -159,6 +155,8 @@ module.exports = {
 			this.MarkMessageSeenWhenAnswerForward = Types.pBool(oAppDataMailWebclientSection.MarkMessageSeenWhenAnswerForward, this.MarkMessageSeenWhenAnswerForward);
 			this.UserLoginPartInAccountDropdown = Types.pBool(oAppDataMailWebclientSection.UserLoginPartInAccountDropdown, this.UserLoginPartInAccountDropdown);
 			this.UseMeRecipientForMessages = Types.pBool(oAppDataMailWebclientSection.UseMeRecipientForMessages, this.UseMeRecipientForMessages);
+			this.MessageListItemSize = Types.pString(oAppDataMailWebclientSection.MessageListItemSize, this.MessageListItemSize);
+			this.PreviewPanePosition = Types.pString(oAppDataMailWebclientSection.PreviewPanePosition, this.PreviewPanePosition);
 			this.OpenMessagesInPopup = Types.pBool(oAppDataMailWebclientSection.OpenMessagesInPopup, this.OpenMessagesInPopup);
 			this.AllMailsFolder = Types.pString(oAppDataMailWebclientSection.AllMailsFolder, this.AllMailsFolder);
 		}
@@ -198,13 +196,11 @@ module.exports = {
 	 * 
 	 * @param {boolean} bAutocreateMailAccountOnNewUserFirstLogin
 	 * @param {boolean} bAllowAddAccounts
-	 * @param {boolean} bHorizontalLayoutByDefault
 	 */
-	updateAdmin: function (bAutocreateMailAccountOnNewUserFirstLogin, bAllowAddAccounts, bHorizontalLayoutByDefault)
+	updateAdmin: function (bAutocreateMailAccountOnNewUserFirstLogin, bAllowAddAccounts)
 	{
 		this.AutocreateMailAccountOnNewUserFirstLogin = Types.pBool(bAutocreateMailAccountOnNewUserFirstLogin, this.AutocreateMailAccountOnNewUserFirstLogin);
 		this.AllowAddAccounts = Types.pBool(bAllowAddAccounts, this.AllowAddAccounts);
-		this.HorizontalLayoutByDefault = Types.pBool(bHorizontalLayoutByDefault, this.HorizontalLayoutByDefault);
 	},
 	
 	disableEditDomainsInServer: function ()

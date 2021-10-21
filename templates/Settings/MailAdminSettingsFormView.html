@@ -26,11 +26,6 @@
 					<label for="allowAddAccounts" data-bind="i18n: {'key': '%MODULENAME%/LABEL_ALLOW_USERS_ADD_MAILBOXES'}"></label>
 				</span>
 			</div>
-			
-			<div class="row" data-bind="visible: bAllowHorizontalLayout">
-				<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_DEFAULT_LAYOUT'}"></span>
-				<select class="value input" data-bind="options: aLayoutValues, value: horizontalLayoutByDefault, optionsText: 'text', optionsValue: 'value'"></select>
-			</div>
 		</div>
 		<div class="buttons">
 			<span class="button" data-bind="click: save, visible: !isSaving()">

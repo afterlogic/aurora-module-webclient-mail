@@ -14,7 +14,6 @@ var
 	Browser = require('%PathToCoreWebclientModule%/js/Browser.js'),
 	CJua = require('%PathToCoreWebclientModule%/js/CJua.js'),
 	CSelector = require('%PathToCoreWebclientModule%/js/CSelector.js'),
-	MessagePanePopup = require('modules/%ModuleName%/js/popups/MessagePanePopup.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
 	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
@@ -47,9 +46,9 @@ ko.subscribable.fn.subscribeExtended = function (callback) {
 /**
  * @constructor
  * 
- * @param {Function} fOpenMessageInNewWindowBound
+ * @param {Function} fOpenMessaheInPopupOrTabBound
  */
-function CMessageListView(fOpenMessageInNewWindowBound)
+function CMessageListView(fOpenMessaheInPopupOrTabBound)
 {
 	this.disableMoveMessages = ko.computed(function () {
 		var oFolder = MailCache.getCurrentFolder();
@@ -74,7 +73,7 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 		return this.bDragActive();
 	}, this);
 
-	this.openMessageInNewWindowBound = fOpenMessageInNewWindowBound;
+	this.openMessaheInPopupOrTabBound = fOpenMessaheInPopupOrTabBound;
 	
 	this.isFocused = ko.observable(false);
 
@@ -477,18 +476,7 @@ CMessageListView.prototype.changeRoutingForMessageList = function (sFolder, iPag
  */
 CMessageListView.prototype.onEnterPress = function (oMessage)
 {
-	var bInNotes = ModulesManager.isModuleAvailable('MailNotesPlugin') && MailCache.getCurrentFolderFullname() === 'Notes';
-	if (!bInNotes && Settings.OpenMessagesInPopup && oMessage)
-	{
-		var
-			iAccountId = oMessage.accountId(),
-			sFolder = oMessage.folder(),
-			sUid = oMessage.uid(),
-			aParams = LinksUtils.getViewMessage(iAccountId, sFolder, sUid)
-		;
-		aParams.shift();
-		Popups.showPopup(MessagePanePopup, [aParams]);
-	}
+	this.openMessaheInPopupOrTabBound(oMessage)
 //	if (oMessage.threadNextLoadingVisible())
 //	{
 //		oMessage.loadNextMessages();
@@ -522,7 +510,7 @@ CMessageListView.prototype.onMessageDblClick = function (oMessage)
 			}
 			else
 			{
-				this.openMessageInNewWindowBound(oMessage);
+				this.openMessaheInPopupOrTabBound(oMessage);
 			}
 		}
 	}

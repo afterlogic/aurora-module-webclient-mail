@@ -30,6 +30,8 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 				'MailsPerPage'					=> array('int', $this->getConfig('MailsPerPage', 20)),
 				'ShowMessagesCountInFolderList'	=> array('bool', $this->getConfig('ShowMessagesCountInFolderList', false)),
 				'HorizontalLayout'				=> array('bool', $this->getConfig('HorizontalLayoutByDefault', false)),
+				'MessageListItemSize'			=> array('string', 'big'),
+				'PreviewPanePosition'			=> array('string', 'right'),
 				'OpenMessagesInPopup'			=> array('bool', false),
 			]
 		);		
@@ -91,6 +93,8 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			{
 				$aSettings['HorizontalLayout'] = $oUser->{self::GetName().'::HorizontalLayout'};
 			}
+			$aSettings['MessageListItemSize'] = $oUser->{self::GetName().'::MessageListItemSize'};
+			$aSettings['PreviewPanePosition'] = $oUser->{self::GetName().'::PreviewPanePosition'};
 			$aSettings['OpenMessagesInPopup'] = $oUser->{self::GetName().'::OpenMessagesInPopup'};
 		}
 		
@@ -142,5 +146,22 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 				return $this->saveModuleConfig();
 			}
 		}
+	}
+	
+	public function UpdateLayoutSettings($MessageListItemSize, $PreviewPanePosition, $OpenMessagesInPopup)
+	{
+		\Aurora\System\Api::checkUserRoleIsAtLeast(\Aurora\System\Enums\UserRole::NormalUser);
+
+		$oUser = \Aurora\System\Api::getAuthenticatedUser();
+		if ($oUser && $oUser->isNormalOrTenant())
+		{
+			$oUser->{self::GetName() . '::MessageListItemSize'} = $MessageListItemSize;
+			$oUser->{self::GetName() . '::PreviewPanePosition'} = $PreviewPanePosition;
+			$oUser->{self::GetName() . '::OpenMessagesInPopup'} = $OpenMessagesInPopup;
+			$oCoreDecorator = \Aurora\Modules\Core\Module::Decorator();
+			return $oCoreDecorator->UpdateUserObject($oUser);
+		}
+
+		return false;
 	}
 }

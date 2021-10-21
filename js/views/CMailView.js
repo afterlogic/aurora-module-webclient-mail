@@ -11,6 +11,7 @@ var
 
 	App = require('%PathToCoreWebclientModule%/js/App.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
+	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
 	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
 	WindowOpener = require('%PathToCoreWebclientModule%/js/WindowOpener.js'),
 
@@ -20,14 +21,18 @@ var
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
 
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
+	ChangeLayoutPopup = require('modules/%ModuleName%/js/popups/ChangeLayoutPopup.js'),
 	MailCache = require('modules/%ModuleName%/js/Cache.js'),
+	MessagePanePopup = require('modules/%ModuleName%/js/popups/MessagePanePopup.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 
 	CFolderListView = require('modules/%ModuleName%/js/views/CFolderListView.js'),
 	CMessageListView = require('modules/%ModuleName%/js/views/CMessageListView.js'),
 	CMessagePaneView = require('modules/%ModuleName%/js/views/CMessagePaneView.js'),
 	
-	MessagePaneView = new CMessagePaneView();
+	MessagePaneView = new CMessagePaneView(),
+	
+	bHorizontalLayout = Settings.PreviewPanePosition === 'bottom'
 ;
 
 /**
@@ -46,19 +51,19 @@ function CMailView()
 	this.folderList = MailCache.folderList;
 	this.domFoldersMoveTo = ko.observable(null);
 
-	this.openMessageInNewWindowBound = _.bind(this.openMessageInNewWindow, this);
+	this.openMessaheInPopupOrTabBound = _.bind(this.openMessaheInPopupOrTab, this);
 
 	this.oFolderList = new CFolderListView();
 	this.isUnifiedFolderCurrent = MailCache.oUnifiedInbox.selected;
-	this.oMessageList = new CMessageListView(this.openMessageInNewWindowBound);
+	this.oMessageList = new CMessageListView(this.openMessaheInPopupOrTabBound);
 
 	this.allowPreviewPane = ko.computed(function () {
 		var bInNotes = ModulesManager.isModuleAvailable('MailNotesPlugin') && MailCache.getCurrentFolderFullname() === 'Notes';
-		return !Settings.OpenMessagesInPopup || bInNotes;
+		return bInNotes || Settings.PreviewPanePosition !== 'none';
 	});
 	this.oBaseMessagePaneView = MessagePaneView;
 	this.messagePane = ko.observable(this.oBaseMessagePaneView);
-	this.messagePane().openMessageInNewWindowBound = this.openMessageInNewWindowBound;
+	this.messagePane().openMessaheInPopupOrTabBound = this.openMessaheInPopupOrTabBound;
 	this.messagePane.subscribe(function () {
 		this.bindMessagePane();
 		this.messagePane().expandMessagePaneWidth = this.expandMessagePaneWidth;
@@ -95,6 +100,8 @@ function CMailView()
 		}
 		return TextUtils.i18n('%MODULENAME%/ACTION_NEW_MESSAGE');
 	}, this);
+
+	this.changeLayoutCommand = Utils.createCommand(this, this.changeLayout);
 
 	this.checkMailCommand = Utils.createCommand(this, this.executeCheckMail);
 	this.checkMailIndicator = ko.observable(true).extend({ throttle: 50 });
@@ -170,10 +177,11 @@ function CMailView()
 		return MailCache.getCurrentFolderType() === Enums.FolderTypes.Trash;
 	}, this);
 
-	if (Settings.HorizontalLayout)
+	if (bHorizontalLayout)
 	{
 		$('html').addClass('layout-horiz-split');
 	}
+	$('html').addClass('layout-' + Settings.MessageListItemSize + '-message-list-item');
 
 	App.subscribeEvent('CoreWebclient::GetDebugInfo', _.bind(function (oParams) {
 		oParams.Info.push('checkMailStarted: ' + MailCache.checkMailStarted() + ', messagesLoading: ' + MailCache.messagesLoading());
@@ -184,7 +192,7 @@ function CMailView()
 
 _.extendOwn(CMailView.prototype, CAbstractScreenView.prototype);
 
-CMailView.prototype.ViewTemplate = Settings.HorizontalLayout ? '%ModuleName%_MailHorizontalLayoutView' : '%ModuleName%_MailView';
+CMailView.prototype.ViewTemplate = bHorizontalLayout ? '%ModuleName%_MailHorizontalLayoutView' : '%ModuleName%_MailView';
 CMailView.prototype.ViewConstructorName = 'CMailView';
 
 /**
@@ -298,6 +306,32 @@ CMailView.prototype.executeCheckMail = function ()
 {
 	MailCache.checkMessageFlags();
 	MailCache.executeCheckMail(true);
+};
+
+/**
+ * @param {CMessageModel} oMessage
+ */
+CMailView.prototype.openMessaheInPopupOrTab = function (oMessage)
+{
+	var bInNotes = ModulesManager.isModuleAvailable('MailNotesPlugin') && MailCache.getCurrentFolderFullname() === 'Notes';
+	if (!bInNotes && oMessage)
+	{
+		if (Settings.OpenMessagesInPopup)
+		{
+			var
+				iAccountId = oMessage.accountId(),
+				sFolder = oMessage.folder(),
+				sUid = oMessage.uid(),
+				aParams = LinksUtils.getViewMessage(iAccountId, sFolder, sUid)
+			;
+			aParams.shift();
+			Popups.showPopup(MessagePanePopup, [aParams]);
+		}
+		else
+		{
+			this.openMessageInNewWindow(oMessage);
+		}
+	}
 };
 
 /**
@@ -555,6 +589,11 @@ CMailView.prototype.uncheckMessages = function ()
 	_.each(MailCache.messages(), function(oMessage) {
 		oMessage.checked(false);
 	});
+};
+
+CMailView.prototype.changeLayout = function ()
+{
+	Popups.showPopup(ChangeLayoutPopup, []);
 };
 
 module.exports = CMailView;

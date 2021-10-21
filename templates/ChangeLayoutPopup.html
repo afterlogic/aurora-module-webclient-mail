@@ -1,0 +1,35 @@
+<div class="popup add_folder" style="display: none;">
+	<div class="mask" data-bind="click: cancelPopup"></div>
+	<div class="popup_panel">
+		<span class="close" data-bind="click: cancelPopup"></span>
+		<span class="popup_heading" data-bind="i18n: {'key': '%MODULENAME%/LABEL_MESSAGES_SCREEN_LAYOUT'}"></span>
+
+		<div class="fields">
+			<div class="row">
+				<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_MESSAGE_LIST_ITEM_SIZE'}"></span>
+				<select class="value input" data-bind="options: aMessageListItemSizeValues, value: messageListItemSize,
+						optionsText: 'text', optionsValue: 'value'"></select>
+			</div>
+			<div class="row">
+				<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_PREVIEW_PANE_POSITION'}"></span>
+				<select class="value input" data-bind="options: aPreviewPanePositionValues, value: previewPanePosition,
+						optionsText: 'text', optionsValue: 'value'"></select>
+			</div>
+			<div class="row">
+				<span class="value offset">
+					<label class="custom_checkbox" data-bind="css: {'checked': openMessagesInPopup}">
+						<span class="icon"></span>
+						<input type="checkbox" id="openMessagesInPopup" data-bind="checked: openMessagesInPopup" />
+					</label>
+					<label for="openMessagesInPopup" data-bind="i18n: {'key': '%MODULENAME%/LABEL_OPEN_MESSAGES_IN_POPUP'}"></label>
+				</span>
+			</div>
+			<div class="buttons">
+				<span class="button" data-bind="i18n: {'key': '%MODULENAME%/ACTION_APPLY'}, click: save, visible: !isSaving()"></span>
+				<span class="button" data-bind="i18n: {'key': '%MODULENAME%/ACTION_APPLY_IN_PROGRESS'}, visible: isSaving()"></span>
+				<span class="button secondary_button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_CANCEL'}, click: cancelPopup, visible: !isSaving()"></span>
+			</div>
+		</div>
+	</div>
+	<span class="helper"></span>	
+</div>

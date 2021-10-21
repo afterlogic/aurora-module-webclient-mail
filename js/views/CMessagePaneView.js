@@ -124,6 +124,10 @@ function CMessagePaneView()
 		View: this
 	});
 
+	this.openInPopupOrTabVisible = !this.bNewTab && this.bNotPopup;
+	this.openInPopupOrTabText = Settings.OpenMessagesInPopup ? TextUtils.i18n('%MODULENAME%/ACTION_OPEN_IN_POPUP') : TextUtils.i18n('%MODULENAME%/ACTION_OPEN_IN_NEW_TAB');
+	this.openInPopupOrTabCommand = Utils.createCommand(this, this.openInPopupOrTab);
+
 	this.moreCommand = Utils.createCommand(this, null, this.isCurrentMessageLoaded);
 	this.moreSectionCommands = ko.observableArray([]);
 	App.broadcastEvent('%ModuleName%::AddMoreSectionCommand', _.bind(function (oCommand) {
@@ -760,9 +764,9 @@ CMessagePaneView.prototype.alwaysShowPictures = function ()
 	this.setMessageBody();
 };
 
-CMessagePaneView.prototype.openInNewWindow = function ()
+CMessagePaneView.prototype.openInPopupOrTab = function ()
 {
-	this.openMessageInNewWindowBound(this.currentMessage());
+	this.openMessaheInPopupOrTabBound(this.currentMessage());
 };
 
 CMessagePaneView.prototype.getReplyHtmlText = function ()
@@ -1042,6 +1046,18 @@ CMessagePaneView.prototype.onBind = function ($MailViewDom)
 	if (!App.isMobile())
 	{
 		this.hotKeysBind();
+	}
+	
+	if (this.bNewTab)
+	{
+		$(window).on('keyup', function (oEvent) {
+			var iKeyCode = Types.pInt(oEvent && oEvent.keyCode);
+
+			if (Enums.Key.Esc === iKeyCode)
+			{
+				window.close();
+			}
+		})
 	}
 };
 

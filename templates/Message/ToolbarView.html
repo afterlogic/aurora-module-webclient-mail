@@ -30,11 +30,10 @@
 			</span>
 		<!-- /ko -->
 
-		<a class="item new_window" href="javascript: void(0);"
-			data-bind="click: openInNewWindow, visible: !bNewTab">
-			<span class="icon" data-bind="customTooltip: '%MODULENAME%/ACTION_OPEN_IN_NEW_WINDOW'"></span>
-			<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_OPEN_IN_NEW_WINDOW'}"></span>
-		</a>
+		<span class="item new_window" data-bind="command: openInPopupOrTabCommand, visible: openInPopupOrTabVisible">
+			<span class="icon" data-bind="customTooltip: openInPopupOrTabText"></span>
+			<span class="text" data-bind="text: openInPopupOrTabText"></span>
+		</span>
 
 		<span class="item more" data-bind="dropdown: {control: false, alignTo: bNotPopup ? null : 'message_viewer'}, command: moreCommand, customTooltip: '%MODULENAME%/ACTION_SHOW_MORE_ACTIONS'">
 			<span class="icon"></span>

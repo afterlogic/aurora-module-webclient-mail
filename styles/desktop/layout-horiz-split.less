@@ -32,12 +32,6 @@
 			}
 		}
 	}
-	.list_notification {
-		padding: 6px 14px 12px;
-		.description {
-			padding-top: 8px;
-		}
-	}
 	.horiz_split_panel {
 		display: flex;
 		flex-direction: column;
@@ -50,26 +44,6 @@
 		.panel_content {
 			border-bottom: 1px solid #f1f1f1;
 		}
-		.toolbar {
-			.content {
-				padding: 4px;
-			}
-			.item {
-				&.checkstate {
-					float: left;
-				}
-/*				.icon {
-					display: none;
-					&.arrow {
-						display: inline-block;
-					}
-				}*/
-				.text {
-					display: inline-block;
-					font-size: 11pt;
-				}
-			}
-		}
 		.panel_top {
 			.search_block {
 				width: 60%;
@@ -77,49 +51,6 @@
 		}
 		.panel_center {
 			border-radius: 0 0 4px 4px;
-			
-			.message_list {
-				.item_content {
-					padding: 6px 16px 6px 14px;
-					
-					.controls {
-						display: inline-flex;
-						
-						.custom_checkbox {
-							margin-right: 10px;
-						}
-						
-						.flag {
-							margin-top: -3px;
-						}
-					}
-					
-					.data {
-						.date, .attachments, .from, .separator, .thread-pin, .subject {
-							display: inline-block;
-							margin-top: 0 !important;
-							margin-bottom: 0;
-							vertical-align: middle;
-						}
-						.from {
-							width: 30%;
-							margin: 0 !important;
-							min-height: unset;
-							font-size: 11pt;
-						}
-						.subject {
-							width: 50%;
-							font-size: 11pt;
-							line-height: normal;
-						}
-						.thread-pin {
-							font-size: 8pt;
-							padding: 2px 8px 2px;
-							margin-right: 4px;
-						}
-					}
-				}
-			}
 		}
 		.middle_bar {
 			position: relative;
@@ -134,4 +65,88 @@
 	}
 	
 	.theme-layout-horiz-split();
+}
+
+.layout-big-message-list-item {
+	/* default */
+}
+.layout-small-message-list-item, .layout-tiny-message-list-item {
+	.list_notification {
+		padding: 6px 14px 12px;
+		.description {
+			padding-top: 8px;
+		}
+	}
+	.message_list {
+		.item_content {
+			padding: 6px 16px 6px 14px;
+
+			.controls {
+				display: inline-flex;
+
+				.custom_checkbox {
+					margin-right: 10px;
+				}
+
+				.flag {
+					margin-top: -3px;
+				}
+			}
+
+			.data {
+				.date, .attachments, .from, .separator, .thread-pin, .subject {
+					display: inline-block;
+					margin-top: 0 !important;
+					margin-bottom: 0;
+					vertical-align: middle;
+				}
+				.from {
+					width: 30%;
+					margin: 0 !important;
+					min-height: unset;
+					font-size: 10.5pt;
+				}
+				.subject {
+					width: 50%;
+					font-size: 11pt !important;
+					line-height: normal;
+				}
+				.thread-pin {
+					font-size: 8pt;
+					padding: 2px 8px 2px;
+					margin-right: 4px;
+				}
+			}
+		}
+	}
+}
+
+.layout-tiny-message-list-item {
+	.message_list {
+		.item_content {
+			padding: 3px 10px 3px 14px;
+
+			.data {
+				.from {
+					font-size: 9.5pt !important;
+				}
+				.subject {
+					font-size: 10pt !important;
+				}
+				.attachments.has_attachments {
+					height: 18px;
+					width: 18px;
+					&:before {
+						font-size: 18px;
+					}
+				}
+				.thread-pin {
+					font-size: 7pt !important;
+				}
+				.custom_marker {
+					font-size: 7pt !important;
+				}
+			}
+		}
+	}
 }

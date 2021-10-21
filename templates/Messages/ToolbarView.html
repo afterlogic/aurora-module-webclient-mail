@@ -1,15 +1,21 @@
 <div class="toolbar">
 	<span class="resizer" data-bind="event: { 'dblclick': resizeDblClick}"></span>
 	<span class="content">
+		<span class="item changelayout" data-bind="command: changeLayoutCommand,
+				customTooltip: '%MODULENAME%/ACTION_CHANGE_LAYOUT'">
+			<span class="icon"></span>
+			<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_CHANGE_LAYOUT'}"></span>
+		</span>
+
 		<span class="item checkstate" data-bind="command: checkMailCommand, checkstate: {'activeClass': 'process', 'state': checkMailIndicator(), 'duration': 800},
-				customTooltip: '%MODULENAME%/ACTION_CHECK_MAIL'" id="selenium_mail_check_button">
+				customTooltip: '%MODULENAME%/ACTION_CHECK_MAIL'">
 			<span class="icon"></span>
 			<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_CHECK_MAIL'}"></span>
 		</span>
 
 		<!-- ko template: {name: '%ModuleName%_Messages_MarkButtonView'} --><!-- /ko -->
 
-		<span class="item move" id="selenium_move_to_folder" data-bind="dropdown: {control: false, scrollToTopContainer: '.scroll-inner'},
+		<span class="item move" data-bind="dropdown: {control: false, scrollToTopContainer: '.scroll-inner'},
 				command: moveToFolderCommand, customTooltip: '%MODULENAME%/ACTION_MOVE_TO_FOLDER', visible: visibleMoveTool">
 			<span class="icon"></span>
 			<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_MOVE_TO_FOLDER'}"></span>
