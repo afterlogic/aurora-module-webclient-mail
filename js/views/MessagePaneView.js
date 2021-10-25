@@ -709,31 +709,22 @@ CMessagePaneView.prototype.onRoute = function (aParams)
 {
 	var
 		oParams = LinksUtils.parseMailbox(aParams),
-		iMessageAccountId = 0,
 		sFolder = oParams.Folder,
-		sUid = oParams.Uid
+		sUid = oParams.Uid,
+		oIdentifiers = MailCache.getMessageActualIdentifiers(MailCache.currentAccountId(), sFolder, sUid)
 	;
 
 	AccountList.changeCurrentAccountByHash(oParams.AccountHash);
-	iMessageAccountId = MailCache.currentAccountId();
 
-	if (sFolder === MailCache.oUnifiedInbox.fullName() && Types.isNonEmptyString(sUid))
-	{
-		var aParts = sUid.split(':');
-		iMessageAccountId = Types.pInt(aParts[0]);
-		sFolder = 'INBOX';
-		sUid = Types.pString(aParts[1]);
-	}
-
-	if (this.replyText() !== '' && this.uid() !== sUid)
+	if (this.replyText() !== '' && this.uid() !== oIdentifiers.sUid)
 	{
 		this.saveReplyMessage(false);
 	}
 
-	this.accountId(iMessageAccountId);
-	this.uid(sUid);
-	this.folder(sFolder);
-	MailCache.setCurrentMessage(this.accountId(), this.folder(), this.uid());
+	this.accountId(oIdentifiers.iAccountId);
+	this.uid(oIdentifiers.sUid);
+	this.folder(oIdentifiers.sFolder);
+	MailCache.setCurrentMessage(oIdentifiers.iAccountId, oIdentifiers.sFolder, oIdentifiers.sUid);
 
 	this.contentHasFocus(true);
 };

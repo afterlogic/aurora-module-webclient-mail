@@ -90,21 +90,17 @@ CUidListModel.prototype.getUidsForOffset = function (iOffset)
 		aUids = [],
 		oMsg = null
 	;
-	
+
 	for(; iIndex < iLen; iIndex++)
 	{
 		if (iIndex >= iOffset && iExistsCount < Settings.MailsPerPage)
 		{
 			sUid = this.collection()[iIndex];
-			var sUidForDict = sUid;
-			if (sUid !== undefined && this.sFullName === MailCache.oUnifiedInbox.fullName())
+			if (sUid !== undefined)
 			{
-				var aParts = sUid.split(':');
-				iAccountId = Types.pInt(aParts[0]);
-				sFullName = 'INBOX';
-				sUidForDict = aParts[1];
+				var oIdentifiers = MailCache.getMessageActualIdentifiers(this.iAccountId, this.sFullName, sUid);
+				oMsg = MessagesDictionary.get([oIdentifiers.iAccountId, oIdentifiers.sFolder, oIdentifiers.sUid]);
 			}
-			oMsg = (sUid === undefined) ? null : MessagesDictionary.get([iAccountId, sFullName, sUidForDict]);
 
 			if (oMsg && !oMsg.deleted() || sUid === undefined)
 			{

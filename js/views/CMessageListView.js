@@ -74,6 +74,18 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 	this.searchInputText = ko.observable('');
 	this.searchSpan = ko.observable('');
 	this.highlightTrigger = ko.observable('');
+	this.searchFoldersMode = ko.observable('');
+	this.searchFoldersModeText = ko.computed(function () {
+		if (this.searchFoldersMode() === Enums.SearchFoldersMode.Sub)
+		{
+			return TextUtils.i18n('%MODULENAME%/LABEL_SEARCH_CURRENT_FOLDER_AND_SUBFOLDERS');
+		}
+		if (this.searchFoldersMode() === Enums.SearchFoldersMode.All)
+		{
+			return TextUtils.i18n('%MODULENAME%/LABEL_SEARCH_ALL_FOLDERS');
+		}
+		return TextUtils.i18n('%MODULENAME%/LABEL_SEARCH_CURRENT_FOLDER');
+	}, this);
 
 	this.currentMessage = MailCache.currentMessage;
 	this.currentMessage.subscribe(function () {
@@ -635,6 +647,11 @@ CMessageListView.prototype.calculateSearchStringFromAdvancedForm  = function ()
 		aOutput.push('date:' + fEsc(sDateStart) + '/' + fEsc(sDateEnd));
 	}
 
+	if (this.searchFoldersMode() === Enums.SearchFoldersMode.Sub || this.searchFoldersMode() === Enums.SearchFoldersMode.All)
+	{
+		aOutput.push('folders:' + this.searchFoldersMode());
+	}
+
 	return aOutput.join(' ');
 };
 
@@ -904,15 +921,14 @@ CMessageListView.prototype.executeSpam = function ()
 
 		_.each(oUidsByAccounts, function (oData) {
 			var
-				aUidsByAccount = oData.Uids,
-				iAccountId = oData.AccountId,
-				oFolderList = MailCache.oFolderListItems[iAccountId],
+				aUidsByAccount = oData.aUids,
+				oFolderList = MailCache.oFolderListItems[oData.iAccountId],
 				oAccSpam = oFolderList ? oFolderList.spamFolder() : null,
-				oAccInbox = oFolderList ? oFolderList.inboxFolder() : null
+				oAccFolder = oFolderList ? oFolderList.getFolderByFullName(oData.sFolder) : null;
 			;
-			if (oAccInbox && oAccSpam && oAccInbox.fullName() !== oAccSpam.fullName())
+			if (oAccFolder && oAccSpam && oAccFolder.fullName() !== oAccSpam.fullName())
 			{
-				MailCache.moveMessagesToFolder(oAccInbox, oAccSpam, aUidsByAccount);
+				MailCache.moveMessagesToFolder(oAccFolder, oAccSpam, aUidsByAccount);
 			}
 		});
 	}
@@ -980,6 +996,7 @@ CMessageListView.prototype.clearAdvancedSearch = function ()
 	this.searchAttachments('');
 	this.searchDateStart('');
 	this.searchDateEnd('');
+	this.searchFoldersMode('');
 };
 
 CMessageListView.prototype.onAdvancedSearchClick = function ()
@@ -1047,6 +1064,11 @@ CMessageListView.prototype.onFileUploadComplete = function (sFileUid, bResponseR
 	{
 		Api.showErrorByCode(oResponse || {}, TextUtils.i18n('COREWEBCLIENT/ERROR_UPLOAD_FILE'));
 	}
+};
+
+CMessageListView.prototype.setFolderSearch = function (sSearchFoldersMode)
+{
+	this.searchFoldersMode(sSearchFoldersMode);
 };
 
 module.exports = CMessageListView;
