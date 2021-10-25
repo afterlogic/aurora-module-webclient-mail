@@ -1231,7 +1231,28 @@ CMessagePaneView.prototype.close = function ()
 {
 	if (!this.bNotPopup && !this.bNewTab)
 	{
-		this.cancelPopup();
+		this.markCurrentMessageAsRead();
+		this.closePopup();
+	}
+};
+
+CMessagePaneView.prototype.doBeforeUnload = function ()
+{
+	this.markCurrentMessageAsRead();
+};
+
+CMessagePaneView.prototype.markCurrentMessageAsRead = function ()
+{
+	if (ModulesManager.isModuleIncluded('InformatikProjects'))
+	{
+		var InformatikSettings = require('modules/InformatikProjects/js/Settings.js');
+		var oCurrentMessage = this.currentMessage();
+		if	(oCurrentMessage && !oCurrentMessage.seen() &&
+			(!InformatikSettings.AllowAssignProjects ||
+			 !InformatikSettings.isAssignProjectsAllowedForEmail(oCurrentMessage.accountEmail())))
+		{
+			MailCache.executeGroupOperation('SetMessagesSeen', [MailCache.getMessageUid(oCurrentMessage)], 'seen', true);
+		}
 	}
 };
 

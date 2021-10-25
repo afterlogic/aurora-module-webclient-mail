@@ -22,7 +22,7 @@ function CMessagePanePopup()
 	this.currentMessage.subscribe(function () {
 		if (!this.currentMessage())
 		{
-			this.closePopup();
+			this.close();
 		}
 	}, this);
 
@@ -73,21 +73,9 @@ CMessagePanePopup.prototype.onOpen = function (aParams)
 	this.preventBackspaceOn();
 };
 
-CMessagePanePopup.prototype.saveAndClose = function ()
-{
-	if (this.hasUnsavedChanges())
-	{
-		this.saveCommand();
-	}
-
-	// closePopup method will remove the entire popup so click event for span.item.save_and_close won't be fired and tooltip won't be hidden.
-	// So we postpone it for a bit.
-	setTimeout(this.closePopup.bind(this), 0);
-};
-
 CMessagePanePopup.prototype.cancelPopup = function ()
 {
-	this.closePopup();
+	this.close();
 };
 
 /**
@@ -95,7 +83,7 @@ CMessagePanePopup.prototype.cancelPopup = function ()
  */
 CMessagePanePopup.prototype.onEscHandler = function (oEvent)
 {
-	this.closePopup();
+	this.close();
 };
 
 module.exports = new CMessagePanePopup();
