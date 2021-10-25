@@ -68,23 +68,23 @@
 	<div class="folders_search" data-bind="visible: bAdvancedSearch">
 		<span class="folders_search_label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_SEARCH_IN'}"></span>
 		<span class="folders_search_select" data-bind="dropdown: {}, customTooltip: 'MAILWEBCLIENT/LABEL_SEARCH_IN'">
-			<span class="link control" data-bind="text: searchFoldersModeText"></span>
+			<span class="link control" data-bind="text: selectedSearchFoldersModeText"></span>
 			<span class="dropdown">
 				<span class="dropdown_helper">
 					<span class="dropdown_arrow"><span></span></span>
 					<span class="dropdown_content">
 						<span class="item" data-bind="
 							  i18n: {'key': '%MODULENAME%/LABEL_SEARCH_CURRENT_FOLDER'},
-							  css: {'selected': searchFoldersMode() === Enums.SearchFoldersMode.Current},
-							  click: function () { setFolderSearch(Enums.SearchFoldersMode.Current); }"></span>
+							  css: {'selected': selectedSearchFoldersMode() === Enums.SearchFoldersMode.Current},
+							  click: function () { selectFolderSearch(Enums.SearchFoldersMode.Current); }"></span>
 						<span class="item" data-bind="
 							  i18n: {'key': '%MODULENAME%/LABEL_SEARCH_CURRENT_FOLDER_AND_SUBFOLDERS'},
-							  css: {'selected': searchFoldersMode() === Enums.SearchFoldersMode.Sub},
-							  click: function () { setFolderSearch(Enums.SearchFoldersMode.Sub); }"></span>
+							  css: {'selected': selectedSearchFoldersMode() === Enums.SearchFoldersMode.Sub},
+							  click: function () { selectFolderSearch(Enums.SearchFoldersMode.Sub); }"></span>
 						<span class="item" data-bind="
 							  i18n: {'key': '%MODULENAME%/LABEL_SEARCH_ALL_FOLDERS'},
-							  css: {'selected': searchFoldersMode() === Enums.SearchFoldersMode.All},
-							  click: function () { setFolderSearch(Enums.SearchFoldersMode.All); }"></span>
+							  css: {'selected': selectedSearchFoldersMode() === Enums.SearchFoldersMode.All},
+							  click: function () { selectFolderSearch(Enums.SearchFoldersMode.All); }"></span>
 					</span>
 				</span>
 			</span>

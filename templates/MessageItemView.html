@@ -16,6 +16,7 @@
 		<span class="data">
 			<span class="size" data-bind="text: friendlySize()"></span>
 			<span class="date" data-bind="text: date"></span>
+			<span class="search_folder_marker" data-bind="text: folder"></span>
 			<span class="unified_marker" data-bind="visible: showUnifiedMailboxLabel, text: unifiedMailboxLabelText, style: {'background': unifiedMailboxLabelColor}"></span>
 			<!-- ko foreach: customLabels -->
 				<span class="custom_marker" data-bind="text: text, css: cssClass"></span>
