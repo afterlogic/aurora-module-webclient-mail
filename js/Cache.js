@@ -908,10 +908,22 @@ CMailCache.prototype.requestMessageList = function (sFolder, iPage, sSearch, sFi
 	
 	if (bStartRequest)
 	{
+		var
+			bSearchInAllFolders = (/(^|\s)folders:all(\s|$)/).test(oParameters.Search),
+			bSearchInCurrentAndSubFolders = (/(^|\s)folders:sub(\s|$)/).test(oParameters.Search)
+		;
 		if (oParameters.Folder === this.oUnifiedInbox.fullName())
 		{
 			delete oParameters.Folder;
 			Ajax.send('GetUnifiedMailboxMessages', oParameters, fCallBack, this);
+		}
+		else if (bSearchInCurrentAndSubFolders || bSearchInAllFolders)
+		{
+			if (bSearchInAllFolders)
+			{
+//				delete oParameters.Folder;
+			}
+			Ajax.send('GetMessagesByFolders', oParameters, fCallBack, this);
 		}
 		else
 		{
