@@ -1345,26 +1345,21 @@ CMailCache.prototype.getUidsSeparatedByAccounts = function (aUids)
 	var oUidsByAccounts = {};
 	
 	_.each(aUids, function (sUnifiedUid) {
-		var
-			aParts = sUnifiedUid.split(':'),
-			iAccountId = Types.pInt(aParts[0]),
-			sFolder = aParts[1],
-			sUid = aParts[2]
-		;
+		var oIdentifiers = this.getMessageActualIdentifiers(this.currentAccountId(), this.getCurrentFolderFullname(), sUnifiedUid);
 
-		if (sUid !== '')
+		if (oIdentifiers.sUid !== '')
 		{
-			if (!oUidsByAccounts[iAccountId + ':' + sFolder])
+			if (!oUidsByAccounts[oIdentifiers.iAccountId + ':' + oIdentifiers.sFolder])
 			{
-				oUidsByAccounts[iAccountId + ':' + sFolder] = {
-					iAccountId: iAccountId,
-					sFolder: sFolder,
+				oUidsByAccounts[oIdentifiers.iAccountId + ':' + oIdentifiers.sFolder] = {
+					iAccountId: oIdentifiers.iAccountId,
+					sFolder: oIdentifiers.sFolder,
 					aUids: []
 				};
 			}
-			oUidsByAccounts[iAccountId + ':' + sFolder].aUids.push(sUid);
+			oUidsByAccounts[oIdentifiers.iAccountId + ':' + oIdentifiers.sFolder].aUids.push(oIdentifiers.sUid);
 		}
-	});
+	}.bind(this));
 
 	return oUidsByAccounts;
 };
@@ -1379,8 +1374,9 @@ CMailCache.prototype.executeGroupOperation = function (sMethod, aUids, sField, b
 {
 	if (this.oUnifiedInbox.selected() && aUids.length > 0)
 	{
+		console.log('aUids', aUids);
 		var oUidsByAccounts = this.getUidsSeparatedByAccounts(aUids);
-		
+		console.log('oUidsByAccounts', oUidsByAccounts);
 		_.each(oUidsByAccounts, function (oData) {
 			var
 				aUidsByAccount = oData.aUids,

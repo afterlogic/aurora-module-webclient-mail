@@ -65,11 +65,16 @@
 		}
 		
 		.search_multi_folders& .search_folder_marker {
-			background: white;
+			background: inherit;
 			color: #a1a3ab;
 			border: solid 1px #a1a3ab;
 			padding: 0px 6px;
 			margin-left: 4px;
+		}
+
+		.search_multi_folders&.selected .search_folder_marker {
+			color: #fff;
+			border: solid 1px #fff;
 		}
 
 		.size {
