@@ -1894,6 +1894,9 @@ CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 				this.uidList().sortBy() === oParameters.SortBy &&
 				this.uidList().sortOrder() === oParameters.SortOrder,
 		bCurrentPage = this.page() === ((oParameters.Offset / Settings.MailsPerPage) + 1), // !!!
+		bSearchInAllFolders = (/(^|\s)folders:all(\s|$)/).test(oParameters.Search),
+		bSearchInCurrentAndSubFolders = (/(^|\s)folders:sub(\s|$)/).test(oParameters.Search),
+		bSearchOnlyInCurrentFolder = !bSearchInAllFolders && !bSearchInCurrentAndSubFolders,
 		aNewFolderMessages = []
 	;
 	
@@ -1902,10 +1905,13 @@ CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 	if (oResult !== false && oResult['@Object'] === 'Collection/MessageCollection')
 	{
 		oFolder = this.getFolderByFullName(iAccountId, oParameters.Folder);
-		
-		// perform before getUidList, because in case of a mismatch the uid list will be pre-cleaned
-		oFolder.setRelevantInformation(oResult.UidNext.toString(), oResult.FolderHash, 
-			oResult.MessageCount, oResult.MessageUnseenCount, bCurrentFolder && !bCurrentList);
+
+		if (bSearchOnlyInCurrentFolder)
+		{
+			// perform before getUidList, because in case of a mismatch the uid list will be pre-cleaned
+			oFolder.setRelevantInformation(oResult.UidNext.toString(), oResult.FolderHash, 
+				oResult.MessageCount, oResult.MessageUnseenCount, bCurrentFolder && !bCurrentList);
+		}
 		bHasFolderChanges = oFolder.hasChanges();
 		oFolder.removeAllMessageListsFromCacheIfHasChanges();
 		oUidList = oFolder.getUidList(oResult.Search, oResult.Filters, oParameters.SortBy, oParameters.SortOrder);
