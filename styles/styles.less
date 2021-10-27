@@ -66,6 +66,16 @@
 		float: left;
 		margin-left: 32px;
 		margin-top: -34px;
+		opacity: 0;
+		visibility: hidden;
+		.transition(~"max-height 0.2s ease 0s, opacity 0.2s ease 0s, visibility 0.1s");
+
+		&.folders_search_expand {
+			opacity: 1;
+			visibility: visible;
+
+			.transition(~"max-height 0.9s ease 0s, opacity 0.9s ease 0s, visibility 0.9s");
+		}
 		
 		.folders_search_label {
 			position: relative;
