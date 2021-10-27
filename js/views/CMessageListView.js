@@ -196,20 +196,38 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 	}, this);
 
 	this.searchText = ko.computed(function () {
-		if (this.searchFoldersMode() === Enums.SearchFoldersMode.Sub || this.searchFoldersMode() === Enums.SearchFoldersMode.All)
+		var
+			oTextOptions = {
+				'SEARCH': this.calculateSearchStringForDescription(),
+				'FOLDER': MailCache.getCurrentFolder() ? TextUtils.encodeHtml(MailCache.getCurrentFolder().displayName()) : ''
+			}
+		;
+		if (this.searchFoldersMode() === Enums.SearchFoldersMode.Sub)
 		{
-			return TextUtils.i18n('%MODULENAME%/INFO_SEARCH_ALL_FOLDERS_RESULT', {
-				'SEARCH': this.calculateSearchStringForDescription()
-			});
+			if (MailCache.oUnifiedInbox.selected())
+			{
+				return TextUtils.i18n('%MODULENAME%/INFO_SEARCH_UNIFIED_SUBFOLDERS_RESULT', oTextOptions);
+			}
+			else
+			{
+				return TextUtils.i18n('%MODULENAME%/INFO_SEARCH_SUBFOLDERS_RESULT', oTextOptions);
+			}
 		}
-		return TextUtils.i18n('%MODULENAME%/INFO_SEARCH_RESULT', {
-			'SEARCH': this.calculateSearchStringForDescription(),
-			'FOLDER': MailCache.getCurrentFolder() ? TextUtils.encodeHtml(MailCache.getCurrentFolder().displayName()) : ''
-		});
+		else if (this.searchFoldersMode() === Enums.SearchFoldersMode.All)
+		{
+			if (MailCache.oUnifiedInbox.selected())
+			{
+				return TextUtils.i18n('%MODULENAME%/INFO_SEARCH_UNIFIED_ALL_FOLDERS_RESULT', oTextOptions);
+			}
+			else
+			{
+				return TextUtils.i18n('%MODULENAME%/INFO_SEARCH_ALL_FOLDERS_RESULT', oTextOptions);
+			}
+		}
+		return TextUtils.i18n('%MODULENAME%/INFO_SEARCH_RESULT', oTextOptions);
 	}, this);
 
 	this.unseenFilterText = ko.computed(function () {
-
 		if (this.search() === '')
 		{
 			return TextUtils.i18n('%MODULENAME%/INFO_UNREAD_MESSAGES', {
@@ -223,7 +241,6 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 				'FOLDER': MailCache.getCurrentFolder() ? TextUtils.encodeHtml(MailCache.getCurrentFolder().displayName()) : ''
 			});
 		}
-		
 	}, this);
 
 	this.unseenFilterEmptyText = ko.computed(function () {
@@ -1027,7 +1044,7 @@ CMessageListView.prototype.onAdvancedSearchClick = function ()
 
 CMessageListView.prototype.calculateSearchStringForDescription = function ()
 {
-	return '<span class="part">' + TextUtils.encodeHtml(this.search().replace(/(^|\s)folders:(all|sub)(\s|$)/, '')) + '</span>';
+	return TextUtils.encodeHtml(this.search().replace(/(^|\s)folders:(all|sub)(\s|$)/, ''));
 };
 
 CMessageListView.prototype.initUploader = function ()
