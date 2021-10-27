@@ -95,7 +95,7 @@ ko.bindingHandlers.highlighter = {
 			oValueObserver = oOptions.valueObserver ? oOptions.valueObserver : null,
 			oHighlighterValueObserver = oOptions.highlighterValueObserver ? oOptions.highlighterValueObserver : null,
 			oHighlightTrigger = oOptions.highlightTrigger ? oOptions.highlightTrigger : null,
-			aHighlightWords = ['from:', 'to:', 'subject:', 'text:', 'email:', 'has:', 'date:', 'text:', 'body:'],
+			aHighlightWords = ['from:', 'to:', 'subject:', 'text:', 'email:', 'has:', 'date:', 'text:', 'body:', 'folders:'],
 			rPattern = (function () {
 				var sPatt = '';
 				$.each(aHighlightWords, function(i, oEl) {

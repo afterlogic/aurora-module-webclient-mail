@@ -74,6 +74,18 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 	this.searchInputText = ko.observable('');
 	this.searchSpan = ko.observable('');
 	this.highlightTrigger = ko.observable('');
+	this.selectedSearchFoldersMode = ko.observable('');
+	this.selectedSearchFoldersModeText = ko.computed(function () {
+		if (this.selectedSearchFoldersMode() === Enums.SearchFoldersMode.Sub)
+		{
+			return TextUtils.i18n('%MODULENAME%/LABEL_SEARCH_CURRENT_FOLDER_AND_SUBFOLDERS');
+		}
+		if (this.selectedSearchFoldersMode() === Enums.SearchFoldersMode.All)
+		{
+			return TextUtils.i18n('%MODULENAME%/LABEL_SEARCH_ALL_FOLDERS');
+		}
+		return TextUtils.i18n('%MODULENAME%/LABEL_SEARCH_CURRENT_FOLDER');
+	}, this);
 
 	this.currentMessage = MailCache.currentMessage;
 	this.currentMessage.subscribe(function () {
@@ -128,6 +140,7 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 		'write': this._search,
 		'owner': this
 	});
+	this.searchFoldersMode = ko.observable('');
 	
 	this.messageListParamsChanged = ko.observable(false).extend({'autoResetToFalse': 100});
 
@@ -183,16 +196,38 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 	}, this);
 
 	this.searchText = ko.computed(function () {
-
-		return TextUtils.i18n('%MODULENAME%/INFO_SEARCH_RESULT', {
-			'SEARCH': this.calculateSearchStringForDescription(),
-			'FOLDER': MailCache.getCurrentFolder() ? TextUtils.encodeHtml(MailCache.getCurrentFolder().displayName()) : ''
-		});
-		
+		var
+			oTextOptions = {
+				'SEARCH': this.calculateSearchStringForDescription(),
+				'FOLDER': MailCache.getCurrentFolder() ? TextUtils.encodeHtml(MailCache.getCurrentFolder().displayName()) : ''
+			}
+		;
+		if (this.searchFoldersMode() === Enums.SearchFoldersMode.Sub)
+		{
+			if (MailCache.oUnifiedInbox.selected())
+			{
+				return TextUtils.i18n('%MODULENAME%/INFO_SEARCH_UNIFIED_SUBFOLDERS_RESULT', oTextOptions);
+			}
+			else
+			{
+				return TextUtils.i18n('%MODULENAME%/INFO_SEARCH_SUBFOLDERS_RESULT', oTextOptions);
+			}
+		}
+		else if (this.searchFoldersMode() === Enums.SearchFoldersMode.All)
+		{
+			if (MailCache.oUnifiedInbox.selected())
+			{
+				return TextUtils.i18n('%MODULENAME%/INFO_SEARCH_UNIFIED_ALL_FOLDERS_RESULT', oTextOptions);
+			}
+			else
+			{
+				return TextUtils.i18n('%MODULENAME%/INFO_SEARCH_ALL_FOLDERS_RESULT', oTextOptions);
+			}
+		}
+		return TextUtils.i18n('%MODULENAME%/INFO_SEARCH_RESULT', oTextOptions);
 	}, this);
 
 	this.unseenFilterText = ko.computed(function () {
-
 		if (this.search() === '')
 		{
 			return TextUtils.i18n('%MODULENAME%/INFO_UNREAD_MESSAGES', {
@@ -206,7 +241,6 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 				'FOLDER': MailCache.getCurrentFolder() ? TextUtils.encodeHtml(MailCache.getCurrentFolder().displayName()) : ''
 			});
 		}
-		
 	}, this);
 
 	this.unseenFilterEmptyText = ko.computed(function () {
@@ -528,6 +562,7 @@ CMessageListView.prototype.onRoute = function (aParams)
 	this.filters(oParams.Filters);
 	this.search(oParams.Search);
 	this.searchInput(this.search());
+	this.setSearchFolderMode();
 	this.searchSpan.notifySubscribers();
 	this.sSortBy = oParams.SortBy;
 	this.iSortOrder = oParams.SortOrder;
@@ -556,6 +591,21 @@ CMessageListView.prototype.onRoute = function (aParams)
 	}
 
 	this.highlightTrigger.notifySubscribers(true);
+};
+
+CMessageListView.prototype.setSearchFolderMode = function () {
+	if ((/(^|\s)folders:all(\s|$)/).test(this.search()))
+	{
+		this.searchFoldersMode(Enums.SearchFoldersMode.All);
+	}
+	else if ((/(^|\s)folders:sub(\s|$)/).test(this.search()))
+	{
+		this.searchFoldersMode(Enums.SearchFoldersMode.Sub);
+	}
+	else
+	{
+		this.searchFoldersMode(Enums.SearchFoldersMode.Current);
+	}
 };
 
 CMessageListView.prototype.setCurrentFolder = function ()
@@ -633,6 +683,11 @@ CMessageListView.prototype.calculateSearchStringFromAdvancedForm  = function ()
 	if (sDateStart !== '' || sDateEnd !== '')
 	{
 		aOutput.push('date:' + fEsc(sDateStart) + '/' + fEsc(sDateEnd));
+	}
+
+	if (this.selectedSearchFoldersMode() === Enums.SearchFoldersMode.Sub || this.selectedSearchFoldersMode() === Enums.SearchFoldersMode.All)
+	{
+		aOutput.push('folders:' + this.selectedSearchFoldersMode());
 	}
 
 	return aOutput.join(' ');
@@ -904,15 +959,14 @@ CMessageListView.prototype.executeSpam = function ()
 
 		_.each(oUidsByAccounts, function (oData) {
 			var
-				aUidsByAccount = oData.Uids,
-				iAccountId = oData.AccountId,
-				oFolderList = MailCache.oFolderListItems[iAccountId],
+				aUidsByAccount = oData.aUids,
+				oFolderList = MailCache.oFolderListItems[oData.iAccountId],
 				oAccSpam = oFolderList ? oFolderList.spamFolder() : null,
-				oAccInbox = oFolderList ? oFolderList.inboxFolder() : null
+				oAccFolder = oFolderList ? oFolderList.getFolderByFullName(oData.sFolder) : null;
 			;
-			if (oAccInbox && oAccSpam && oAccInbox.fullName() !== oAccSpam.fullName())
+			if (oAccFolder && oAccSpam && oAccFolder.fullName() !== oAccSpam.fullName())
 			{
-				MailCache.moveMessagesToFolder(oAccInbox, oAccSpam, aUidsByAccount);
+				MailCache.moveMessagesToFolder(oAccFolder, oAccSpam, aUidsByAccount);
 			}
 		});
 	}
@@ -980,6 +1034,7 @@ CMessageListView.prototype.clearAdvancedSearch = function ()
 	this.searchAttachments('');
 	this.searchDateStart('');
 	this.searchDateEnd('');
+	this.selectedSearchFoldersMode('');
 };
 
 CMessageListView.prototype.onAdvancedSearchClick = function ()
@@ -989,7 +1044,7 @@ CMessageListView.prototype.onAdvancedSearchClick = function ()
 
 CMessageListView.prototype.calculateSearchStringForDescription = function ()
 {
-	return '<span class="part">' + TextUtils.encodeHtml(this.search()) + '</span>';
+	return TextUtils.encodeHtml(this.search().replace(/(^|\s)folders:(all|sub)(\s|$)/, ''));
 };
 
 CMessageListView.prototype.initUploader = function ()
@@ -1047,6 +1102,11 @@ CMessageListView.prototype.onFileUploadComplete = function (sFileUid, bResponseR
 	{
 		Api.showErrorByCode(oResponse || {}, TextUtils.i18n('COREWEBCLIENT/ERROR_UPLOAD_FILE'));
 	}
+};
+
+CMessageListView.prototype.selectFolderSearch = function (sSearchFoldersMode)
+{
+	this.selectedSearchFoldersMode(sSearchFoldersMode);
 };
 
 module.exports = CMessageListView;

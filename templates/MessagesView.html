@@ -10,7 +10,7 @@
 		<div class="scroll-inner message_list_scroll">
 			<div class="items_list message_list" data-bind="initDom: messagesContainer, css: folderFullName">
 				<span>
-					<span class="list_notification" data-bind="visible: visibleInfoSearchLoading">
+					<span class="list_notification" data-bind="visible: visibleInfoSearchLoading() && !visibleInfoUnseenFilterList()">
 						<span class="link" data-bind="i18n: {'key': '%MODULENAME%/ACTION_STOP_SEARCH'}, click: onStopSearchClick"></span>
 						<span class="description" data-bind="html: searchText"></span>
 					</span>

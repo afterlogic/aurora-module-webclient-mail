@@ -84,10 +84,10 @@ MailUtils.deleteMessagesFromUnifiedInbox = function (aUids, fAfterDelete)
 		bMoved = false,
 		bDeleteAsked = false,
 		oUidsByAccounts = MailCache.getUidsSeparatedByAccounts(aUids),
-		fDeleteMessages = function (oAccInbox, aUidsByAccount, bResult) {
+		fDeleteMessages = function (oAccFolder, aUidsByAccount, bResult) {
 			if (bResult)
 			{
-				MailCache.deleteMessagesFromFolder(oAccInbox, aUidsByAccount);
+				MailCache.deleteMessagesFromFolder(oAccFolder, aUidsByAccount);
 				fAfterDelete();
 			}
 		}
@@ -95,25 +95,25 @@ MailUtils.deleteMessagesFromUnifiedInbox = function (aUids, fAfterDelete)
 
 	_.each(oUidsByAccounts, function (oData) {
 		var
-			aUidsByAccount = oData.Uids,
-			iAccountId = oData.AccountId,
+			aUidsByAccount = oData.aUids,
+			iAccountId = oData.iAccountId,
 			oFolderList = MailCache.oFolderListItems[iAccountId],
 			oAccount = AccountList.getAccount(iAccountId),
 			oAccTrash = oFolderList ? oFolderList.trashFolder() : null,
-			oAccInbox = oFolderList ? oFolderList.inboxFolder() : null
+			oAccFolder = oFolderList ? oFolderList.getFolderByFullName(oData.sFolder) : null
 		;
-		if (oAccInbox)
+		if (oAccFolder)
 		{
 			if (oAccTrash)
 			{
-				MailCache.moveMessagesToFolder(oAccInbox, oAccTrash, aUidsByAccount);
+				MailCache.moveMessagesToFolder(oAccFolder, oAccTrash, aUidsByAccount);
 				bMoved = true;
 			}
 			else
 			{
 				Popups.showPopup(ConfirmPopup, [
 					TextUtils.i18n('%MODULENAME%/CONFIRM_MESSAGES_DELETE_NO_TRASH_FOLDER'),
-					fDeleteMessages.bind(null, oAccInbox, aUidsByAccount),
+					fDeleteMessages.bind(null, oAccFolder, aUidsByAccount),
 					oAccount ? oAccount.fullEmail() : ''
 				]);
 				bDeleteAsked = true;

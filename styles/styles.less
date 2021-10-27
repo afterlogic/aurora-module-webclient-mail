@@ -51,3 +51,47 @@
 		width: 300px;
 	}
 }
+
+.search_block {
+	.input.expand .folder_select .dropdown {
+		opacity: 0;
+	}
+	.input.expand .folder_select.expand .dropdown {
+		opacity: 1;
+	}
+	
+	.folders_search {
+		color: #bbbbbb;
+		font-size: 12pt;
+		float: left;
+		margin-left: 32px;
+		margin-top: -34px;
+		opacity: 0;
+		visibility: hidden;
+		.transition(~"max-height 0.2s ease 0s, opacity 0.2s ease 0s, visibility 0.1s");
+
+		&.folders_search_expand {
+			opacity: 1;
+			visibility: visible;
+
+			.transition(~"max-height 0.9s ease 0s, opacity 0.9s ease 0s, visibility 0.9s");
+		}
+		
+		.folders_search_label {
+			position: relative;
+		}
+
+		.folders_search_select {
+		   display: inline-block;
+		   margin-right: 8px;
+		   position: relative;
+	   }
+
+	   .link,
+	   .link:hover {
+		   border-bottom: 1px dashed @theme-settings-filter-link-color;
+		   color: @theme-settings-filter-link-color;
+		   text-decoration: none;
+	   }
+   }
+}

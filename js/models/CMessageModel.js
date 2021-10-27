@@ -455,11 +455,9 @@ CMessageModel.prototype.parse = function (oData, iAccountId, bThreadPart, bTrust
 		if (Types.isNonEmptyString(oData.UnifiedUid))
 		{
 			this.unifiedUid(oData.UnifiedUid);
-		}
-		if (Types.isNonEmptyString(oData.UnifiedUid))
-		{
-			var aParts = oData.UnifiedUid.split(':');
-			this.accountId(Types.pInt(aParts[0]));
+			var oIdentifiers = MailCache.getMessageActualIdentifiers(this.accountId(), this.folder(), this.unifiedUid());
+			this.accountId(oIdentifiers.iAccountId);
+//			this.folder(oIdentifiers.sFolder);
 		}
 		this.sUniq = this.accountId() + this.folder() + this.uid();
 

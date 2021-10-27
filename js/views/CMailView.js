@@ -48,6 +48,9 @@ function CMailView()
 	this.oFolderList = new CFolderListView();
 	this.isUnifiedFolderCurrent = MailCache.oUnifiedInbox.selected;
 	this.oMessageList = new CMessageListView(this.openMessageInNewWindowBound);
+	this.isSearchMultiFolders = ko.computed(function () {
+		return this.oMessageList.searchFoldersMode() === Enums.SearchFoldersMode.Sub || this.oMessageList.searchFoldersMode() === Enums.SearchFoldersMode.All;
+	}, this);
 
 	this.oBaseMessagePaneView = MessagePaneView;
 	this.messagePane = ko.observable(this.oBaseMessagePaneView);

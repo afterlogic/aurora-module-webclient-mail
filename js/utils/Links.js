@@ -30,7 +30,19 @@ function IsPageParam(sTemp)
  */
 function IsMsgParam(sTemp)
 {
-	return ('msg' === sTemp.substr(0, 3) && (/^[1-9][\d:]*$/).test(sTemp.substr(3)));
+	if ('msg' === sTemp.substr(0, 3))
+	{
+		var aParts = sTemp.substr(3).split(':');
+		if (aParts.length === 1)
+		{
+			return (/^[1-9][\d:]*$/).test(aParts[0]);
+		}
+		if (aParts.length >= 3)
+		{
+			return (/^[1-9][\d:]*$/).test(aParts[0]) && (/^[1-9][\d:]*$/).test(aParts[aParts.length - 1]);
+		}
+	}
+	return false;
 };
 
 /**

@@ -149,20 +149,9 @@ CFolderModel.prototype.getUnifiedInbox = function (iAccountId)
  */
 CFolderModel.prototype.getMessageByUid = function (sUid)
 {
-	if (this.bIsUnifiedInbox)
-	{
-		var
-			aParts = sUid.split(':'),
-			iAccountId = aParts.length === 2 ? Types.pInt(aParts[0]) : this.iAccountId,
-			sActualUid = aParts.length === 2 ? Types.pString(aParts[1]) : sUid,
-			oInbox = this.getUnifiedInbox(iAccountId)
-		;
-		return oInbox ? MessagesDictionary.get([iAccountId, oInbox.fullName(), sActualUid]) : null;
-	}
-	else
-	{
-		return MessagesDictionary.get([this.iAccountId, this.fullName(), sUid]);
-	}
+	this.requireMailCache();
+	var oIdentifiers = MailCache.getMessageActualIdentifiers(this.iAccountId, this.fullName(), sUid);
+	return MessagesDictionary.get([oIdentifiers.iAccountId, oIdentifiers.sFolder, oIdentifiers.sUid]);
 };
 
 /**
@@ -296,7 +285,7 @@ CFolderModel.prototype.getThreadMessages = function (oMessage)
 					oThreadMessage.markAsThreadPart(iShowThrottle, oMessage.uid());
 					if (!oThreadMessage.unifiedUid())
 					{
-						oThreadMessage.unifiedUid(oThreadMessage.accountId() + ':' + oThreadMessage.uid());
+						oThreadMessage.unifiedUid(oThreadMessage.accountId() + ':' + oThreadMessage.folder() + ':' + oThreadMessage.uid());
 					}
 					aLoadedMessages.push(oThreadMessage);
 					aChangedThreadUids.push(oThreadMessage.uid());

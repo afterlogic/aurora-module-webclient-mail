@@ -35,6 +35,12 @@ Enums.SortOrder = {
 	'Desc': 1
 };
 
+Enums.SearchFoldersMode = {
+	Current: '',
+	Sub: 'sub',
+	All: 'all'
+};
+
 /**
  * @enum {number}
  */
