@@ -3,9 +3,13 @@
 var
 	_ = require('underscore'),
 	
+	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	
 	Ajax = require('%PathToCoreWebclientModule%/js/Ajax.js'),
+	App = require('%PathToCoreWebclientModule%/js/App.js'),
+	ModuleErrors = require('%PathToCoreWebclientModule%/js/ModuleErrors.js'),
+	Screens = require('%PathToCoreWebclientModule%/js/Screens.js'),
 	
 	Settings = require('modules/%ModuleName%/js/Settings.js')
 ;
@@ -60,14 +64,32 @@ module.exports = {
 			MailCache = require('modules/%ModuleName%/js/Cache.js'),
 			iTimeout = (sMethod === 'GetMessagesBodies') ? 100000 : undefined,
 			fBaseResponseHandler = function (oResponse, oRequest) {
-				if (!oResponse.Result && oResponse.ErrorCode === 4002)
+				if (!oResponse.Result && oResponse.ErrorCode === 4002 && App.getUserRole() !== Enums.UserRole.Anonymous)
 				{
 					var
 						AccountList = require('modules/%ModuleName%/js/AccountList.js'),
-						iAccountId = Types.pInt(oRequest.Parameters.AccountID),
-						oAccount = AccountList.getAccount(iAccountId)
+						aErrorMessageParts = oResponse.ErrorMessage.split(':'),
+						iAccountId = Types.pInt(aErrorMessageParts.shift()),
+						oAccount = AccountList.getAccount(iAccountId),
+						sErrorMessage = aErrorMessageParts.join(':')
 					;
-					oAccount.passwordMightBeIncorrect(true);
+					
+					if (oAccount && oAccount.bDefault)
+					{
+						oResponse = { Result: false, ErrorCode: Enums.Errors.AuthError };
+						App.logoutAndGotoLogin();
+					}
+					else if (oAccount)
+					{
+						oAccount.passwordMightBeIncorrect(true);
+						var sResultError = TextUtils.i18n('%MODULENAME%/ERROR_CREDENTIALS_INCORRECT', {'EMAIL': oAccount.email()});
+						if (sErrorMessage)
+						{
+							sResultError += ' (' + sErrorMessage + ')';
+						}
+						Screens.showError(sResultError, true);
+						oResponse = { Result: false, ErrorCode: Enums.Errors.NotDisplayedError };
+					}
 				}
 				if (_.isFunction(fResponseHandler))
 				{

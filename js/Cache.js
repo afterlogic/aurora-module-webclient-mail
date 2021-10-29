@@ -1386,9 +1386,7 @@ CMailCache.prototype.executeGroupOperation = function (sMethod, aUids, sField, b
 {
 	if (this.oUnifiedInbox.selected() && aUids.length > 0)
 	{
-		console.log('aUids', aUids);
 		var oUidsByAccounts = this.getUidsSeparatedByAccounts(aUids);
-		console.log('oUidsByAccounts', oUidsByAccounts);
 		_.each(oUidsByAccounts, function (oData) {
 			var
 				aUidsByAccount = oData.aUids,
