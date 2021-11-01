@@ -98,6 +98,10 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 	this.folderFullName = ko.observable('');
 	this.folderType = ko.observable(Enums.FolderTypes.User);
 	this.filters = ko.observable('');
+	
+	this.allowAdvancedSearch = ko.computed(function () {
+		return !ModulesManager.isModuleIncluded('MailNotesPlugin') || this.folderFullName() !== 'Notes';
+	}, this);
 
 	this.uidList = MailCache.uidList;
 	this.uidList.subscribe(function () {
@@ -701,7 +705,7 @@ CMessageListView.prototype.onSearchClick = function ()
 		sSearch = this.searchInput()
 	;
 	
-	if (this.bAdvancedSearch())
+	if (this.allowAdvancedSearch() && this.bAdvancedSearch())
 	{
 		sSearch = this.calculateSearchStringFromAdvancedForm();
 		this.searchInput(sSearch);
