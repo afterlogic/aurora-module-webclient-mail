@@ -53,12 +53,8 @@
 			</div>
 		</div>
 		<div class="buttons">
-			<span class="button" data-bind="click: save, visible: !isSaving()">
-				<span data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_SAVE'}"></span>
-			</span>
-			<span class="button" data-bind="visible: isSaving()">
-				<span data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_SAVE_IN_PROGRESS'}"></span>
-			</span>
+			<span class="button" data-bind="click: save, visible: !isSaving(), i18n: {'key': 'COREWEBCLIENT/ACTION_SAVE'}"></span>
+			<span class="button" data-bind="visible: isSaving(), i18n: {'key': 'COREWEBCLIENT/ACTION_SAVE_IN_PROGRESS'}"></span>
 		</div>
 	</div>
 </div>
