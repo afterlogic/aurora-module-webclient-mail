@@ -1251,7 +1251,7 @@ CMailCache.prototype.setCurrentFolder = function (sFolder, sFilters)
 
 CMailCache.prototype.getMessageUid = function (oMessage)
 {
-	if (this.oUnifiedInbox.selected())
+	if (Types.isNonEmptyString(oMessage.unifiedUid()))
 	{
 		return oMessage.unifiedUid();
 	}
