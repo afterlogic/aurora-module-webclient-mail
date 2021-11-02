@@ -241,9 +241,7 @@ Prefetcher.startThreadListPrefetch = function ()
 {
 	var
 		bPrefetchStarted = false,
-		oUidsForLoad = {},
-		oFolders = {},
-		oCurrFolder = MailCache.getCurrentFolder()
+		oUidsForLoad = {}
 	;
 
 	_.each(MailCache.messages(), function (oCacheMess) {
@@ -251,29 +249,37 @@ Prefetcher.startThreadListPrefetch = function ()
 		{
 			var
 				iAccountId = oCacheMess.accountId(),
-				oFolder = oCurrFolder.bIsUnifiedInbox ? oCurrFolder.getUnifiedInbox(iAccountId) : oCurrFolder
+				sFolderFullName = oCacheMess.folder(),
+				oFolder = MailCache.getFolderByFullName(iAccountId, sFolderFullName),
+				sFolderId = iAccountId + ':' + sFolderFullName
 			;
-			if (!_.isArray(oUidsForLoad[iAccountId]))
+			if (!oUidsForLoad[sFolderId])
 			{
-				oUidsForLoad[iAccountId] = [];
-				oFolders[iAccountId] = oFolder;
+				oUidsForLoad[sFolderId] = {
+					oFolder: oFolder,
+					aUids: []
+				};
 			}
+
 			_.each(oCacheMess.threadUids(), function (sThreadUid) {
 				if (!oFolder.hasThreadUidBeenRequested(sThreadUid))
 				{
-					oUidsForLoad[iAccountId].push(sThreadUid);
+					oUidsForLoad[sFolderId].aUids.push(sThreadUid);
 				}
 			});
 		}
 	}, this);
 
-	_.each(oUidsForLoad, function (aUidsForLoad, iAccountId) {
-		var oFolder = oFolders[iAccountId];
-		if (oFolder && aUidsForLoad.length > 0)
+	_.each(oUidsForLoad, function (oUidsData, sFolderId) {
+		var
+			oFolder = oUidsData.oFolder,
+			aUids = oUidsData.aUids
+		;
+		if (oFolder && aUids.length > 0)
 		{
-			aUidsForLoad = aUidsForLoad.slice(0, Settings.MailsPerPage);
-			oFolder.addRequestedThreadUids(aUidsForLoad);
-			oFolder.loadThreadMessages(aUidsForLoad);
+			aUids = aUids.slice(0, Settings.MailsPerPage);
+			oFolder.addRequestedThreadUids(aUids);
+			oFolder.loadThreadMessages(aUids);
 			bPrefetchStarted = true;
 		}
 	});
@@ -312,7 +318,6 @@ Prefetcher.startMessagesPrefetch = function (oFolder)
 Prefetcher.startMessagesPrefetchForFolder = function (oPrefetchFolder, bFolderSelected)
 {
 	var
-		iAccountId = oPrefetchFolder.iAccountId,
 		iTotalSize = 0,
 		iMaxSize = Settings.MaxMessagesBodiesSizeToPrefetch,
 		aUids = [],
@@ -322,7 +327,8 @@ Prefetcher.startMessagesPrefetchForFolder = function (oPrefetchFolder, bFolderSe
 			if (oMsg && _.isFunction(oMsg.uid))
 			{
 				var
-					bFromThisAccount = oMsg.accountId() === iAccountId,
+					// might be not from this folder for unified inbox or multi search
+					bFromThisFolder = oMsg.accountId() === oPrefetchFolder.iAccountId && oMsg.folder() === oPrefetchFolder.fullName(),
 					bNotFilled = (!oMsg.deleted() && !oMsg.completelyFilled()),
 					bUidNotAdded = !_.find(aUids, function (sUid) {
 						return sUid === oMsg.uid();
@@ -331,7 +337,7 @@ Prefetcher.startMessagesPrefetchForFolder = function (oPrefetchFolder, bFolderSe
 					iTextSize = oMsg.textSize() < Settings.MessageBodyTruncationThreshold ? oMsg.textSize() : Settings.MessageBodyTruncationThreshold
 				;
 
-				if (iTotalSize < iMaxSize && bFromThisAccount && bNotFilled && bUidNotAdded && bHasNotBeenRequested)
+				if (iTotalSize < iMaxSize && bFromThisFolder && bNotFilled && bUidNotAdded && bHasNotBeenRequested)
 				{
 					aUids.push(oMsg.uid());
 					iTotalSize += iTextSize + iJsonSizeOf1Message;
@@ -353,7 +359,7 @@ Prefetcher.startMessagesPrefetchForFolder = function (oPrefetchFolder, bFolderSe
 			oPrefetchFolder.addRequestedUids(aUids);
 
 			oParameters = {
-				'AccountID': iAccountId,
+				'AccountID': oPrefetchFolder.iAccountId,
 				'Folder': oPrefetchFolder.fullName(),
 				'Uids': aUids,
 				'MessageBodyTruncationThreshold': Settings.MessageBodyTruncationThreshold

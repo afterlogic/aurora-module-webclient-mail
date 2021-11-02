@@ -937,7 +937,7 @@ CComposeView.prototype.onMessageResponse = function (oMessage)
 			case 'drafts':
 				if (-1 !== $.inArray(oMessage.folder(), MailCache.getCurrentTemplateFolders()))
 				{
-					this.templateUid(oMessage.uid());
+					this.templateUid(oMessage.longUid());
 					this.templateFolderName(oMessage.folder());
 				}
 				else
@@ -948,7 +948,7 @@ CComposeView.prototype.onMessageResponse = function (oMessage)
 					;
 					if (sDraftFolder === oMessage.folder())
 					{
-						this.draftUid(oMessage.uid());
+						this.draftUid(oMessage.longUid());
 					}
 				}
 				this.setDataFromMessage(oMessage);
@@ -976,7 +976,7 @@ CComposeView.prototype.onMessageResponse = function (oMessage)
 		var oParams = {
 			AccountId: oMessage.accountId(),
 			FolderFullName: oMessage.folder(),
-			MessageUid: oMessage.uid(),
+			MessageUid: oMessage.longUid(),
 			Compose: this
 		};
 		if (this.allAttachmentsUploaded())
@@ -1179,7 +1179,7 @@ CComposeView.prototype.addMessageAsAttachment = function (oMessage)
 		oParameters = {
 			'AccountID': oMessage.accountId(),
 			'MessageFolder': oMessage.folder(),
-			'MessageUid': oMessage.uid(),
+			'MessageUid': oMessage.longUid(),
 			'FileName': oAttach.fileName()
 		};
 

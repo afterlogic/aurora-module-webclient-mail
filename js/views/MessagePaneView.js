@@ -405,7 +405,7 @@ CMessagePaneView.prototype.notifySender = function ()
 			'Subject': TextUtils.i18n('%MODULENAME%/LABEL_RETURN_RECEIPT_MAIL_SUBJECT'),
 			'Text': sText,
 			'ConfirmFolder': this.currentMessage().folder(),
-			'ConfirmUid': this.currentMessage().uid()
+			'ConfirmUid': this.currentMessage().longUid()
 		});
 		this.currentMessage().readingConfirmationAddressee('');
 	}
@@ -428,13 +428,13 @@ CMessagePaneView.prototype.onMessagesSubscribe = function ()
 };
 
 /**
- * @param {string} sUniq
+ * @param {string} sUid
  */
-CMessagePaneView.prototype.passReplyDataToNewTab = function (sUniq)
+CMessagePaneView.prototype.passReplyDataToNewTab = function (sUid)
 {
-	if (this.currentMessage() && this.currentMessage().sUniq === sUniq && this.replyText() !== '')
+	if (this.currentMessage() && this.currentMessage().longUid() === sUid && this.replyText() !== '')
 	{
-		MainTabExtMethods.passReplyData(sUniq, {
+		MainTabExtMethods.passReplyData(sUid, {
 			'ReplyText': this.replyText(),
 			'ReplyDraftUid': this.replyDraftUid()
 		});
@@ -454,14 +454,14 @@ CMessagePaneView.prototype.onCurrentMessageSubscribe = function ()
 
 	if (MainTab && oMessage)
 	{
-		oReplyData = MainTab.getReplyData(oMessage.sUniq);
+		oReplyData = MainTab.getReplyData(oMessage.longUid());
 		if (oReplyData)
 		{
 			this.replyText(oReplyData.ReplyText);
 			this.replyDraftUid(oReplyData.ReplyDraftUid);
 		}
 	}
-	else if (!oMessage || oMessage.uid() !== this.displayedMessageUid())
+	else if (!oMessage || oMessage.longUid() !== this.displayedMessageUid())
 	{
 		this.replyText('');
 		this.replyDraftUid('');
@@ -499,7 +499,7 @@ CMessagePaneView.prototype.onCurrentMessageSubscribe = function ()
 		this.midDate(oMessage.oDateModel.getMidDate());
 		this.fullDate(oMessage.oDateModel.getFullDate());
 
-		this.isLoading(oMessage.uid() !== '' && !oMessage.completelyFilled());
+		this.isLoading(oMessage.longUid() !== '' && !oMessage.completelyFilled());
 
 		this.setMessageBody();
 
@@ -598,7 +598,7 @@ CMessagePaneView.prototype.setMessageBody = function ()
 
 		this.textBody(sText);
 
-		if ($body.data('displayed-message-uid') === oMessage.uid())
+		if ($body.data('displayed-message-uid') === oMessage.longUid())
 		{
 			aCollapsedStatuses = this.getBlockquotesStatus();
 		}
@@ -627,8 +627,8 @@ CMessagePaneView.prototype.setMessageBody = function ()
 			}
 		}
 
-		$body.data('displayed-message-uid', oMessage.uid());
-		this.displayedMessageUid(oMessage.uid());
+		$body.data('displayed-message-uid', oMessage.longUid());
+		this.displayedMessageUid(oMessage.longUid());
 	}
 };
 
@@ -772,7 +772,7 @@ CMessagePaneView.prototype.executeReplyOrForward = function (sReplyType)
 		this.replyText('');
 		this.replyDraftUid('');
 
-		ComposeUtils.composeMessageAsReplyOrForward(sReplyType, this.currentMessage().accountId(), this.currentMessage().folder(), this.currentMessage().uid());
+		ComposeUtils.composeMessageAsReplyOrForward(sReplyType, this.currentMessage().accountId(), this.currentMessage().folder(), this.currentMessage().longUid());
 	}
 };
 
@@ -782,11 +782,11 @@ CMessagePaneView.prototype.executeDeleteMessage = function ()
 	{
 		if (MainTab)
 		{
-			MainTab.deleteMessage(this.currentMessage().uid(), function () { window.close(); });
+			MainTab.deleteMessage(this.currentMessage().longUid(), function () { window.close(); });
 		}
 		else if (App.isMobile())
 		{
-			MailUtils.deleteMessages([this.currentMessage().uid()], App);
+			MailUtils.deleteMessages([this.currentMessage().longUid()], App);
 		}
 	}
 };
@@ -1139,7 +1139,7 @@ CMessagePaneView.prototype.searchBySubject = function ()
 		var
 			sFolder = this.currentMessage().folder(),
 			iPage = 1,
-			sUid = this.currentMessage().uid(),
+			sUid = this.currentMessage().longUid(),
 			sSearch = '',
 			sFilters = '',
 

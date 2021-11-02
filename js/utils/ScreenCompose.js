@@ -58,7 +58,7 @@ ScreenComposeUtils.composeMessageWithData = function (oData)
  */
 ScreenComposeUtils.composeMessageWithEml = function (oMessage)
 {
-	var aParams = LinksUtils.getComposeWithEmlObject(oMessage.accountId(), oMessage.folder(), oMessage.uid(), oMessage);
+	var aParams = LinksUtils.getComposeWithEmlObject(oMessage.accountId(), oMessage.folder(), oMessage.longUid(), oMessage);
 	aParams.shift();
 	aParams.shift();
 	Routing.goDirectly(LinksUtils.getCompose(), aParams);

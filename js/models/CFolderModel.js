@@ -188,7 +188,6 @@ CFolderModel.prototype.updateLastAccessTime = function (aUids) {
  */
 CFolderModel.prototype.doForAllMessages = function (fDoForAllMessages) {
 	var aInvalidUids = [];
-	
 	_.each(this.aMessagesDictionaryUids, function (sUidInDict) {
 		var oMessage = this.getMessageByUid(sUidInDict);
 		if (oMessage)
@@ -283,10 +282,6 @@ CFolderModel.prototype.getThreadMessages = function (oMessage)
 				if (!oThreadMessage.deleted())
 				{
 					oThreadMessage.markAsThreadPart(iShowThrottle, oMessage.uid());
-					if (!oThreadMessage.unifiedUid())
-					{
-						oThreadMessage.unifiedUid(oThreadMessage.accountId() + ':' + oThreadMessage.folder() + ':' + oThreadMessage.uid());
-					}
 					aLoadedMessages.push(oThreadMessage);
 					aChangedThreadUids.push(oThreadMessage.uid());
 					iCount++;
@@ -317,8 +312,6 @@ CFolderModel.prototype.getThreadMessages = function (oMessage)
 	{
 		oLastMessage.showNextLoadingLink(_.bind(oMessage.increaseThreadCountForLoad, oMessage));
 	}
-	
-	this.addThreadUidsToUidLists(oMessage.uid(), oMessage.threadUids());
 	
 	return aLoadedMessages;
 };
@@ -375,18 +368,6 @@ CFolderModel.prototype.computeThreadData = function (oMessage)
 };
 
 /**
- * 
- * @param {string} sUid
- * @param {Array} aThreadUids
- */
-CFolderModel.prototype.addThreadUidsToUidLists = function (sUid, aThreadUids)
-{
-	_.each(this.oUids, function (oUidList) {
-		oUidList.addThreadUids(sUid, aThreadUids);
-	});
-};
-
-/**
  * @param {Array} aUidsForLoad
  */
 CFolderModel.prototype.loadThreadMessages = function (aUidsForLoad)
@@ -420,7 +401,7 @@ CFolderModel.prototype.getThreadCheckedUidsFromList = function (aMessages)
 				;
 				if (oThreadMessage && !oThreadMessage.deleted() && oThreadMessage.checked())
 				{
-					aThreadUids.push(this.bIsUnifiedInbox ? oThreadMessage.unifiedUid() : oThreadMessage.uid());
+					aThreadUids.push(oThreadMessage.longUid());
 				}
 			}, this);
 		}
@@ -454,7 +435,7 @@ CFolderModel.prototype.parseAndCacheMessage = function (oRawMessage, bThreadPart
 		this.requireMailCache();
 		MailCache.increaseStarredCount();
 	}
-	
+
 	MessagesDictionary.set([oMessage.accountId(), oMessage.folder(), sUid], oMessage);
 	if (bNewMessage)
 	{
@@ -560,7 +541,7 @@ CFolderModel.prototype.markMessageReplied = function (sUid, sReplyType)
 				oMessage.answered(true);
 				if (Settings.MarkMessageSeenWhenAnswerForward && oFolder && !oMessage.seen())
 				{
-					MailCache.executeGroupOperationForFolder('SetMessagesSeen', oFolder, [MailCache.getMessageUid(oMessage)], 'seen', true);
+					MailCache.executeGroupOperationForFolder('SetMessagesSeen', oFolder, [oMessage.longUid()], 'seen', true);
 				}
 				break;
 			case Enums.ReplyType.Forward:
@@ -568,7 +549,7 @@ CFolderModel.prototype.markMessageReplied = function (sUid, sReplyType)
 				oMessage.forwarded(true);
 				if (Settings.MarkMessageSeenWhenAnswerForward && oFolder && !oMessage.seen())
 				{
-					MailCache.executeGroupOperationForFolder('SetMessagesSeen', oFolder, [MailCache.getMessageUid(oMessage)], 'seen', true);
+					MailCache.executeGroupOperationForFolder('SetMessagesSeen', oFolder, [oMessage.longUid()], 'seen', true);
 				}
 				break;
 		}
@@ -600,7 +581,7 @@ CFolderModel.prototype.removeAllMessages = function ()
 			&& MailCache.currentMessage().folder() === this.fullName())
 	{
 		Utils.log('removeAllMessages, the current message is in the list to remove', MailCache.currentMessage() ? {'accountId': MailCache.currentMessage().accountId(),'folder': MailCache.currentMessage().folder(),'uid': MailCache.currentMessage().uid()} : null);
-		aMessagesUidsToRemove = _.without(aMessagesUidsToRemove, MailCache.currentMessage().uid());
+		aMessagesUidsToRemove = _.without(aMessagesUidsToRemove, MailCache.currentMessage().longUid());
 	}
 	_.each(aMessagesUidsToRemove, function (sUid) {
 		this.removeMessageFromDict(sUid);
@@ -810,7 +791,7 @@ CFolderModel.prototype.commitDeleted = function (aUids)
 	_.each(aUids, _.bind(function (sUid) {
 		var bCurrentMessageIsBeingDeleted = MailCache.currentMessage() && MailCache.currentMessage().accountId() === this.iAccountId 
 				&& MailCache.currentMessage().folder() === this.fullName()
-				&& MailCache.currentMessage().uid() === sUid;
+				&& MailCache.currentMessage().longUid() === sUid;
 		if (bCurrentMessageIsBeingDeleted)
 		{
 			Utils.log('commitDeleted, the current message is to remove', MailCache.currentMessage() ? {'accountId': MailCache.currentMessage().accountId(),'folder': MailCache.currentMessage().folder(),'uid': MailCache.currentMessage().uid()} : null);
@@ -1154,8 +1135,7 @@ CFolderModel.prototype.onGetMessageResponse = function (oResponse, oRequest)
 		{
 			Api.showErrorByCode(oResponse, TextUtils.i18n('COREWEBCLIENT/ERROR_UNKNOWN'));
 		}
-		Routing.replaceHashWithoutMessageUid(oMessage.uid());
-		Routing.replaceHashWithoutMessageUid(oMessage.unifiedUid());
+		Routing.replaceHashWithoutMessageUid(oMessage.longUid());
 		if (oMessage && !oMessage.deleted())
 		{
 			this.removeMessageFromDict(sUid);

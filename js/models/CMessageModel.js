@@ -50,8 +50,7 @@ function CMessageModel()
 	}, this);
 	this.folder = ko.observable('');
 	this.uid = ko.observable('');
-	this.unifiedUid = ko.observable('');
-	this.sUniq = '';
+	this.longUid = ko.observable('');
 
 	this.subject = ko.observable('');
 	this.emptySubject = ko.computed(function () {
@@ -454,12 +453,14 @@ CMessageModel.prototype.parse = function (oData, iAccountId, bThreadPart, bTrust
 		this.uid(Types.pString(oData.Uid));
 		if (Types.isNonEmptyString(oData.UnifiedUid))
 		{
-			this.unifiedUid(oData.UnifiedUid);
-			var oIdentifiers = MailCache.getMessageActualIdentifiers(this.accountId(), this.folder(), this.unifiedUid());
+			this.longUid(oData.UnifiedUid);
+			var oIdentifiers = MailCache.getMessageActualIdentifiers(this.accountId(), this.folder(), this.longUid());
 			this.accountId(oIdentifiers.iAccountId);
-//			this.folder(oIdentifiers.sFolder);
 		}
-		this.sUniq = this.accountId() + this.folder() + this.uid();
+		else
+		{
+			this.longUid(this.accountId() + ':' + this.folder() + ':' + Types.pString(oData.Uid));
+		}
 
 		this.subject(Types.pString(oData.Subject));
 		this.messageId(Types.pString(oData.MessageId));
@@ -634,8 +635,8 @@ CMessageModel.prototype.parseAttachments = function (oData, iAccountId)
 	{
 		this.attachments(_.map(aCollection, function (oRawAttach) {
 			var oAttachment = new CAttachmentModel(iAccountId);
-			oAttachment.setMessageData(this.folder(), this.uid());
-			oAttachment.parse(oRawAttach, this.folder(), this.uid());
+			oAttachment.setMessageData(this.folder(), this.longUid());
+			oAttachment.parse(oRawAttach, this.folder(), this.longUid());
 			return oAttachment;
 		}, this));
 	}
@@ -802,7 +803,7 @@ CMessageModel.prototype.toJSON = function ()
 {
 	return {
 		uid: this.uid(),
-		unifiedUid: this.unifiedUid(),
+		longUid: this.longUid(),
 		accountId: this.accountId(),
 		to: this.to(),
 		subject: this.subject(),

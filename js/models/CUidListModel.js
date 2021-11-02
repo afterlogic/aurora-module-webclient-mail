@@ -29,7 +29,6 @@ function CUidListModel()
 	
 	this.resultCount = ko.observable(-1);
 	this.collection = ko.observableArray([]);
-	this.threadUids = {};
 }
 
 /**
@@ -40,18 +39,6 @@ CUidListModel.prototype.requireMailCache = function ()
 	if (MailCache === null)
 	{
 		MailCache = require('modules/%ModuleName%/js/Cache.js');
-	}
-};
-
-/**
- * @param {string} sUid
- * @param {Array} aThreadUids
- */
-CUidListModel.prototype.addThreadUids = function (sUid, aThreadUids)
-{
-	if (-1 !== _.indexOf(this.collection(), sUid))
-	{
-		this.threadUids[sUid] = aThreadUids;
 	}
 };
 
@@ -153,7 +140,6 @@ CUidListModel.prototype.clearData = function ()
 {
 	this.resultCount(-1);
 	this.collection([]);
-	this.threadUids = {};
 };
 
 module.exports = CUidListModel;

@@ -64,9 +64,9 @@ else
 		searchMessagesInCurrentFolder: function (sSearch) {
 			MailCache.searchMessagesInCurrentFolder(sSearch);
 		},
-		getReplyData: function (sUniq) {
-			var oReplyData = aReplyData[sUniq];
-			delete aReplyData[sUniq];
+		getReplyData: function (sUid) {
+			var oReplyData = aReplyData[sUid];
+			delete aReplyData[sUid];
 			return oReplyData;
 		},
 		deleteMessage: function (sUid, fAfterDelete) {
@@ -77,8 +77,8 @@ else
 	window.MainTabMailMethods = MainTabMailMethods;
 
 	module.exports = {
-		passReplyData: function (sUniq, oReplyData) {
-			aReplyData[sUniq] = oReplyData;
+		passReplyData: function (sUid, oReplyData) {
+			aReplyData[sUid] = oReplyData;
 		},
 		passComposedMessage: function (sWinName, oComposedMessage) {
 			aComposedMessages[sWinName] = oComposedMessage;

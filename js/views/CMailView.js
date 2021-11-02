@@ -304,7 +304,7 @@ CMailView.prototype.openMessageInNewWindow = function (oMessage)
 		var
 			iAccountId = oMessage.accountId(),
 			sFolder = oMessage.folder(),
-			sUid = oMessage.uid(),
+			sUid = oMessage.longUid(),
 			oFolder = this.folderList().getFolderByFullName(sFolder),
 			bDraftFolder = (oFolder.type() === Enums.FolderTypes.Drafts),
 			sHash = ''
@@ -319,7 +319,7 @@ CMailView.prototype.openMessageInNewWindow = function (oMessage)
 			sHash = Routing.buildHashFromArray(LinksUtils.getViewMessage(iAccountId, sFolder, sUid));
 			if (_.isFunction(this.messagePane().passReplyDataToNewTab))
 			{
-				this.messagePane().passReplyDataToNewTab(oMessage.sUniq);
+				this.messagePane().passReplyDataToNewTab(oMessage.longUid());
 			}
 		}
 
@@ -440,7 +440,7 @@ CMailView.prototype.hotKeysBind = function ()
 			bComputed = ev && !ev.ctrlKey && !ev.altKey && !ev.shiftKey && !Utils.isTextFieldFocused() && this.shown(),
 			oList = this.oMessageList,
 			oFirstMessage = oList.collection()[0],
-			bGotoSearch = oFirstMessage && MailCache.currentMessage() && oFirstMessage.uid() === MailCache.currentMessage().uid()
+			bGotoSearch = oFirstMessage && MailCache.currentMessage() && oFirstMessage.longUid() === MailCache.currentMessage().longUid()
 		;
 
 		if (bComputed && sKey === Enums.Key.s || bComputed && bGotoSearch && sKey === Enums.Key.Up)
