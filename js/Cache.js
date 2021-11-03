@@ -807,7 +807,8 @@ CMailCache.prototype.requestCurrentMessageList = function (sFolder, iPage, sSear
 {
 	this.changeCurrentPage(iPage);
 	var
-		oRequestData = this.requestMessageList(sFolder, iPage, sSearch, sFilter || '', sSortBy, iSortOrder, true, (bFillMessages || false))
+		iRequestPage = Math.max(iPage, this.page(), this.prevPage()),
+		oRequestData = this.requestMessageList(sFolder, iRequestPage, sSearch, sFilter || '', sSortBy, iSortOrder, true, (bFillMessages || false))
 	;
 	if (oRequestData)
 	{
