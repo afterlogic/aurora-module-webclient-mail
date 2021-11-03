@@ -1341,28 +1341,28 @@ CMailCache.prototype.setUnifiedInboxUnseenChanges = function (iAccountId, sFolde
 	}
 };
 
-CMailCache.prototype.getUidsSeparatedByAccounts = function (aUids)
+CMailCache.prototype.getUidsSeparatedByFolders = function (aLongUids)
 {
-	var oUidsByAccounts = {};
+	var oUidsByFolders = {};
 	
-	_.each(aUids, function (sUnifiedUid) {
-		var oIdentifiers = this.getMessageActualIdentifiers(this.currentAccountId(), this.getCurrentFolderFullname(), sUnifiedUid);
+	_.each(aLongUids, function (sLongUid) {
+		var oIdentifiers = this.getMessageActualIdentifiers(this.currentAccountId(), this.getCurrentFolderFullname(), sLongUid);
 
 		if (oIdentifiers.sUid !== '')
 		{
-			if (!oUidsByAccounts[oIdentifiers.iAccountId + ':' + oIdentifiers.sFolder])
+			if (!oUidsByFolders[oIdentifiers.iAccountId + ':' + oIdentifiers.sFolder])
 			{
-				oUidsByAccounts[oIdentifiers.iAccountId + ':' + oIdentifiers.sFolder] = {
+				oUidsByFolders[oIdentifiers.iAccountId + ':' + oIdentifiers.sFolder] = {
 					iAccountId: oIdentifiers.iAccountId,
 					sFolder: oIdentifiers.sFolder,
 					aUids: []
 				};
 			}
-			oUidsByAccounts[oIdentifiers.iAccountId + ':' + oIdentifiers.sFolder].aUids.push(oIdentifiers.sUid);
+			oUidsByFolders[oIdentifiers.iAccountId + ':' + oIdentifiers.sFolder].aUids.push(oIdentifiers.sUid);
 		}
 	}.bind(this));
 
-	return oUidsByAccounts;
+	return oUidsByFolders;
 };
 
 /**
@@ -1396,17 +1396,15 @@ CMailCache.prototype.executeGroupOperation = function (sMethod, aUids, sField, b
 	}
 	else
 	{
-		var oUidsByAccounts = this.getUidsSeparatedByAccounts(aUids);
-		_.each(oUidsByAccounts, function (oData) {
+		var oUidsByFolders = this.getUidsSeparatedByFolders(aUids);
+		_.each(oUidsByFolders, function (oData) {
 			var
-				aUidsByAccount = oData.aUids,
-				iAccountId = oData.iAccountId,
-				oFolderList = this.oFolderListItems[iAccountId],
+				oFolderList = this.oFolderListItems[oData.iAccountId],
 				oAccFolder = oFolderList ? oFolderList.getFolderByFullName(oData.sFolder) : null
 			;
 			if (oAccFolder)
 			{
-				this.executeGroupOperationForFolder(sMethod, oAccFolder, aUidsByAccount, sField, bSetAction);
+				this.executeGroupOperationForFolder(sMethod, oAccFolder, oData.aUids, sField, bSetAction);
 			}
 		}, this);
 	}

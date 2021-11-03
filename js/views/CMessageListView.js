@@ -882,7 +882,25 @@ CMessageListView.prototype.executeMarkAllRead = function ()
  */
 CMessageListView.prototype.executeMoveToFolder = function (sToFolder)
 {
-	MailCache.moveMessagesToFolder(MailCache.getCurrentFolder(), MailCache.getFolderByFullName(MailCache.currentAccountId(), sToFolder), this.checkedOrSelectedUids());
+	var
+		oToFolder = MailCache.getFolderByFullName(MailCache.currentAccountId(), sToFolder),
+		aLongUids = this.checkedOrSelectedUids(),
+		oUidsByFolders = MailCache.getUidsSeparatedByFolders(aLongUids)
+	;
+
+	if (oToFolder)
+	{
+		_.each(oUidsByFolders, function (oData) {
+			if (MailCache.currentAccountId() === oData.iAccountId)
+			{
+				var oFromFolder = MailCache.getFolderByFullName(MailCache.currentAccountId(), oData.sFolder);
+				if (oFromFolder)
+				{
+					MailCache.moveMessagesToFolder(oFromFolder, oToFolder, oData.aUids);
+				}
+			}
+		});
+	}
 };
 
 CMessageListView.prototype.executeCopyToFolder = function (sToFolder)
@@ -954,33 +972,22 @@ CMessageListView.prototype.deleteMessages = function (aUids)
  */
 CMessageListView.prototype.executeSpam = function ()
 {
-	var aUids = this.checkedOrSelectedUids();
-	if (MailCache.oUnifiedInbox.selected())
-	{
-		var oUidsByAccounts = MailCache.getUidsSeparatedByAccounts(aUids);
+	var
+		aLongUids = this.checkedOrSelectedUids(),
+		oUidsByFolders = MailCache.getUidsSeparatedByFolders(aLongUids)
+	;
 
-		_.each(oUidsByAccounts, function (oData) {
-			var
-				aUidsByAccount = oData.aUids,
-				oFolderList = MailCache.oFolderListItems[oData.iAccountId],
-				oAccSpam = oFolderList ? oFolderList.spamFolder() : null,
-				oAccFolder = oFolderList ? oFolderList.getFolderByFullName(oData.sFolder) : null;
-			;
-			if (oAccFolder && oAccSpam && oAccFolder.fullName() !== oAccSpam.fullName())
-			{
-				MailCache.moveMessagesToFolder(oAccFolder, oAccSpam, aUidsByAccount);
-			}
-		});
-	}
-	else
-	{
-		var oSpamFolder = this.folderList().spamFolder();
-
-		if (oSpamFolder && MailCache.getCurrentFolderFullname() !== oSpamFolder.fullName())
+	_.each(oUidsByFolders, function (oData) {
+		var
+			oFolderList = MailCache.oFolderListItems[oData.iAccountId],
+			oAccSpam = oFolderList ? oFolderList.spamFolder() : null,
+			oAccFolder = oFolderList ? oFolderList.getFolderByFullName(oData.sFolder) : null;
+		;
+		if (oAccFolder && oAccSpam && oAccFolder.fullName() !== oAccSpam.fullName())
 		{
-			MailCache.moveMessagesToFolder(MailCache.getCurrentFolder(), oSpamFolder, aUids);
+			MailCache.moveMessagesToFolder(oAccFolder, oAccSpam, oData.aUids);
 		}
-	}
+	});
 };
 
 /**
@@ -990,12 +997,19 @@ CMessageListView.prototype.executeNotSpam = function ()
 {
 	var
 		oCurrentFolder = MailCache.getCurrentFolder(),
-		oInbox = this.folderList().inboxFolder()
+		oInbox = this.folderList().inboxFolder(),
+		aLongUids = this.checkedOrSelectedUids(),
+		oUidsByFolders = MailCache.getUidsSeparatedByFolders(aLongUids)
 	;
 
 	if (oInbox && oCurrentFolder && oCurrentFolder.fullName() !== oInbox.fullName())
 	{
-		MailCache.moveMessagesToFolder(oCurrentFolder, oInbox, this.checkedOrSelectedUids());
+		_.each(oUidsByFolders, function (oData) {
+			if (oCurrentFolder.iAccountId === oData.iAccountId && oCurrentFolder.fullName() === oData.sFolder)
+			{
+				MailCache.moveMessagesToFolder(oCurrentFolder, oInbox, oData.aUids);
+			}
+		});
 	}
 };
 

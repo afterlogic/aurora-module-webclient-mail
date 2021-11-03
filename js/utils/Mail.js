@@ -20,82 +20,77 @@ var
 	MailUtils = {}
 ;
 
+MailUtils.isPermanentDelete = function ()
+{
+	if (!MailCache.isSearchInMultiFolders())
+	{
+		var
+			oFolderList = MailCache.folderList(),
+			sCurrFolder = oFolderList.currentFolderFullName(),
+			oTrash = oFolderList.trashFolder(),
+			bInTrash =(oTrash && sCurrFolder === oTrash.fullName()),
+			oSpam = oFolderList.spamFolder(),
+			bInSpam = (oSpam && sCurrFolder === oSpam.fullName())
+		;
+		return bInSpam || bInTrash;
+	}
+	return false;
+};
+
 /**
  * Moves the specified messages in the current folder to the Trash or delete permanently 
  * if the current folder is Trash or Spam.
  * 
- * @param {Array} aUids
+ * @param {Array} aLongUids
  * @param {Function=} fAfterDelete
  */
-MailUtils.deleteMessages = function (aUids, fAfterDelete)
+MailUtils.deleteMessages = function (aLongUids, fAfterDelete)
 {
-	if (!$.isFunction(fAfterDelete))
+	if (!_.isFunction(fAfterDelete))
 	{
 		fAfterDelete = function () {};
 	}
 	
 	var
-		oFolderList = MailCache.folderList(),
-		sCurrFolder = oFolderList.currentFolderFullName(),
-		oTrash = oFolderList.trashFolder(),
-		bInTrash =(oTrash && sCurrFolder === oTrash.fullName()),
-		oSpam = oFolderList.spamFolder(),
-		bInSpam = (oSpam && sCurrFolder === oSpam.fullName()),
+		bPermanentDelete = MailUtils.isPermanentDelete(),
 		fDeleteMessages = function (bResult) {
 			if (bResult)
 			{
-				MailCache.deleteMessages(aUids);
-				fAfterDelete();
+				MailUtils.actualDeleteMessages(aLongUids, bPermanentDelete, fAfterDelete);
 			}
 		}
 	;
 
-	if (bInSpam || bInTrash)
+	if (bPermanentDelete)
 	{
 		Popups.showPopup(ConfirmPopup, [
-			TextUtils.i18n('%MODULENAME%/CONFIRM_DELETE_MESSAGES_PLURAL', {}, null, aUids.length), 
+			TextUtils.i18n('%MODULENAME%/CONFIRM_DELETE_MESSAGES_PLURAL', {}, null, aLongUids.length), 
 			fDeleteMessages, '', TextUtils.i18n('COREWEBCLIENT/ACTION_DELETE')
 		]);
 	}
 	else
 	{
-		if (MailCache.oUnifiedInbox.selected())
-		{
-			MailUtils.deleteMessagesFromUnifiedInbox(aUids, fAfterDelete);
-		}
-		else
-		{
-			if (oTrash)
-			{
-				MailCache.moveMessagesToFolder(oFolderList.currentFolder(), oTrash, aUids);
-				fAfterDelete();
-			}
-			else
-			{
-				Popups.showPopup(ConfirmPopup, [TextUtils.i18n('%MODULENAME%/CONFIRM_MESSAGES_DELETE_NO_TRASH_FOLDER'), fDeleteMessages]);
-			}
-		}
+		fDeleteMessages(true);
 	}
 };
 
-MailUtils.deleteMessagesFromUnifiedInbox = function (aUids, fAfterDelete)
+MailUtils.actualDeleteMessages = function (aLongUids, bPermanentDelete, fAfterDelete)
 {
 	var
-		bMoved = false,
+		bDeleted = false,
 		bDeleteAsked = false,
-		oUidsByAccounts = MailCache.getUidsSeparatedByAccounts(aUids),
-		fDeleteMessages = function (oAccFolder, aUidsByAccount, bResult) {
+		oUidsByFolders = MailCache.getUidsSeparatedByFolders(aLongUids),
+		fPermanentDeleteMessages = function (oAccFolder, aUids, bResult) {
 			if (bResult)
 			{
-				MailCache.deleteMessagesFromFolder(oAccFolder, aUidsByAccount);
+				MailCache.deleteMessagesFromFolder(oAccFolder, aUids);
 				fAfterDelete();
 			}
 		}
 	;
 
-	_.each(oUidsByAccounts, function (oData) {
+	_.each(oUidsByFolders, function (oData) {
 		var
-			aUidsByAccount = oData.aUids,
 			iAccountId = oData.iAccountId,
 			oFolderList = MailCache.oFolderListItems[iAccountId],
 			oAccount = AccountList.getAccount(iAccountId),
@@ -104,16 +99,21 @@ MailUtils.deleteMessagesFromUnifiedInbox = function (aUids, fAfterDelete)
 		;
 		if (oAccFolder)
 		{
-			if (oAccTrash)
+			if (bPermanentDelete)
 			{
-				MailCache.moveMessagesToFolder(oAccFolder, oAccTrash, aUidsByAccount);
-				bMoved = true;
+				fPermanentDeleteMessages(oAccFolder, oData.aUids, true);
+				bDeleted = true;
+			}
+			else if (oAccTrash)
+			{
+				MailCache.moveMessagesToFolder(oAccFolder, oAccTrash, oData.aUids);
+				bDeleted = true;
 			}
 			else
 			{
 				Popups.showPopup(ConfirmPopup, [
 					TextUtils.i18n('%MODULENAME%/CONFIRM_MESSAGES_DELETE_NO_TRASH_FOLDER'),
-					fDeleteMessages.bind(null, oAccFolder, aUidsByAccount),
+					fPermanentDeleteMessages.bind(null, oAccFolder, oData.aUids),
 					oAccount ? oAccount.fullEmail() : ''
 				]);
 				bDeleteAsked = true;
@@ -121,7 +121,7 @@ MailUtils.deleteMessagesFromUnifiedInbox = function (aUids, fAfterDelete)
 		}
 	});
 
-	if (bMoved && !bDeleteAsked)
+	if (bDeleted && !bDeleteAsked)
 	{
 		fAfterDelete();
 	}

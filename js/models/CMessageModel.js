@@ -237,18 +237,18 @@ CMessageModel.prototype.setCustomLabel = function (sId, sText, sCssClass)
 			this.customLabels.push({
 				id: sId,
 				text: sText,
-				cssClass: sCssClass,
+				cssClass: sCssClass
 			});
 		}
 	}
-}
+};
 
 CMessageModel.prototype.removeCustomLabel = function (sId)
 {
 	this.customLabels(_.filter(this.customLabels(), function (oCustomLabel) {
 		return oCustomLabel.id !== sId;
 	}));
-}
+};
 
 CMessageModel.prototype.requireMailCache = function ()
 {
@@ -635,7 +635,7 @@ CMessageModel.prototype.parseAttachments = function (oData, iAccountId)
 	{
 		this.attachments(_.map(aCollection, function (oRawAttach) {
 			var oAttachment = new CAttachmentModel(iAccountId);
-			oAttachment.setMessageData(this.folder(), this.longUid());
+			oAttachment.setMessageData(this.folder(), this.uid());
 			oAttachment.parse(oRawAttach, this.folder(), this.longUid());
 			return oAttachment;
 		}, this));
@@ -819,6 +819,6 @@ CMessageModel.prototype.getHeaderValue = function (sHeaderName) {
 		aResult = reg.exec(this.sourceHeaders())
 	;
 	return $.trim(Types.pString(aResult && aResult[1]));
-}
+};
 
 module.exports = CMessageModel;
