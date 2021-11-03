@@ -148,7 +148,7 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 
 		var bNewListHasCurrentMessage = !!this.currentMessage() && (_.indexOf(aNewUids, this.currentMessage().uid()) !== -1);
 		if (bNewListHasCurrentMessage && !this.currentMessage().selected()) {
-			this.currentMessage().selected(true);
+			this.selector.itemSelected(this.currentMessage());
 		}
 
 		if (this.lockScroll() && !this.isLoading()) {
