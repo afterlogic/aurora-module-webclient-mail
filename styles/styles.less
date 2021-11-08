@@ -57,18 +57,48 @@
 	}
 }
 
-.message_list_search_everywhere {
-	background: #f2f6fe;
-	
-	.list_notification {
-		background: inherit;
+.global_search_marker {
+	display: none;
+}
+
+.use_global_search {
+	.search_block > .input .field {
+		width: calc(100% - 80px);
 	}
 	
-	.item:not(.selected):not(.checked) {
-		background: inherit;
-		
-		&.unseen {
-			background: #d6dce8;
+	.global_search_marker {
+		background: #f1f1f1;
+		border-radius: 10px;
+		color: #cccccc;
+		cursor: default;
+		display: block;
+		float: right;
+		font-size: 8pt;
+		font-weight: normal;
+		margin: 0 3px;
+		padding: 3px 11px;
+	}
+}
+
+.message_list_search_everywhere {
+	.global_search_marker {
+		background: #4f5984;
+		color: white;
+	}
+	
+	.message_list_scroll {
+		background: #f2f6fe;
+
+		.list_notification {
+			background: inherit;
+		}
+
+		.item:not(.selected):not(.checked) {
+			background: inherit;
+
+			&.unseen {
+				background: #d6dce8;
+			}
 		}
 	}
 }

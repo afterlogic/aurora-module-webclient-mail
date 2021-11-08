@@ -5,6 +5,7 @@
 		<div class="field" contenteditable="true" spellcheck="false" 
 			 data-bind="highlighter: {valueObserver: searchInput, highlighterValueObserver: searchSpan, highlightTrigger: highlightTrigger}, 
 						onEnter: onSearchClick, hasfocus: isFocused" ></div>
+		<span class="global_search_marker" data-bind="i18n: {'key': '%MODULENAME%/LABEL_MARKER_SEARCH_EVERYWHERE'}, click: turnOffGlobalSearch"></span>
 		<div class="fields extended">
 			<span class="search_fieldset">
 				<span class="section">
@@ -57,14 +58,14 @@
 						</span>
 					</span>
 					<span class="row attachments" data-bind="visible: allowSearchEverywhere">
-						<label class="custom_checkbox" data-bind="css: {'checked': searchEverywhere}">
+						<label class="custom_checkbox" data-bind="css: {'checked': useEverywhereSearch}">
 							<span class="icon"></span>
-							<input id="attachments" type="checkbox" data-bind="checked: searchEverywhere">
+							<input id="attachments" type="checkbox" data-bind="checked: useEverywhereSearch">
 						</label>
 						<span class="attachment_name">
 							<label style="cursor: pointer" class="label placeholder" 
 								   data-bind="i18n: {'key': '%MODULENAME%/LABEL_SEARCH_EVERYWHERE'},
-								   click: function() { searchEverywhere(!searchEverywhere()); }"></label>
+								   click: function() { useEverywhereSearch(!useEverywhereSearch()); }"></label>
 							<input disabled class="value input" spellcheck="false" type="text" />
 						</span>
 					</span>

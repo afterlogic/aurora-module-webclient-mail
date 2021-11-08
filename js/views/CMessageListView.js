@@ -200,6 +200,12 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 	this.isEverywhereSearch = ko.computed(function () {
 		return this.isSearch() && this.folderFullName() === this.folderList().allMailsFolderFullName();
 	}, this);
+	this.isEverywhereSearch.subscribe(function () {
+		if (this.isEverywhereSearch() && !this.useEverywhereSearch())
+		{
+			this.useEverywhereSearch(true);
+		}
+	}, this);
 
 	this.isUnseenFilter = ko.computed(function () {
 		return this.filters() === Enums.FolderFilter.Unseen;
@@ -241,7 +247,7 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 		return this.isUnseenFilter() && this.isEmptyList() && !this.isError() && !this.isLoading();
 	}, this);
 
-	this.searchEverywhere = ko.observable(false);
+	this.useEverywhereSearch = ko.observable(false);
 	this.allowSearchEverywhere = ko.computed(function () {
 		return !!this.folderList().allMailsFolder();
 	}, this);
@@ -724,7 +730,7 @@ CMessageListView.prototype.onSearchClick = function ()
 		this.bAdvancedSearch(false);
 	}
 
-	if (this.allowSearchEverywhere() && this.searchEverywhere() && sFolder !== this.folderList().allMailsFolderFullName())
+	if (this.allowSearchEverywhere() && this.useEverywhereSearch() && sFolder !== this.folderList().allMailsFolderFullName())
 	{
 		this.folderBeforeSearchEverywhere(sFolder);
 		this.filtersBeforeSearchEverywhere(sFilters);
@@ -733,6 +739,22 @@ CMessageListView.prototype.onSearchClick = function ()
 	}
 
 	this.changeRoutingForMessageList(sFolder, iPage, '', sSearch, sFilters);
+};
+
+CMessageListView.prototype.turnOffGlobalSearch = function ()
+{
+	this.useEverywhereSearch(false);
+	if (this.isSearch())
+	{
+		var
+			sFolder = this.folderBeforeSearchEverywhere() || this.folderList().inboxFolderFullName(),
+			iPage = 1,
+			sSearch = this.searchInput(),
+			sFilters = this.filters()
+		;
+
+		this.changeRoutingForMessageList(sFolder, iPage, '', sSearch, sFilters);
+	}
 };
 
 CMessageListView.prototype.onRetryClick = function ()
@@ -1102,7 +1124,6 @@ CMessageListView.prototype.clearAdvancedSearch = function ()
 	this.searchAttachmentsCheckbox(false);
 	this.searchDateStart('');
 	this.searchDateEnd('');
-	this.searchEverywhere(false);
 };
 
 CMessageListView.prototype.onAdvancedSearchClick = function ()

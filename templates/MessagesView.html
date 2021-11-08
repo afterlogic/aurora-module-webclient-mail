@@ -1,4 +1,4 @@
-<div class="middle_bar" data-bind="css: {'advanced_search': bAdvancedSearch}">
+<div class="middle_bar" data-bind="css: {'advanced_search': bAdvancedSearch, 'message_list_search_everywhere': isEverywhereSearch, 'use_global_search': useEverywhereSearch}">
 	<div class="panel_top">
 		<span class="custom_checkbox" data-bind="click: function () { checkAll(!checkAll()); },
 					css: {'checked': checkAll, 'incomplete': checkAllIncomplite}">
@@ -7,7 +7,7 @@
 		<!-- ko template: {name: '%ModuleName%_SearchView'} --><!-- /ko -->
 	</div>
 	<div class="panel_center unselectable" data-bind="customScrollbar: {'reset': listChangedThrottle(), x: false}">
-		<div class="scroll-inner message_list_scroll" data-bind="css: {'message_list_search_everywhere': isEverywhereSearch}">
+		<div class="scroll-inner message_list_scroll">
 			<div class="items_list message_list" data-bind="initDom: messagesContainer, css: folderFullName">
 				<span>
 					<span class="list_notification" data-bind="visible: visibleInfoSearchLoading">
