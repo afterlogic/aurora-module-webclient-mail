@@ -18,6 +18,7 @@ var
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
 	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
 	Screens = require('%PathToCoreWebclientModule%/js/Screens.js'),
+	Storage = require('%PathToCoreWebclientModule%/js/Storage.js'),
 	
 	CPageSwitcherView = require('%PathToCoreWebclientModule%/js/views/CPageSwitcherView.js'),
 	
@@ -247,7 +248,10 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 		return this.isUnseenFilter() && this.isEmptyList() && !this.isError() && !this.isLoading();
 	}, this);
 
-	this.useEverywhereSearch = ko.observable(false);
+	this.useEverywhereSearch = ko.observable(Storage.getData('useEverywhereSearch') || false);
+	this.useEverywhereSearch.subscribe(function () {
+		Storage.setData('useEverywhereSearch', this.useEverywhereSearch());
+	}, this);
 	this.allowSearchEverywhere = ko.computed(function () {
 		return !!this.folderList().allMailsFolder();
 	}, this);
@@ -736,6 +740,11 @@ CMessageListView.prototype.onSearchClick = function ()
 		this.filtersBeforeSearchEverywhere(sFilters);
 		sFolder = this.folderList().allMailsFolderFullName();
 		sFilters = '';
+	}
+	else if (this.allowSearchEverywhere() && !this.useEverywhereSearch() && sFolder === this.folderList().allMailsFolderFullName())
+	{
+		sFolder = this.folderBeforeSearchEverywhere() || this.folderList().inboxFolderFullName();
+		sFilters = this.filtersBeforeSearchEverywhere() || '';
 	}
 
 	this.changeRoutingForMessageList(sFolder, iPage, '', sSearch, sFilters);

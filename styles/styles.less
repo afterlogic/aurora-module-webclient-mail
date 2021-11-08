@@ -61,7 +61,7 @@
 	display: none;
 }
 
-.use_global_search {
+.use_global_search:not(.advanced_search) {
 	.search_block > .input .field {
 		width: calc(100% - 80px);
 	}
@@ -80,12 +80,14 @@
 	}
 }
 
-.message_list_search_everywhere {
+.message_list_search_everywhere.use_global_search:not(.advanced_search) {
 	.global_search_marker {
 		background: #4f5984;
 		color: white;
 	}
-	
+}
+
+.message_list_search_everywhere {
 	.message_list_scroll {
 		background: #f2f6fe;
 
