@@ -33,6 +33,7 @@ var
 /**
  * @constructor
  * @param {number} iAccountId
+ * @param {boolean} bIsUnifiedInbox
  */
 function CFolderModel(iAccountId, bIsUnifiedInbox)
 {
@@ -608,6 +609,23 @@ CFolderModel.prototype.removeAllMessageListsFromCacheIfHasChanges = function ()
 	}
 };
 
+CFolderModel.prototype.removeMultiFoldersMessageListsFromCache = function ()
+{
+	_.each(this.oUids, function (oUidList) {
+		if (MailCache.isSearchInMultiFolders(oUidList.search()))
+		{
+			this.requestedLists = _.filter(this.requestedLists, function (oParams) {
+				return oParams.search !== oUidList.search();
+			});
+
+			// clear the UID list because it is outdated
+			// Do not remove it from the cache to prevent the creation of a new oUidList object
+			// because the old oUidList object will remain in the browser's memory
+			oUidList.clearData();
+		}
+	}, this);
+};
+
 CFolderModel.prototype.removeFlaggedMessageListsFromCache = function ()
 {
 	_.each(this.oUids, function (oUidList) {
@@ -791,7 +809,7 @@ CFolderModel.prototype.commitDeleted = function (aUids)
 	_.each(aUids, _.bind(function (sUid) {
 		var bCurrentMessageIsBeingDeleted = MailCache.currentMessage() && MailCache.currentMessage().accountId() === this.iAccountId 
 				&& MailCache.currentMessage().folder() === this.fullName()
-				&& MailCache.currentMessage().longUid() === sUid;
+				&& MailCache.currentMessage().uid() === sUid;
 		if (bCurrentMessageIsBeingDeleted)
 		{
 			Utils.log('commitDeleted, the current message is to remove', MailCache.currentMessage() ? {'accountId': MailCache.currentMessage().accountId(),'folder': MailCache.currentMessage().folder(),'uid': MailCache.currentMessage().uid()} : null);
@@ -1161,6 +1179,7 @@ CFolderModel.prototype.onGetMessageResponse = function (oResponse, oRequest)
  * @param {string} sUid
  * @param {Function} fResponseHandler
  * @param {Object} oContext
+ * @param {boolean} bForceAjaxRequest
  */
 CFolderModel.prototype.getCompletelyFilledMessage = function (sUid, fResponseHandler, oContext, bForceAjaxRequest)
 {

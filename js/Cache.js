@@ -1237,8 +1237,8 @@ CMailCache.prototype.showExternalPictures = function (bAlwaysForSender)
 };
 
 /**
- * @param {string|null} sUid
  * @param {string} sFolder
+ * @param {string} sFilters
  */
 CMailCache.prototype.setCurrentFolder = function (sFolder, sFilters)
 {
@@ -1844,6 +1844,24 @@ CMailCache.prototype.parseAndCacheMessages = function (aMessagesCollection, oFol
 	}, this);
 };
 
+CMailCache.prototype.removeAllMessageListsFromCacheIfHasChanges = function (oFolder)
+{
+	if (oFolder && oFolder.hasChanges())
+	{
+		var
+			oFolderList = this.oFolderListItems[oFolder.iAccountId],
+			oNamedCollection = oFolderList ? oFolderList.oNamedCollection : {}
+		;
+		_.each(oNamedCollection, function (oFolder) {
+			oFolder.removeMultiFoldersMessageListsFromCache();
+		}, this);
+
+		this.oUnifiedInbox.removeMultiFoldersMessageListsFromCache();
+
+		oFolder.removeAllMessageListsFromCacheIfHasChanges();
+	}
+};
+
 /**
  * @param {Object} oResponse
  * @param {Object} oRequest
@@ -1891,7 +1909,7 @@ CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 				oResult.MessageCount, oResult.MessageUnseenCount, bCurrentFolder && !bCurrentList);
 		}
 		bHasFolderChanges = oFolder.hasChanges();
-		oFolder.removeAllMessageListsFromCacheIfHasChanges();
+		this.removeAllMessageListsFromCacheIfHasChanges(oFolder);
 		oUidList = oFolder.getUidList(oResult.Search, oResult.Filters, oParameters.SortBy, oParameters.SortOrder);
 		oUidList.setUidsAndCount(oParameters.Offset, oResult);
 		this.parseAndCacheMessages(oResult['@Collection'], oFolder, bTrustThreadInfo, aNewFolderMessages);
@@ -1944,7 +1962,7 @@ CMailCache.prototype.removeMessageFromCurrentList = function (iAccountId, sFolde
 		this.messages(_.filter(this.messages(), function (oTempMessage) {
 			return oTempMessage.longUid() !== sUid;
 		}));
-		Routing.replaceHashWithoutMessageUid(sUid);
+		Routing.replaceHashWithoutMessageUid(oMessage.longUid());
 		oFolder.markHasChanges();
 	}
 };
@@ -2010,16 +2028,20 @@ CMailCache.prototype.onMoveMessagesResponse = function (oResponse, oRequest)
 	}
 	else if (oFolder)
 	{
+		var aLongUids = _.map(aUids, function (sUid) {
+			return oFolder.iAccountId + ':' + oFolder.fullName() + ':' + Types.pString(sUid);
+		});
 		this.messages(_.filter(this.messages(), function (oMessage) {
-			return _.indexOf(aUids, oMessage && oMessage.longUid && oMessage.longUid()) === -1;
+			return _.indexOf(aLongUids, oMessage && oMessage.longUid && oMessage.longUid()) === -1;
 		}));
 		oFolder.commitDeleted(aUids);
-		_.each(aUids, function (sUid) {
-			Routing.replaceHashWithoutMessageUid(sUid);
+		_.each(aLongUids, function (sLongUid) {
+			Routing.replaceHashWithoutMessageUid(sLongUid);
 		});
 	}
 
 	if (oFolder && sCurrFolderFullName === oFolder.fullName() || oToFolder && sCurrFolderFullName === oToFolder.fullName() ||
+		this.isSearchInMultiFolders() ||
 		oCurrFolder.bIsUnifiedInbox && (oFolder && oFolder.type() === Enums.FolderTypes.Inbox || oToFolder && oToFolder.type() === Enums.FolderTypes.Inbox))
 	{
 		oCurrFolder.markHasChanges();
@@ -2161,7 +2183,7 @@ CMailCache.prototype.clearMessagesCache = function (iAccountId)
 	
 	_.each(oFolderList.collection(), function (oFolder) {
 		oFolder.markHasChanges();
-		oFolder.removeAllMessageListsFromCacheIfHasChanges();
+		this.removeAllMessageListsFromCacheIfHasChanges(oFolder);
 	}, this);
 	
 	if (iAccountId === this.currentAccountId())
