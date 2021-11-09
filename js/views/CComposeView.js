@@ -948,7 +948,7 @@ CComposeView.prototype.onMessageResponse = function (oMessage)
 					;
 					if (sDraftFolder === oMessage.folder())
 					{
-						this.draftUid(oMessage.longUid());
+						this.draftUid(oMessage.uid());
 					}
 				}
 				this.setDataFromMessage(oMessage);

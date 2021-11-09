@@ -1153,10 +1153,13 @@ CFolderModel.prototype.onGetMessageResponse = function (oResponse, oRequest)
 		{
 			Api.showErrorByCode(oResponse, TextUtils.i18n('COREWEBCLIENT/ERROR_UNKNOWN'));
 		}
-		Routing.replaceHashWithoutMessageUid(oMessage.longUid());
-		if (oMessage && !oMessage.deleted())
+		if (oMessage)
 		{
-			this.removeMessageFromDict(sUid);
+			Routing.replaceHashWithoutMessageUid(oMessage.longUid());
+			if (!oMessage.deleted())
+			{
+				this.removeMessageFromDict(sUid);
+			}
 		}
 		
 		oMessage = null;

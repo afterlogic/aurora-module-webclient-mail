@@ -279,6 +279,7 @@ LinksUtils.parseMailbox = function (aParamsToParse)
 };
 
 /**
+ * @param {number} iAccountId
  * @param {string} sFolder
  * @param {string} sUid
  * @return {Array}
@@ -387,7 +388,11 @@ LinksUtils.getComposeWithEmlObject = function (iAccountId, sFolderName, sUid, oO
  */
 LinksUtils.parseCompose = function (aParams)
 {
+	this.requireMailCache();
+
 	var
+		AccountList = require('modules/%ModuleName%/js/AccountList.js'),
+
 		sAccountHash = (aParams.length > 0) ? aParams[0] : '',
 		sRouteType = (aParams.length > 1) ? aParams[1] : '',
 		oObject = ((sRouteType === Enums.ReplyType.ForwardAsAttach || sRouteType === 'attachments' || sRouteType === 'data') && aParams.length > 2) ? 
@@ -397,16 +402,19 @@ LinksUtils.parseCompose = function (aParams)
 					|| sRouteType === Enums.ReplyType.Resend || sRouteType === Enums.ReplyType.Forward 
 					|| sRouteType === 'drafts' || sRouteType === Enums.ReplyType.ForwardAsAttach) && aParams.length > 2),
 		sFolderName = bMessage ? aParams[2] : '',
-		sUid = bMessage ? aParams[3] : ''
+		sLongUid = bMessage ? aParams[3] : '',
+		oAccount = AccountList.getAccountByHash(sAccountHash),
+		iAccountId = oAccount ? oAccount.id() : AccountList.currentId(),
+		oIdentifiers = MailCache.getMessageActualIdentifiers(iAccountId, sFolderName, sLongUid)
 	;
-	
+
 	return {
 		'AccountHash': sAccountHash,
 		'RouteType': sRouteType,
 		'ToAddr': oToAddr,
 		'Object': oObject,
-		'MessageFolderName': sFolderName,
-		'MessageUid': sUid
+		'MessageFolderName': oIdentifiers.sFolder,
+		'MessageUid': oIdentifiers.sUid
 	};
 };
 
