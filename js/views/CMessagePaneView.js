@@ -527,6 +527,7 @@ CMessagePaneView.prototype.onCurrentMessageSubscribe = function ()
 			}, this));
 
 			this.attachments(aAtachments);
+			this.markCurrentMessageAsRead();
 		}
 		else
 		{
@@ -1058,7 +1059,7 @@ CMessagePaneView.prototype.onBind = function ($MailViewDom)
 			{
 				window.close();
 			}
-		})
+		});
 	}
 };
 
@@ -1235,11 +1236,6 @@ CMessagePaneView.prototype.close = function ()
 		this.markCurrentMessageAsRead();
 		this.closePopup();
 	}
-};
-
-CMessagePaneView.prototype.doBeforeUnload = function ()
-{
-	this.markCurrentMessageAsRead();
 };
 
 CMessagePaneView.prototype.markCurrentMessageAsRead = function ()
