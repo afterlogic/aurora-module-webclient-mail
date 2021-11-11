@@ -2148,7 +2148,7 @@ CComposeView.prototype.printMessage = function ()
 	sDate = oDateModel.getFullDate();
 	
 	_.each(this.allControllers(), function (oController) {
-		if (_.isFunction(oController.selectedProjectItem))
+		if (_.isFunction(oController.selectedProjectItem) && oController.selectedProjectItem() && oController.selectedProjectItem().item)
 		{
 			sProject = oController.selectedProjectItem().item.ProjectName;
 		}
