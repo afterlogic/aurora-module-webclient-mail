@@ -4,6 +4,7 @@ var
 	_ = require('underscore'),
 	$ = require('jquery'),
 	ko = require('knockout'),
+	moment = require('moment'),
 
 	AddressUtils = require('%PathToCoreWebclientModule%/js/utils/Address.js'),
 	FilesUtils = require('%PathToCoreWebclientModule%/js/utils/Files.js'),
@@ -13,6 +14,7 @@ var
 
 	App = require('%PathToCoreWebclientModule%/js/App.js'),
 	Browser = require('%PathToCoreWebclientModule%/js/Browser.js'),
+	CDateModel = require('%PathToCoreWebclientModule%/js/models/CDateModel.js'),
 	CJua = require('%PathToCoreWebclientModule%/js/CJua.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
@@ -26,6 +28,7 @@ var
 	AlertPopup = require('%PathToCoreWebclientModule%/js/popups/AlertPopup.js'),
 	SelectFilesPopup = ModulesManager.run('FilesWebclient', 'getSelectFilesPopup'),
 
+	InformatikMailUtils = require('modules/%ModuleName%/js/utils/InformatikMail.js'),
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
 	SendingUtils = require('modules/%ModuleName%/js/utils/Sending.js'),
 
@@ -316,7 +319,7 @@ function CComposeView()
 	}, this);
 
 	this.toolbarControllers = ko.observableArray([]);
-	this.messageRowControllers = ko.observableArray([])
+	this.messageRowControllers = ko.observableArray([]);
 	this.allControllers = ko.computed(function () {
 		return _.union(this.toolbarControllers(), this.messageRowControllers());
 	}, this);
@@ -1985,6 +1988,11 @@ CComposeView.prototype.registerOwnToolbarControllers = function ()
 		sId: 'confirmation',
 		sendReadingConfirmation: this.sendReadingConfirmation
 	});
+	this.registerToolbarController({
+		ViewTemplate: '%ModuleName%_Compose_PrintButtonView',
+		sId: 'print',
+		printMessage: this.printMessage.bind(this)
+	});
 };
 
 /**
@@ -2102,6 +2110,51 @@ CComposeView.prototype.getExtInterface = function ()
 			}
 		}.bind(this)
 	};
+};
+
+CComposeView.prototype.printMessage = function ()
+{
+	var
+		oDomText = this.oHtmlEditor.getEditableArea().clone(),
+		sFrom = '',
+		sTo = this.toAddr(),
+		sCc = this.ccAddr(),
+		sBcc = this.bccAddr(),
+		oDateModel = new CDateModel(),
+		sDate,
+		sSubject = this.subject(),
+		sProject = '',
+		aAttachments = _.map(this.attachments(), function (oAttach) {
+			return oAttach.fileName();
+		})
+	;
+	if (this.senderList().length > 0 && this.selectedSender())
+	{
+		var oSender = _.find(this.senderList(), function (oSender) {
+			return oSender.id === this.selectedSender();
+		}.bind(this));
+		if (oSender)
+		{
+			sFrom = oSender.fullEmail;
+		}
+	}
+	if (!sFrom)
+	{
+		var oAccount = AccountList.getAccount(this.senderAccountId());
+		sFrom = oAccount.fullEmail();
+	}
+
+	oDateModel.parse(moment().unix());
+	sDate = oDateModel.getFullDate();
+	
+	_.each(this.allControllers(), function (oController) {
+		if (_.isFunction(oController.selectedProjectItem))
+		{
+			sProject = oController.selectedProjectItem().item.ProjectName;
+		}
+	});
+
+	InformatikMailUtils.printMessageFromCompose(oDomText, sFrom, sTo, sCc, sBcc, sDate, sSubject, sProject, aAttachments);
 };
 
 module.exports = CComposeView;
