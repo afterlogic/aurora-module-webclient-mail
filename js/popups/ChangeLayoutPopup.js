@@ -91,4 +91,12 @@ CChangeLayoutPopup.prototype.onSaveLayoutSettingsResponse = function (oResponse,
 	}
 };
 
+CChangeLayoutPopup.prototype.cancelPopup = function ()
+{
+	if (!this.isSaving())
+	{
+		this.closePopup();
+	}
+}
+
 module.exports = new CChangeLayoutPopup();
