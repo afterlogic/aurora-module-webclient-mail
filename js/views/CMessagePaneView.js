@@ -474,17 +474,18 @@ CMessagePaneView.prototype.onCurrentMessageSubscribe = function ()
 
 	if (oMessage && this.uid() === oMessage.uid())
 	{
+		var oFrom = oMessage.bUseReplyToInsteadOfFrom ? oMessage.oReplyTo : oMessage.oFrom;
 		this.hasReplyAllCcAddrs(SendingUtils.hasReplyAllCcAddrs(oMessage));
 
 		this.subject(oMessage.subject());
 		this.importance(oMessage.importance());
-		this.from(oMessage.oFrom.getDisplay());
-		this.fromEmail(oMessage.oFrom.getFirstEmail());
+		this.from(oFrom.getDisplay());
+		this.fromEmail(oFrom.getFirstEmail());
 
-		this.fullFrom(oMessage.oFrom.getFull());
-		if (oMessage.oFrom.aCollection.length > 0)
+		this.fullFrom(oFrom.getFull());
+		if (oFrom.aCollection.length > 0)
 		{
-			this.oFromAddr(oMessage.oFrom.aCollection[0]);
+			this.oFromAddr(oFrom.aCollection[0]);
 		}
 		else
 		{
@@ -1159,7 +1160,7 @@ CMessagePaneView.prototype.doAfterPopulatingMessage = function ()
 			sRawText: oMessage.textRaw(),
 			sText: oMessage.text(),
 			sAccountEmail: AccountList.getEmail(oMessage.accountId()),
-			sFromEmail: oMessage.oFrom.getFirstEmail(),
+			sFromEmail: (oMessage.bUseReplyToInsteadOfFrom ? oMessage.oReplyTo : oMessage.oFrom).getFirstEmail(),
 			iSensitivity: oMessage.sensitivity(),
 			aExtend: oMessage.aExtend
 		} : null
