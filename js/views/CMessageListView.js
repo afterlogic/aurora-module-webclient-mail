@@ -622,10 +622,6 @@ CMessageListView.prototype.onRoute = function (aParams)
 	
 	if (bRouteChanged || bMailsPerPageChanged || this.collection().length === 0)
 	{
-		if (oParams.Filters === Enums.FolderFilter.Unseen)
-		{
-			MailCache.waitForUnseenMessages(true);
-		}
 		MailCache.resetCurrentPage();
 		this.requestMessageList(1);
 		this.messageListParamsChanged(true);
@@ -642,17 +638,19 @@ CMessageListView.prototype.setCurrentFolder = function ()
 
 CMessageListView.prototype.requestMessageList = function (iPage)
 {
-	var
-		sFullName = MailCache.getCurrentFolderFullname()
-//		iPage = this.oPageSwitcher.currentPage()
-	;
+	var sFullName = MailCache.getCurrentFolderFullname();
 	
-	if (iPage === undefined) {
+	if (iPage === undefined)
+	{
 		iPage = MailCache.page();
 	}
 	
 	if (sFullName.length > 0)
 	{
+		if (this.filters() === Enums.FolderFilter.Unseen)
+		{
+			MailCache.waitForUnseenMessages(true);
+		}
 		MailCache.changeCurrentMessageList(sFullName, iPage, this.search(), this.filters(), this.sSortBy, this.iSortOrder);
 	}
 	else
