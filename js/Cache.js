@@ -1902,7 +1902,7 @@ CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 				this.uidList().sortBy() === oParameters.SortBy &&
 				this.uidList().sortOrder() === oParameters.SortOrder,
 		iOffset = oParameters.Offset === 0 ? oParameters.Limit - Settings.MailsPerPage : oParameters.Offset,
-		bCurrentPage = this.page() === ((iOffset / Settings.MailsPerPage) + 1),
+		bCurrentPage = Math.max(this.page(), this.prevPage()) === ((iOffset / Settings.MailsPerPage) + 1),
 		aNewFolderMessages = []
 	;
 
