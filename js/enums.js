@@ -71,6 +71,7 @@ Enums.ReplyType = {
 	'ReplyAll': 'reply-all',
 	'Resend': 'resend',
 	'Forward': 'forward',
+	'ForwardOrig': 'forward-orig',
 	'ForwardAsAttach': 'eml'
 };
 

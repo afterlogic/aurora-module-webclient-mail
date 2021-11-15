@@ -654,6 +654,7 @@ CComposeView.prototype.onRoute = function (aParams)
 		case Enums.ReplyType.ReplyAll:
 		case Enums.ReplyType.Resend:
 		case Enums.ReplyType.Forward:
+		case Enums.ReplyType.ForwardOrig:
 		case 'drafts':
 			this.routeParams(aParams);
 			if (this.folderList().iAccountId !== 0)
@@ -918,6 +919,7 @@ CComposeView.prototype.onMessageResponse = function (oMessage)
 				break;
 
 			case Enums.ReplyType.Forward:
+			case Enums.ReplyType.ForwardOrig:
 				SenderSelector.setFetcherOrIdentityByReplyMessage(oMessage);
 
 				oReplyData = SendingUtils.getReplyDataFromMessage(oMessage, this.routeType(), this.senderAccountId(), this.selectedFetcherOrIdentity(), true);

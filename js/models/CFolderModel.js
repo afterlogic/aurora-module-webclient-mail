@@ -577,6 +577,7 @@ CFolderModel.prototype.markMessageReplied = function (sUid, sReplyType)
 				}
 				break;
 			case Enums.ReplyType.Forward:
+			case Enums.ReplyType.ForwardOrig:
 			case Enums.ReplyType.ForwardAsAttach:
 				oMessage.forwarded(true);
 				if (Settings.MarkMessageSeenWhenAnswerForward && oFolder && !oMessage.seen())

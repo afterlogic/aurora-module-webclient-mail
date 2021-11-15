@@ -468,6 +468,8 @@ CMessageListView.prototype.createDatePickerObject = function (oElement, value)
  * @param {string} sFolder
  * @param {number} iPage
  * @param {string} sUid
+ * @param {string} sSearch
+ * @param {string} sFilters
  * @param {string} sSortBy
  * @param {string} iSortOrder
  */
@@ -486,7 +488,7 @@ CMessageListView.prototype.changeRoutingForMessageList = function (sFolder, iPag
  */
 CMessageListView.prototype.onEnterPress = function (oMessage)
 {
-	this.openMessaheInPopupOrTabBound(oMessage)
+	this.openMessaheInPopupOrTabBound(oMessage);
 //	if (oMessage.threadNextLoadingVisible())
 //	{
 //		oMessage.loadNextMessages();

@@ -383,6 +383,7 @@ LinksUtils.parseCompose = function (aParams)
 		oToAddr = (sRouteType === 'to' && aParams.length > 2) ? LinksUtils.parseToAddr(aParams[2]) : null,
 		bMessage = ((sRouteType === Enums.ReplyType.Reply || sRouteType === Enums.ReplyType.ReplyAll 
 					|| sRouteType === Enums.ReplyType.Resend || sRouteType === Enums.ReplyType.Forward 
+					|| sRouteType === Enums.ReplyType.ForwardOrig
 					|| sRouteType === 'drafts' || sRouteType === Enums.ReplyType.ForwardAsAttach) && aParams.length > 2),
 		sFolderName = bMessage ? aParams[2] : '',
 		sUid = bMessage ? aParams[3] : ''

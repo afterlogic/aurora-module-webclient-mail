@@ -417,12 +417,16 @@ SendingUtils.getReplyDataFromMessage = function (oMessage, sReplyType, iAccountI
 		sText = this.sReplyText;
 		this.sReplyText = '';
 	}
-	
-	if (sReplyType === 'forward')
+
+	if (sReplyType === Enums.ReplyType.Forward)
 	{
 		oReplyData.Text = sText + this.getForwardMessageBody(oMessage, iAccountId, oFetcherOrIdentity);
 	}
-	else if (sReplyType === 'resend')
+	else if (sReplyType === Enums.ReplyType.ForwardOrig)
+	{
+		oReplyData.Text = oMessage.getConvertedHtml();
+	}
+	else if (sReplyType === Enums.ReplyType.Resend)
 	{
 		oReplyData.Text = oMessage.getConvertedHtml();
 		oReplyData.Cc = oMessage.cc();
@@ -470,6 +474,7 @@ SendingUtils.getReplyDataFromMessage = function (oMessage, sReplyType, iAccountI
 			break;
 		case Enums.ReplyType.ForwardAsAttach:
 		case Enums.ReplyType.Forward:
+		case Enums.ReplyType.ForwardOrig:
 			oReplyData.DraftInfo = [Enums.ReplyType.Forward, oMessage.uid(), oMessage.folder()];
 			oReplyData.Subject = this.getReplySubject(oMessage.subject(), false);
 			aAttachmentsLink = oMessage.attachments();

@@ -106,6 +106,7 @@ function CMessagePaneView()
 	this.replyAllCommand = Utils.createCommand(this, this.executeReplyAll, this.isEnableReplyAll);
 	this.resendCommand = Utils.createCommand(this, this.executeResend, this.isEnableResend);
 	this.forwardCommand = Utils.createCommand(this, this.executeForward, this.isEnableForward);
+	this.forwardOriginalCommand = Utils.createCommand(this, this.executeForwardOriginal, this.isEnableForward);
 	this.printCommand = Utils.createCommand(this, this.executePrint, this.isEnablePrint);
 	this.saveCommand = Utils.createCommand(this, this.executeSave, this.isEnableSave);
 	this.forwardAsAttachment = Utils.createCommand(this, this.executeForwardAsAttachment, this.isCurrentMessageLoaded);
@@ -841,6 +842,11 @@ CMessagePaneView.prototype.executeResend = function ()
 CMessagePaneView.prototype.executeForward = function ()
 {
 	this.executeReplyOrForward(Enums.ReplyType.Forward);
+};
+
+CMessagePaneView.prototype.executeForwardOriginal = function ()
+{
+	this.executeReplyOrForward(Enums.ReplyType.ForwardOrig);
 };
 
 CMessagePaneView.prototype.executePrint = function ()
