@@ -125,28 +125,20 @@ Prefetcher.prefetchUnseenMessageList = function ()
 };
 
 /**
- * @param {string} sCurrentUid
+ * @param {number} iMessageIndex
  */
-Prefetcher.prefetchNextPage = function (sCurrentUid)
+Prefetcher.prefetchNextPage = function (iMessageIndex)
 {
-	var
-		oUidList = MailCache.uidList(),
-		iIndex = _.indexOf(oUidList.collection(), sCurrentUid),
-		iPage = Math.ceil(iIndex/Settings.MailsPerPage) + 1
-	;
+	var iPage = Math.ceil(iMessageIndex/Settings.MailsPerPage) + 1;
 	this.startPagePrefetch(iPage - 1);
 };
 
 /**
- * @param {string} sCurrentUid
+ * @param {number} iMessageIndex
  */
-Prefetcher.prefetchPrevPage = function (sCurrentUid)
+Prefetcher.prefetchPrevPage = function (iMessageIndex)
 {
-	var
-		oUidList = MailCache.uidList(),
-		iIndex = _.indexOf(oUidList.collection(), sCurrentUid),
-		iPage = Math.ceil((iIndex + 1)/Settings.MailsPerPage) + 1
-	;
+	var iPage = Math.ceil((iMessageIndex + 1)/Settings.MailsPerPage) + 1;
 	this.startPagePrefetch(iPage);
 };
 

@@ -956,7 +956,7 @@ CMessageListView.prototype.deleteMessages = function (aUids)
 			if (sUidToOpenAfter !== '')
 			{
 				oMessageToOpenAfter = _.find(this.collection(), function (oMessage) {
-					return oMessage && _.isFunction(oMessage.longUid) && oMessage.longUid() === sUidToOpenAfter;
+					return oMessage && _.isFunction(oMessage.longUid) && (oMessage.longUid() === sUidToOpenAfter || oMessage.uid() === sUidToOpenAfter);
 				});
 				if (oMessageToOpenAfter)
 				{
