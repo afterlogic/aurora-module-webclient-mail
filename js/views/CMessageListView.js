@@ -138,14 +138,42 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 	this.lockPages = ko.observableArray(MailCache.pages());
 	this.collection = MailCache.messages;
 	this.collection.subscribeExtended(function (aNewMessage, aOldMessages) {
-		var aNewUids = _.map(aNewMessage, function (oMessage) {
-			return oMessage.uid();
-		});
-		_.each(aOldMessages, function (oMessage) {
-			if (oMessage.checked() && _.indexOf(aNewUids, oMessage.uid()) === -1) {
-				oMessage.checked(false);
+		var
+			aNewUids = _.map(aNewMessage, function (oMessage) {
+				return oMessage.uid();
+			}),
+			iNewIndex = null,
+			iOldIndex = null
+		;
+		_.each(aOldMessages, function (oMessage, iOldKey) {
+			var iNewKey = null;
+			if (iNewIndex === null) {
+				iNewKey = _.indexOf(aNewUids, oMessage.uid());
+				if (iNewKey !== -1) {
+					iNewIndex = iNewKey;
+					iOldIndex = iOldKey;
+				}
+			}
+			if (oMessage.checked()) {
+				if (iNewKey === null) {
+					iNewKey = _.indexOf(aNewUids, oMessage.uid());
+				}
+				if (iNewKey === -1) {
+					oMessage.checked(false);
+				}
 			}
 		});
+		if (iNewIndex !== iOldIndex) {
+			var
+				oMessageListScrollDom = $('.message_list_scroll', this.$viewDom),
+				oItem = $('.item', oMessageListScrollDom).first(),
+				iHeight = oItem.outerHeight(),
+				iScrollTop = oMessageListScrollDom.scrollTop()
+			;
+			if (iHeight) {
+				oMessageListScrollDom.scrollTop(iScrollTop + (iNewIndex - iOldIndex) * iHeight);
+			}
+		}
 
 		var bNewListHasCurrentMessage = !!this.currentMessage() && (_.indexOf(aNewUids, this.currentMessage().uid()) !== -1);
 		if (bNewListHasCurrentMessage && !this.currentMessage().selected()) {
@@ -153,23 +181,6 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 		}
 
 		if (this.lockScroll() && !this.isLoading()) {
-			var
-				oMessageListDom = $('.message_list', this.$viewDom),
-				oMessageListScrollDom = $('.message_list_scroll', this.$viewDom),
-				iLockedPagesSum = _.reduce(this.lockPages(), function(memo, num){ return memo + num; }, 0),
-				iCurrPagesSum = _.reduce(MailCache.pages(), function(memo, num){ return memo + num; }, 0)
-			;
-
-			if (iLockedPagesSum < iCurrPagesSum) {
-				// The last scroll was to bottom
-				if (this.lockPages().length === 1) {
-					// It was the first scroll, do nothing
-				} else {
-					oMessageListScrollDom.scrollTop(oMessageListScrollDom.scrollTop() - (oMessageListDom.height() / 2));
-				}
-			} else if (oMessageListScrollDom.scrollTop() === 0) {
-				oMessageListScrollDom.scrollTop(10);
-			}
 			this.lockScroll(false);
 			this.lockPages(MailCache.pages());
 		}
@@ -923,12 +934,6 @@ CMessageListView.prototype.onBind = function ($viewDom)
 		$('.message_list', $viewDom),
 		$('.message_list_scroll.scroll-inner', $viewDom)
 	);
-	
-//	$(window).scroll(function() {
-//		if($(window).scrollTop() == $(document).height() - $(window).height()) {
-//			   // ajax call get data from server and append to the div
-//		}
-//	});
 
 	this.initUploader();
 };

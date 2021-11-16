@@ -807,8 +807,10 @@ CMailCache.prototype.requestCurrentMessageList = function (sFolder, iPage, sSear
 {
 	this.changeCurrentPage(iPage);
 	var
-		iRequestPage = Math.max(iPage, this.page(), this.prevPage()),
-		oRequestData = this.requestMessageList(sFolder, iRequestPage, sSearch, sFilter || '', sSortBy, iSortOrder, true, (bFillMessages || false))
+		iRequestPage = Math.min(this.page(), this.prevPage()),
+		iOffset = (iRequestPage - 1) * Settings.MailsPerPage,
+		iLimit = this.page() === this.prevPage() ? Settings.MailsPerPage : Settings.MailsPerPage * 2,
+		oRequestData = this.requestMessageListWithOffset(sFolder, iOffset, iLimit, sSearch, sFilter || '', sSortBy, iSortOrder, true, (bFillMessages || false))
 	;
 	if (oRequestData)
 	{
@@ -842,6 +844,27 @@ CMailCache.prototype.requestCurrentMessageList = function (sFolder, iPage, sSear
  */
 CMailCache.prototype.requestMessageList = function (sFolder, iPage, sSearch, sFilters, sSortBy, iSortOrder, bCurrent, bFillMessages, bDoNotRequest)
 {
+	var
+		iLimit = Settings.MailsPerPage,
+		iOffset = (iPage - 1) * Settings.MailsPerPage
+	;
+	this.requestMessageListWithOffset(sFolder, iOffset, iLimit, sSearch, sFilters, sSortBy, iSortOrder, bCurrent, bFillMessages, bDoNotRequest);
+};
+
+/**
+ * @param {string} sFolder
+ * @param {number} iOffset
+ * @param {number} iLimit
+ * @param {string} sSearch
+ * @param {string} sFilters
+ * @param {string} sSortBy
+ * @param {int} iSortOrder
+ * @param {boolean} bCurrent
+ * @param {boolean} bFillMessages
+ * @param {boolean} bDoNotRequest
+ */
+CMailCache.prototype.requestMessageListWithOffset = function (sFolder, iOffset, iLimit, sSearch, sFilters, sSortBy, iSortOrder, bCurrent, bFillMessages, bDoNotRequest)
+{
 	// Parameter is true if method was called only to update last access time of messages for specified page.
 	// This case is used for Prefetcher work.
 	bDoNotRequest = Types.pBool(bDoNotRequest, false);
@@ -852,7 +875,8 @@ CMailCache.prototype.requestMessageList = function (sFolder, iPage, sSearch, sFi
 		Utils.log('requestMessageList, error: folder not found ', JSON.stringify({
 			'currentAccountId': this.currentAccountId(),
 			'sFolder': sFolder,
-			'iPage': iPage,
+			'iOffset': iOffset,
+			'iLimit': iLimit,
 			'sSearch': sSearch,
 			'sFilters': sFilters,
 			'sSortBy': sSortBy,
@@ -869,12 +893,11 @@ CMailCache.prototype.requestMessageList = function (sFolder, iPage, sSearch, sFi
 		oUidList = (oFolder) ? oFolder.getUidList(sSearch, sFilters, sSortBy, iSortOrder) : null,
 		bHasChanges = oFolder.hasChanges() || oUidList.hasChanges(),
 		bCacheIsEmpty = oUidList && oUidList.resultCount() === -1,
-		iOffset = (iPage - 1) * Settings.MailsPerPage,
 		iUidsOffset =  bFillMessages ? this.offset() : iOffset,
 		oParameters = {
 			'Folder': sFolder,
 			'Offset': bHasChanges ? 0 : iOffset,
-			'Limit': bHasChanges ? iOffset + Settings.MailsPerPage : Settings.MailsPerPage,
+			'Limit': bHasChanges ? iOffset + iLimit : iLimit,
 			'Search': sSearch,
 			'Filters': sFilters,
 			'SortBy': sSortBy,
@@ -1902,7 +1925,7 @@ CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 				this.uidList().sortBy() === oParameters.SortBy &&
 				this.uidList().sortOrder() === oParameters.SortOrder,
 		iOffset = oParameters.Offset === 0 ? oParameters.Limit - Settings.MailsPerPage : oParameters.Offset,
-		bCurrentPage = Math.max(this.page(), this.prevPage()) === ((iOffset / Settings.MailsPerPage) + 1),
+		bCurrentPage = this.page() === ((iOffset / Settings.MailsPerPage) + 1) || this.prevPage() === ((iOffset / Settings.MailsPerPage) + 1),
 		aNewFolderMessages = []
 	;
 
