@@ -33,6 +33,8 @@ var
 
 	CAttachmentModel = require('modules/%ModuleName%/js/models/CAttachmentModel.js'),
 
+	InformatikSettings = require('modules/InformatikProjects/js/Settings.js'),
+	
 	MainTab = App.isNewTab() && window.opener && window.opener.MainTabMailMethods
 ;
 
@@ -190,7 +192,12 @@ function CMessagePaneView()
 		return !this.disableAllSendTools() && this.isCurrentSentFolder();
 	}, this);
 	this.isVisibleForwardTool = ko.computed(function () {
-		return !this.disableAllSendTools() && this.isCurrentNotDraftFolder();
+		var
+			bCentral = InformatikSettings.isAssignProjectsAllowedForEmail(App.currentAccountEmail()),
+			bAssignedFolder = InformatikSettings.isAssignedFolder(MailCache.getCurrentFolderFullname()),
+			bDisable = InformatikSettings.DisableForward && bCentral && !bAssignedFolder
+		;
+		return !bDisable && !this.disableAllSendTools() && this.isCurrentNotDraftFolder();
 	}, this);
 
 	this.accountId = ko.observable(0);

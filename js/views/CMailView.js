@@ -152,12 +152,6 @@ function CMailView()
 			MailCache.getCurrentFolderType() !== Enums.FolderTypes.Sent);
 	}, this);
 
-	this.isVisibleForwardTool = ko.computed(function () {
-		return (MailCache.getCurrentFolder() &&
-			MailCache.getCurrentFolderFullname().length > 0 &&
-			MailCache.getCurrentFolderType() !== Enums.FolderTypes.Drafts);
-	}, this);
-
 	this.isSpamFolder = ko.computed(function () {
 		return MailCache.getCurrentFolderType() === Enums.FolderTypes.Spam;
 	}, this);
