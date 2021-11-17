@@ -30,9 +30,7 @@ var
 	CMessageListView = require('modules/%ModuleName%/js/views/CMessageListView.js'),
 	CMessagePaneView = require('modules/%ModuleName%/js/views/CMessagePaneView.js'),
 	
-	MessagePaneView = new CMessagePaneView(),
-	
-	bHorizontalLayout = Settings.PreviewPanePosition === 'bottom'
+	MessagePaneView = new CMessagePaneView()
 ;
 
 /**
@@ -59,7 +57,7 @@ function CMailView()
 
 	this.allowPreviewPane = ko.computed(function () {
 		var bInNotes = ModulesManager.isModuleAvailable('MailNotesPlugin') && MailCache.getCurrentFolderFullname() === 'Notes';
-		return bInNotes || Settings.PreviewPanePosition !== 'none';
+		return bInNotes || Settings.previewPanePosition() !== 'none';
 	});
 	this.oBaseMessagePaneView = MessagePaneView;
 	this.messagePane = ko.observable(this.oBaseMessagePaneView);
@@ -171,12 +169,26 @@ function CMailView()
 		return MailCache.getCurrentFolderType() === Enums.FolderTypes.Trash;
 	}, this);
 
-	if (bHorizontalLayout)
+	this.horizontalLayout = ko.computed(function () {
+		return Settings.previewPanePosition() === 'bottom';
+	}, this);
+	if (this.horizontalLayout())
 	{
 		$('html').addClass('layout-horiz-split');
 	}
-	$('html').addClass('layout-' + Settings.MessageListItemSize + '-message-list-item');
-
+	Settings.previewPanePosition.subscribe(function () {
+		if (Settings.previewPanePosition()) {
+			$('html').addClass('layout-horiz-split');
+		} else {
+			$('html').removeClass('layout-horiz-split');
+		}
+		this.onBind();
+	}, this);
+	$('html').addClass('layout-' + Settings.messageListItemSize() + '-message-list-item');
+	Settings.messageListItemSize.subscribeExtended(function (sNewMessageListItemSize, sOldMessageListItemSize) {
+		$('html').removeClass('layout-' + sOldMessageListItemSize + '-message-list-item');
+		$('html').addClass('layout-' + sNewMessageListItemSize + '-message-list-item');
+	}.bind(this));
 	App.subscribeEvent('CoreWebclient::GetDebugInfo', _.bind(function (oParams) {
 		oParams.Info.push('checkMailStarted: ' + MailCache.checkMailStarted() + ', messagesLoading: ' + MailCache.messagesLoading());
 	}, this));
@@ -186,7 +198,7 @@ function CMailView()
 
 _.extendOwn(CMailView.prototype, CAbstractScreenView.prototype);
 
-CMailView.prototype.ViewTemplate = bHorizontalLayout ? '%ModuleName%_MailHorizontalLayoutView' : '%ModuleName%_MailView';
+CMailView.prototype.ViewTemplate = '%ModuleName%_MailView';
 CMailView.prototype.ViewConstructorName = 'CMailView';
 
 /**
@@ -310,7 +322,7 @@ CMailView.prototype.openMessaheInPopupOrTab = function (oMessage)
 	var bInNotes = ModulesManager.isModuleAvailable('MailNotesPlugin') && MailCache.getCurrentFolderFullname() === 'Notes';
 	if (!bInNotes && oMessage)
 	{
-		if (Settings.OpenMessagesInPopup)
+		if (Settings.openMessagesInPopup())
 		{
 			var
 				iAccountId = oMessage.accountId(),

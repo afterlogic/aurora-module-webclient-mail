@@ -30,16 +30,16 @@ function CChangeLayoutPopup()
 		{ text: TextUtils.i18n('%MODULENAME%/LABEL_MESSAGE_LIST_ITEM_SIZE_SMALL'), value: 'small' },
 		{ text: TextUtils.i18n('%MODULENAME%/LABEL_MESSAGE_LIST_ITEM_SIZE_TINY'), value: 'tiny' }
 	];
-	this.messageListItemSize = ko.observable(Settings.MessageListItemSize);
+	this.messageListItemSize = ko.observable(Settings.messageListItemSize());
 
 	this.aPreviewPanePositionValues = [
 		{ text: TextUtils.i18n('%MODULENAME%/LABEL_PREVIEW_PANE_POSITION_RIGHT'), value: 'right' },
 		{ text: TextUtils.i18n('%MODULENAME%/LABEL_PREVIEW_PANE_POSITION_BOTTOM'), value: 'bottom' },
 		{ text: TextUtils.i18n('%MODULENAME%/LABEL_PREVIEW_PANE_POSITION_NONE'), value: 'none' }
 	];
-	this.previewPanePosition = ko.observable(Settings.PreviewPanePosition);
+	this.previewPanePosition = ko.observable(Settings.previewPanePosition());
 
-	this.openMessagesInPopup = ko.observable(Settings.OpenMessagesInPopup);
+	this.openMessagesInPopup = ko.observable(Settings.openMessagesInPopup());
 }
 
 _.extendOwn(CChangeLayoutPopup.prototype, CAbstractPopup.prototype);
@@ -48,9 +48,9 @@ CChangeLayoutPopup.prototype.PopupTemplate = '%ModuleName%_ChangeLayoutPopup';
 
 CChangeLayoutPopup.prototype.onOpen = function ()
 {
-	this.messageListItemSize(Settings.MessageListItemSize);
-	this.previewPanePosition(Settings.PreviewPanePosition);
-	this.openMessagesInPopup(Settings.OpenMessagesInPopup);
+	this.messageListItemSize(Settings.messageListItemSize());
+	this.previewPanePosition(Settings.previewPanePosition());
+	this.openMessagesInPopup(Settings.openMessagesInPopup());
 };
 
 CChangeLayoutPopup.prototype.save = function ()
@@ -82,12 +82,10 @@ CChangeLayoutPopup.prototype.onSaveLayoutSettingsResponse = function (oResponse,
 	else
 	{
 		var oParameters = oRequest.Parameters;
-		if (oParameters.MessageListItemSize !== Settings.MessageListItemSize ||
-			oParameters.PreviewPanePosition !== Settings.PreviewPanePosition ||
-			oParameters.OpenMessagesInPopup !== Settings.OpenMessagesInPopup)
-		{
-			window.location.reload();
-		}
+		Settings.previewPanePosition(oParameters.PreviewPanePosition);
+		Settings.messageListItemSize(oParameters.MessageListItemSize);
+		Settings.openMessagesInPopup(oParameters.OpenMessagesInPopup);
+		this.closePopup();
 	}
 };
 

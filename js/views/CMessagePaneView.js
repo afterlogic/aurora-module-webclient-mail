@@ -128,7 +128,9 @@ function CMessagePaneView()
 	});
 
 	this.openInPopupOrTabVisible = !this.bNewTab && this.bNotPopup;
-	this.openInPopupOrTabText = Settings.OpenMessagesInPopup ? TextUtils.i18n('%MODULENAME%/ACTION_OPEN_IN_POPUP') : TextUtils.i18n('%MODULENAME%/ACTION_OPEN_IN_NEW_TAB');
+	this.openInPopupOrTabText = ko.computed(function () {
+		return Settings.openMessagesInPopup() ? TextUtils.i18n('%MODULENAME%/ACTION_OPEN_IN_POPUP') : TextUtils.i18n('%MODULENAME%/ACTION_OPEN_IN_NEW_TAB');
+	}, this);
 	this.openInPopupOrTabCommand = Utils.createCommand(this, this.openInPopupOrTab);
 
 	this.moreCommand = Utils.createCommand(this, null, this.isCurrentMessageLoaded);

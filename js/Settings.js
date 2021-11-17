@@ -68,9 +68,9 @@ module.exports = {
 	MarkMessageSeenWhenAnswerForward: false,
 	UserLoginPartInAccountDropdown: false,
 	UseMeRecipientForMessages: true,
-	MessageListItemSize: 'big',
-	PreviewPanePosition: 'right',
-	OpenMessagesInPopup: false,
+	messageListItemSize: ko.observable('big'),
+	previewPanePosition: ko.observable('right'),
+	openMessagesInPopup: ko.observable(false),
 	AllMailsFolder: '',
 
 	userMailAccountsCount: ko.observable(0),
@@ -155,9 +155,9 @@ module.exports = {
 			this.MarkMessageSeenWhenAnswerForward = Types.pBool(oAppDataMailWebclientSection.MarkMessageSeenWhenAnswerForward, this.MarkMessageSeenWhenAnswerForward);
 			this.UserLoginPartInAccountDropdown = Types.pBool(oAppDataMailWebclientSection.UserLoginPartInAccountDropdown, this.UserLoginPartInAccountDropdown);
 			this.UseMeRecipientForMessages = Types.pBool(oAppDataMailWebclientSection.UseMeRecipientForMessages, this.UseMeRecipientForMessages);
-			this.MessageListItemSize = Types.pString(oAppDataMailWebclientSection.MessageListItemSize, this.MessageListItemSize);
-			this.PreviewPanePosition = Types.pString(oAppDataMailWebclientSection.PreviewPanePosition, this.PreviewPanePosition);
-			this.OpenMessagesInPopup = Types.pBool(oAppDataMailWebclientSection.OpenMessagesInPopup, this.OpenMessagesInPopup);
+			this.messageListItemSize(Types.pString(oAppDataMailWebclientSection.MessageListItemSize, this.messageListItemSize()));
+			this.previewPanePosition(Types.pString(oAppDataMailWebclientSection.PreviewPanePosition, this.previewPanePosition()));
+			this.openMessagesInPopup(Types.pBool(oAppDataMailWebclientSection.OpenMessagesInPopup, this.openMessagesInPopup()));
 			this.AllMailsFolder = Types.pString(oAppDataMailWebclientSection.AllMailsFolder, this.AllMailsFolder);
 		}
 		
