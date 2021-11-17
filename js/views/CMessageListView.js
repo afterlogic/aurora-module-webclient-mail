@@ -123,8 +123,8 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 		return oAccount && oAccount.threadingIsAvailable() && !bFolderWithoutThreads && bNotSearchOrFilters;
 	}, this);
 
-	this.lockScroll = ko.observable(false);
-	this.lockPages = ko.observableArray(MailCache.pages());
+	this.lockTopScroll = ko.observable(false);
+	this.lockBottomScroll = ko.observable(false);
 	this.collection = MailCache.messages;
 	this.collection.subscribeExtended(function (aNewMessage, aOldMessages) {
 		var
@@ -169,9 +169,9 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 			this.selector.itemSelected(this.currentMessage());
 		}
 
-		if (this.lockScroll() && !this.isLoading()) {
-			this.lockScroll(false);
-			this.lockPages(MailCache.pages());
+		if ((this.lockTopScroll() || this.lockBottomScroll()) && !this.isLoading()) {
+			this.lockTopScroll(false);
+			this.lockBottomScroll(false);
 		}
 	}.bind(this));
 	
@@ -897,19 +897,20 @@ CMessageListView.prototype.onBind = function ($viewDom)
 				bScrollAtBottom = (messageListDom.height() - (iScrollTop + oMessageListScrollDom.height())) < 200,
 				bLoadingOnTop = false
 			;
+
 			if (bScrollAtTop && !bScrollAtBottom) {
-				if (MailCache.page() > 1 && !this.lockScroll()) {
+				if (MailCache.page() > 1 && !this.lockTopScroll()) {
 					// load prev page
-					this.lockScroll(true);
-					this.lockPages(MailCache.pages());
+					this.lockTopScroll(true);
+					this.lockBottomScroll(false);
 					this.requestMessageList(MailCache.page() - 1);
-					bLoadingOnTop = true;
 				}
+				bLoadingOnTop = true;
 			} else if (bScrollAtBottom && !bScrollAtTop) {
-				if (MailCache.page() * Settings.MailsPerPage < this.totalCount() && !this.lockScroll()) {
+				if (MailCache.page() * Settings.MailsPerPage < this.totalCount() && !this.lockBottomScroll()) {
 					// load next page
-					this.lockScroll(true);
-					this.lockPages(MailCache.pages());
+					this.lockBottomScroll(true);
+					this.lockTopScroll(false);
 					this.requestMessageList(MailCache.page() + 1);
 				}
 			}
