@@ -59,10 +59,18 @@ function CMailView()
 		var bInNotes = ModulesManager.isModuleAvailable('MailNotesPlugin') && MailCache.getCurrentFolderFullname() === 'Notes';
 		return bInNotes || Settings.previewPanePosition() !== 'none';
 	});
+	this.allowPreviewPane.subscribe(function () {
+		if (Settings.previewPanePosition() === 'none') {
+			this.onBind();
+		}
+	}, this);
 	this.oBaseMessagePaneView = MessagePaneView;
 	this.messagePane = ko.observable(this.oBaseMessagePaneView);
 	this.messagePane().openMessaheInPopupOrTabBound = this.openMessaheInPopupOrTabBound;
 	this.messagePane.subscribe(function () {
+		if (Settings.previewPanePosition() === 'none') {
+			this.onBind();
+		}
 		this.bindMessagePane();
 		this.messagePane().expandMessagePaneWidth = this.expandMessagePaneWidth;
 	}, this);
@@ -172,12 +180,11 @@ function CMailView()
 	this.horizontalLayout = ko.computed(function () {
 		return Settings.previewPanePosition() === 'bottom';
 	}, this);
-	if (this.horizontalLayout())
-	{
+	if (this.horizontalLayout()) {
 		$('html').addClass('layout-horiz-split');
 	}
 	Settings.previewPanePosition.subscribe(function () {
-		if (Settings.previewPanePosition()) {
+		if (this.horizontalLayout()) {
 			$('html').addClass('layout-horiz-split');
 		} else {
 			$('html').removeClass('layout-horiz-split');
