@@ -163,8 +163,8 @@ function CMailCache()
 	
 	this.uidList = ko.observable(new CUidListModel());
 	this.page = ko.observable(1);
-	this.prevPage = ko.observable(1);
-	this.pages = ko.observableArray([1]);
+	this.prevPage = ko.observable(2);
+	this.pages = ko.observableArray([1, 2]);
 	this.limit = ko.computed(function () {
 		return Settings.MailsPerPage * this.pages().length;
 	}, this);
@@ -780,9 +780,9 @@ CMailCache.prototype.changeCurrentMessageList = function (sFolder, iPage, sSearc
  */
 CMailCache.prototype.resetCurrentPage = function ()
 {
-	this.prevPage(1);
+	this.prevPage(2);
 	this.page(1);
-	this.pages([1]);
+	this.pages([1, 2]);
 };
 
 CMailCache.prototype.changeCurrentPage = function (iPage)
