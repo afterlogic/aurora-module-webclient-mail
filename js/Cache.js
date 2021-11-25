@@ -1719,7 +1719,7 @@ CMailCache.prototype.onGetRelevantFoldersInformationResponseForAccount = functio
 				if (oFolder)
 				{
 					bSameFolder = bSameAccount && oFolder.fullName() === sCurrentFolderName;
-					bFolderHasChanges = oFolder.setRelevantInformation(sUidNext, sHash, iCount, iUnseenCount, bSameFolder);
+					bFolderHasChanges = oFolder.setRelevantInformation(sUidNext, sHash, iCount, iUnseenCount, bSameFolder && !this.isSearchInMultiFolders());
 					if (bSameFolder && bFolderHasChanges && this.uidList().filters() !== Enums.FolderFilter.Unseen)
 					{
 						this.requestCurrentMessageList(oFolder.fullName(), this.page(), this.uidList().search(), this.uidList().filters(), this.uidList().sortBy(), this.uidList().sortOrder(), false);
@@ -1905,9 +1905,6 @@ CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 				this.uidList().sortBy() === oParameters.SortBy &&
 				this.uidList().sortOrder() === oParameters.SortOrder,
 		bCurrentPage = this.page() === ((oParameters.Offset / Settings.MailsPerPage) + 1), // !!!
-		bSearchInAllFolders = (/(^|\s)folders:all(\s|$)/).test(oParameters.Search),
-		bSearchInCurrentAndSubFolders = (/(^|\s)folders:sub(\s|$)/).test(oParameters.Search),
-		bSearchOnlyInCurrentFolder = !bSearchInAllFolders && !bSearchInCurrentAndSubFolders,
 		aNewFolderMessages = []
 	;
 	
@@ -1917,11 +1914,14 @@ CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 	{
 		oFolder = this.getFolderByFullName(iAccountId, oParameters.Folder);
 
-		if (bSearchOnlyInCurrentFolder)
-		{
+		if (!this.isSearchInMultiFolders(oParameters.Search)) {
+			var
+				bMultiFolderSearchDisplayed = this.isSearchInMultiFolders(),
+				bNotApplyInfoToUI = bCurrentFolder && !bCurrentList && !bMultiFolderSearchDisplayed;
+			
 			// perform before getUidList, because in case of a mismatch the uid list will be pre-cleaned
 			oFolder.setRelevantInformation(oResult.UidNext.toString(), oResult.FolderHash, 
-				oResult.MessageCount, oResult.MessageUnseenCount, bCurrentFolder && !bCurrentList);
+				oResult.MessageCount, oResult.MessageUnseenCount, bNotApplyInfoToUI);
 		}
 		bHasFolderChanges = oFolder.hasChanges();
 		this.removeAllMessageListsFromCacheIfHasChanges(oFolder);
