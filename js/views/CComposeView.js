@@ -1179,7 +1179,7 @@ CComposeView.prototype.addMessageAsAttachment = function (oMessage)
 		oParameters = {
 			'AccountID': oMessage.accountId(),
 			'MessageFolder': oMessage.folder(),
-			'MessageUid': oMessage.longUid(),
+			'MessageUid': oMessage.uid(),
 			'FileName': oAttach.fileName()
 		};
 
