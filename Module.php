@@ -10,7 +10,7 @@ namespace Aurora\Modules\MailWebclient;
 /**
  * @license https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @license https://afterlogic.com/products/common-licensing Afterlogic Software License
- * @copyright Copyright (c) 2019, Afterlogic Corp.
+ * @copyright Copyright (c) 2021, Afterlogic Corp.
  *
  * @package Modules
  */
@@ -33,6 +33,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 				'MessageListItemSize'			=> array('string', 'big'),
 				'PreviewPanePosition'			=> array('string', 'right'),
 				'OpenMessagesInPopup'			=> array('bool', false),
+				'AccountsAboveFolders'			=> array('bool', true),
 			]
 		);		
 		
@@ -96,6 +97,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			$aSettings['MessageListItemSize'] = $oUser->{self::GetName().'::MessageListItemSize'};
 			$aSettings['PreviewPanePosition'] = $oUser->{self::GetName().'::PreviewPanePosition'};
 			$aSettings['OpenMessagesInPopup'] = $oUser->{self::GetName().'::OpenMessagesInPopup'};
+			$aSettings['AccountsAboveFolders'] = $oUser->{self::GetName().'::AccountsAboveFolders'};
 		}
 		
 		return $aSettings;

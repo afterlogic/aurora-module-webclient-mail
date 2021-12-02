@@ -43,6 +43,28 @@
 	content: "\e90e";
 }
 
+.folders_panel .account_list {
+	border-bottom: solid 1px #d2d2d2;
+	margin-bottom: 5px;
+
+	.account_item {
+		border-radius: 15px;
+		cursor: pointer;
+		font-size: 11pt;
+		margin: 2px 10px;
+		overflow: hidden;
+		padding: 6px 10px;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		
+		&.current_account {
+			background: #7090cb;
+			color: white;
+			cursor: default;
+		}
+	}
+}
+
 .mail-servers-pagination {
 	margin: -20px 25px 90px;
 	

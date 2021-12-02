@@ -25,6 +25,10 @@ function CHeaderItemView()
 	}, this);
 	
 	this.accounts = ko.computed(function () {
+		if (Settings.accountsAboveFolders()) {
+			// Do not show dropdown
+			return [];
+		}
 		return _.map(AccountList.collection(), function (oAccount) {
 			return {
 				bCurrent: oAccount.isCurrent(),
@@ -34,15 +38,16 @@ function CHeaderItemView()
 		});
 	}, this);
 	
-	if (Settings.ShowEmailAsTabName)
-	{
-		this.linkText = ko.computed(function () {
+	this.linkText = ko.computed(function () {
+		if (!Settings.accountsAboveFolders() && Settings.ShowEmailAsTabName)
+		{
 			var oCurrent = _.find(this.accounts(), function (oAccountData) {
 				return oAccountData.bCurrent;
 			});
 			return oCurrent ? oCurrent.sText : TextUtils.i18n('%MODULENAME%/HEADING_BROWSER_TAB');
-		}, this);
-	}
+		}
+		return TextUtils.i18n('%MODULENAME%/ACTION_SHOW_MAIL');
+	}, this);
 	
 	this.mainHref = ko.computed(function () {
 		if (this.isCurrent())

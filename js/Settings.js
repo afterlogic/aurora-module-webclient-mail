@@ -72,6 +72,7 @@ module.exports = {
 	previewPanePosition: ko.observable('right'),
 	openMessagesInPopup: ko.observable(false),
 	AllMailsFolder: '',
+	accountsAboveFolders: ko.observable(true),
 
 	userMailAccountsCount: ko.observable(0),
 	mailAccountsEmails: ko.observableArray([]),
@@ -159,6 +160,7 @@ module.exports = {
 			this.previewPanePosition(Types.pString(oAppDataMailWebclientSection.PreviewPanePosition, this.previewPanePosition()));
 			this.openMessagesInPopup(Types.pBool(oAppDataMailWebclientSection.OpenMessagesInPopup, this.openMessagesInPopup()));
 			this.AllMailsFolder = Types.pString(oAppDataMailWebclientSection.AllMailsFolder, this.AllMailsFolder);
+			this.accountsAboveFolders(Types.pBool(oAppDataMailWebclientSection.AccountsAboveFolders, this.accountsAboveFolders()));
 		}
 		
 		if (!_.isEmpty(oAppDataFetchersSection))
@@ -191,6 +193,11 @@ module.exports = {
 		this.showMessagesCountInFolderList(Types.pBool(bShowMessagesCountInFolderList, this.showMessagesCountInFolderList()));
 	},
 	
+	updateAccountsPlace: function (bAccountsAboveFolders)
+	{
+		this.accountsAboveFolders(bAccountsAboveFolders);
+	},
+
 	/**
 	 * Updates new admin settings values after saving on server.
 	 * 

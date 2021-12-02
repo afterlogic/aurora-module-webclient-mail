@@ -9,6 +9,12 @@
 	</span>
 </div>
 
+<!-- ko if: accounts().length > 0 -->
+<div class="account_list" data-bind="foreach: accounts">
+	<div class="account_item" data-bind="text: sText, css: {'current_account': bCurrent}, click: changeAccount"></div>
+</div>
+<!-- /ko -->
+
 <div class="middle_bar" data-bind="css: {'quota_visible': -1 < quotaProc(), 'quota_has_text_below': !bShowQuotaBarTextAsTooltip}">
 	<div class="panel_center" data-bind="customScrollbar: {x: false}">
 		<div class="scroll-inner">

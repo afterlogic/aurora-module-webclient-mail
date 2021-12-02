@@ -1,6 +1,7 @@
 'use strict';
 
 var
+	_ = require('underscore'),
 	ko = require('knockout'),
 
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
@@ -25,6 +26,19 @@ var
  */
 function CFolderListView()
 {
+	this.accounts = ko.computed(function () {
+		if (Settings.accountsAboveFolders()) {
+			return _.map(AccountList.collection(), function (oAccount) {
+				return {
+					bCurrent: oAccount.isCurrent(),
+					sText: oAccount.mailboxName() || oAccount.email(),
+					changeAccount: oAccount.changeAccount.bind(oAccount)
+				};
+			});
+		}
+		return [];
+	}, this);
+
 	this.folderList = MailCache.folderList;
 
 	this.folderFullName = ko.computed(function () {
