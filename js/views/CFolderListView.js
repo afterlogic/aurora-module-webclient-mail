@@ -31,7 +31,7 @@ function CFolderListView()
 			return _.map(AccountList.collection(), function (oAccount) {
 				return {
 					bCurrent: oAccount.isCurrent(),
-					sText: oAccount.mailboxName() || oAccount.email(),
+					sText: oAccount.mailboxName() || oAccount.email().split('@')[0],
 					changeAccount: oAccount.changeAccount.bind(oAccount)
 				};
 			});
