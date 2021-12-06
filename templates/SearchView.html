@@ -1,5 +1,5 @@
 <span class="search_block">
-	<span class="input" data-bind="css: {'focus': isFocused, 'expand': bAdvancedSearch}">
+	<span class="input" data-bind="css: {'focus': isFocused, 'search_block_expand': bAdvancedSearch}">
 		<span class="icon search"></span>
 		<input class="field hide" spellcheck="false" type="text" data-bind="value: searchInput" />
 		<div class="field" contenteditable="true" spellcheck="false" 
@@ -93,6 +93,6 @@
 	</span>
 	
 	<span class="control" data-bind="visible: allowAdvancedSearch">
-		<span class="icon" data-bind="click: onAdvancedSearchClick, css: {'expand': bAdvancedSearch()}, customTooltip: '%MODULENAME%/ACTION_OPEN_ADVANCED_SEARCH'"></span>
+		<span class="icon" data-bind="click: onAdvancedSearchClick, css: {'search_block_expand': bAdvancedSearch()}, customTooltip: '%MODULENAME%/ACTION_OPEN_ADVANCED_SEARCH'"></span>
 	</span>
 </span>
