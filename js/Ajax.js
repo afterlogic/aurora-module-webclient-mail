@@ -62,7 +62,6 @@ module.exports = {
 	send: function (sMethod, oParameters, fResponseHandler, oContext) {
 		var
 			MailCache = require('modules/%ModuleName%/js/Cache.js'),
-			iTimeout = (sMethod === 'GetMessagesBodies') ? 100000 : undefined,
 			fBaseResponseHandler = function (oResponse, oRequest) {
 				if (!oResponse.Result && oResponse.ErrorCode === 4002 && App.getUserRole() !== Enums.UserRole.Anonymous)
 				{
@@ -101,6 +100,6 @@ module.exports = {
 		{
 			oParameters.AccountID = MailCache.currentAccountId();
 		}
-		Ajax.send(Settings.ServerModuleName, sMethod, oParameters, fBaseResponseHandler, null, iTimeout);
+		Ajax.send(Settings.ServerModuleName, sMethod, oParameters, fBaseResponseHandler, null);
 	}
 };
