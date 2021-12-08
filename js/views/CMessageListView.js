@@ -127,6 +127,14 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 	this.lockBottomScroll = ko.observable(false);
 	this.collection = MailCache.messages;
 	this.collection.subscribeExtended(function (aNewMessage, aOldMessages) {
+		setTimeout(function () {
+			var
+				messageListDom = $('.message_list', this.$viewDom),
+				messageListScrollDom = $('.message_list_scroll', this.$viewDom)
+			;
+			this.showLoadingOnTop(messageListDom.height() > messageListScrollDom.height());
+		}.bind(this));
+		
 		var
 			aNewUids = _.map(aNewMessage, function (oMessage) {
 				return oMessage.uid();
@@ -213,7 +221,7 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 	}, this);
 
 	this.isLoading = MailCache.messagesLoading;
-	this.isLoadingOnTop = ko.observable(false);
+	this.showLoadingOnTop = ko.observable(false);
 
 	this.isError = MailCache.messagesLoadingError;
 
@@ -894,8 +902,7 @@ CMessageListView.prototype.onBind = function ($viewDom)
 			var
 				iScrollTop = oMessageListScrollDom.scrollTop(),
 				bScrollAtTop = iScrollTop < 200,
-				bScrollAtBottom = (messageListDom.height() - (iScrollTop + oMessageListScrollDom.height())) < 200,
-				bLoadingOnTop = false
+				bScrollAtBottom = (messageListDom.height() - (iScrollTop + oMessageListScrollDom.height())) < 200
 			;
 
 			if (bScrollAtTop && !bScrollAtBottom) {
@@ -905,7 +912,6 @@ CMessageListView.prototype.onBind = function ($viewDom)
 					this.lockBottomScroll(false);
 					this.requestMessageList(MailCache.page() - 1);
 				}
-				bLoadingOnTop = true;
 			} else if (bScrollAtBottom && !bScrollAtTop) {
 				if (MailCache.page() * Settings.MailsPerPage < this.totalCount() && !this.lockBottomScroll()) {
 					// load next page
@@ -914,7 +920,6 @@ CMessageListView.prototype.onBind = function ($viewDom)
 					this.requestMessageList(MailCache.page() + 1);
 				}
 			}
-			this.isLoadingOnTop(bLoadingOnTop);
 		}.bind(this));
 
 	this.selector.initOnApplyBindings(

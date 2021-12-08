@@ -164,12 +164,11 @@ function CMailCache()
 	this.uidList = ko.observable(new CUidListModel());
 	this.page = ko.observable(1);
 	this.prevPage = ko.observable(2);
-	this.pages = ko.observableArray([1, 2]);
 	this.limit = ko.computed(function () {
-		return Settings.MailsPerPage * this.pages().length;
+		return Settings.MailsPerPage * 2;
 	}, this);
 	this.offset = ko.computed(function () {
-		return Settings.MailsPerPage * (_.min(this.pages()) - 1);
+		return Settings.MailsPerPage * (_.min([this.page(), this.prevPage()]) - 1);
 	}, this);
 	
 	this.messagesLoading = ko.observable(false);
@@ -782,7 +781,6 @@ CMailCache.prototype.resetCurrentPage = function ()
 {
 	this.prevPage(2);
 	this.page(1);
-	this.pages([1, 2]);
 };
 
 CMailCache.prototype.changeCurrentPage = function (iPage)
@@ -790,7 +788,6 @@ CMailCache.prototype.changeCurrentPage = function (iPage)
 	if (iPage !== this.page()) {
 		this.prevPage(this.page());
 		this.page(iPage);
-		this.pages(_.uniq([this.page(), this.prevPage()]).sort());
 	}
 };
 
