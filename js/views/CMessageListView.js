@@ -127,11 +127,10 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 	this.lockBottomScroll = ko.observable(false);
 	this.collection = MailCache.messages;
 	this.collection.subscribeExtended(function (aNewMessage, aOldMessages) {
+		var messageListScrollDom = $('.message_list_scroll', this.$viewDom);
+
 		setTimeout(function () {
-			var
-				messageListDom = $('.message_list', this.$viewDom),
-				messageListScrollDom = $('.message_list_scroll', this.$viewDom)
-			;
+			var messageListDom = $('.message_list', this.$viewDom);
 			this.showLoadingOnTop(messageListDom.height() > messageListScrollDom.height());
 		}.bind(this));
 		
@@ -162,13 +161,12 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 		});
 		if (iNewIndex !== iOldIndex) {
 			var
-				oMessageListScrollDom = $('.message_list_scroll', this.$viewDom),
-				oItem = $('.item', oMessageListScrollDom).first(),
+				oItem = $('.item', messageListScrollDom).first(),
 				iHeight = oItem.outerHeight(),
-				iScrollTop = oMessageListScrollDom.scrollTop()
+				iScrollTop = messageListScrollDom.scrollTop()
 			;
 			if (iHeight) {
-				oMessageListScrollDom.scrollTop(iScrollTop + (iNewIndex - iOldIndex) * iHeight);
+				messageListScrollDom.scrollTop(iScrollTop + (iNewIndex - iOldIndex) * iHeight);
 			}
 		}
 

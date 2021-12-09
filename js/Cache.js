@@ -581,7 +581,9 @@ CMailCache.prototype.setMessagesFromUidList = function (oUidList, iOffset, bFill
 			this.messagesLoading(true);
 		}
 
-		if (!this.messagesLoading() || _.isEmpty(this.messages()) || _.isEmpty(aMessages)) {
+		var bMoreDataExpected = (iOffset + aUids.length < oUidList.resultCount()) && (aUids.length < this.limit());
+		if (!bMoreDataExpected) {
+			this.messagesLoading(false); // it will be reassigned later, this needed correct applying of message list
 			this.messages(this.getMessagesWithThreads(this.getCurrentFolderFullname(), oUidList, aMessages));
 		}
 		
@@ -807,7 +809,7 @@ CMailCache.prototype.requestCurrentMessageList = function (sFolder, iPage, sSear
 		iRequestPage = Math.min(this.page(), this.prevPage()),
 		iOffset = (iRequestPage - 1) * Settings.MailsPerPage,
 		iLimit = this.page() === this.prevPage() ? Settings.MailsPerPage : Settings.MailsPerPage * 2,
-		oRequestData = this.requestMessageListWithOffset(sFolder, iOffset, iLimit, sSearch, sFilter || '', sSortBy, iSortOrder, true, (bFillMessages || false))
+		oRequestData = this.requestMessageListWithOffset(sFolder, iOffset, iLimit, sSearch, sFilter || '', sSortBy, iSortOrder, true, bFillMessages)
 	;
 	if (oRequestData)
 	{
