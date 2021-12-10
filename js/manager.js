@@ -303,6 +303,15 @@ module.exports = function (oAppData) {
 						{
 							AddQuotaSettingsView(Settings, ModulesManager, TextUtils);
 						}
+
+						ModulesManager.run(
+							'SettingsWebclient',
+							'registerSettingsTabSection',
+							[
+								function () { return require('modules/%ModuleName%/js/views/settings/MailCustomTagsSettingsFormView.js'); },
+								'mail'
+							]
+						);
 					},
 					getScreens: function () {
 						var oScreens = {};

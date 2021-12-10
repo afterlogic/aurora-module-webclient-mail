@@ -38,6 +38,8 @@ function CFolderListView()
 		}
 		return [];
 	}, this);
+	
+	this.customMailTags = Settings.customMailTags;
 
 	this.folderList = MailCache.folderList;
 

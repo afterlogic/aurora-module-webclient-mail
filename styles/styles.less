@@ -139,3 +139,63 @@
 		}
 	}
 }
+
+.custom_mail_tag_edit_panel {
+	h2 {
+		margin: 0;
+	}
+
+	.buttons {
+		display: inline-block;
+	}
+}
+
+.custom_mail_tag {
+	background: white;
+	border-radius: 10px;
+	color: black;
+	cursor: default;
+	display: inline-block;
+	font-size: 10pt;
+	font-weight: normal;
+	margin: 5px 1px 0 0;
+	padding: 2px 8px;
+	position: relative;
+
+	.user-select(none);
+
+	&.custom_mail_tag_allow_delete {
+		padding: 2px 22px 2px 8px;
+	}
+
+	&.custom_mail_tag_colored {
+		color: white;
+	}
+
+	.ficon {
+		cursor: pointer;
+		font-size: 13px;
+		margin: -2px 7px 0px 0px;
+		outline: none;
+		padding: 0px;
+		position: absolute;
+		right: 0;
+		text-decoration: none;
+	}
+}
+
+.custom_mail_tag_edit_list {
+	display: inline-block;
+	width: calc(100% - 150px);
+	margin-top: -5px;
+	vertical-align: top;
+}
+
+.custom_mail_tag_reset_link {
+	float: right;
+	margin-right: 5px;
+}
+
+.custom_mail_tag_list {
+	margin: -5px 7px 5px;
+}

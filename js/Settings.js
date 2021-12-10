@@ -39,6 +39,7 @@ module.exports = {
 	IgnoreImapSubscription: false,
 	ImageUploadSizeLimit: 0,
 	AllowUnifiedInbox: true,
+	customMailTags: ko.observableArray([]),
 
 	// from MailWebclient module
 	AllowAppRegisterMailto: false,
@@ -125,6 +126,8 @@ module.exports = {
 			this.MessagesSortBy.DefaultSortBy = Types.pString(this.MessagesSortBy.DefaultSortBy, 'arrival');
 			var sOrder = Types.pString(this.MessagesSortBy.DefaultSortOrder, 'desc');
 			this.MessagesSortBy.DefaultSortOrder = sOrder === 'desc' ? Enums.SortOrder.Desc : Enums.SortOrder.Asc;
+
+			this.customMailTags(Types.pArray(oAppDataMailSection.CustomMailTags, this.customMailTags()));
 		}
 			
 		if (!_.isEmpty(oAppDataMailWebclientSection))
@@ -208,6 +211,34 @@ module.exports = {
 	{
 		this.AutocreateMailAccountOnNewUserFirstLogin = Types.pBool(bAutocreateMailAccountOnNewUserFirstLogin, this.AutocreateMailAccountOnNewUserFirstLogin);
 		this.AllowAddAccounts = Types.pBool(bAllowAddAccounts, this.AllowAddAccounts);
+	},
+	
+	addCustomMailTag: function (customMailTag)
+	{
+		this.customMailTags.push(customMailTag);
+	},
+	
+	updateCustomMailTags: function (customMailTags)
+	{
+		this.customMailTags(customMailTags);
+	},
+	
+	updateCustomMailTag: function (tagLabel, newTagData)
+	{
+		this.customMailTags(_.map(this.customMailTags(), function (tagData) {
+			if (tagData.label === tagLabel) {
+				return newTagData;
+			} else {
+				return tagData;
+			}
+		}));
+	},
+	
+	deleteCustomMailTag: function (tagLabel)
+	{
+		this.customMailTags(_.filter(this.customMailTags(), function (tagData) {
+			return tagData.label !== tagLabel;
+		}));
 	},
 	
 	disableEditDomainsInServer: function ()

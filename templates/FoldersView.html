@@ -5,13 +5,24 @@
 	</span>
 	<span href="javascript: void(0)" class="button add_new_folder" data-bind="click: addNewFolder, visible: visibleNewFolderButton">
 		<span class="icon"></span>
-		<span data-bind="i18n: {'key': 'MAILWEBCLIENT/HEADING_NEW_FOLDER'}"></span>
+		<span data-bind="i18n: {'key': '%MODULENAME%/HEADING_NEW_FOLDER'}"></span>
 	</span>
 </div>
 
 <!-- ko if: accounts().length > 0 -->
 <div class="account_list" data-bind="foreach: accounts">
 	<div class="account_item" data-bind="text: sText, css: {'current_account': bCurrent}, click: changeAccount"></div>
+</div>
+<!-- /ko -->
+
+<!-- ko if: customMailTags().length > 0 -->
+<div>
+	<div class="link custom_mail_tag_reset_link" data-bind="i18n: {'key': '%MODULENAME%/ACTION_RESET_FLAGS'}"></div>
+	<div class="custom_mail_tag_list" data-bind="foreach: customMailTags">
+		<div class="custom_mail_tag">
+			<span data-bind="text: label"></span>
+		</div>
+	</div>
 </div>
 <!-- /ko -->
 

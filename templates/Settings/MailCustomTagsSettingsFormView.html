@@ -1,0 +1,37 @@
+<div class="panel_center custom_mail_tag_edit_panel">
+	<div class="fields">
+		<div class="fieldset">
+			<div class="row">
+				<h2 data-bind="i18n: {'key': '%MODULENAME%/HEADING_CUSTOM_TAGS'}"></h2>
+			</div>
+
+			<div class="row">
+				<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_CUSTOM_TAG_LABEL'}"></span>
+				<input class="value input" spellcheck="false" type="text" maxlength="65"
+					   data-bind="value: tagLabel, valueUpdate: 'afterkeydown', onEnter: save, placeholder: tagPlaceholderText, hasfocus: tagLabelFocused"/>
+				<div class="buttons">
+					<span class="button" data-bind="click: save, text: saveButtonText"></span>
+					<span class="button" data-bind="click: clear, visible: !createMode(), i18n: {'key': 'COREWEBCLIENT/ACTION_CANCEL'}"></span>
+				</div>
+			</div>
+
+			<div class="row">
+				<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_CUSTOM_TAG_COLOR'}"></span>
+				<span class="colors" data-bind="foreach: aColors">
+					<span class="item color_pick" data-bind="style: {backgroundColor: $data}, css: {'selected': $parent.tagColor() === $data},
+						 click: function () { $parent.setColor($data); }"></span>
+				</span>
+			</div>
+
+			<div class="row">
+				<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_CURRENT_CUSTOM_TAGS'}"></span>
+				<span class="custom_mail_tag_edit_list" data-bind="foreach: currentTags, initDom: currentTagsDom">
+					<span class="custom_mail_tag custom_mail_tag_colored custom_mail_tag_allow_delete" data-bind="style: {'background': color}">
+						<span data-bind="text: label, attr: {'data-tag': label}, customTooltip: '%MODULENAME%/INFO_DBLCLICK_TO_EDIT'"></span>
+						<span class="ficon" data-bind="customTooltip: '%MODULENAME%/ACTION_DELETE_TAG', click: function () { $parent.deleteTag(label); }">&#x2716;</span>
+					</span>
+				</span>
+			</div>
+		</div>
+	</div>
+</div>
