@@ -165,10 +165,10 @@ function CMailCache()
 	this.page = ko.observable(1);
 	this.prevPage = ko.observable(2);
 	this.limit = ko.computed(function () {
-		return Settings.MailsPerPage * 2;
+		return Settings.MailsPerPage * _.max([this.page(), this.prevPage()]);
 	}, this);
 	this.offset = ko.computed(function () {
-		return Settings.MailsPerPage * (_.min([this.page(), this.prevPage()]) - 1);
+		return 0;
 	}, this);
 	
 	this.messagesLoading = ko.observable(false);
