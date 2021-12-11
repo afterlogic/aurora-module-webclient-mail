@@ -85,6 +85,14 @@ function CMessageModel()
 	this.partialFlagged = ko.observable(false);
 	this.answered = ko.observable(false);
 	this.forwarded = ko.observable(false);
+	
+	this.allFlags = ko.observableArray([]);
+	this.customMailTags = ko.computed(function () {
+		return _.filter(Settings.customMailTags(), function (tagData) {
+			return _.indexOf(this.allFlags(), tagData.label) !== -1;
+		}.bind(this));
+	}, this);
+
 	this.hasAttachments = ko.observable(false);
 	this.hasIcalAttachment = ko.observable(false);
 	this.hasVcardAttachment = ko.observable(false);
@@ -238,18 +246,18 @@ CMessageModel.prototype.setCustomLabel = function (sId, sText, sCssClass)
 			this.customLabels.push({
 				id: sId,
 				text: sText,
-				cssClass: sCssClass,
+				cssClass: sCssClass
 			});
 		}
 	}
-}
+};
 
 CMessageModel.prototype.removeCustomLabel = function (sId)
 {
 	this.customLabels(_.filter(this.customLabels(), function (oCustomLabel) {
 		return oCustomLabel.id !== sId;
 	}));
-}
+};
 
 CMessageModel.prototype.requireMailCache = function ()
 {
@@ -410,6 +418,17 @@ CMessageModel.prototype.markAsThreadPart = function (iShowThrottle, sParentUid)
 	}, iShowThrottle);
 };
 
+CMessageModel.prototype.updateFlag = function (editFlagName, addFlag)
+{
+	if (addFlag) {
+		this.allFlags.push(editFlagName);
+	} else {
+		this.allFlags(_.filter(this.allFlags(), function (flagName) {
+			return flagName !== editFlagName;
+		}));
+	}
+};
+
 /**
  * @param {AjaxMessageResponse} oData
  * @param {number} iAccountId
@@ -438,6 +457,8 @@ CMessageModel.prototype.parse = function (oData, iAccountId, bThreadPart, bTrust
 		this.flagged(!!oData.IsFlagged);
 		this.answered(!!oData.IsAnswered);
 		this.forwarded(!!oData.IsForwarded);
+		
+		this.allFlags(Types.pArray(oData.AllFlags));
 
 		if (oData.Custom)
 		{

@@ -32,6 +32,7 @@ var
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 
 	CAttachmentModel = require('modules/%ModuleName%/js/models/CAttachmentModel.js'),
+	oCustomMailTagsButtonView = require('modules/%ModuleName%/js/views/CustomMailTagsButtonView.js'),
 
 	InformatikSettings = require('modules/InformatikProjects/js/Settings.js'),
 	
@@ -132,6 +133,8 @@ function CMessagePaneView()
 		return Settings.openMessagesInPopup() ? TextUtils.i18n('%MODULENAME%/ACTION_OPEN_IN_POPUP') : TextUtils.i18n('%MODULENAME%/ACTION_OPEN_IN_NEW_TAB');
 	}, this);
 	this.openInPopupOrTabCommand = Utils.createCommand(this, this.openInPopupOrTab);
+
+	this.oCustomMailTagsButtonView = oCustomMailTagsButtonView;
 
 	this.moreCommand = Utils.createCommand(this, null, this.isCurrentMessageLoaded);
 	this.moreSectionCommands = ko.observableArray([]);

@@ -28,7 +28,7 @@
 				<span class="custom_mail_tag_edit_list" data-bind="foreach: currentTags, initDom: currentTagsDom">
 					<span class="custom_mail_tag custom_mail_tag_colored custom_mail_tag_allow_delete" data-bind="style: {'background': color}">
 						<span data-bind="text: label, attr: {'data-tag': label}, customTooltip: '%MODULENAME%/INFO_DBLCLICK_TO_EDIT'"></span>
-						<span class="ficon" data-bind="customTooltip: '%MODULENAME%/ACTION_DELETE_TAG', click: function () { $parent.deleteTag(label); }">&#x2716;</span>
+						<span class="delete_tag_icon" data-bind="customTooltip: '%MODULENAME%/ACTION_DELETE_TAG', click: function () { $parent.deleteTag(label); }">&#x2716;</span>
 					</span>
 				</span>
 			</div>

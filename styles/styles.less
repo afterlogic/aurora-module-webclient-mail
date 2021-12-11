@@ -172,7 +172,7 @@
 		color: white;
 	}
 
-	.ficon {
+	.delete_tag_icon {
 		cursor: pointer;
 		font-size: 13px;
 		margin: -2px 7px 0px 0px;
@@ -181,6 +181,23 @@
 		position: absolute;
 		right: 0;
 		text-decoration: none;
+	}
+}
+
+.set_custom_tags {
+	.icon:before {
+		content: '\2690';
+		font-size: 17pt;
+	}
+
+	.custom_mail_tag {
+		line-height: normal;
+		margin: 4px 6px;
+
+		&.custom_mail_tag_checked span:after {
+			content: '\2713';
+			margin-left: 6px;
+		}
 	}
 }
 

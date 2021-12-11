@@ -20,6 +20,11 @@
 			<!-- ko foreach: customLabels -->
 				<span class="custom_marker" data-bind="text: text, css: cssClass"></span>
 			<!-- /ko -->
+			<!-- ko foreach: customMailTags().reverse() -->
+				<span class="custom_marker custom_mail_tag custom_mail_tag_colored" data-bind="style: {'background': color}">
+					<span data-bind="text: label"></span>
+				</span>
+			<!-- /ko -->
 			<span class="attachments has_attachments" data-bind="visible: hasAttachments(),
 				css: {'has_ical_attachment': hasIcalAttachment(), 'has_vcard_attachment': hasVcardAttachment()}"></span>
 			<span class="marker"></span>

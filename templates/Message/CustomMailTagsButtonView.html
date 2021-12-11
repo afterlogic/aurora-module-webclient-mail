@@ -1,0 +1,20 @@
+<!-- ko if: customMailTags().length > 0 -->
+<span class="item set_custom_tags" data-bind="dropdown: {control: false, scrollToTopContainer: '.scroll-inner'},
+		customTooltip: '%MODULENAME%/ACTION_SET_CUSTOM_TAGS'">
+	<span class="icon"></span>
+	<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_SET_CUSTOM_TAGS'}"></span>
+	<span class="icon arrow"></span>
+	<span class="dropdown">
+		<span class="dropdown_helper">
+			<span class="dropdown_arrow"><span></span></span>
+			<span class="dropdown_content" data-bind="customScrollbar: {x: false}">
+				<span class="scroll-inner" data-bind="foreach: customMailTags">
+					<span class="custom_mail_tag custom_mail_tag_colored" data-bind="style: {'background': color}, css: {'custom_mail_tag_checked': checked}">
+						<span data-bind="text: label, click: function () { $parent.setCustomMailFlag(label); }"></span>
+					</span>
+				</span>
+			</span>
+		</span>
+	</span>
+</span>
+<!-- /ko -->
