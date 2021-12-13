@@ -81,6 +81,12 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 	this.currentMessage.subscribe(function () {
 		this.isFocused(false);
 		this.selector.itemSelected(this.currentMessage());
+		var last = this.collection().length > 0 ? this.collection()[this.collection().length - 1] : null;
+		if (last && this.currentMessage() && last.uid() === this.currentMessage().uid()) {
+			var messageListScrollDom = $('.message_list_scroll', this.$viewDom);
+			var messageListDom = $('.message_list', this.$viewDom);
+			messageListScrollDom.scrollTop(messageListDom.height());
+		}
 	}, this);
 
 	this.folderList = MailCache.folderList;
@@ -228,6 +234,15 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 	}, this);
 	this.visibleInfoSearchLoading = ko.computed(function () {
 		return this.isSearch() && !this.isUnseenFilter() && this.isLoading();
+	}, this);
+	this.loadingText = ko.computed(function () {
+		if (this.visibleInfoLoading()) {
+			return TextUtils.i18n('%MODULENAME%/INFO_LOADING_MESSAGE_LIST');
+		}
+		if (this.visibleInfoSearchLoading()) {
+			return TextUtils.i18n('%MODULENAME%/INFO_SEARCHING_FOR_MESSAGES');
+		}
+		return '';
 	}, this);
 	this.visibleInfoSearchList = ko.computed(function () {
 		return this.isSearch() && !this.isUnseenFilter() && !this.isLoading() && !this.isEmptyList();

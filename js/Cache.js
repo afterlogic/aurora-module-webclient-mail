@@ -162,8 +162,8 @@ function CMailCache()
 	}, this);
 	
 	this.uidList = ko.observable(new CUidListModel());
-	this.page = ko.observable(1);
-	this.prevPage = ko.observable(2);
+	this.page = ko.observable(2);
+	this.prevPage = ko.observable(1);
 	this.limit = ko.computed(function () {
 		return Settings.MailsPerPage * _.max([this.page(), this.prevPage()]);
 	}, this);
@@ -781,15 +781,19 @@ CMailCache.prototype.changeCurrentMessageList = function (sFolder, iPage, sSearc
  */
 CMailCache.prototype.resetCurrentPage = function ()
 {
-	this.prevPage(2);
-	this.page(1);
+	this.prevPage(1);
+	this.page(2);
 };
 
 CMailCache.prototype.changeCurrentPage = function (iPage)
 {
 	if (iPage !== this.page()) {
-		this.prevPage(this.page());
-		this.page(iPage);
+		if (iPage === 1) {
+			this.resetCurrentPage();
+		} else {
+			this.prevPage(this.page());
+			this.page(iPage);
+		}
 	}
 };
 
