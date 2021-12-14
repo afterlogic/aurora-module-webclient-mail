@@ -634,6 +634,7 @@ CMessagePaneView.prototype.setMessageBody = function ()
 			sHtml = oDom.length > 0 ? oDom.html() : '';
 
 			$body.append(sHtml);
+			$body.children().addClass('clearfix');
 
 			this.visiblePicturesControl(oMessage.hasExternals() && !oMessage.isExternalsAlwaysShown());
 			this.visibleShowPicturesLink(!oMessage.isExternalsShown());
