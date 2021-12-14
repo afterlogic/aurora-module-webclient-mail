@@ -63,6 +63,14 @@ function CMailView()
 		if (Settings.previewPanePosition() === 'none') {
 			this.onBind();
 		}
+		if (this.allowPreviewPane() && _.isFunction(this.messagePane().onShow))
+		{
+			this.messagePane().onShow();
+		}
+		if (!this.allowPreviewPane() && _.isFunction(this.messagePane().onHide))
+		{
+			this.messagePane().onHide();
+		}
 	}, this);
 	this.oBaseMessagePaneView = MessagePaneView;
 	this.messagePane = ko.observable(this.oBaseMessagePaneView);
@@ -214,7 +222,7 @@ CMailView.prototype.ViewConstructorName = 'CMailView';
  */
 CMailView.prototype.hasUnsavedChanges = function ()
 {
-	return this.messagePane() && _.isFunction(this.messagePane().hasUnsavedChanges) && this.messagePane().hasUnsavedChanges();
+	return this.allowPreviewPane() && this.messagePane() && _.isFunction(this.messagePane().hasUnsavedChanges) && this.messagePane().hasUnsavedChanges();
 };
 
 /**
@@ -433,7 +441,7 @@ CMailView.prototype.onRoute = function (aParams)
 CMailView.prototype.onShow = function ()
 {
 	this.oMessageList.onShow();
-	if (_.isFunction(this.messagePane().onShow))
+	if (this.allowPreviewPane() && _.isFunction(this.messagePane().onShow))
 	{
 		this.messagePane().onShow();
 	}

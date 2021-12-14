@@ -461,11 +461,52 @@ CMessagePaneView.prototype.passReplyDataToNewTab = function (sUniq)
 
 CMessagePaneView.prototype.onCurrentMessageSubscribe = function ()
 {
+	if (this.openedPopupSubscription) {
+		this.openedPopupSubscription.dispose();
+		this.openedPopupSubscription = undefined;
+	}
+	if (!this.bNotPopup && !this.opened()) { // this is not opened popup
+		this.openedPopupSubscription = this.opened.subscribe(function () {
+			setTimeout(function () {
+				if (!this.bNotPopup && this.opened()) {
+					this.onCurrentMessageSubscribe();
+				}
+			}.bind(this));
+		}, this);
+		return;
+	}
+
+	if (this.shownPaneSubscription) {
+		this.shownPaneSubscription.dispose();
+		this.shownPaneSubscription = undefined;
+	}
+	if (this.bNotPopup && !this.shown()) { // this is not shown pane
+		this.shownPaneSubscription = this.shown.subscribe(function () {
+			setTimeout(function () {
+				if (this.bNotPopup && this.shown()) {
+					this.onCurrentMessageSubscribe();
+				}
+			}.bind(this));
+		}, this);
+		return;
+	}
+
 	var
 		oMessage = this.currentMessage(),
 		oAccount = oMessage ? AccountList.getAccount(oMessage.accountId()) : null,
 		oReplyData = null
 	;
+	
+	if (oMessage) {
+		if (oMessage.completelyFilledSubscription) {
+			oMessage.completelyFilledSubscription.dispose();
+			oMessage.completelyFilledSubscription = undefined;
+		}
+		if (oMessage.completelyFilledNewTabSubscription) {
+			oMessage.completelyFilledNewTabSubscription.dispose();
+			oMessage.completelyFilledNewTabSubscription = undefined;
+		}
+	}
 
 	if (MainTab && oMessage)
 	{
@@ -557,16 +598,6 @@ CMessagePaneView.prototype.onCurrentMessageSubscribe = function ()
 			{
 				oMessage.completelyFilledSubscription = oSubscribedField.subscribe(this.onCurrentMessageSubscribe, this);
 			}
-		}
-		else if (oMessage.completelyFilledSubscription)
-		{
-			oMessage.completelyFilledSubscription.dispose();
-			oMessage.completelyFilledSubscription = undefined;
-		}
-		else if (oMessage.completelyFilledNewTabSubscription)
-		{
-			oMessage.completelyFilledNewTabSubscription.dispose();
-			oMessage.completelyFilledNewTabSubscription = undefined;
 		}
 	}
 	else
@@ -1006,12 +1037,12 @@ CMessagePaneView.prototype.downloadAllAttachmentsSeparately = function ()
 
 CMessagePaneView.prototype.onShow = function ()
 {
-	this.bShown = true;
+	this.shown(true);
 };
 
 CMessagePaneView.prototype.onHide = function ()
 {
-	this.bShown = false;
+	this.shown(false);
 	_.each(this.controllers(), _.bind(function (oController) {
 		if ($.isFunction(oController.onHide))
 		{
@@ -1083,7 +1114,7 @@ CMessagePaneView.prototype.hotKeysBind = function ()
 {
 	$(document).on('keydown', $.proxy(function(ev) {
 
-		var	bComputed = this.bShown && ev && !ev.ctrlKey && !ev.shiftKey &&
+		var	bComputed = this.shown() && ev && !ev.ctrlKey && !ev.shiftKey &&
 			!Utils.isTextFieldFocused() && this.isEnableReply();
 
 		if (bComputed && ev.keyCode === Enums.Key.q)
