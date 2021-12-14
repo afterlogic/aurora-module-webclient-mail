@@ -198,6 +198,9 @@ function CMailView()
 			$('html').removeClass('layout-horiz-split');
 		}
 		this.onBind();
+		if (_.isFunction(this.messagePane().onCurrentMessageSubscribe)) {
+			this.messagePane().onCurrentMessageSubscribe();
+		}
 	}, this);
 	$('html').addClass('layout-' + Settings.messageListItemSize() + '-message-list-item');
 	Settings.messageListItemSize.subscribeExtended(function (sNewMessageListItemSize, sOldMessageListItemSize) {
