@@ -108,6 +108,8 @@ function CMailView()
 	this.visibleMoveTool = ko.computed(function () {
 		return !MailCache.oUnifiedInbox.selected() && !Types.isNonEmptyArray(this.customModulesDisabledMove());
 	}, this);
+
+	this.needToCopyDraggedItems = ko.observable(false);
 	this.moveToFolderCommand = Utils.createCommand(this, function () {}, this.isEnableGroupOperations);
 //	this.copyToFolderCommand = Utils.createCommand(this, function () {}, this.isEnableGroupOperations);
 	this.deleteCommand = Utils.createCommand(this.oMessageList, this.oMessageList.executeDelete, this.isEnableGroupOperations);
@@ -474,9 +476,9 @@ CMailView.prototype.routeMessageView = function (sFolderName, iUid)
 
 /**
  * @param {Object} oMessage
- * @param {boolean} bCtrl
+ * @param {boolean} ctrlOrCmdUsed
  */
-CMailView.prototype.dragAndDropHelper = function (oMessage, bCtrl)
+CMailView.prototype.dragAndDropHelper = function (oMessage, ctrlOrCmdUsed)
 {
 	if (oMessage)
 	{
@@ -492,8 +494,9 @@ CMailView.prototype.dragAndDropHelper = function (oMessage, bCtrl)
 	oHelper.data('p7-message-list-folder', MailCache.getCurrentFolderFullname());
 	oHelper.data('p7-message-list-uids', aUids);
 
+	this.needToCopyDraggedItems(ctrlOrCmdUsed);
 	$('.count-text', oHelper).text(TextUtils.i18n('%MODULENAME%/LABEL_DRAG_MESSAGES_PLURAL', {
-		'COUNT': bCtrl ? '+ ' + iCount : iCount
+		'COUNT': ctrlOrCmdUsed ? '+ ' + iCount : iCount
 	}, null, iCount));
 
 	return oHelper;
@@ -517,7 +520,7 @@ CMailView.prototype.messagesDrop = function (oToFolder, oEvent, oUi)
 		if ('' !== sFolder && null !== aUids)
 		{
 			Utils.uiDropHelperAnim(oEvent, oUi);
-			if(oEvent.ctrlKey)
+			if(this.needToCopyDraggedItems())
 			{
 				this.oMessageList.executeCopyToFolder(oToFolder.fullName());
 			}
