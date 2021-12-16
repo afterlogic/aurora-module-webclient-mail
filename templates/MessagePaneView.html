@@ -102,10 +102,13 @@
 <div class="panel_center">
 	<!-- ko if: !bNotPopup -->
 	<div class="search_in_message_pane" data-bind="visible: isOpenedSearchInMessage">
-		<input data-bind="value: wordToSearchInMessage, hasfocus: wordToSearchInMessageFocused, onEnter: searchInMessage" />
-		<span data-bind="text: foundMatches().length > 0 ? currentMatchPos() + 1 : 0"></span>
-		/
-		<span data-bind="text: foundMatches().length"></span>
+		<input data-bind="value: wordToSearchInMessage, hasfocus: wordToSearchInMessageFocused,
+				valueUpdate: 'afterkeydown', onEnter: highlightNextSearchInMessage" />
+		<span class="search_in_message_counter">
+			<span data-bind="text: foundMatches().length > 0 ? currentMatchPos() + 1 : 0"></span>
+			/
+			<span data-bind="text: foundMatches().length"></span>
+		</span>
 		<span class="search_in_message_arrow_down" data-bind="click: highlightPrevSearchInMessage, css: {'disabled': foundMatches().length === 0}">
 			<span class="icon"></span>
 		</span>

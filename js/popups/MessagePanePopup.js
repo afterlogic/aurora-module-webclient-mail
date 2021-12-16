@@ -21,10 +21,10 @@ function CMessagePanePopup()
 	CMessagePaneView.call(this);
 	
 	this.wordToSearchInMessage = ko.observable('');
+	this.wordToSearchInMessage.subscribe(_.debounce(this.searchInMessage.bind(this), 300));
 	this.wordToSearchInMessageFocused = ko.observable(false);
 	this.isOpenedSearchInMessage = ko.observable(false);
 	this.messageHtml = null;
-	this.messageText = null;
 	this.foundMatches = ko.observableArray([]);
 	this.currentMatchPos = ko.observable(0);
 	this.currentSearchTerm = '';
@@ -70,7 +70,6 @@ CMessagePanePopup.prototype.preventBackspaceOff = function ()
 CMessagePanePopup.prototype.customSearchOn = function ()
 {
 	this.messageHtml = null;
-	this.messageText = null;
 	this.closeSearchInMessage();
 	$(document).on('keydown', this.useCustomSearchBound);
 };
@@ -78,7 +77,6 @@ CMessagePanePopup.prototype.customSearchOn = function ()
 CMessagePanePopup.prototype.customSearchOff = function ()
 {
 	this.messageHtml = null;
-	this.messageText = null;
 	this.closeSearchInMessage();
 	$(document).off('keydown', this.useCustomSearchBound);
 };
@@ -97,11 +95,17 @@ CMessagePanePopup.prototype.useCustomSearch = function (ev) {
 	}
 };
 
-CMessagePanePopup.prototype.openSearchInMessage = function ()
+CMessagePanePopup.prototype.clearSearchInMessage = function ()
 {
 	this.foundMatches([]);
 	this.currentMatchPos(0);
 	this.currentSearchTerm = '';
+};
+
+CMessagePanePopup.prototype.openSearchInMessage = function ()
+{
+	this.clearSearchInMessage();
+	this.messageHtml = null;
 	this.isOpenedSearchInMessage(true);
 	this.wordToSearchInMessage('');
 	this.wordToSearchInMessageFocused(true);
@@ -109,6 +113,10 @@ CMessagePanePopup.prototype.openSearchInMessage = function ()
 
 CMessagePanePopup.prototype.closeSearchInMessage = function ()
 {
+	if (this.messageHtml) {
+		this.domTextBody().html(this.messageHtml);
+	}
+	this.clearSearchInMessage();
 	this.isOpenedSearchInMessage(false);
 };
 
@@ -118,37 +126,27 @@ CMessagePanePopup.prototype.searchInMessage = function ()
 		searchTerm = this.wordToSearchInMessage(),
 		areaToSearch = this.domTextBody()
 	;
-    if (searchTerm && areaToSearch) {
-		if (this.currentSearchTerm === searchTerm) {
-			this.highlightNextSearchInMessage();
-			return;
-		}
-
-		var
-			messageHtml = this.messageHtml === null ? areaToSearch.html() : this.messageHtml,
-			messageText = this.messageText === null ? areaToSearch.text() : this.messageText
-		;
+    if (searchTerm) {
+		var messageHtml = this.messageHtml === null ? areaToSearch.html() : this.messageHtml;
 		this.messageHtml = messageHtml;
-		this.messageText = messageText;
 
         //var wholeWordOnly = new RegExp("\\g"+searchTerm+"\\g","ig"); //matches whole word only
         //var anyCharacter = new RegExp("\\g["+searchTerm+"]\\g","ig"); //matches any word with any of search chars characters
-        var searchTermRegEx = new RegExp(searchTerm, "ig");
-        var matches = messageText.match(searchTermRegEx);
-
-        if (matches !== null && matches.length > 0) {
-            areaToSearch.html(messageHtml.replace(searchTermRegEx, '<span class="match">' + searchTerm + '</span>'));
-			
-			this.foundMatches(areaToSearch.find('.match'));
-			this.currentMatchPos(0);
-			this.currentSearchTerm = searchTerm;
-			if (this.foundMatches().length > 0) {
-				this.highlightCurrentMatchInMessage();
-			}
-            return true;
-        }
-    }
-    return false;	
+        var searchTermRegEx = new RegExp('(?![^<]*>)(' + searchTerm + ')', "ig");
+		areaToSearch.html(messageHtml.replace(searchTermRegEx, '<span class="match">$1</span>'));
+		this.foundMatches(areaToSearch.find('.match'));
+		this.currentMatchPos(0);
+		this.currentSearchTerm = searchTerm;
+		if (this.foundMatches().length > 0) {
+			this.highlightCurrentMatchInMessage();
+		} else {
+			this.clearSearchInMessage();
+			areaToSearch.html(this.messageHtml);
+		}
+    } else {
+		this.clearSearchInMessage();
+		areaToSearch.html(this.messageHtml);
+	}
 };
 
 CMessagePanePopup.prototype.highlightPrevSearchInMessage = function ()
@@ -182,7 +180,7 @@ CMessagePanePopup.prototype.highlightCurrentMatchInMessage = function ()
 		currentMatchTop = currentMatch.offset().top
 	;
 	currentMatch.addClass('highlighted');
-	if (currentMatchTop < scrollAreaTop || currentMatchTop > (scrollAreaTop + this.domTextBodyScrollArea().height())) {
+	if (currentMatchTop < scrollAreaTop || currentMatchTop > (scrollAreaTop + this.domTextBodyScrollArea().height() - 100)) {
 		this.domTextBodyScrollArea().animate({
 			scrollTop: this.domTextBodyScrollArea().scrollTop() + currentMatchTop - scrollAreaTop
 		}, 300);
