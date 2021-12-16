@@ -670,10 +670,10 @@ CMessagePaneView.prototype.setMessageBody = function ()
 			this.visiblePicturesControl(oMessage.hasExternals() && !oMessage.isExternalsAlwaysShown());
 			this.visibleShowPicturesLink(!oMessage.isExternalsShown());
 
-			if (!TextUtils.htmlStartsWithBlockquote(sHtml))
-			{
-				this.doHidingBlockquotes(aCollapsedStatuses);
-			}
+//			if (!TextUtils.htmlStartsWithBlockquote(sHtml))
+//			{
+//				this.doHidingBlockquotes(aCollapsedStatuses);
+//			}
 		}
 
 		$body.data('displayed-message-uid', oMessage.uid());
