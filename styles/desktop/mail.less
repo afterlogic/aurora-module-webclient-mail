@@ -665,11 +665,24 @@
 
 .search_in_message_pane {
 	position: absolute;
-	z-index: 1;
-	right: 0;
+	z-index: 100;
+	right: 10px;
 	background: white;
-	padding: 4px;
-	border: solid 1px grey;
+	padding: 10px 15px;
+	border-radius: 3px;
+	box-shadow: 0px 2px 10px #0000005e;
+	margin-top: -5px;
+
+	input {
+	    border: 0px;
+	}
+	
+	.search_in_message_counter {
+	    border-right: 1px solid #ccc;
+	    display: inline-block;
+	    padding: 5px 8px;
+	    margin-right: 5px;
+	}
 }
 
 .search_in_message_arrow_down,
@@ -677,9 +690,31 @@
 .search_in_message_close {
 	.init-icon-font();
 	color: #626365;
+	color: #626365;
+	padding: 4px;
+        text-align: center;
+	font-size: 0px;
+        height: 16px;
+        width: 16px;
+        display: inline-block;
+        vertical-align: middle;
+
+	&:hover {
+	    background: #ebebeb;
+	}
+	
+	&:before {
+	    display: inline-block;
+	    vertical-align: middle;
+	    font-size: 15px;
+	}
 	
 	&.disabled {
 		color: #c3c4c4;
+	}
+
+	.icon {
+	    display:none;
 	}
 }
 
