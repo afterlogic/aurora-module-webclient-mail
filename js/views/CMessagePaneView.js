@@ -234,6 +234,7 @@ function CMessagePaneView()
 	this.textBody = ko.observable('');
 	this.textBodyForNewWindow = ko.observable('');
 	this.domTextBody = ko.observable(null);
+	this.domTextBodyScrollArea = ko.observable(null);
 	this.rtlMessage = ko.observable(false);
 
 	this.contentHasFocus = ko.observable(false);

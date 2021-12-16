@@ -100,10 +100,29 @@
 	<!-- /ko -->
 </div>
 <div class="panel_center">
+	<!-- ko if: !bNotPopup -->
+	<div class="search_in_message_pane" data-bind="visible: isOpenedSearchInMessage">
+		<input data-bind="value: wordToSearchInMessage, hasfocus: wordToSearchInMessageFocused, onEnter: searchInMessage" />
+		<span data-bind="text: foundMatches().length > 0 ? currentMatchPos() + 1 : 0"></span>
+		/
+		<span data-bind="text: foundMatches().length"></span>
+		<span class="search_in_message_arrow_down" data-bind="click: highlightPrevSearchInMessage, css: {'disabled': foundMatches().length === 0}">
+			<span class="icon"></span>
+		</span>
+		<span class="search_in_message_arrow_up" data-bind="click: highlightNextSearchInMessage, css: {'disabled': foundMatches().length === 0}">
+			<span class="icon"></span>
+		</span>
+		<span class="search_in_message_close" data-bind="click: closeSearchInMessage">
+			<span class="icon"></span>
+		</span>
+	</div>
+	<!-- /ko -->
 	<div class="panels" data-bind="css: {'has_attachments': hasNotInlineAttachments, 'view_attachments': visibleAttachments}">
 		<div class="panel message_panel">
-			<div class="message" data-bind="customScrollbar: {x: true, y: true, 'reset': displayedMessageUid()}, css: {'has_bodytext': hasBodyText, 'has_attachments': hasNotInlineAttachments}">
-				<div class="message_content scroll-inner" data-bind="hasfocus: contentHasFocus, css: {'message_content_not_empty_text': isCurrentMessage() && textBody()}">
+			<div class="message" data-bind="
+					customScrollbar: {x: true, y: true, 'reset': displayedMessageUid()},
+					css: {'has_bodytext': hasBodyText, 'has_attachments': hasNotInlineAttachments}">
+				<div class="message_content scroll-inner" data-bind="initDom: domTextBodyScrollArea, hasfocus: contentHasFocus, css: {'message_content_not_empty_text': isCurrentMessage() && textBody()}">
 
 					<!-- ko foreach: bodyControllers -->
 						<!-- ko if: $data.ViewTemplate -->

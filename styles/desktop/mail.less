@@ -658,3 +658,39 @@
 		margin-left: 10px;
 	}
 }
+
+.message_body .highlighted {
+	background-color:yellow;
+}
+
+.search_in_message_pane {
+	position: absolute;
+	z-index: 1;
+	right: 0;
+	background: white;
+	padding: 4px;
+	border: solid 1px grey;
+}
+
+.search_in_message_arrow_down,
+.search_in_message_arrow_up,
+.search_in_message_close {
+	.init-icon-font();
+	color: #626365;
+	
+	&.disabled {
+		color: #c3c4c4;
+	}
+}
+
+.search_in_message_arrow_down:before {
+	content: "\e66e";
+}
+
+.search_in_message_arrow_up:before {
+	content: "\e66d";
+}
+
+.search_in_message_close:before {
+	content: "\e66b";
+}
