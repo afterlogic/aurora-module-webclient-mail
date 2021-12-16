@@ -122,7 +122,9 @@
 			<div class="message" data-bind="
 					customScrollbar: {x: true, y: true, 'reset': displayedMessageUid()},
 					css: {'has_bodytext': hasBodyText, 'has_attachments': hasNotInlineAttachments}">
-				<div class="message_content scroll-inner" data-bind="initDom: domTextBodyScrollArea, hasfocus: contentHasFocus, css: {'message_content_not_empty_text': isCurrentMessage() && textBody()}">
+				<div class="message_content scroll-inner" style="outline: none;" tabindex="0"
+					 data-bind="initDom: domTextBodyScrollArea, hasfocus: contentHasFocus,
+					 css: {'message_content_not_empty_text': isCurrentMessage() && textBody()}">
 
 					<!-- ko foreach: bodyControllers -->
 						<!-- ko if: $data.ViewTemplate -->

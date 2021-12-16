@@ -204,6 +204,7 @@ CMessagePanePopup.prototype.onOpen = function (aParams)
 	this.onRoute(aParams);
 	this.preventBackspaceOn();
 	this.customSearchOn();
+	this.domTextBodyScrollArea().focus();
 };
 
 CMessagePanePopup.prototype.cancelPopup = function ()
