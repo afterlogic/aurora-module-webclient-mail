@@ -133,53 +133,53 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 	this.lockBottomScroll = ko.observable(false);
 	this.collection = MailCache.messages;
 	this.collection.subscribeExtended(function (aNewMessage, aOldMessages) {
-		var messageListScrollDom = $('.message_list_scroll', this.$viewDom);
-
-		setTimeout(function () {
-			var messageListDom = $('.message_list', this.$viewDom);
-			this.showLoadingOnTop(messageListDom.height() > messageListScrollDom.height());
-		}.bind(this));
-		
-		var
-			aNewUids = _.map(aNewMessage, function (oMessage) {
-				return oMessage.uid();
-			}),
-			iNewIndex = null,
-			iOldIndex = null
-		;
-		_.each(aOldMessages, function (oMessage, iOldKey) {
-			var iNewKey = null;
-			if (iNewIndex === null) {
-				iNewKey = _.indexOf(aNewUids, oMessage.uid());
-				if (iNewKey !== -1) {
-					iNewIndex = iNewKey;
-					iOldIndex = iOldKey;
-				}
-			}
-			if (oMessage.checked()) {
-				if (iNewKey === null) {
-					iNewKey = _.indexOf(aNewUids, oMessage.uid());
-				}
-				if (iNewKey === -1) {
-					oMessage.checked(false);
-				}
-			}
-		});
-		if (iNewIndex !== iOldIndex) {
-			var
-				oItem = $('.item', messageListScrollDom).first(),
-				iHeight = oItem.outerHeight(),
-				iScrollTop = messageListScrollDom.scrollTop()
-			;
-			if (iHeight) {
-				messageListScrollDom.scrollTop(iScrollTop + (iNewIndex - iOldIndex) * iHeight);
-			}
-		}
-
-		var bNewListHasCurrentMessage = !!this.currentMessage() && (_.indexOf(aNewUids, this.currentMessage().uid()) !== -1);
-		if (bNewListHasCurrentMessage && !this.currentMessage().selected()) {
-			this.selector.itemSelected(this.currentMessage());
-		}
+//		var messageListScrollDom = $('.message_list_scroll', this.$viewDom);
+//
+//		setTimeout(function () {
+//			var messageListDom = $('.message_list', this.$viewDom);
+//			this.showLoadingOnTop(messageListDom.height() > messageListScrollDom.height());
+//		}.bind(this));
+//		
+//		var
+//			aNewUids = _.map(aNewMessage, function (oMessage) {
+//				return oMessage.uid();
+//			}),
+//			iNewIndex = null,
+//			iOldIndex = null
+//		;
+//		_.each(aOldMessages, function (oMessage, iOldKey) {
+//			var iNewKey = null;
+//			if (iNewIndex === null) {
+//				iNewKey = _.indexOf(aNewUids, oMessage.uid());
+//				if (iNewKey !== -1) {
+//					iNewIndex = iNewKey;
+//					iOldIndex = iOldKey;
+//				}
+//			}
+//			if (oMessage.checked()) {
+//				if (iNewKey === null) {
+//					iNewKey = _.indexOf(aNewUids, oMessage.uid());
+//				}
+//				if (iNewKey === -1) {
+//					oMessage.checked(false);
+//				}
+//			}
+//		});
+//		if (iNewIndex !== iOldIndex) {
+//			var
+//				oItem = $('.item', messageListScrollDom).first(),
+//				iHeight = oItem.outerHeight(),
+//				iScrollTop = messageListScrollDom.scrollTop()
+//			;
+//			if (iHeight) {
+//				messageListScrollDom.scrollTop(iScrollTop + (iNewIndex - iOldIndex) * iHeight);
+//			}
+//		}
+//
+//		var bNewListHasCurrentMessage = !!this.currentMessage() && (_.indexOf(aNewUids, this.currentMessage().uid()) !== -1);
+//		if (bNewListHasCurrentMessage && !this.currentMessage().selected()) {
+//			this.selector.itemSelected(this.currentMessage());
+//		}
 
 		if ((this.lockTopScroll() || this.lockBottomScroll()) && !this.isLoading()) {
 			this.lockTopScroll(false);
