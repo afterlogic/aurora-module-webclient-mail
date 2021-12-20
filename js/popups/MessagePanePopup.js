@@ -87,7 +87,7 @@ CMessagePanePopup.prototype.cancelPopup = function ()
  */
 CMessagePanePopup.prototype.onEscHandler = function (oEvent)
 {
-	if (!this.customSearchPaneView.isOpenedSearchInMessage()) {
+	if (!this.customSearchPaneView.isOpenedSearch()) {
 		this.close();
 	}
 };

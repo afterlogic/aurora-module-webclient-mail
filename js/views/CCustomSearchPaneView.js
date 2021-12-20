@@ -18,7 +18,7 @@ function CCustomSearchPaneView()
 	this.domScrollArea = null;
 
 	this.wordToSearch = ko.observable('');
-	this.wordToSearch.subscribe(_.debounce(this.searchInMessage.bind(this), 300));
+	this.wordToSearch.subscribe(_.debounce(this.searchInMessage.bind(this, false), 300));
 	this.wordToSearchFocused = ko.observable(false);
 	this.isOpenedSearch = ko.observable(false);
 	this.htmlToSearchIn = null;
@@ -46,8 +46,9 @@ CCustomSearchPaneView.prototype.customSearchOn = function (domToSearchIn, domScr
 	this.domToSearchIn.bind('DOMNodeInserted', function() {
 		if (!this.lockHtmlChanges()) {
 			if (this.isOpenedSearch()) {
-				this.htmlToSearchIn = null;
-				this.searchInMessage();
+				setTimeout(function () {
+					this.searchInMessage(true);
+				}.bind(this), 100);
 			} else {
 				this.wordToSearch('');
 			}
@@ -114,7 +115,7 @@ CCustomSearchPaneView.prototype.openSearchInMessage = function ()
 		this.isOpenedSearch(true);
 	}
 	this.wordToSearchFocused(true);
-	this.searchInMessage();
+	this.searchInMessage(false);
 };
 
 CCustomSearchPaneView.prototype.closeSearchInMessage = function ()
@@ -132,17 +133,21 @@ CCustomSearchPaneView.prototype.setHtml = function (html)
 	this.domToSearchIn.html(html);
 };
 
-CCustomSearchPaneView.prototype.searchInMessage = function ()
+CCustomSearchPaneView.prototype.searchInMessage = function (repeatSearch)
 {
 	var searchTerm = this.wordToSearch();
     if (searchTerm.length > 0) {
-		var htmlToSearchIn = this.htmlToSearchIn === null ? this.domToSearchIn.html() : this.htmlToSearchIn;
+		var htmlToSearchIn = (repeatSearch || this.htmlToSearchIn === null)
+							 ? this.domToSearchIn.html()
+							 : this.htmlToSearchIn;
 		this.htmlToSearchIn = htmlToSearchIn;
 
         var searchTermRegEx = new RegExp('(?![^<]*>)(' + searchTerm + ')', "ig");
 		this.setHtml(htmlToSearchIn.replace(searchTermRegEx, '<span class="match">$1</span>'));
 		this.foundMatches(this.domToSearchIn.find('.match'));
-		this.currentMatchPos(0);
+		if (!repeatSearch || this.currentMatchPos() >= this.foundMatches().length) {
+			this.currentMatchPos(0);
+		}
 		this.currentSearchTerm = searchTerm;
 		if (this.foundMatches().length > 0) {
 			this.highlightCurrentMatchInMessage();
