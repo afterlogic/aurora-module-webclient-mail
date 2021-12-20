@@ -1,0 +1,18 @@
+<div class="search_in_message_pane" data-bind="visible: isOpenedSearch">
+	<input class="search_in_message_input" data-bind="value: wordToSearch, hasfocus: wordToSearchFocused,
+			valueUpdate: 'afterkeydown', onEnter: highlightNextSearchInMessage, onFocusSelect: true" />
+	<span class="search_in_message_counter">
+		<span data-bind="text: foundMatches().length > 0 ? currentMatchPos() + 1 : 0"></span>
+		/
+		<span data-bind="text: foundMatches().length"></span>
+	</span>
+	<span class="search_in_message_arrow_down" data-bind="click: highlightPrevSearchInMessage, css: {'disabled': foundMatches().length === 0}">
+		<span class="icon"></span>
+	</span>
+	<span class="search_in_message_arrow_up" data-bind="click: highlightNextSearchInMessage, css: {'disabled': foundMatches().length === 0}">
+		<span class="icon"></span>
+	</span>
+	<span class="search_in_message_close" data-bind="click: closeSearchInMessage">
+		<span class="icon"></span>
+	</span>
+</div>

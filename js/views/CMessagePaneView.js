@@ -641,16 +641,16 @@ CMessagePaneView.prototype.setMessageBody = function ()
 			oDom = null,
 			sHtml = '',
 			sLen = sText.length,
-			sMaxLen = 5000000,
-			aCollapsedStatuses = []
+			sMaxLen = 5000000
+//			aCollapsedStatuses = []
 		;
 
 		this.textBody(sText);
 
-		if ($body.data('displayed-message-uid') === oMessage.uid())
-		{
-			aCollapsedStatuses = this.getBlockquotesStatus();
-		}
+//		if ($body.data('displayed-message-uid') === oMessage.uid())
+//		{
+//			aCollapsedStatuses = this.getBlockquotesStatus();
+//		}
 
 		$body.empty();
 
