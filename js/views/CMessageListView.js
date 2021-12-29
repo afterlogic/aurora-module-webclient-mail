@@ -940,8 +940,10 @@ CMessageListView.prototype.deleteMessages = function (aUids)
 		sUidToOpenAfter = '',
 		oMessageToOpenAfter = null
 	;
-	
-	if (aUids.length === 1 && MailCache.currentMessage() && aUids[0] === MailCache.currentMessage().longUid())
+
+	if (MailCache.uidList().filters() !== Enums.FolderFilter.Unseen
+			&& aUids.length === 1 && MailCache.currentMessage()
+			&& aUids[0] === MailCache.currentMessage().longUid())
 	{
 		sUidToOpenAfter = MailCache.prevMessageUid();
 		if (sUidToOpenAfter === '')

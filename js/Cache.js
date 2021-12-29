@@ -946,7 +946,7 @@ CMailCache.prototype.requestMessageList = function (sFolder, iPage, sSearch, sFi
 			Ajax.send('GetMessages', oParameters, fCallBack, this);
 		}
 	}
-	else
+	else if (bFillMessages && !bDoNotRequest)
 	{
 		this.waitForUnseenMessages(false);
 	}
@@ -1062,11 +1062,12 @@ CMailCache.prototype.moveMessagesToFolder = function (oFromFolder, oToFolder, aU
 			},
 			oDiffs = null,
 			fMoveMessages = _.bind(function () {
-				if (this.uidList().filters() === Enums.FolderFilter.Unseen && this.uidList().resultCount() > Settings.MailsPerPage)
+				if (this.uidList().filters() === Enums.FolderFilter.Unseen
+						&& (this.uidList().resultCount() > Settings.MailsPerPage || this.uidList().resultCount() === -1))
 				{
 					this.waitForUnseenMessages(true);
 				}
-				
+
 				oDiffs = oFromFolder.markDeletedByUids(aUids);
 				oToFolder.addMessagesCountsDiff(oDiffs.MinusDiff, oDiffs.UnseenMinusDiff);
 				this.setUnifiedInboxUnseenChanges(oToFolder.iAccountId, oToFolder.fullName(), oDiffs.MinusDiff, oDiffs.UnseenMinusDiff);
