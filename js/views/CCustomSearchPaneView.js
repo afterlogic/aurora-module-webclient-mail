@@ -142,7 +142,7 @@ CCustomSearchPaneView.prototype.searchInMessage = function (repeatSearch)
 							 : this.htmlToSearchIn;
 		this.htmlToSearchIn = htmlToSearchIn;
 
-        var searchTermRegEx = new RegExp('(?![^<]*>)(' + searchTerm + ')', "ig");
+        var searchTermRegEx = new RegExp('(?![^<]*>)(?!<)(' + searchTerm + ')', "ig");
 		this.setHtml(htmlToSearchIn.replace(searchTermRegEx, '<span class="match">$1</span>'));
 		this.foundMatches(this.domToSearchIn.find('.match'));
 		if (!repeatSearch || this.currentMatchPos() >= this.foundMatches().length) {
