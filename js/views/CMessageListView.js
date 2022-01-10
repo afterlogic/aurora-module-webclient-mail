@@ -903,9 +903,24 @@ CMessageListView.prototype.executeMoveToFolder = function (sToFolder)
 	}
 };
 
-CMessageListView.prototype.executeCopyToFolder = function (sToFolder)
+CMessageListView.prototype.executeCopyToFolder = function (toFolderName)
 {
-	MailCache.copyMessagesToFolder(sToFolder, this.checkedOrSelectedUids());
+	var
+		toFolder = MailCache.getFolderByFullName(MailCache.currentAccountId(), toFolderName),
+		longUids = this.checkedOrSelectedUids(),
+		uidsByFolders = MailCache.getUidsSeparatedByFolders(longUids)
+	;
+
+	if (toFolder) {
+		_.each(uidsByFolders, function (data) {
+			if (MailCache.currentAccountId() === data.iAccountId) {
+				var fromFolder = MailCache.getFolderByFullName(MailCache.currentAccountId(), data.sFolder);
+				if (fromFolder) {
+					MailCache.copyMessagesToFolder(fromFolder, toFolder, data.aUids);
+				}
+			}
+		});
+	}
 };
 
 /**

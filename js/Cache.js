@@ -1107,28 +1107,18 @@ CMailCache.prototype.moveMessagesToFolder = function (oFromFolder, oToFolder, aU
 	}
 };
 
-CMailCache.prototype.copyMessagesToFolder = function (sToFolderFullName, aUids)
+CMailCache.prototype.copyMessagesToFolder = function (fromFolder, toFolder, uids)
 {
-	if (aUids.length > 0)
-	{
-		var
-			oCurrFolder = this.getCurrentFolder(),
-			oToFolder = this.getFolderByFullName(this.currentAccountId(), sToFolderFullName),
-			oParameters = {
-				'Folder': oCurrFolder ? oCurrFolder.fullName() : '',
-				'ToFolder': sToFolderFullName,
-				'Uids': aUids.join(',')
-			}
-		;
+	if (fromFolder && toFolder && uids.length > 0) {
+		var parameters = {
+			'Folder': fromFolder.fullName(),
+			'ToFolder': toFolder.fullName(),
+			'Uids': uids.join(',')
+		};
 
-		if (oCurrFolder && oToFolder)
-		{
-			oToFolder.recivedAnim(true);
-
-			oToFolder.markHasChanges();
-
-			Ajax.send('CopyMessages', oParameters, this.onCopyMessagesResponse, this);
-		}
+		toFolder.recivedAnim(true);
+		toFolder.markHasChanges();
+		Ajax.send('CopyMessages', parameters, this.onCopyMessagesResponse, this);
 	}
 };
 
