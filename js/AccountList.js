@@ -40,7 +40,7 @@ function CAccountListModel()
 	this.unifiedInboxAllowed = ko.computed(function () {
 		return this.unifiedMailboxAccounts().length > 1;
 	}, this);
-	this.unifiedInboxReady = ko.observable(false);
+	this.allFolderListsLoaded = ko.observable(false);
 }
 
 /**

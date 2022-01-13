@@ -91,6 +91,7 @@ function CMailCache()
 	}, this);
 	
 	this.oFolderListItems = {};
+	this.allInboxesUnseenCounts = ko.observable({});
 
 	this.quotaChangeTrigger = ko.observable(false);
 	
@@ -646,20 +647,17 @@ CMailCache.prototype.executeCheckMail = function (bAbortPrevious)
 	
 	if (App.getUserRole() !== Enums.UserRole.Anonymous && bCheckmailAllowed)
 	{
-		if (AccountList.unifiedInboxReady())
+		if (AccountList.allFolderListsLoaded())
 		{
 			_.each(AccountList.collection(), function (oAccount) {
-				if (iCurrentAccountId === oAccount.id() || oAccount.includeInUnifiedMailbox())
+				aFolders = this.getNamesOfFoldersToRefresh(oAccount.id());
+				if (aFolders.length > 0)
 				{
-					aFolders = this.getNamesOfFoldersToRefresh(oAccount.id());
-					if (aFolders.length > 0)
-					{
-						aAccountsData.push({
-							'AccountID': oAccount.id(),
-							'Folders': aFolders,
-							'UseListStatusIfPossible': this.getUseListStatusIfPossibleValue(oAccount.id(), aFolders.length)
-						});
-					}
+					aAccountsData.push({
+						'AccountID': oAccount.id(),
+						'Folders': aFolders,
+						'UseListStatusIfPossible': this.getUseListStatusIfPossibleValue(oAccount.id(), aFolders.length)
+					});
 				}
 			}, this);
 			if (aAccountsData.length > 0)
@@ -1374,7 +1372,7 @@ CMailCache.prototype.getMessage = function (iAccountId, sFullName, sUid, fRespon
 
 CMailCache.prototype.setUnifiedInboxUnseenChanges = function (iAccountId, sFolderFullName, iDiff, iUnseenDiff)
 {
-	if (AccountList.unifiedInboxReady())
+	if (AccountList.unifiedInboxAllowed() && AccountList.allFolderListsLoaded())
 	{
 		var oInbox  = this.oUnifiedInbox.getUnifiedInbox(iAccountId);
 		if (oInbox && oInbox.fullName() === sFolderFullName)
@@ -1585,6 +1583,8 @@ CMailCache.prototype.onGetFoldersResponse = function (oResponse, oRequest)
 		
 		this.__oldFolderList = this.oFolderListItems[iAccountId];
 		this.oFolderListItems[iAccountId] = oFolderList;
+		this.allInboxesUnseenCounts()[iAccountId] = oFolderList.inboxFolder().unseenMessageCount;
+		this.allInboxesUnseenCounts.valueHasMutated();
 
 		if (this.currentAccountId() === iAccountId)
 		{
@@ -1617,16 +1617,17 @@ CMailCache.prototype.onGetFoldersResponse = function (oResponse, oRequest)
  */
 CMailCache.prototype.getAllFoldersRelevantInformation = function (iAccountId)
 {
-	if (AccountList.unifiedInboxReady())
+	if (AccountList.allFolderListsLoaded())
 	{
 		var aAccountsData = [];
 		_.each(AccountList.collection(), function (oAccount) {
 			var aFolders = [];
 			if (oAccount.id() === iAccountId)
 			{
+				var oFolderList = this.oFolderListItems[iAccountId];
 				aFolders = oFolderList ? oFolderList.getFoldersWithoutCountInfo() : [];
 			}
-			else if (oAccount.includeInUnifiedMailbox())
+			else
 			{
 				aFolders = this.getNamesOfFoldersToRefresh(iAccountId);
 			}

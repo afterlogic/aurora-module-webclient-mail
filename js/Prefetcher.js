@@ -19,10 +19,10 @@ var
 
 Prefetcher.prefetchFolderLists = function ()
 {
-	if (AccountList.unifiedInboxAllowed() && !AccountList.unifiedInboxReady())
+	if (!AccountList.allFolderListsLoaded())
 	{
 		var oAccount = _.find(AccountList.collection(), function (oAcct) {
-			return oAcct.includeInUnifiedMailbox() && !MailCache.oFolderListItems[oAcct.id()];
+			return !MailCache.oFolderListItems[oAcct.id()];
 		}, this);
 		if (oAccount)
 		{
@@ -31,7 +31,7 @@ Prefetcher.prefetchFolderLists = function ()
 		}
 		else
 		{
-			AccountList.unifiedInboxReady(true);
+			AccountList.allFolderListsLoaded(true);
 		}
 	}
 	return false;
@@ -173,7 +173,7 @@ Prefetcher.startPagePrefetch = function (iPage)
 
 Prefetcher.startUnifiedInboxPrefetch = function ()
 {
-	if (AccountList.unifiedInboxReady())
+	if (AccountList.unifiedInboxAllowed() && AccountList.allFolderListsLoaded())
 	{
 		return this.startFolderPrefetch(MailCache.oUnifiedInbox);
 	}

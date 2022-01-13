@@ -57,23 +57,23 @@
 		padding: 6px 10px;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		
+
+		&::before {
+			content: "\e638";
+			display: inline-block;
+			width: 20px;
+			height: 16px;
+			font-family: 'afterlogic';
+			font-size: 20px;
+			vertical-align: middle;
+			margin-right: 4px;
+			margin-top: -6px;
+		}
+
 		&.current_account {
 			background: #a9b0bb;
 			color: white;
 			cursor: default;
-			
-			&::before {
-				content: "\e638";
-				display: inline-block;
-				width: 20px;
-				height: 16px;
-				font-family: 'afterlogic';
-				font-size: 20px;
-				vertical-align: middle;
-				margin-right: 4px;
-				margin-top: -6px;
-			}
 		}
 	}
 }

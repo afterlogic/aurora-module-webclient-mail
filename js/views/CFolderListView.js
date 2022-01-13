@@ -14,8 +14,6 @@ var
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
 	CreateFolderPopup = require('modules/%ModuleName%/js/popups/CreateFolderPopup.js'),
 
-	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
-
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	MailCache = require('modules/%ModuleName%/js/Cache.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js')
@@ -32,7 +30,11 @@ function CFolderListView()
 				return {
 					bCurrent: oAccount.isCurrent(),
 					sText: oAccount.mailboxName() || oAccount.email().split('@')[0],
-					changeAccount: oAccount.changeAccount.bind(oAccount)
+					changeAccount: oAccount.changeAccount.bind(oAccount),
+					unseenMessagesCount: ko.computed(function () {
+						var unseenMessageCountObservable = MailCache.allInboxesUnseenCounts()[oAccount.id()];
+						return unseenMessageCountObservable ? unseenMessageCountObservable() : 0;
+					})
 				};
 			});
 		}
