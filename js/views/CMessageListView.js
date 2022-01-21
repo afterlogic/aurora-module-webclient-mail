@@ -773,10 +773,11 @@ CMessageListView.prototype.routeForMessage = function (oMessage)
 			sFolder = MailCache.getCurrentFolderFullname(),
 			iPage = this.oPageSwitcher.currentPage(),
 			sUid = oMessage.longUid(),
+			sCurrentUid = this.currentMessage() ? this.currentMessage().longUid() : '',
 			sSearch = this.search()
 		;
-		
-		if (sUid !== '')
+
+		if (sUid !== '' && sUid !== sCurrentUid)
 		{
 			if (App.isMobile() && oFolder.type() === Enums.FolderTypes.Drafts)
 			{
