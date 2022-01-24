@@ -28,7 +28,8 @@ var
 
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
-	MailCache  = require('modules/%ModuleName%/js/Cache.js'),
+	MailCache = require('modules/%ModuleName%/js/Cache.js'),
+	MessagePaneSpamButtonsController = require('modules/%ModuleName%/js/views/message/SpamButtonsView.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 
 	CAttachmentModel = require('modules/%ModuleName%/js/models/CAttachmentModel.js'),
@@ -108,20 +109,8 @@ function CMessagePaneView()
 	this.printCommand = Utils.createCommand(this, this.executePrint, this.isEnablePrint);
 	this.saveCommand = Utils.createCommand(this, this.executeSave, this.isEnableSave);
 	this.forwardAsAttachment = Utils.createCommand(this, this.executeForwardAsAttachment, this.isCurrentMessageLoaded);
-	this.otherToolbarCommands = ko.observableArray([]);
-	App.broadcastEvent('%ModuleName%::AddPreviewPaneToolbarCommand', {
-		AddPreviewPaneToolbarCommand: _.bind(function (oCommand) {
-			var oNewCommand = _.extend({
-				'Text': '',
-				'CssClass': '',
-				'Handler': function () {},
-				'Visible': true
-			}, oCommand);
-			oNewCommand.Command = Utils.createCommand(this, oNewCommand.Handler, this.isCurrentMessageLoaded);
-			this.otherToolbarCommands.push(oNewCommand);
-		}, this),
-		View: this
-	});
+	this.messageToolbarControllers = ko.observableArray([]);
+	this.registerController(MessagePaneSpamButtonsController, 'OnMessageToolbar');
 
 	this.moreCommand = Utils.createCommand(this, null, this.isCurrentMessageLoaded);
 	this.moreSectionCommands = ko.observableArray([]);
@@ -164,7 +153,12 @@ function CMessagePaneView()
 	this.bodyControllers = ko.observableArray();
 	this.bottomControllers = ko.observableArray();
 	this.controllers = ko.computed(function () {
-		return _.union(this.topControllers(), this.bodyControllers(), this.bottomControllers());
+		return _.union(
+			this.topControllers(),
+			this.bodyControllers(),
+			this.bottomControllers(),
+			this.messageToolbarControllers()
+		);
 	}, this);
 
 	this.disableAllSendTools = ko.computed(function () {
@@ -1068,6 +1062,9 @@ CMessagePaneView.prototype.switchDetailsVisibility = function ()
 CMessagePaneView.prototype.registerController = function (oController, sPlace) {
 	switch (sPlace)
 	{
+		case 'OnMessageToolbar':
+			this.messageToolbarControllers.push(oController);
+			break
 		case 'BeforeMessageHeaders':
 			this.topControllers.push(oController);
 			break
