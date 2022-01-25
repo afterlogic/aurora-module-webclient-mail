@@ -5,9 +5,9 @@ var
 	$ = require('jquery'),
 			
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
-	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	UrlUtils = require('%PathToCoreWebclientModule%/js/utils/Url.js'),
 	
+	App = require('%PathToCoreWebclientModule%/js/App.js'),
 	Storage = require('%PathToCoreWebclientModule%/js/Storage.js'),
 	UserSettings = require('%PathToCoreWebclientModule%/js/Settings.js'),
 	
@@ -49,6 +49,15 @@ MailUtils.deleteMessages = function (aUids, fAfterDelete)
 			}
 		}
 	;
+
+	App.sendLogMessage(JSON.stringify({
+		Message: 'MailUtils.deleteMessages method',
+		Uids: aUids,
+		InSpam: bInSpam,
+		InTrash: bInTrash,
+		UnifiedInboxSelected: MailCache.oUnifiedInbox.selected(),
+		HasTrash: !!oTrash
+	}));
 
 	if (bInSpam || bInTrash)
 	{

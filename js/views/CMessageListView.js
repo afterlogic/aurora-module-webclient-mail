@@ -15,7 +15,6 @@ var
 	CJua = require('%PathToCoreWebclientModule%/js/CJua.js'),
 	CSelector = require('%PathToCoreWebclientModule%/js/CSelector.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
-	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
 	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
 	Screens = require('%PathToCoreWebclientModule%/js/Screens.js'),
 	Storage = require('%PathToCoreWebclientModule%/js/Storage.js'),
@@ -1007,8 +1006,12 @@ CMessageListView.prototype.executeCopyToFolder = function (sToFolder)
 CMessageListView.prototype.onDeletePress = function (aMessages)
 {
 	var aUids = MailCache.oUnifiedInbox.selected() ?
-				_.map(aMessages, function (oMessage) { return oMessage.unifiedUid(); }) :
-				_.map(aMessages, function (oMessage) { return oMessage.uid(); });
+			_.map(aMessages, function (oMessage) { return oMessage.unifiedUid(); }) :
+			_.map(aMessages, function (oMessage) { return oMessage.uid(); });
+	App.sendLogMessage(JSON.stringify({
+		Message: 'Pressing delete key on keyboard',
+		Uids: aUids
+	}));
 
 	if (aUids.length > 0)
 	{
@@ -1021,7 +1024,12 @@ CMessageListView.prototype.onDeletePress = function (aMessages)
  */
 CMessageListView.prototype.executeDelete = function ()
 {
-	this.deleteMessages(this.checkedOrSelectedUids());
+	var aUids = this.checkedOrSelectedUids();
+	App.sendLogMessage(JSON.stringify({
+		Message: 'Mouse click on delete button in UI',
+		Uids: aUids
+	}));
+	this.deleteMessages(aUids);
 };
 
 /**
@@ -1048,6 +1056,12 @@ CMessageListView.prototype.deleteMessages = function (aUids)
 	if (aUids.length > 0)
 	{
 		MailUtils.deleteMessages(aUids, function () {
+			App.sendLogMessage(JSON.stringify({
+				Message: 'Callback after delete',
+				Uids: aUids,
+				UidToOpenAfter: sUidToOpenAfter
+			}));
+
 			if (sUidToOpenAfter !== '')
 			{
 				oMessageToOpenAfter = _.find(this.collection(), function (oMessage) {
