@@ -1,6 +1,10 @@
 <div class="fields">
 	<div class="fieldset">
 		<div>
+			<div class="row">
+				<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_SPAM_SCORE'}"></span>
+				<input class="input" style="width: 100px" data-bind="value: spamScore" />
+			</div>
 			<div class="row message">
 				<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_BLOCK_LIST'}"></span>
 				<textarea class="input" data-bind="value: blockList"></textarea>

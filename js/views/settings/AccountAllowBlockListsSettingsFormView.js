@@ -3,21 +3,18 @@
 var
 	_ = require('underscore'),
 	ko = require('knockout'),
-	
+
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
-	
+
 	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 	Screens = require('%PathToCoreWebclientModule%/js/Screens.js'),
-	
+
 	CAbstractSettingsFormView = ModulesManager.run('SettingsWebclient', 'getAbstractSettingsFormViewClass'),
-	
+
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
-	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
-	Settings = require('modules/%ModuleName%/js/Settings.js'),
-	
-	CAutoresponderModel = require('modules/%ModuleName%/js/models/CAutoresponderModel.js')
+	Ajax = require('modules/%ModuleName%/js/Ajax.js')
 ;
 
 /**
@@ -26,7 +23,8 @@ var
 function CAccountAllowBlockListsSettingsFormView()
 {
 	CAbstractSettingsFormView.call(this, '%ModuleName%');
-	
+
+	this.spamScore = ko.observable('');
 	this.allowList = ko.observable('');
 	this.blockList = ko.observable('');
 }
@@ -38,8 +36,9 @@ CAccountAllowBlockListsSettingsFormView.prototype.ViewTemplate = '%ModuleName%_S
 CAccountAllowBlockListsSettingsFormView.prototype.getCurrentValues = function ()
 {
 	return [
+		this.spamScore(),
 		this.allowList(),
-		this.blockList()	
+		this.blockList()
 	];
 };
 
@@ -48,15 +47,11 @@ CAccountAllowBlockListsSettingsFormView.prototype.onShow = function ()
 	this.populate();
 };
 
-CAccountAllowBlockListsSettingsFormView.prototype.revert = function ()
-{
-	this.populate();
-};
-
 CAccountAllowBlockListsSettingsFormView.prototype.getParametersForSave = function ()
 {
 	return {
 		'AccountID': AccountList.editedId(),
+		'SpamScore': Types.pInt(this.spamScore()),
 		'AllowList': this.allowList() !== '' ? this.allowList().split('\n') : [],
 		'BlockList': this.blockList() !== '' ? this.blockList().split('\n') : []
 	};
@@ -65,10 +60,10 @@ CAccountAllowBlockListsSettingsFormView.prototype.getParametersForSave = functio
 CAccountAllowBlockListsSettingsFormView.prototype.save = function ()
 {
 	this.isSaving(true);
-	
+
 	this.updateSavedState();
-	
-	Ajax.send('SetAllowBlockLists', this.getParametersForSave(), this.onResponse, this);
+
+	Ajax.send('SetAccountSpamSettings', this.getParametersForSave(), this.onResponse, this);
 };
 
 /**
@@ -95,7 +90,7 @@ CAccountAllowBlockListsSettingsFormView.prototype.populate = function()
 	
 	if (oAccount)
 	{
-		Ajax.send('GetAllowBlockLists', {'AccountID': oAccount.id()}, this.onGetAllowBlockListsResponse, this);
+		Ajax.send('GetAccountSpamSettings', {'AccountID': oAccount.id()}, this.onGetAllowBlockListsResponse, this);
 	}
 	
 	this.updateSavedState();
@@ -111,10 +106,12 @@ CAccountAllowBlockListsSettingsFormView.prototype.onGetAllowBlockListsResponse =
 	if (oResult)
 	{
 		var
+			iSpamScore = Types.pInt(oResult.SpamScore),
 			aAllowList = Types.pArray(oResult.AllowList),
 			aBlockList = Types.pArray(oResult.BlockList)
 		;
-		
+
+		this.spamScore(iSpamScore);
 		this.allowList(aAllowList.join('\n'));
 		this.blockList(aBlockList.join('\n'));
 

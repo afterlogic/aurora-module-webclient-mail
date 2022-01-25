@@ -115,7 +115,7 @@ function CAccountsSettingsPaneView()
 		},
 		{
 			name: 'allow-block-lists',
-			title: TextUtils.i18n('%MODULENAME%/LABEL_ALLOW_BLOCK_LISTS_TAB'),
+			title: TextUtils.i18n('%MODULENAME%/LABEL_ACCOUNT_SPAM_TAB'),
 			view: AccountAllowBlockListsSettingsFormView,
 			visible: this.visibleAllowBlockLists
 		}
