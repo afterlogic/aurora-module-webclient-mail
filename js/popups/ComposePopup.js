@@ -77,6 +77,7 @@ CComposePopup.prototype.preventBackspaceOff = function ()
 CComposePopup.prototype.onClose = function ()
 {
 	this.preventBackspaceOff();
+	this.minimized(false);
 };
 
 /**
