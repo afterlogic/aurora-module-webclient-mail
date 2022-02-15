@@ -1584,6 +1584,7 @@ CMailCache.prototype.getAllFoldersRelevantInformation = function (iAccountId)
 			var aFolders = [];
 			if (oAccount.id() === iAccountId)
 			{
+				let oFolderList = this.oFolderListItems[iAccountId];
 				aFolders = oFolderList ? oFolderList.getFoldersWithoutCountInfo() : [];
 			}
 			else if (oAccount.includeInUnifiedMailbox())

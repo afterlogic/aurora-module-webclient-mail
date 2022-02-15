@@ -1,4 +1,8 @@
 {
+	"Disabled": [
+		false,
+		"bool"
+	],
 	"AllowAppRegisterMailto": [
 		true,
 		"bool"
@@ -39,10 +43,6 @@
 		false,
 		"bool"
 	],
-    "Disabled": [
-		false,
-		"bool"
-	],
 	"JoinReplyPrefixes": [
 		true,
 		"bool"
@@ -61,6 +61,10 @@
 	],
 	"ShowEmailAsTabName": [
 		true,
+		"bool"
+	],
+	"AllowOtherModulesToReplaceTabsbarHeader": [
+		false,
 		"bool"
 	],
 	"AllowShowMessagesCountInFolderList": [

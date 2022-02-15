@@ -1,10 +1,12 @@
 'use strict';
 
 var
+	_ = require('underscore'),
 	ko = require('knockout'),
 
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 
+	App = require('%PathToCoreWebclientModule%/js/App.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
 	Screens = require('%PathToCoreWebclientModule%/js/Screens.js'),
@@ -12,8 +14,6 @@ var
 
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
 	CreateFolderPopup = require('modules/%ModuleName%/js/popups/CreateFolderPopup.js'),
-
-	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
 
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	MailCache = require('modules/%ModuleName%/js/Cache.js'),
@@ -87,6 +87,11 @@ function CFolderListView()
 	this.visibleNewFolderButton = ko.computed(function () {
 		return Settings.AllowAddNewFolderOnMainScreen && this.folderList().collection().length > 0;
 	}, this);
+
+	this.underNewMessageButtonControllers = ko.observableArray([]);
+	App.broadcastEvent('%ModuleName%::RegisterFolderListController', _.bind(function (controller, place) {
+		this.registerController(controller, place);
+	}, this));
 }
 
 CFolderListView.prototype.ViewTemplate = '%ModuleName%_FoldersView';
@@ -94,6 +99,18 @@ CFolderListView.prototype.ViewTemplate = '%ModuleName%_FoldersView';
 CFolderListView.prototype.addNewFolder = function ()
 {
 	Popups.showPopup(CreateFolderPopup);
+};
+
+/**
+ * @param {Object} controller
+ * @param {string} place
+ */
+CFolderListView.prototype.registerController = function (controller, place) {
+	switch (place) {
+		case 'UnderNewMessageButton':
+			this.underNewMessageButtonControllers.push(controller);
+			break;
+	}
 };
 
 module.exports = CFolderListView;

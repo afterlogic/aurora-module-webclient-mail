@@ -238,6 +238,9 @@ module.exports = function (oAppData) {
 				getAccountList: function () {
 					return AccountList;
 				},
+				getMailCache: function () {
+					return Cache;
+				},
 				setCustomRouting: function (sFolder, iPage, sUid, sSearch, sFilters, sCustom) {
 					var
 						Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
@@ -312,8 +315,13 @@ module.exports = function (oAppData) {
 						return oScreens;
 					},
 					getHeaderItem: function () {
-						if (HeaderItemView === null)
-						{
+						if (HeaderItemView === null && Settings.AllowOtherModulesToReplaceTabsbarHeader) {
+							let params = {};
+							App.broadcastEvent('%ModuleName%::GetHeaderItemView', params);
+							HeaderItemView = params.HeaderItemView || null;
+						}
+
+						if (HeaderItemView === null) {
 							HeaderItemView = require('modules/%ModuleName%/js/views/HeaderItemView.js');
 						}
 

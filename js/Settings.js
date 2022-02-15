@@ -57,6 +57,7 @@ module.exports = {
 	MessageBodyTruncationThreshold: 650000, // in bytes
 	MessagesSortBy: {},
 	ShowEmailAsTabName: true,
+	AllowOtherModulesToReplaceTabsbarHeader: false,
 	AllowShowMessagesCountInFolderList: false,
 	showMessagesCountInFolderList: ko.observable(false),
 	AllowSearchMessagesBySubject: false,
@@ -143,6 +144,7 @@ module.exports = {
 			this.MessageBodyTruncationThreshold = Types.pNonNegativeInt(oAppDataMailWebclientSection.MessageBodyTruncationThreshold, this.MessageBodyTruncationThreshold);
 			
 			this.ShowEmailAsTabName = Types.pBool(oAppDataMailWebclientSection.ShowEmailAsTabName, this.ShowEmailAsTabName);
+			this.AllowOtherModulesToReplaceTabsbarHeader = Types.pBool(oAppDataMailWebclientSection.AllowOtherModulesToReplaceTabsbarHeader, this.AllowOtherModulesToReplaceTabsbarHeader);
 			this.AllowShowMessagesCountInFolderList = Types.pBool(oAppDataMailWebclientSection.AllowShowMessagesCountInFolderList, this.AllowShowMessagesCountInFolderList);
 			this.showMessagesCountInFolderList(Types.pBool(oAppDataMailWebclientSection.ShowMessagesCountInFolderList, this.showMessagesCountInFolderList()));
 			this.AllowSearchMessagesBySubject = Types.pBool(oAppDataMailWebclientSection.AllowSearchMessagesBySubject, this.AllowSearchMessagesBySubject);
