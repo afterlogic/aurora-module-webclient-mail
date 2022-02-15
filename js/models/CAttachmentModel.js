@@ -35,9 +35,11 @@ function CAttachmentModel(iAccountId)
 	this.messagePart = ko.observable(null);
 	
 	CAbstractFileModel.call(this);
-	
+
+	this.cancelButtonTooltip = TextUtils.i18n('COREWEBCLIENT/ACTION_REMOVE');
+
 	this.content = ko.observable('');
-	
+
 	this.isMessageType = ko.computed(function () {
 		this.mimeType();
 		this.mimePartIndex();
