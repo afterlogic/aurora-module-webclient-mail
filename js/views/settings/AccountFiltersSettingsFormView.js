@@ -112,9 +112,7 @@ CAccountFiltersSettingsFormView.prototype.populate = function ()
 
 CAccountFiltersSettingsFormView.prototype.revert = function ()
 {
-	_.each(this.collection(), function (oFilter) {
-		oFilter.revert();
-	});
+	this.populateFilters();
 };
 
 CAccountFiltersSettingsFormView.prototype.commit = function ()
@@ -181,7 +179,7 @@ CAccountFiltersSettingsFormView.prototype.populateFilters = function ()
 		if (oAccount.filters() !== null)
 		{
 			this.loading(false);
-			this.collection(oAccount.filters().collection());
+			this.collection([...oAccount.filters().collection()]);
 			this.updateSavedState();
 		}
 		else
