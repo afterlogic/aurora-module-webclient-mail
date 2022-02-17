@@ -7,6 +7,7 @@ var
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	
+	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
 	Screens = require('%PathToCoreWebclientModule%/js/Screens.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 	
@@ -112,7 +113,13 @@ CAccountFiltersSettingsFormView.prototype.populate = function ()
 
 CAccountFiltersSettingsFormView.prototype.revert = function ()
 {
-	this.populateFilters();
+	var account = AccountList.getEdited();
+	if (account && account.filters() !== null) {
+		this.collection([...account.filters().collection()]);
+	} else {
+		this.collection([]);
+	}
+	this.updateSavedState();
 };
 
 CAccountFiltersSettingsFormView.prototype.commit = function ()
@@ -314,27 +321,21 @@ CAccountFiltersSettingsFormView.prototype.onGetFiltersResponse = function (oResp
 };
 
 /**
- * @param {Object} oResponse
- * @param {Object} oRequest
+ * @param {Object} response
+ * @param {Object} request
  */
-CAccountFiltersSettingsFormView.prototype.onAccountSieveFiltersUpdateResponse = function (oResponse, oRequest)
+CAccountFiltersSettingsFormView.prototype.onAccountSieveFiltersUpdateResponse = function (response, request)
 {
 	this.isSaving(false);
 
-	if (oRequest && oRequest.Method)
-	{
-		if (oResponse && oResponse.Result)
-		{
-			Screens.showReport(TextUtils.i18n('%MODULENAME%/REPORT_FILTERS_UPDATE_SUCCESS'));
+	const account = AccountList.getEdited();
+	if (response && response.Result) {
+		Screens.showReport(TextUtils.i18n('%MODULENAME%/REPORT_FILTERS_UPDATE_SUCCESS'));
+		if (account) {
+			account.filters().collection([...this.collection()]);
 		}
-		else
-		{
-			Screens.showError(TextUtils.i18n('COREWEBCLIENT/ERROR_SAVING_SETTINGS_FAILED'));
-		}
-	}
-	else
-	{
-		Screens.showError(TextUtils.i18n('COREWEBCLIENT/ERROR_UNKNOWN'));
+	} else {
+		Api.showErrorByCode(response, TextUtils.i18n('COREWEBCLIENT/ERROR_SAVING_SETTINGS_FAILED'));
 	}
 };
 
