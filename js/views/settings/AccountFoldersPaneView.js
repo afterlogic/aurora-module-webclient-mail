@@ -63,7 +63,16 @@ function CAccountFoldersPaneView()
 	App.subscribeEvent('%ModuleName%::AttemptDeleteNonemptyFolder', _.bind(function () {
 		this.highlighted(true);
 	}, this));
-	
+
+	this.manageFolderButtons = ko.observableArray([]);
+	App.broadcastEvent('%ModuleName%::RegisterManageFolderButton', function (buttonData) {
+		this.manageFolderButtons.push(_.extend({
+			tooltip: folder => '',
+			cssClasses: folder => '',
+			handler: folder => {}
+		}, buttonData));
+	}.bind(this));
+
 	App.broadcastEvent('%ModuleName%::ConstructView::after', {'Name': 'CAccountFoldersPaneView', 'View': this});
 	
 	this.afterMove = _.debounce(_.bind(this.folderListOrderUpdate, this), 3000);
