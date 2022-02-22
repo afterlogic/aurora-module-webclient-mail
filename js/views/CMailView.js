@@ -366,6 +366,7 @@ CMailView.prototype.onRoute = function (aParams)
 
 CMailView.prototype.onShow = function ()
 {
+	this.oFolderList.onShow();
 	this.oMessageList.onShow();
 	if (_.isFunction(this.messagePane().onShow))
 	{

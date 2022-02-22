@@ -96,6 +96,15 @@ function CFolderListView()
 
 CFolderListView.prototype.ViewTemplate = '%ModuleName%_FoldersView';
 
+CFolderListView.prototype.onShow = function ()
+{
+	this.underNewMessageButtonControllers().forEach(controller => {
+		if (_.isFunction(controller.onShow)) {
+			controller.onShow();
+		}
+	});
+};
+
 CFolderListView.prototype.addNewFolder = function ()
 {
 	Popups.showPopup(CreateFolderPopup);
