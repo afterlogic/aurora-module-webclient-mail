@@ -50,15 +50,6 @@ MailUtils.deleteMessages = function (aUids, fAfterDelete)
 		}
 	;
 
-	App.sendLogMessage(JSON.stringify({
-		Message: 'MailUtils.deleteMessages method',
-		Uids: aUids,
-		InSpam: bInSpam,
-		InTrash: bInTrash,
-		UnifiedInboxSelected: MailCache.oUnifiedInbox.selected(),
-		HasTrash: !!oTrash
-	}));
-
 	if (bInSpam || bInTrash)
 	{
 		Popups.showPopup(ConfirmPopup, [
