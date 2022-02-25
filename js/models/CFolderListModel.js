@@ -455,15 +455,19 @@ CFolderListModel.prototype.repopulateLinedCollection = function ()
  * @param {boolean=} bHideInbox = false
  * @param {boolean=} bIgnoreCanBeSelected = false
  * @param {boolean=} bIgnoreUnsubscribed = false
+ * @param {array=} aIgnoreFoldersFullNames = []
  * @returns {Array}
  */
-CFolderListModel.prototype.getOptions = function (sFirstItem, bEnableSystem, bHideInbox, bIgnoreCanBeSelected, bIgnoreUnsubscribed)
+CFolderListModel.prototype.getOptions = function (sFirstItem, bEnableSystem, bHideInbox,
+												bIgnoreCanBeSelected, bIgnoreUnsubscribed,
+												aIgnoreFoldersFullNames)
 {
 	bEnableSystem = !!bEnableSystem;
 	bHideInbox = !!bHideInbox;
 	bIgnoreCanBeSelected = !!bIgnoreCanBeSelected;
 	bIgnoreUnsubscribed = !!bIgnoreUnsubscribed;
-	
+	aIgnoreFoldersFullNames = Types.pArray(aIgnoreFoldersFullNames);
+
 	var
 		sDeepPrefix = '\u00A0\u00A0\u00A0\u00A0',
 		aCollection = []
@@ -473,12 +477,22 @@ CFolderListModel.prototype.getOptions = function (sFirstItem, bEnableSystem, bHi
 		if (oFolder && !oFolder.bVirtual && (!bHideInbox || Enums.FolderTypes.Inbox !== oFolder.type()) && (!bIgnoreUnsubscribed || oFolder.subscribed()))
 		{
 			var sPrefix = (new Array(oFolder.getDisplayedLevel() + 1)).join(sDeepPrefix);
+			var bDisable = false;
+			if (!bEnableSystem && oFolder.isSystem()) {
+				bDisable = true;
+			}
+			if (!bIgnoreCanBeSelected && !oFolder.canBeSelected()) {
+				bDisable = true;
+			}
+			if (_.indexOf(aIgnoreFoldersFullNames, oFolder.fullName()) !== -1) {
+				bDisable = true;
+			}
 			aCollection.push({
 				'name': oFolder.name(),
 				'fullName': oFolder.fullName(),
 				'displayName': sPrefix + oFolder.name(),
 				'translatedDisplayName': sPrefix + oFolder.displayName(),
-				'disable': !bEnableSystem && oFolder.isSystem() || !bIgnoreCanBeSelected && !oFolder.canBeSelected()
+				'disable': bDisable
 			});
 		}
 	});
