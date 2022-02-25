@@ -110,8 +110,10 @@ function CMailView()
 	}, this);
 
 	this.needToCopyDraggedItems = ko.observable(false);
+
+	this.moveToFolderTemplate = '%ModuleName%_Messages_MoveButtonView'; // can be override by other modules
 	this.moveToFolderCommand = Utils.createCommand(this, function () {}, this.isEnableGroupOperations);
-//	this.copyToFolderCommand = Utils.createCommand(this, function () {}, this.isEnableGroupOperations);
+
 	this.deleteCommand = Utils.createCommand(this.oMessageList, this.oMessageList.executeDelete, this.isEnableGroupOperations);
 	this.selectedCount = ko.computed(function () {
 		return this.oMessageList.checkedUids().length;
