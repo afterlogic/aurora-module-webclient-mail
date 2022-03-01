@@ -63,6 +63,7 @@ function CFolderModel(iAccountId, bIsUnifiedInbox)
 	this.fullName = ko.observable('');
 	this.fullNameHash = ko.observable('');
 	this.parentFullName = ko.observable('');
+	this.parentDisplayFullName = ko.observable('');
 	this.bSelectable = true;
 	this.subscribed = ko.observable(true);
 	this.name = ko.observable('');
@@ -875,8 +876,9 @@ CFolderModel.prototype.initStarredFolder = function (iLevel, sFullName)
  * @param {Object} oData
  * @param {string} sParentFullName
  * @param {string} sNamespaceFolder
+ * @param {string} sParentDisplayFullName
  */
-CFolderModel.prototype.parse = function (oData, sParentFullName, sNamespaceFolder)
+CFolderModel.prototype.parse = function (oData, sParentFullName, sNamespaceFolder, sParentDisplayFullName)
 {
 	var
 		sName = '',
@@ -893,6 +895,7 @@ CFolderModel.prototype.parse = function (oData, sParentFullName, sNamespaceFolde
 		this.fullName(Types.pString(oData.FullNameRaw));
 		this.fullNameHash(Types.pString(oData.FullNameHash));
 		this.parentFullName(Types.pString(sParentFullName));
+		this.parentDisplayFullName(Types.pString(sParentDisplayFullName));
 		this.sDelimiter = oData.Delimiter;
 		
 		iType = Types.pInt(oData.Type);
@@ -925,7 +928,7 @@ CFolderModel.prototype.parse = function (oData, sParentFullName, sNamespaceFolde
 
 		this.initSubscriptions(sParentFullName);
 		this.initComputedFields();
-	
+
 		App.broadcastEvent('%ModuleName%::ParseFolder::after', this);
 		
 		return oData.SubFolders;
@@ -1120,6 +1123,13 @@ CFolderModel.prototype.initComputedFields = function ()
 				return TextUtils.i18n('%MODULENAME%/LABEL_FOLDER_SPAM');
 		}
 		return this.name();
+	}, this);
+	
+	this.displayFullName = ko.computed(function () {
+		if (this.parentDisplayFullName() !== '') {
+			return this.parentDisplayFullName() + this.sDelimiter + this.displayName();
+		}
+		return this.displayName();
 	}, this);
 
 	this.setDisableMoveTo(false);

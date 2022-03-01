@@ -291,9 +291,11 @@ CFolderListModel.prototype.destroyFolders = function ()
  * @param {Object} oNamedFolderListOld
  * @param {number=} iLevel
  * @param {string=} sParentFullName
+ * @param {string=} sParentDisplayFullName
  * @returns {Array}
  */
-CFolderListModel.prototype.parseRecursively = function (aRawCollection, oNamedFolderListOld, iLevel, sParentFullName)
+CFolderListModel.prototype.parseRecursively = function (aRawCollection, oNamedFolderListOld, iLevel,
+														sParentFullName, sParentDisplayFullName)
 {
 	var
 		aParsedCollection = [],
@@ -323,7 +325,7 @@ CFolderListModel.prototype.parseRecursively = function (aRawCollection, oNamedFo
 			
 			// Do not create a new folder object if possible. A new object will use memory that is difficult to free.
 			oFolder = oFolderOld ? oFolderOld : new CFolderModel(this.iAccountId);
-			oSubFolders = oFolder.parse(aRawCollection[iIndex], sParentFullName, this.sNamespaceFolder);
+			oSubFolders = oFolder.parse(aRawCollection[iIndex], sParentFullName, this.sNamespaceFolder, sParentDisplayFullName);
 			
 			// Remove from the old folder list reference to the folder. The remaining folders will be destroyed.
 			delete oNamedFolderListOld[sFolderFullName];
@@ -376,11 +378,13 @@ CFolderListModel.prototype.parseRecursively = function (aRawCollection, oNamedFo
 			{
 				if(oFolder.bNamespace && oFolder.type() === Enums.FolderTypes.Inbox)
 				{
-					aSubfolders = this.parseRecursively(oSubFolders['@Collection'], oNamedFolderListOld, iLevel - 1, oFolder.fullName());
+					aSubfolders = this.parseRecursively(oSubFolders['@Collection'], oNamedFolderListOld,
+									iLevel - 1, oFolder.fullName(), oFolder.displayFullName());
 				}
 				else
 				{
-					aSubfolders = this.parseRecursively(oSubFolders['@Collection'], oNamedFolderListOld, iLevel, oFolder.fullName());
+					aSubfolders = this.parseRecursively(oSubFolders['@Collection'], oNamedFolderListOld,
+									iLevel, oFolder.fullName(), oFolder.displayFullName());
 				}
 				if(oFolder.type() === Enums.FolderTypes.Inbox)
 				{
