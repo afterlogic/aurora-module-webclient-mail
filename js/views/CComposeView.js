@@ -1980,11 +1980,11 @@ CComposeView.prototype.registerOwnToolbarControllers = function ()
 		visible: this.visibleSaveTemplateControl,
 		saveTemplateCommand: this.saveTemplateCommand
 	});
-	this.registerToolbarController({
-		ViewTemplate: '%ModuleName%_Compose_ImportanceDropdownView',
-		sId: 'importance',
-		selectedImportance: this.selectedImportance
-	});
+//	this.registerToolbarController({
+//		ViewTemplate: '%ModuleName%_Compose_ImportanceDropdownView',
+//		sId: 'importance',
+//		selectedImportance: this.selectedImportance
+//	});
 	this.registerToolbarController({
 		ViewTemplate: '%ModuleName%_Compose_ConfirmationCheckboxView',
 		sId: 'confirmation',

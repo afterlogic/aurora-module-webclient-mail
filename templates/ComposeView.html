@@ -2,9 +2,10 @@
 	<div class="panel compose" data-bind="css: {'compose-auto-encrypt': autoEncryptSignMessage}">
 		<div class="panel_content">
 			<div class="toolbar">
-				<span class="content">
+				<span class="content" style="float: right;">
 					<!-- ko template: {name: sPopupButtonsViewTemplate} --><!-- /ko -->
-
+				</span>
+				<span class="content content_standard_buttons" style="float: left;">
 					<!-- ko foreach: toolbarControllers -->
 						<!-- ko if: !bSendButton -->
 							<!-- ko template: { name: $data.ViewTemplate, data: $data} --><!-- /ko -->
