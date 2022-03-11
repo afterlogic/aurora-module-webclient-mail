@@ -104,7 +104,7 @@
 												</div>
 											</td>
 										</tr>
-										<tr class="subject" data-bind="visible: !headersCompressed()">
+<!--										<tr class="subject" data-bind="visible: !headersCompressed()">
 											<td class="label">
 												<span data-bind="i18n: {'key': '%MODULENAME%/LABEL_SUBJECT'}"></span>:
 											</td>
@@ -112,7 +112,7 @@
 												<input type="text" class="input" maxlength="1000" tabindex="5" id="selenium_compose_subject"
 													   data-bind="value: subject, hasfocus: subjectFocused, valueUpdate: 'afterkeydown'"/>
 											</td>
-										</tr>
+										</tr>-->
 										<!-- ko if: !headersCompressed() -->
 											<!-- ko foreach: messageRowControllers -->
 												<!-- ko template: { name: $data.ViewTemplate, data: $data} --><!-- /ko -->
