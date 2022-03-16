@@ -477,10 +477,21 @@ CComposeView.prototype.initInputosaurus = function (koAddrDom, koAddr, koLockAdd
 {
 	if (koAddrDom() && $(koAddrDom()).length > 0)
 	{
+		const
+			suggestParameters = {
+				storage: 'all',
+				addContactGroups: true,
+				addUserGroups: true,
+				exceptEmail: ''
+			},
+			autoCompleteSource = ModulesManager.run(
+				'ContactsWebclient', 'getSuggestionsAutocompleteCallback', [suggestParameters]
+			)
+		;
 		var oOptions = {
 			width: 'auto',
 			parseOnBlur: true,
-			autoCompleteSource: ModulesManager.run('ContactsWebclient', 'getSuggestionsAutocompleteCallback', ['all', '', /*bWithGroups*/true]) || function () {},
+			autoCompleteSource: _.isFunction(autoCompleteSource) ? autoCompleteSource : function () {},
 			autoCompleteDeleteItem: ModulesManager.run('ContactsWebclient', 'getSuggestionsAutocompleteDeleteHandler') || function () {},
 			autoCompleteAppendTo: $(koAddrDom()).closest('td'),
 			change : _.bind(function (ev) {
