@@ -68,6 +68,7 @@ module.exports = {
 	DisableRtlRendering: false,
 	AllowQuickReply: false,
 	AllowQuickSendOnCompose: false,
+	AllowQuickSendOnCompose: false,
 	MarkMessageSeenWhenViewing: true,
 	MarkMessageSeenWhenAnswerForward: false,
 	UserLoginPartInAccountDropdown: false,
@@ -155,6 +156,7 @@ module.exports = {
 			this.DisableRtlRendering = Types.pBool(oAppDataMailWebclientSection.DisableRtlRendering, this.DisableRtlRendering);
 			this.AllowQuickReply = Types.pBool(oAppDataMailWebclientSection.AllowQuickReply, this.AllowQuickReply);
 			this.AllowQuickSendOnCompose = Types.pBool(oAppDataMailWebclientSection.AllowQuickSendOnCompose, this.AllowQuickSendOnCompose);
+			this.AllowUserGroupsInComposeAutocomplete = Types.pBool(oAppDataMailWebclientSection.AllowUserGroupsInComposeAutocomplete, this.AllowUserGroupsInComposeAutocomplete);
 			this.MarkMessageSeenWhenViewing = Types.pBool(oAppDataMailWebclientSection.MarkMessageSeenWhenViewing, this.MarkMessageSeenWhenViewing);
 			this.MarkMessageSeenWhenAnswerForward = Types.pBool(oAppDataMailWebclientSection.MarkMessageSeenWhenAnswerForward, this.MarkMessageSeenWhenAnswerForward);
 			this.UserLoginPartInAccountDropdown = Types.pBool(oAppDataMailWebclientSection.UserLoginPartInAccountDropdown, this.UserLoginPartInAccountDropdown);

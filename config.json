@@ -99,6 +99,10 @@
 		false,
 		"bool"
 	],
+	"AllowUserGroupsInComposeAutocomplete": [
+		true,
+		"bool"
+	],
 	"MarkMessageSeenWhenViewing": [
 		true,
 		"bool"
