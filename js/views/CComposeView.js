@@ -482,6 +482,7 @@ CComposeView.prototype.initInputosaurus = function (koAddrDom, koAddr, koLockAdd
 				storage: 'all',
 				addContactGroups: true,
 				addUserGroups: Settings.AllowUserGroupsInComposeAutocomplete,
+				addEmailsToGroups: true,
 				exceptEmail: ''
 			},
 			autoCompleteSource = ModulesManager.run(
