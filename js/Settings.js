@@ -68,7 +68,7 @@ module.exports = {
 	DisableRtlRendering: false,
 	AllowQuickReply: false,
 	AllowQuickSendOnCompose: false,
-	AllowQuickSendOnCompose: false,
+	AllowUserGroupsInComposeAutocomplete: true,
 	MarkMessageSeenWhenViewing: true,
 	MarkMessageSeenWhenAnswerForward: false,
 	UserLoginPartInAccountDropdown: false,
@@ -76,7 +76,7 @@ module.exports = {
 
 	userMailAccountsCount: ko.observable(0),
 	mailAccountsEmails: ko.observableArray([]),
-	
+
 	/**
 	 * Initializes settings from AppData object sections.
 	 * 

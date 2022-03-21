@@ -66,7 +66,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			'DisableRtlRendering' => $this->getConfig('DisableRtlRendering', false),
 			'AllowQuickReply' => $this->getConfig('AllowQuickReply', false),
 			'AllowQuickSendOnCompose' => $this->getConfig('AllowQuickSendOnCompose', false),
-			'AllowUserGroupsInComposeAutocomplete' => $this->getConfig('AllowUserGroupsInComposeAutocomplete', false),
+			'AllowUserGroupsInComposeAutocomplete' => $this->getConfig('AllowUserGroupsInComposeAutocomplete', true),
 			'MarkMessageSeenWhenViewing' => $this->getConfig('MarkMessageSeenWhenViewing', true),
 			'MarkMessageSeenWhenAnswerForward' => $this->getConfig('MarkMessageSeenWhenAnswerForward', false),
 			'UserLoginPartInAccountDropdown' => $this->getConfig('UserLoginPartInAccountDropdown', false),
