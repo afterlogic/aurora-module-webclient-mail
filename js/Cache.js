@@ -1091,7 +1091,11 @@ CMailCache.prototype.moveMessagesToFolder = function (oFromFolder, oToFolder, aU
 				this.excludeDeletedMessages();
 
 				oToFolder.markHasChanges();
-
+				
+				App.sendLogMessage(JSON.stringify({
+					Message: 'Send MoveMessages request',
+					Parameters: oParameters
+				}));
 				Ajax.send('MoveMessages', oParameters, this.onMoveMessagesResponse, this);
 			}, this)
 		;
@@ -1239,6 +1243,10 @@ CMailCache.prototype.deleteMessagesFromFolder = function (oFolder, aUids)
 
 	this.excludeDeletedMessages();
 
+	App.sendLogMessage(JSON.stringify({
+		Message: 'Send DeleteMessages request',
+		Parameters: oParameters
+	}));
 	Ajax.send('DeleteMessages', oParameters, this.onMoveMessagesResponse, this);
 };
 
@@ -2008,6 +2016,11 @@ CMailCache.prototype.removeMessageFromCurrentList = function (iAccountId, sFolde
  */
 CMailCache.prototype.onMoveMessagesResponse = function (oResponse, oRequest)
 {
+	App.sendLogMessage(JSON.stringify({
+		Message: 'onMoveMessagesResponse method',
+		Response: oResponse,
+		Request: oRequest
+	}));
 	var
 		oResult = oResponse.Result,
 		oParameters = oRequest.Parameters,

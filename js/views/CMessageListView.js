@@ -1008,6 +1008,10 @@ CMessageListView.prototype.onDeletePress = function (aMessages)
 	var aUids = MailCache.oUnifiedInbox.selected() ?
 			_.map(aMessages, function (oMessage) { return oMessage.unifiedUid(); }) :
 			_.map(aMessages, function (oMessage) { return oMessage.uid(); });
+	App.sendLogMessage(JSON.stringify({
+		Message: 'Pressing delete key on keyboard',
+		Uids: aUids
+	}));
 
 	if (aUids.length > 0)
 	{
@@ -1021,6 +1025,10 @@ CMessageListView.prototype.onDeletePress = function (aMessages)
 CMessageListView.prototype.executeDelete = function ()
 {
 	var aUids = this.checkedOrSelectedUids();
+	App.sendLogMessage(JSON.stringify({
+		Message: 'Mouse click on delete button in UI',
+		Uids: aUids
+	}));
 	this.deleteMessages(aUids);
 };
 
@@ -1048,6 +1056,12 @@ CMessageListView.prototype.deleteMessages = function (aUids)
 	if (aUids.length > 0)
 	{
 		MailUtils.deleteMessages(aUids, function () {
+			App.sendLogMessage(JSON.stringify({
+				Message: 'Callback after delete',
+				Uids: aUids,
+				UidToOpenAfter: sUidToOpenAfter
+			}));
+
 			if (sUidToOpenAfter !== '')
 			{
 				oMessageToOpenAfter = _.find(this.collection(), function (oMessage) {
