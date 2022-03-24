@@ -1020,16 +1020,13 @@ CMessagePaneView.prototype.hotKeysBind = function ()
 {
 	$(document).on('keydown', $.proxy(function(ev) {
 
-		var	bComputed = this.bShown && ev && !ev.ctrlKey && !ev.shiftKey &&
+		const allowReply = this.bShown && ev && !(ev.ctrlKey || ev.metaKey) && !ev.shiftKey &&
 			!Utils.isTextFieldFocused() && this.isEnableReply();
 
-		if (bComputed && ev.keyCode === Enums.Key.q)
-		{
+		if (allowReply && ev.keyCode === Enums.Key.q) {
 			ev.preventDefault();
 			this.replyTextFocus(true);
-		}
-		else if (bComputed && ev.keyCode === Enums.Key.r)
-		{
+		} else if (allowReply && ev.keyCode === Enums.Key.r) {
 			ev.preventDefault();
 			this.executeReply();
 		}
