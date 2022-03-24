@@ -584,13 +584,12 @@ CMailView.prototype.messagesDrop = function (oToFolder, oEvent, oUi)
 			if(oEvent.ctrlKey)
 			{
 				this.oMessageList.executeCopyToFolder(oToFolder.fullName());
+				this.uncheckMessages();
 			}
 			else
 			{
 				this.oMessageList.executeMoveToFolder(oToFolder.fullName());
 			}
-
-			this.uncheckMessages();
 		}
 	}
 };

@@ -19,7 +19,8 @@ var
 	
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
 	ConfirmPopup = require('%PathToCoreWebclientModule%/js/popups/ConfirmPopup.js'),
-	
+	AlertPopup = require('%PathToCoreWebclientModule%/js/popups/AlertPopup.js'),
+
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
 	
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
@@ -31,7 +32,9 @@ var
 	CFolderModel = require('modules/%ModuleName%/js/models/CFolderModel.js'),
 	CFolderListModel = require('modules/%ModuleName%/js/models/CFolderListModel.js'),
 	CUidListModel = require('modules/%ModuleName%/js/models/CUidListModel.js'),
-	
+
+	InformatikSettings = require('modules/InformatikProjects/js/Settings.js'),
+
 	MainTab = App.isNewTab() && window.opener && window.opener.MainTabMailMethods
 ;
 
@@ -1062,6 +1065,13 @@ CMailCache.prototype.moveMessagesToFolder = function (oFromFolder, oToFolder, aU
 {
 	if (Types.isNonEmptyArray(aUids))
 	{
+		if (oToFolder.fullName() === InformatikSettings.AssignedInternalFolderName ||
+			oToFolder.fullName() === InformatikSettings.AssignedIncomingFolderName ||
+			oToFolder.fullName() === InformatikSettings.AssignedOutgoingFolderName
+		) {
+			Popups.showPopup(AlertPopup, [TextUtils.i18n('INFORMATIKPROJECTS/ERROR_CANNOT_MOVETO_SPECIAL_FOLDER')]);
+			return;
+		}
 		var
 			bDraftsFolder = oFromFolder && oFromFolder.type() === Enums.FolderTypes.Drafts,
 			aOpenedDraftUids = bDraftsFolder && this.getOpenedDraftUids(),
