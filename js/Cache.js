@@ -152,10 +152,11 @@ function CMailCache()
 		{
 			this.messagesLoadingError(false);
 		}
-		if (this.currentMessage()) {
+		const currentMessageUniqId = this.currentMessage() && this.currentMessage().sUniq;
+		if (currentMessageUniqId) {
 			var
 				oCurrMessage = _.find(this.messages(), function (oMessage) {
-					return oMessage.sUniq === this.currentMessage().sUniq;
+					return oMessage && oMessage.sUniq === currentMessageUniqId;
 				}.bind(this)),
 				oFolder = oCurrMessage ? this.getFolderByFullName(oCurrMessage.accountId(), oCurrMessage.folder()) : null
 			;
