@@ -1056,12 +1056,6 @@ CMessageListView.prototype.deleteMessages = function (aUids)
 	if (aUids.length > 0)
 	{
 		MailUtils.deleteMessages(aUids, function () {
-			App.sendLogMessage(JSON.stringify({
-				Message: 'Callback after delete',
-				Uids: aUids,
-				UidToOpenAfter: sUidToOpenAfter
-			}));
-
 			if (sUidToOpenAfter !== '')
 			{
 				oMessageToOpenAfter = _.find(this.collection(), function (oMessage) {

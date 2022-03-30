@@ -35,7 +35,10 @@ var
 
 	InformatikSettings = require('modules/InformatikProjects/js/Settings.js'),
 
-	MainTab = App.isNewTab() && window.opener && window.opener.MainTabMailMethods
+	MainTab = App.isNewTab() && window.opener && window.opener.MainTabMailMethods,
+
+	allDeletedFromInboxMessagesUids = {},
+	allDeletedFromAllMailMessagesUids = {}
 ;
 
 /**
@@ -148,6 +151,21 @@ function CMailCache()
 
 	this.messages = ko.observableArray([]);
 	this.messages.subscribe(function () {
+		if (this.uidList().sFullName === 'INBOX') {
+			const inboxMessagesUids = this.messages().filter(message => !message.deleted()).map(message => message.uid());
+			const inboxMessagesDeletedUids = this.messages().filter(message => message.deleted()).map(message => message.uid());
+			const inboxDeletedUids = Types.pArray(allDeletedFromInboxMessagesUids[this.uidList().iAccountId]);
+			const inboxIntersection = inboxMessagesUids.filter(uid => inboxDeletedUids.includes(uid));
+			App.sendLogMessage(JSON.stringify({inboxMessagesUids, inboxMessagesDeletedUids, inboxDeletedUids, inboxIntersection}));
+		}
+		if (this.uidList().sFullName === 'All mail') {
+			const allMailMessagesUids = this.messages().filter(message => !message.deleted()).map(message => message.uid());
+			const allMailMessagesDeletedUids = this.messages().filter(message => message.deleted()).map(message => message.uid());
+			const allMailDeletedUids = Types.pArray(allDeletedFromAllMailMessagesUids[this.uidList().iAccountId]);
+			const allMailIntersection = allMailMessagesUids.filter(uid => allMailDeletedUids.includes(uid));
+			App.sendLogMessage(JSON.stringify({allMailMessagesUids, allMailMessagesDeletedUids, allMailDeletedUids, allMailIntersection}));
+		}
+
 		if (this.messages().length > 0)
 		{
 			this.messagesLoadingError(false);
@@ -384,7 +402,7 @@ CMailCache.prototype.calcPrevMessageUid = function ()
 			var aUids = _.filter(this.uidList().collection(), function (sUid) {
 				var oMessage = oFolder.getMessageByUid(sUid);
 				return oMessage && !oMessage.deleted();
-			})
+			});
 			_.each(aUids, function (sUid, iIndex, aCollection) {
 				if (sUid === sCurrentUid && (iIndex + 1) < aCollection.length)
 				{
@@ -1102,11 +1120,20 @@ CMailCache.prototype.moveMessagesToFolder = function (oFromFolder, oToFolder, aU
 				this.excludeDeletedMessages();
 
 				oToFolder.markHasChanges();
-				
-				App.sendLogMessage(JSON.stringify({
-					Message: 'Send MoveMessages request',
-					Parameters: oParameters
-				}));
+				if (oParameters.ToFolder === 'Trash') {
+					if (oParameters.Folder === 'INBOX') {
+						if (!allDeletedFromInboxMessagesUids[oParameters.AccountID]) {
+							allDeletedFromInboxMessagesUids[oParameters.AccountID] = [];
+						}
+						allDeletedFromInboxMessagesUids[oParameters.AccountID] = allDeletedFromInboxMessagesUids[oParameters.AccountID].concat(aUids);
+					}
+					if (oParameters.Folder === 'All mail') {
+						if (!allDeletedFromAllMailMessagesUids[oParameters.AccountID]) {
+							allDeletedFromAllMailMessagesUids[oParameters.AccountID] = [];
+						}
+						allDeletedFromAllMailMessagesUids[oParameters.AccountID] = allDeletedFromAllMailMessagesUids[oParameters.AccountID].concat(aUids);
+					}
+				}
 				Ajax.send('MoveMessages', oParameters, this.onMoveMessagesResponse, this);
 			}, this)
 		;
@@ -1254,10 +1281,6 @@ CMailCache.prototype.deleteMessagesFromFolder = function (oFolder, aUids)
 
 	this.excludeDeletedMessages();
 
-	App.sendLogMessage(JSON.stringify({
-		Message: 'Send DeleteMessages request',
-		Parameters: oParameters
-	}));
 	Ajax.send('DeleteMessages', oParameters, this.onMoveMessagesResponse, this);
 };
 
@@ -2027,11 +2050,6 @@ CMailCache.prototype.removeMessageFromCurrentList = function (iAccountId, sFolde
  */
 CMailCache.prototype.onMoveMessagesResponse = function (oResponse, oRequest)
 {
-	App.sendLogMessage(JSON.stringify({
-		Message: 'onMoveMessagesResponse method',
-		Response: oResponse,
-		Request: oRequest
-	}));
 	var
 		oResult = oResponse.Result,
 		oParameters = oRequest.Parameters,
@@ -2054,6 +2072,12 @@ CMailCache.prototype.onMoveMessagesResponse = function (oResponse, oRequest)
 		bFillMessages = false
 	;
 	
+	App.sendLogMessage(JSON.stringify({
+		Message: 'onMoveMessagesResponse',
+		Uids: aUids,
+		Result: oResult
+	}));
+
 	if (oResult === false)
 	{
 		if (oFolder)
