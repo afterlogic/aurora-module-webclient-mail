@@ -101,6 +101,8 @@ function CAccountModel(oData)
 	this.showUnifiedMailboxLabel = ko.observable(Settings.AllowUnifiedInbox && !!oData.ShowUnifiedMailboxLabel);
 	this.unifiedMailboxLabelText = ko.observable(Types.pString(oData.UnifiedMailboxLabelText));
 	this.unifiedMailboxLabelColor = ko.observable(Types.pString(oData.UnifiedMailboxLabelColor));
+
+	App.broadcastEvent('%ModuleName%::ParseAccount::after', { account: this , data: oData });
 }
 
 CAccountModel.prototype.threadingIsAvailable = function ()
