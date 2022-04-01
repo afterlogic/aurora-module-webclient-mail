@@ -64,6 +64,8 @@
 							<span class="icon"></span>
 							<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_OPEN_MESSAGE_HEADERS'}"></span>
 						</span>
+						
+						<!-- ko template: { name: oUnsubscribeButtonView.ViewTemplate, data: oUnsubscribeButtonView} --><!-- /ko -->
 
 						<!-- ko foreach: moreSectionCommands -->
 						<span class="item" data-bind="command: Command, css: CssClass, visible: Visible">

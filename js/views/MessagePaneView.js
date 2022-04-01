@@ -136,6 +136,8 @@ function CMessagePaneView()
 		this.moreSectionCommands.push(oNewCommand);
 	}, this));
 
+	this.oUnsubscribeButtonView = require('modules/%ModuleName%/js/views/message-pane/UnsubscribeButtonView.js'),
+
 	this.visiblePicturesControl = ko.observable(false);
 	this.visibleShowPicturesLink = ko.observable(false);
 

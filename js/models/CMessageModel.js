@@ -203,6 +203,7 @@ function CMessageModel()
 	this.attachments = ko.observableArray([]);
 	this.safety = ko.observable(false);
 	this.sourceHeaders = ko.observable('');
+	this.canUnsubscribe = ko.observable(false);
 
 	this.date = ko.observable('');
 
@@ -537,6 +538,7 @@ CMessageModel.prototype.parse = function (oData, iAccountId, bThreadPart, bTrust
 			this.parseAttachments(oData.Attachments, iAccountId);
 			this.safety(oData.Safety);
 			this.sourceHeaders(oData.Headers);
+			this.canUnsubscribe(!!oData.CanUnsubscribe);
 
 			this.aExtend = oData.Extend;
 			this.completelyFilled(true);
