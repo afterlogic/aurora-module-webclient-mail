@@ -2070,6 +2070,7 @@ CComposeView.prototype.getExtInterface = function ()
 			return this.subject();
 		}, this),
 		koSubject: this.subject,
+		koRecipientEmails: this.recipientEmails,
 		getAutoEncryptSignMessage: function () {
 			return this.autoEncryptSignMessage();
 		}.bind(this),
