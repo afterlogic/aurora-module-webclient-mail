@@ -36,9 +36,11 @@ SpamButtonsView.prototype.doAfterPopulatingMessage = function (parameters)
 {
 	const
 		message = MailCache.currentMessage(),
-		account = message ? AccountList.getAccount(message.accountId()) : AccountList.getCurrent()
+		account = message ? AccountList.getAccount(message.accountId()) : AccountList.getCurrent(),
+		enableAllowBlockLists = account ? account.enableAllowBlockLists() : false,
+		isTemplateFolder = MailCache.isTemplateFolder(message && message.folder());
 	;
-	this.allowSpamButtons(account ? account.enableAllowBlockLists() : false);
+	this.allowSpamButtons(enableAllowBlockLists && !isTemplateFolder);
 
 	this.isCurrentMessageLoaded(!!parameters);
 };

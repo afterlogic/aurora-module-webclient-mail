@@ -2228,6 +2228,11 @@ CMailCache.prototype.getCurrentTemplateFolders = function ()
 	return Settings.AllowTemplateFolders ? this.folderList().aTemplateFolders : [];
 };
 
+CMailCache.prototype.isTemplateFolder = function (folderFullName)
+{
+	return -1 !== $.inArray(folderFullName, this.getCurrentTemplateFolders());
+};
+
 CMailCache.prototype.changeTemplateFolder = function (sFolderName, bTemplate)
 {
 	if (Settings.AllowTemplateFolders)
