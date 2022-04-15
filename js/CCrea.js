@@ -4,6 +4,7 @@ var
     _ = require('underscore'),
     $ = require('jquery'),
 
+	ContenteditableUtils = require('%PathToCoreWebclientModule%/js/utils/Contenteditable.js'),
     Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 
     App = require('%PathToCoreWebclientModule%/js/App.js'),
@@ -1780,7 +1781,7 @@ CCrea.prototype.getSelectedText = function ()
  */
 CCrea.prototype.storeSelectionPosition = function ()
 {
-    var aNewRanges = this.getSelectionRanges();
+    var aNewRanges = ContenteditableUtils.getSelectionRanges();
     if (_.isArray(aNewRanges) && aNewRanges.length > 0)
     {
         this.aRanges = aNewRanges;
@@ -1794,33 +1795,6 @@ CCrea.prototype.editableIsActive = function ()
 {
     return !!($(document.activeElement).hasClass('crea-content-editable') || $(document.activeElement).children().first().hasClass('crea-content-editable'));
 };
-
-/**
- * @return {Array}
- */
-CCrea.prototype.getSelectionRanges = function ()
-{
-    var aRanges = [];
-
-    if (window.getSelection && this.editableIsActive())
-    {
-        var
-            oSel = window.getSelection(),
-            oRange = null,
-            iIndex = 0,
-            iLen = oSel.rangeCount
-        ;
-
-        for (; iIndex < iLen; iIndex++)
-        {
-            oRange = oSel.getRangeAt(iIndex);
-            aRanges.push(oRange);
-        }
-    }
-
-    return aRanges;
-};
-
 
 CCrea.prototype.checkAnchorNode = function ()
 {
@@ -1883,7 +1857,7 @@ CCrea.prototype.restoreSelectionPosition = function (sText)
         oNode = null
     ;
 
-    sRangeText = this.setSelectionRanges(this.aRanges);
+    sRangeText = ContenteditableUtils.setSelectionRanges(this.aRanges);
     if (window.getSelection && _.isArray(this.aRanges))
     {
         sText = (sText !== undefined) ? sText : '';
@@ -1905,46 +1879,6 @@ CCrea.prototype.restoreSelectionPosition = function (sText)
             }
         }
     }
-};
-
-/**
- * @param {Array} aRanges
- * @return {string}
- */
-CCrea.prototype.setSelectionRanges = function (aRanges)
-{
-    var
-        oSel = null,
-        oRange = null,
-        iIndex = 0,
-        iLen = 0,
-        sRangeText = ''
-    ;
-
-    if (window.getSelection && _.isArray(aRanges))
-    {
-        iLen = aRanges.length;
-
-        oSel = window.getSelection();
-
-        if (!Browser.ie10AndAbove)
-        {
-            oSel.removeAllRanges();
-        }
-
-        for (; iIndex < iLen; iIndex++)
-        {
-            oRange = aRanges[iIndex];
-            if (oRange)
-            {
-                oSel.addRange(oRange);
-                sRangeText += '' + oRange;
-            }
-        }
-
-    }
-
-    return sRangeText;
 };
 
 CCrea.prototype.uniteWithNextQuote = function ()
