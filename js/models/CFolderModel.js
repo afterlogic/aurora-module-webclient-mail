@@ -734,13 +734,15 @@ CFolderModel.prototype.markHasChanges = function ()
 	} else {
 		this.requireMailCache();
 		const folderList = MailCache.oFolderListItems[this.iAccountId];
-		if (this.fullName() === 'All mail') {
+		if (this.fullName() === MailCache.ALL_MAIL_FOLDERNAME) {
 			_.each(folderList.oNamedCollection, function (folder) {
 				folder.markExactFolderHasChanges();
 			}, this);
 		} else {
-			const allMailFolder = folderList.getFolderByFullName('All mail');
-			allMailFolder.markExactFolderHasChanges();
+			const allMailFolder = folderList.getFolderByFullName(MailCache.ALL_MAIL_FOLDERNAME);
+			if (allMailFolder) {
+				allMailFolder.markExactFolderHasChanges();
+			}
 			this.markExactFolderHasChanges();
 		}
 	}

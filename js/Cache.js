@@ -106,6 +106,7 @@ function CMailCache()
 	
 	this.folderList = ko.observable(new CFolderListModel());
 	this.folderListLoading = ko.observableArray([]);
+	this.ALL_MAIL_FOLDERNAME = 'All mail';
 	
 	this.oUnifiedInbox = new CFolderModel(0, true);
 	this.getCurrentFolder = ko.computed(function ()
@@ -158,7 +159,7 @@ function CMailCache()
 			const inboxIntersection = inboxMessagesUids.filter(uid => inboxDeletedUids.includes(uid));
 			App.sendLogMessage(JSON.stringify({inboxMessagesUids, inboxMessagesDeletedUids, inboxDeletedUids, inboxIntersection}));
 		}
-		if (this.uidList().sFullName === 'All mail') {
+		if (this.uidList().sFullName === this.ALL_MAIL_FOLDERNAME) {
 			const allMailMessagesUids = this.messages().filter(message => !message.deleted()).map(message => message.uid());
 			const allMailMessagesDeletedUids = this.messages().filter(message => message.deleted()).map(message => message.uid());
 			const allMailDeletedUids = Types.pArray(allDeletedFromAllMailMessagesUids[this.uidList().iAccountId]);
@@ -1130,7 +1131,7 @@ CMailCache.prototype.moveMessagesToFolder = function (oFromFolder, oToFolder, aU
 						}
 						allDeletedFromInboxMessagesUids[oParameters.AccountID] = allDeletedFromInboxMessagesUids[oParameters.AccountID].concat(aUids);
 					}
-					if (oParameters.Folder === 'All mail') {
+					if (oParameters.Folder === this.ALL_MAIL_FOLDERNAME) {
 						if (!allDeletedFromAllMailMessagesUids[oParameters.AccountID]) {
 							allDeletedFromAllMailMessagesUids[oParameters.AccountID] = [];
 						}
