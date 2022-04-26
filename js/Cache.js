@@ -604,12 +604,15 @@ CMailCache.prototype.setMessagesFromUidList = function (oUidList, iOffset, bFill
 			this.messagesLoading(true);
 		}
 
-		var bMoreDataExpected = (iOffset + aUids.length < oUidList.resultCount()) && (aUids.length < this.limit());
-		if (!bMoreDataExpected) {
+		const
+			isFolderChanged = this.messages().length > 0 && this.messages()[0].folder() !== this.getCurrentFolderFullname(),
+			isMoreDataExpected = (iOffset + aUids.length < oUidList.resultCount()) && (aUids.length < this.limit())
+		;
+		if (isFolderChanged || !isMoreDataExpected) {
 			this.messagesLoading(false); // it will be reassigned later, this needed correct applying of message list
 			this.messages(this.getMessagesWithThreads(this.getCurrentFolderFullname(), oUidList, aMessages));
 		}
-		
+
 		if (this.currentMessage() && (this.currentMessage().deleted() ||
 			this.currentMessage().folder() !== this.getCurrentFolderFullname() && !this.oUnifiedInbox.selected()))
 		{
@@ -2261,7 +2264,7 @@ CMailCache.prototype.clearMessagesCache = function (iAccountId)
 	var oFolderList = this.oFolderListItems[iAccountId];
 	
 	_.each(oFolderList.collection(), function (oFolder) {
-		oFolder.markHasChanges();
+		oFolder.markExactFolderHasChanges();
 		oFolder.removeAllMessageListsFromCacheIfHasChanges(this.uidList());
 	}, this);
 	

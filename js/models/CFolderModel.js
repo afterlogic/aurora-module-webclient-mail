@@ -729,6 +729,25 @@ CFolderModel.prototype.increaseCountIfHasNotInfo = function ()
 
 CFolderModel.prototype.markHasChanges = function ()
 {
+	if (this.bIsUnifiedInbox) {
+		this.markExactFolderHasChanges();
+	} else {
+		this.requireMailCache();
+		const folderList = MailCache.oFolderListItems[this.iAccountId];
+		if (this.fullName() === 'All mail') {
+			_.each(folderList.oNamedCollection, function (folder) {
+				folder.markExactFolderHasChanges();
+			}, this);
+		} else {
+			const allMailFolder = folderList.getFolderByFullName('All mail');
+			allMailFolder.markExactFolderHasChanges();
+			this.markExactFolderHasChanges();
+		}
+	}
+};
+
+CFolderModel.prototype.markExactFolderHasChanges = function ()
+{
 	this.hasChanges(true);
 };
 
