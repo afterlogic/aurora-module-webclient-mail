@@ -62,12 +62,15 @@ function CServerPairPropertiesView(sPairId, bAdminEdit, iServersPerPage)
 			this.externalAccessImapServer(oSelectedServer.sExternalAccessImapServer);
 			this.externalAccessImapPort(oSelectedServer.iExternalAccessImapPort);
 			this.externalAccessImapAlterPort(oSelectedServer.iExternalAccessImapAlterPort > 0 ? oSelectedServer.iExternalAccessImapAlterPort : '');
+			this.externalAccessImapUseSsl(oSelectedServer.bExternalAccessImapUseSsl);
 			this.externalAccessPop3Server(oSelectedServer.sExternalAccessPop3Server);
 			this.externalAccessPop3Port(oSelectedServer.iExternalAccessPop3Port);
 			this.externalAccessPop3AlterPort(oSelectedServer.iExternalAccessPop3AlterPort > 0 ? oSelectedServer.iExternalAccessPop3AlterPort : '');
+			this.externalAccessPop3UseSsl(oSelectedServer.bExternalAccessPop3UseSsl);
 			this.externalAccessSmtpServer(oSelectedServer.sExternalAccessSmtpServer);
 			this.externalAccessSmtpPort(oSelectedServer.iExternalAccessSmtpPort);
 			this.externalAccessSmtpAlterPort(oSelectedServer.iExternalAccessSmtpAlterPort > 0 ? oSelectedServer.iExternalAccessSmtpAlterPort : '');
+			this.externalAccessSmtpUseSsl(oSelectedServer.bExternalAccessSmtpUseSsl);
 
 			this.oauthSelectedConnector(oSelectedServer.bOauthEnable ? oSelectedServer.sOauthType : '');
 
@@ -94,12 +97,15 @@ function CServerPairPropertiesView(sPairId, bAdminEdit, iServersPerPage)
 			this.externalAccessImapServer(this.oLastEditableServer.sExternalAccessImapServer);
 			this.externalAccessImapPort(this.oLastEditableServer.iExternalAccessImapPort);
 			this.externalAccessImapAlterPort(this.oLastEditableServer.iExternalAccessImapAlterPort > 0 ? this.oLastEditableServer.iExternalAccessImapAlterPort : '');
+			this.externalAccessImapUseSsl(this.oLastEditableServer.bExternalAccessImapUseSsl);
 			this.externalAccessPop3Server(this.oLastEditableServer.sExternalAccessPop3Server);
 			this.externalAccessPop3Port(this.oLastEditableServer.iExternalAccessPop3Port);
 			this.externalAccessPop3AlterPort(this.oLastEditableServer.iExternalAccessPop3AlterPort > 0 ? this.oLastEditableServer.iExternalAccessPop3AlterPort : '');
+			this.externalAccessPop3UseSsl(this.oLastEditableServer.bExternalAccessPop3UseSsl);
 			this.externalAccessSmtpServer(this.oLastEditableServer.sExternalAccessSmtpServer);
 			this.externalAccessSmtpPort(this.oLastEditableServer.iExternalAccessSmtpPort);
 			this.externalAccessSmtpAlterPort(this.oLastEditableServer.iExternalAccessSmtpAlterPort > 0 ? this.oLastEditableServer.iExternalAccessSmtpAlterPort : '');
+			this.externalAccessSmtpUseSsl(this.oLastEditableServer.bExternalAccessSmtpUseSsl);
 
 			this.oauthSelectedConnector(this.oLastEditableServer.bOauthEnable ? this.oLastEditableServer.sOauthType : '');
 
@@ -160,24 +166,30 @@ function CServerPairPropertiesView(sPairId, bAdminEdit, iServersPerPage)
 	this.externalAccessImapServer = ko.observable(this.oIncoming.server());
 	this.externalAccessImapPort = ko.observable(this.oIncoming.port());
 	this.externalAccessImapAlterPort = ko.observable('');
+	this.externalAccessImapUseSsl = ko.observable(false);
 	this.externalAccessPop3Server = ko.observable('');
 	this.externalAccessPop3Port = ko.observable(110);
 	this.externalAccessPop3AlterPort = ko.observable('');
+	this.externalAccessPop3UseSsl = ko.observable(false);
 	this.externalAccessSmtpServer = ko.observable(this.oOutgoing.server());
 	this.externalAccessSmtpPort = ko.observable(this.oOutgoing.port());
 	this.externalAccessSmtpAlterPort = ko.observable('');
+	this.externalAccessSmtpUseSsl = ko.observable(false);
 	ko.computed(function () {
 		if (!this.setExternalAccessServers())
 		{
 			this.externalAccessImapServer(this.oIncoming.server());
 			this.externalAccessImapPort(this.oIncoming.port());
 			this.externalAccessImapAlterPort('');
+			this.externalAccessImapUseSsl(this.oIncoming.ssl());
 			this.externalAccessPop3Server('');
 			this.externalAccessPop3Port(110);
 			this.externalAccessPop3AlterPort('');
+			this.externalAccessPop3UseSsl(false);
 			this.externalAccessSmtpServer(this.oOutgoing.server());
 			this.externalAccessSmtpPort(this.oOutgoing.port());
 			this.externalAccessSmtpAlterPort('');
+			this.externalAccessSmtpUseSsl(this.oOutgoing.ssl());
 		}
 	}, this);
 }
@@ -290,12 +302,15 @@ CServerPairPropertiesView.prototype.setCurrentValues = function ()
 			this.externalAccessImapServer(),
 			this.externalAccessImapPort(),
 			this.externalAccessImapAlterPort(),
+			this.externalAccessImapUseSsl(),
 			this.externalAccessPop3Server(),
 			this.externalAccessPop3Port(),
 			this.externalAccessPop3AlterPort(),
+			this.externalAccessPop3UseSsl(),
 			this.externalAccessSmtpServer(),
 			this.externalAccessSmtpPort(),
 			this.externalAccessSmtpAlterPort(),
+			this.externalAccessSmtpUseSsl(),
 			this.oauthSelectedConnector()
 		]
 	;
@@ -357,12 +372,15 @@ CServerPairPropertiesView.prototype.getParametersForSave = function ()
 		oParameters['ExternalAccessImapServer'] = this.externalAccessImapServer();
 		oParameters['ExternalAccessImapPort'] = this.externalAccessImapPort();
 		oParameters['ExternalAccessImapAlterPort'] = Types.pInt(this.externalAccessImapAlterPort(), 0);
+		oParameters['ExternalAccessImapUseSsl'] = this.externalAccessImapUseSsl();
 		oParameters['ExternalAccessPop3Server'] = this.externalAccessPop3Server();
 		oParameters['ExternalAccessPop3Port'] = this.externalAccessPop3Port();
 		oParameters['ExternalAccessPop3AlterPort'] = Types.pInt(this.externalAccessPop3AlterPort(), 0);
+		oParameters['ExternalAccessPop3UseSsl'] = this.externalAccessPop3UseSsl();
 		oParameters['ExternalAccessSmtpServer'] = this.externalAccessSmtpServer();
 		oParameters['ExternalAccessSmtpPort'] = this.externalAccessSmtpPort();
 		oParameters['ExternalAccessSmtpAlterPort'] = Types.pInt(this.externalAccessSmtpAlterPort(), 0);
+		oParameters['ExternalAccessSmtpUseSsl'] = this.externalAccessSmtpUseSsl();
 	}
 
 	var oOAuthConnector = _.find(this.aOauthConnectorsData, function (oConnectorData) {

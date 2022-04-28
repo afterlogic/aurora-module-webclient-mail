@@ -213,6 +213,10 @@
                 <q-input outlined dense bg-color="white" v-model="externalAccessImapAlterPortModel"
                          :disable="!setExternalAccessServers"></q-input>
               </div>
+              <div class="col-1 q-my-sm q-pl-md">
+                <q-checkbox outlined dense v-model="externalAccessImapUseSsl" label="SSL" 
+                          :disable="!setExternalAccessServers"/>
+              </div>
             </div>
             <div class="row q-mb-md">
               <div class="col-2 q-my-sm" v-t="'MAILWEBCLIENT.LABEL_POP3_SERVER'"
@@ -233,6 +237,10 @@
                 <q-input outlined dense bg-color="white" v-model="externalAccessPop3AlterPortModel"
                          :disable="!setExternalAccessServers"></q-input>
               </div>
+              <div class="col-1 q-my-sm q-pl-md">
+                <q-checkbox outlined dense v-model="externalAccessPop3UseSsl" label="SSL" 
+                          :disable="!setExternalAccessServers"/>
+              </div>
             </div>
             <div class="row">
               <div class="col-2 q-my-sm" v-t="'MAILWEBCLIENT.LABEL_SMTP_SERVER'"
@@ -252,6 +260,10 @@
               <div class="col-1">
                 <q-input outlined dense bg-color="white" v-model="externalAccessSmtpAlterPortModel"
                          :disable="!setExternalAccessServers"></q-input>
+              </div>
+              <div class="col-1 q-my-sm q-pl-md">
+                <q-checkbox outlined dense v-model="externalAccessSmtpUseSsl" label="SSL"
+                         :disable="!setExternalAccessServers"/>
               </div>
             </div>
           </q-card-section>
@@ -361,12 +373,15 @@ export default {
       externalAccessImapServer: '',
       externalAccessImapPort: 143,
       externalAccessImapAlterPort: '',
+      externalAccessImapUseSsl: false,
       externalAccessPop3Server: '',
       externalAccessPop3Port: 110,
       externalAccessPop3AlterPort: '',
+      externalAccessPop3UseSsl: false,
       externalAccessSmtpServer: '',
       externalAccessSmtpPort: 25,
       externalAccessSmtpAlterPort: '',
+      externalAccessSmtpUseSsl: false,
 
       oauthConnectorsData: [],
       oauthConnector: '',
@@ -449,6 +464,9 @@ export default {
       if (!this.imapSsl && this.imapPort === 993) {
         this.imapPort = 143
       }
+      if (!this.setExternalAccessServers) {
+        this.externalAccessImapUseSsl = this.imapSsl
+      }
     },
 
     smtpSsl () {
@@ -457,6 +475,9 @@ export default {
       }
       if (!this.smtpSsl && this.smtpPort === 465) {
         this.smtpPort = 25
+      }      
+      if (!this.setExternalAccessServers) {
+        this.externalAccessSmtpUseSsl= this.smtpSsl
       }
     },
 
@@ -488,8 +509,10 @@ export default {
       if (!this.setExternalAccessServers) {
         this.externalAccessImapServer = this.imapServer
         this.externalAccessImapPort = this.imapPort
+        this.externalAccessImapUseSsl = this.imapSsl
         this.externalAccessSmtpServer = this.smtpServer
         this.externalAccessSmtpPort = this.smtpPort
+        this.externalAccessSmtpUseSsl = this.smtpSsl
       }
     }
   },
@@ -592,12 +615,15 @@ export default {
         this.externalAccessImapServer = ''
         this.externalAccessImapPort = 143
         this.externalAccessImapAlterPort = ''
+        this.externalAccessImapUseSsl = false
         this.externalAccessPop3Server = ''
         this.externalAccessPop3Port = 110
         this.externalAccessPop3AlterPort = ''
+        this.externalAccessPop3UseSsl = false
         this.externalAccessSmtpServer = ''
         this.externalAccessSmtpPort = 25
         this.externalAccessSmtpAlterPort = ''
+        this.externalAccessSmtpUseSsl = false
 
         this.oauthConnector = ''
       } else {
@@ -627,12 +653,15 @@ export default {
           this.externalAccessImapServer = server.externalAccessImapServer
           this.externalAccessImapPort = server.externalAccessImapPort
           this.externalAccessImapAlterPort = server.externalAccessImapAlterPort
+          this.externalAccessImapUseSsl = server.externalAccessImapUseSsl
           this.externalAccessPop3Server = server.externalAccessPop3Server
           this.externalAccessPop3Port = server.externalAccessPop3Port
           this.externalAccessPop3AlterPort = server.externalAccessPop3AlterPort
+          this.externalAccessPop3UseSsl = server.externalAccessPop3UseSsl
           this.externalAccessSmtpServer = server.externalAccessSmtpServer
           this.externalAccessSmtpPort = server.externalAccessSmtpPort
           this.externalAccessSmtpAlterPort = server.externalAccessSmtpAlterPort
+          this.externalAccessSmtpUseSsl = server.externalAccessSmtpUseSsl
 
           this.oauthConnector = server.oauthType
         }
@@ -653,10 +682,10 @@ export default {
         let isExternalAccessChanged = this.setExternalAccessServers !== false
         if (!isExternalAccessChanged && this.setExternalAccessServers) {
           isExternalAccessChanged = this.externalAccessImapServer !== '' || this.externalAccessImapPort !== 143 ||
-              this.externalAccessImapAlterPort !== '' || this.externalAccessPop3Server !== '' ||
-              this.externalAccessPop3Port !== 110 || this.externalAccessPop3AlterPort !== '' ||
+              this.externalAccessImapAlterPort !== '' || this.externalAccessImapUseSsl !== false || this.externalAccessPop3Server !== '' ||
+              this.externalAccessPop3Port !== 110 || this.externalAccessPop3AlterPort !== '' || this.externalAccessPop3UseSsl !== false ||
               this.externalAccessSmtpServer !== '' || this.externalAccessSmtpPort !== 25 ||
-              this.externalAccessSmtpAlterPort !== ''
+              this.externalAccessSmtpAlterPort !== '' || this.externalAccessSmtpUseSsl !== false
         }
         return this.serverName !== '' || this.domains !== '' || this.imapServer !== '' || this.imapPort !== 143 ||
             this.imapSsl !== false || this.smtpServer !== '' || this.smtpPort !== 25 || this.smtpSsl !== false ||
@@ -672,12 +701,15 @@ export default {
             isExternalAccessChanged = server.externalAccessImapServer !== this.externalAccessImapServer ||
                 server.externalAccessImapPort !== this.externalAccessImapPort ||
                 server.externalAccessImapAlterPort !== this.externalAccessImapAlterPort ||
+                server.externalAccessImapUseSsl !== this.externalAccessImapUseSsl ||
                 server.externalAccessPop3Server !== this.externalAccessPop3Server ||
                 server.externalAccessPop3Port !== this.externalAccessPop3Port ||
                 server.externalAccessPop3AlterPort !== this.externalAccessPop3AlterPort ||
+                server.externalAccessPop3UseSsl !== this.externalAccessPop3UseSsl ||
                 server.externalAccessSmtpServer !== this.externalAccessSmtpServer ||
                 server.externalAccessSmtpPort !== this.externalAccessSmtpPort ||
                 server.externalAccessSmtpAlterPort !== this.externalAccessSmtpAlterPort
+                server.externalAccessSmtpUseSsl !== this.externalAccessSmtpUseSsl
           }
           return server.name !== this.serverName || server.incomingServer !== this.imapServer ||
               server.incomingPort !== this.imapPort || server.incomingUseSsl !== this.imapSsl ||
@@ -737,12 +769,15 @@ export default {
         ExternalAccessImapServer: this.externalAccessImapServer,
         ExternalAccessImapPort: typesUtils.pInt(this.externalAccessImapPort),
         ExternalAccessImapAlterPort: typesUtils.pInt(this.externalAccessImapAlterPort),
+        ExternalAccessImapUseSsl: typesUtils.pBool(this.externalAccessImapUseSsl),
         ExternalAccessPop3Server: this.externalAccessPop3Server,
         ExternalAccessPop3Port: typesUtils.pInt(this.externalAccessPop3Port),
         ExternalAccessPop3AlterPort: typesUtils.pInt(this.externalAccessPop3AlterPort),
+        ExternalAccessPop3UseSsl: typesUtils.pBool(this.externalAccessPop3UseSsl),
         ExternalAccessSmtpServer: this.externalAccessSmtpServer,
         ExternalAccessSmtpPort: typesUtils.pInt(this.externalAccessSmtpPort),
-        ExternalAccessSmtpAlterPort: typesUtils.pInt(this.externalAccessSmtpAlterPort)
+        ExternalAccessSmtpAlterPort: typesUtils.pInt(this.externalAccessSmtpAlterPort),
+        ExternalAccessSmtpUseSsl: typesUtils.pBool(this.externalAccessSmtpUseSsl)
       }
 
       const isOAuthEnable = this.oauthConnector !== ''

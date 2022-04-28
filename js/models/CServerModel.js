@@ -27,12 +27,15 @@ function CServerModel(oServer)
 	this.sExternalAccessImapServer = Types.pString(oServer && oServer.ExternalAccessImapServer, '');
 	this.iExternalAccessImapPort = Types.pInt(oServer && oServer.ExternalAccessImapPort, 143);
 	this.iExternalAccessImapAlterPort = Types.pInt(oServer && oServer.ExternalAccessImapAlterPort, 0);
+	this.bExternalAccessImapUseSsl = Types.pBool(oServer && oServer.ExternalAccessImapUseSsl, false);
 	this.sExternalAccessPop3Server = Types.pString(oServer && oServer.ExternalAccessPop3Server, '');
 	this.iExternalAccessPop3Port = Types.pInt(oServer && oServer.ExternalAccessPop3Port, 110);
 	this.iExternalAccessPop3AlterPort = Types.pInt(oServer && oServer.ExternalAccessPop3AlterPort, 0);
+	this.bExternalAccessPop3UseSsl = Types.pBool(oServer && oServer.ExternalAccessPop3UseSsl, false);
 	this.sExternalAccessSmtpServer = Types.pString(oServer && oServer.ExternalAccessSmtpServer, '');
 	this.iExternalAccessSmtpPort = Types.pInt(oServer && oServer.ExternalAccessSmtpPort, 25);
 	this.iExternalAccessSmtpAlterPort = Types.pInt(oServer && oServer.ExternalAccessSmtpAlterPort, 0);
+	this.bExternalAccessSmtpUseSsl = Types.pBool(oServer && oServer.ExternalAccessSmtpUseSsl, false);
 	this.bAllowToDelete = Types.pBool(oServer && oServer.AllowToDelete, true);
 	this.bAllowEditDomains = Types.pBool(oServer && oServer.AllowEditDomains, true);
 	this.sOwnerType = oServer ? Types.pString(oServer.OwnerType) : '';

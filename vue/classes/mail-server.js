@@ -31,12 +31,17 @@ class MailServer {
     this.externalAccessImapServer = typesUtils.pString(serverData?.ExternalAccessImapServer)
     this.externalAccessImapPort = typesUtils.pInt(serverData?.ExternalAccessImapPort, 143)
     this.externalAccessImapAlterPort = typesUtils.pInt(serverData?.ExternalAccessImapAlterPort)
+    this.externalAccessImapUseSsl = typesUtils.pBool(serverData?.ExternalAccessImapUseSsl, false)
+
     this.externalAccessPop3Server = typesUtils.pString(serverData?.ExternalAccessPop3Server)
     this.externalAccessPop3Port = typesUtils.pInt(serverData?.ExternalAccessPop3Port, 110)
     this.externalAccessPop3AlterPort = typesUtils.pInt(serverData?.ExternalAccessPop3AlterPort)
+    this.externalAccessPop3UseSsl = typesUtils.pBool(serverData?.ExternalAccessPop3UseSsl, false)
+
     this.externalAccessSmtpServer = typesUtils.pString(serverData?.ExternalAccessSmtpServer)
     this.externalAccessSmtpPort = typesUtils.pInt(serverData?.ExternalAccessSmtpPort, 25)
     this.externalAccessSmtpAlterPort = typesUtils.pInt(serverData?.ExternalAccessSmtpAlterPort)
+    this.externalAccessSmtpUseSsl = typesUtils.pBool(serverData?.ExternalAccessSmtpUseSsl, false)
 
     this.allowToDelete = !!(serverData?.AllowToDelete)
     this.allowEditDomains = !!(serverData?.AllowEditDomains)
@@ -69,13 +74,16 @@ class MailServer {
     this.externalAccessImapServer = parameters.ExternalAccessImapServer
     this.externalAccessImapPort = parameters.ExternalAccessImapPort
     this.externalAccessImapAlterPort = parameters.ExternalAccessImapAlterPort
+    this.externalAccessImapUseSsl = parameters.ExternalAccessImapUseSsl
     this.externalAccessPop3Server = parameters.ExternalAccessPop3Server
     this.externalAccessPop3Port = parameters.ExternalAccessPop3Port
     this.externalAccessPop3AlterPort = parameters.ExternalAccessPop3AlterPort
+    this.externalAccessPop3UseSsl = parameters.ExternalAccessPop3UseSsl
     this.externalAccessSmtpServer = parameters.ExternalAccessSmtpServer
     this.externalAccessSmtpPort = parameters.ExternalAccessSmtpPort
     this.externalAccessSmtpAlterPort = parameters.ExternalAccessSmtpAlterPort
-
+    this.externalAccessSmtpUseSsl = parameters.ExternalAccessSmtpUseSsl
+    
     this.oauthEnable = parameters.OAuthEnable
     this.oauthName = parameters.OAuthName
     this.oauthType = parameters.OAuthType
