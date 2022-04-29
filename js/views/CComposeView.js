@@ -1578,10 +1578,11 @@ CComposeView.prototype.initUploader = function ()
 };
 
 /**
- * @param {boolean} bRemoveSignatureAnchor
- * @param {boolean} bSaveTemplate
+ * @param {boolean} removeSignatureAnchor
+ * @param {boolean} saveTemplate
+ * @param {string} method
  */
-CComposeView.prototype.getSendSaveParameters = function (bRemoveSignatureAnchor, bSaveTemplate)
+CComposeView.prototype.getSendSaveParameters = function ({removeSignatureAnchor = false, saveTemplate = false, method = ''})
 {
 	var
 		oAttachments = SendingUtils.convertAttachmentsForSending(this.attachments()),
@@ -1603,7 +1604,7 @@ CComposeView.prototype.getSendSaveParameters = function (bRemoveSignatureAnchor,
 		'Cc': this.ccAddr(),
 		'Bcc': this.bccAddr(),
 		'Subject': this.subject(),
-		'Text': this.plainText() ? this.oHtmlEditor.getPlainText() : this.oHtmlEditor.getText(bRemoveSignatureAnchor),
+		'Text': this.plainText() ? this.oHtmlEditor.getPlainText() : this.oHtmlEditor.getText(removeSignatureAnchor),
 		'IsHtml': !this.plainText(),
 		'Importance': this.selectedImportance(),
 		'SendReadingConfirmation': this.sendReadingConfirmation(),
@@ -1615,11 +1616,11 @@ CComposeView.prototype.getSendSaveParameters = function (bRemoveSignatureAnchor,
 	_.each(this.allControllers(), function (oController) {
 		if (_.isFunction(oController.doAfterPreparingSendMessageParameters))
 		{
-			oController.doAfterPreparingSendMessageParameters(oParameters);
+			oController.doAfterPreparingSendMessageParameters(oParameters, method);
 		}
 	});
 
-	if (this.templateFolderName() !== '' && bSaveTemplate)
+	if (this.templateFolderName() !== '' && saveTemplate)
 	{
 		oParameters.DraftFolder = this.templateFolderName();
 		oParameters.DraftUid = this.templateUid();
@@ -1715,7 +1716,8 @@ CComposeView.prototype.executeSend = function (mParam)
 			this.sending(true);
 			this.requiresPostponedSending(!this.allowStartSending());
 
-			SendingUtils.send('SendMessage', this.getSendSaveParameters(true), true, this.onSendOrSaveMessageResponse, this, this.requiresPostponedSending());
+			const sendParameters = this.getSendSaveParameters({removeSignatureAnchor: true, method: 'SendMessage'});
+			SendingUtils.send('SendMessage', sendParameters, true, this.onSendOrSaveMessageResponse, this, this.requiresPostponedSending());
 
 			this.backToListOnSendOrSave(true);
 		}, this)
@@ -1757,13 +1759,12 @@ CComposeView.prototype.executeTemplateSaveCommand = function ()
 /**
  * @param {boolean=} bAutosave = false
  * @param {boolean=} bWaitResponse = true
- * @param {boolean=} bSaveTemplate = false
+ * @param {boolean=} saveTemplate = false
  */
-CComposeView.prototype.executeSave = function (bAutosave, bWaitResponse, bSaveTemplate)
+CComposeView.prototype.executeSave = function (bAutosave, bWaitResponse, saveTemplate = false)
 {
 	bAutosave = !!bAutosave;
 	bWaitResponse = (bWaitResponse === undefined) ? true : bWaitResponse;
-	bSaveTemplate = !!bSaveTemplate;
 
 	var
 		fOnSaveMessageResponse = bWaitResponse ? this.onSendOrSaveMessageResponse : SendingUtils.onSendOrSaveMessageResponse,
@@ -1772,7 +1773,8 @@ CComposeView.prototype.executeSave = function (bAutosave, bWaitResponse, bSaveTe
 			if (bSave)
 			{
 				this.saving(bWaitResponse);
-				SendingUtils.send('SaveMessage', this.getSendSaveParameters(false, bSaveTemplate), !bAutosave, fOnSaveMessageResponse, oContext);
+				const saveParameters = this.getSendSaveParameters({saveTemplate, method: 'SaveMessage'});
+				SendingUtils.send('SaveMessage', saveParameters, !bAutosave, fOnSaveMessageResponse, oContext);
 			}
 		}, this),
 		bCancelSaving = false
@@ -2077,9 +2079,7 @@ CComposeView.prototype.getExtInterface = function ()
 		getRecipientsEmpty: function () {
 			return this.toAddr().length === 0 && this.ccAddr().length === 0 && this.bccAddr().length === 0;
 		}.bind(this),
-		getSendSaveParameters: function () {
-			return this.getSendSaveParameters();
-		}.bind(this),
+		getSendSaveParameters: this.getSendSaveParameters.bind(this),
 		isEnableSending: function () {
 			return this.isEnableSending();
 		}.bind(this),

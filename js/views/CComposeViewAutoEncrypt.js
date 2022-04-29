@@ -219,7 +219,7 @@ CComposeViewAutoEncrypt.prototype.proceedEncryptSignAndSend = function (oRecipie
 {
 	var
 		sData = this.oHtmlEditor.getPlainText(),
-		oSendParameters = this.getSendSaveParameters(true),
+		oSendParameters = this.getSendSaveParameters({ removeSignatureAnchor: true }),
 		aInfoToSend = [],
 		fOkCallback = function (aRecipients, bAddToSentFolder, sRes, bEncrypt) {
 			var oCloneSendParameters = _.clone(oSendParameters);
