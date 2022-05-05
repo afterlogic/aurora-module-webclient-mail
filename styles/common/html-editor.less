@@ -3,6 +3,19 @@
 	
 	height: 100%;
 	position: relative;
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+
+	.disable_mask {
+		background: #cccccc;
+		cursor: default;
+		height: 100%;
+		opacity: 0.2;
+		position: absolute;
+		width: 100%;
+		z-index: 100;
+	}
 
 	.workarea {
 		.box-sizing;

@@ -5,7 +5,7 @@ var
 	ko = require('knockout'),
 	
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
-	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
+	Utils = require('%PathToCoreWebclientModule%/js/utils/Common.js'),
 	
 	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
 	Browser = require('%PathToCoreWebclientModule%/js/Browser.js'),
@@ -46,7 +46,9 @@ function CSignatureSettingsFormView()
 	}, this);
 	this.enableImageDragNDrop = ko.observable(false);
 
-	this.enabled = ko.observable(true);
+	this.allowEditSignature = ko.observable(true);
+
+	this.saveCommand = Utils.createCommand(this, this.save, this.allowEditSignature);
 }
 
 _.extendOwn(CSignatureSettingsFormView.prototype, CAbstractSettingsFormView.prototype);
@@ -66,9 +68,12 @@ CSignatureSettingsFormView.prototype.onShow = function (oFetcherOrIdentity)
 
 CSignatureSettingsFormView.prototype.init = function ()
 {
-	this.oHtmlEditor.setInactive(this.useSignatureRadio() === Enums.UseSignature.Off);
+	this.oHtmlEditor.setInactive(!this.allowEditSignature() || this.useSignatureRadio() === Enums.UseSignature.Off);
+	this.oHtmlEditor.setDisableEdit(false);
 	this.oHtmlEditor.init(this.signature(), false, '', TextUtils.i18n('%MODULENAME%/LABEL_ENTER_SIGNATURE_HERE'));
 	this.enableImageDragNDrop(this.oHtmlEditor.isDragAndDropSupported() && !Browser.ie10AndAbove);
+	this.oHtmlEditor.setDisableEdit(!this.allowEditSignature());
+	this.updateSavedState();
 };
 
 CSignatureSettingsFormView.prototype.getCurrentValues = function ()
@@ -149,48 +154,22 @@ CSignatureSettingsFormView.prototype.applySavedValues = function (oParameters)
 CSignatureSettingsFormView.prototype.populate = function ()
 {
 	var
-		oAccount = AccountList.getEdited(),
-		oSignature = this.fetcherOrIdentity() || oAccount
+		accountId = this.fetcherOrIdentity() ? this.fetcherOrIdentity().accountId() : AccountList.editedId(),
+		account = AccountList.getAccount(accountId),
+		objWithSignature = this.fetcherOrIdentity() || account
 	;
 	
-	if (oSignature)
+	if (objWithSignature)
 	{
-		this.useSignatureRadio(oSignature.useSignature() ? Enums.UseSignature.On : Enums.UseSignature.Off);
-		this.signature(oSignature.signature());
+		this.useSignatureRadio(objWithSignature.useSignature() ? Enums.UseSignature.On : Enums.UseSignature.Off);
+		this.signature(objWithSignature.signature());
+		this.oHtmlEditor.setDisableEdit(false);
 		this.oHtmlEditor.setText(this.signature());
-	}
-	else if (oAccount)
-	{
-		Ajax.send('GetSignature', {'AccountID': oAccount.id()}, this.onGetSignatureResponse, this);
+		this.allowEditSignature(account && account.bAllowEditSignature);
+		this.oHtmlEditor.setDisableEdit(!this.allowEditSignature());
 	}
 	
 	this.updateSavedState();
-};
-
-/**
- * @param {Object} oResponse
- * @param {Object} oRequest
- */
-CSignatureSettingsFormView.prototype.onGetSignatureResponse = function (oResponse, oRequest)
-{
-	if (oResponse && oResponse.Result)
-	{
-		var
-			oParameters = oRequest.Parameters,
-			iAccountId = Types.pInt(oParameters.AccountID),
-			oAccount = AccountList.getAccount(iAccountId)
-		;
-
-		if (oAccount)
-		{
-			this.parseSignature(oResponse.Result);
-
-			if (iAccountId === AccountList.editedId())
-			{
-				this.populate();
-			}
-		}
-	}
 };
 
 CSignatureSettingsFormView.prototype.save = function ()

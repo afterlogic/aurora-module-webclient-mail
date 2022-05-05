@@ -485,7 +485,7 @@ CAccountListModel.prototype.onGetIdentitiesResponse = function (oResponse, oRequ
 			oIdentity = new CIdentityModel()
 		;
 
-		if (!Types.isNonEmptyArray(aIdentities))
+		if (!oAccount.bAllowEditSignature || !Types.isNonEmptyArray(aIdentities))
 		{
 			aIdentities = [];
 		}
