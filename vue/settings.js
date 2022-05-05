@@ -17,6 +17,7 @@ class MailSettings {
     const mailData = typesUtils.pObject(appData.Mail)
     this.allowChangeMailQuotaOnMailServer = typesUtils.pBool(mailData.AllowChangeMailQuotaOnMailServer)
     this.allowMultiAccounts = typesUtils.pBool(mailData.AllowMultiAccounts)
+    this.allowAddAccounts = typesUtils.pBool(mailData.AllowAddAccounts)
     this.allowEditDomainsInServer = _getAllowEditDomainsInServer(mailData)
     this.autocreateMailAccountOnNewUserFirstLogin = typesUtils.pBool(mailData.AutocreateMailAccountOnNewUserFirstLogin)
     this.smtpAuthTypeEnum = typesUtils.pObject(mailData.SmtpAuthType)
@@ -26,9 +27,9 @@ class MailSettings {
     this.horizontalLayoutByDefault = this.allowHorizontalLayout && typesUtils.pBool(mailWebclientData.HorizontalLayoutByDefault)
   }
 
-  saveEditableByAdmin ({ autocreateMailAccountOnNewUserFirstLogin, allowMultiAccounts, horizontalLayoutByDefault }) {
+  saveEditableByAdmin ({ autocreateMailAccountOnNewUserFirstLogin, allowAddAccounts, horizontalLayoutByDefault }) {
     this.autocreateMailAccountOnNewUserFirstLogin = autocreateMailAccountOnNewUserFirstLogin
-    this.allowMultiAccounts = allowMultiAccounts
+    this.allowAddAccounts = allowAddAccounts
     this.horizontalLayoutByDefault = horizontalLayoutByDefault
   }
 }
@@ -47,6 +48,7 @@ export default {
   getEditableByAdmin () {
     return {
       allowMultiAccounts: settings.allowMultiAccounts,
+      allowAddAccounts: settings.allowAddAccounts,
       autocreateMailAccountOnNewUserFirstLogin: settings.autocreateMailAccountOnNewUserFirstLogin,
       allowHorizontalLayout: settings.allowHorizontalLayout,
       horizontalLayoutByDefault: settings.horizontalLayoutByDefault,

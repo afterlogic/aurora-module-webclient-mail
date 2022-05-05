@@ -16,9 +16,9 @@
               <q-item-label caption v-html="$t('MAILWEBCLIENT.LABEL_HINT_ALLOW_AUTO_PROVISIONING_NEW_USERS_HTML')"></q-item-label>
             </div>
           </div>
-          <div class="row">
+          <div class="row" v-if="allowMultiAccounts">
             <div class="col-5">
-              <q-checkbox dense v-model="allowMultiAccounts" :label="$t('MAILWEBCLIENT.LABEL_ALLOW_USERS_ADD_MAILBOXES')" />
+              <q-checkbox dense v-model="allowAddAccounts" :label="$t('MAILWEBCLIENT.LABEL_ALLOW_USERS_ADD_MAILBOXES')" />
             </div>
           </div>
           <div class="row q-mt-md" v-show="allowHorizontalLayout">
@@ -56,6 +56,7 @@ export default {
     return {
       autocreateMailAccountOnNewUserFirstLogin: true,
       allowMultiAccounts: false,
+      allowAddAccounts: false,
       allowHorizontalLayout: false,
       horizontalLayoutByDefault: false,
       layoutOptions: [
@@ -80,6 +81,7 @@ export default {
       const data = settings.getEditableByAdmin()
       this.autocreateMailAccountOnNewUserFirstLogin = data.autocreateMailAccountOnNewUserFirstLogin
       this.allowMultiAccounts = data.allowMultiAccounts
+      this.allowAddAccounts = data.allowAddAccounts
       this.allowHorizontalLayout = data.allowHorizontalLayout
       this.horizontalLayoutByDefault = data.horizontalLayoutByDefault
     },
@@ -90,7 +92,7 @@ export default {
     hasChanges () {
       const data = settings.getEditableByAdmin()
       return this.autocreateMailAccountOnNewUserFirstLogin !== data.autocreateMailAccountOnNewUserFirstLogin ||
-          this.allowMultiAccounts !== data.allowMultiAccounts ||
+          this.allowAddAccounts !== data.allowAddAccounts ||
           this.allowHorizontalLayout !== data.allowHorizontalLayout ||
           this.horizontalLayoutByDefault !== data.horizontalLayoutByDefault
     },
@@ -109,7 +111,7 @@ export default {
         this.saving = true
         const parameters = {
           AutocreateMailAccountOnNewUserFirstLogin: this.autocreateMailAccountOnNewUserFirstLogin,
-          AllowAddAccounts: this.allowMultiAccounts,
+          AllowAddAccounts: this.allowAddAccounts,
           HorizontalLayoutByDefault: this.horizontalLayoutByDefault,
         }
         webApi.sendRequest({
@@ -121,7 +123,7 @@ export default {
           if (result === true) {
             settings.saveEditableByAdmin({
               autocreateMailAccountOnNewUserFirstLogin: parameters.AutocreateMailAccountOnNewUserFirstLogin,
-              allowMultiAccounts: parameters.AllowAddAccounts,
+              allowAddAccounts: parameters.AllowAddAccounts,
               horizontalLayoutByDefault: parameters.HorizontalLayoutByDefault,
             })
             this.populate()
