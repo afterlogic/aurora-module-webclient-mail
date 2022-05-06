@@ -1,4 +1,4 @@
-<div class="html_editor" data-bind="css: {'inactive': inactive()}, onEsc: onEscHandler, initDom: htmlEditorDom">
+<div class="html_editor" data-bind="css: {'inactive': inactive() && !disableEdit()}, onEsc: onEscHandler, initDom: htmlEditorDom">
 	<div class="disable_mask" data-bind="visible: disableEdit"></div>
 	<div class="toolbar" data-bind="initDom: toolbarDom">
 		<div class="content">
