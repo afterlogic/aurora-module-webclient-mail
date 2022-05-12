@@ -16,7 +16,7 @@
 			<div data-bind="foreach: accounts">
 				<div class="item account" data-bind="css: {'selected': id() === $parent.editedAccountId() && !$parent.editedFetcherId() && !$parent.editedIdentityId()},  click: function () {$parent.editAccount(hash());}">
 					<span class="link fetcher" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ADD_IDENTITY'},
-						  visible: $parent.bAllowIdentities && bAllowEditSignature,
+						  visible: $parent.bAllowIdentities && bAllowUseIdentities,
 						  click: function (oModel, oEv) {$parent.addIdentity(id(), oEv);}"
 					></span>
 					<span class="link fetcher" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ADD_FETCHER'}, visible: (bDefault && $parent.bAllowFetchers), click: function (oModel, oEv) {$parent.addFetcher(id(), oEv);}"></span>

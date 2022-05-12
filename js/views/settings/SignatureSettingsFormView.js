@@ -155,17 +155,18 @@ CSignatureSettingsFormView.prototype.populate = function ()
 {
 	var
 		accountId = this.fetcherOrIdentity() ? this.fetcherOrIdentity().accountId() : AccountList.editedId(),
+		identityIsAccountPart = this.fetcherOrIdentity() ? this.fetcherOrIdentity().bAccountPart : false,
 		account = AccountList.getAccount(accountId),
 		objWithSignature = this.fetcherOrIdentity() || account
 	;
-	
+
 	if (objWithSignature)
 	{
 		this.useSignatureRadio(objWithSignature.useSignature() ? Enums.UseSignature.On : Enums.UseSignature.Off);
 		this.signature(objWithSignature.signature());
 		this.oHtmlEditor.setDisableEdit(false);
 		this.oHtmlEditor.setText(this.signature());
-		this.allowEditSignature(account && account.bAllowEditSignature);
+		this.allowEditSignature(account && account.bAllowEditSignature || !identityIsAccountPart);
 		this.oHtmlEditor.setDisableEdit(!this.allowEditSignature());
 	}
 	

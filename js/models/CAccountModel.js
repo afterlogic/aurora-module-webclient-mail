@@ -53,6 +53,7 @@ function CAccountModel(oData)
 	this.signature = ko.observable(sSignature);
 	this.useSignature = ko.observable(!!oData.UseSignature);
 	this.bAllowEditSignature = Types.pBool(oData.AllowEditSignature, true);
+	this.bAllowUseIdentities = Types.pBool(oData.AllowUseIdentities, true);
 	this.serverId = ko.observable(Types.pInt(oData.ServerId));
 	this.oServer = new CServerModel(oData.Server);
 	this.useToAuthorize = ko.observable(!!oData.UseToAuthorize);
