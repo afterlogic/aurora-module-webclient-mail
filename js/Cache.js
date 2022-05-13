@@ -2304,6 +2304,12 @@ CMailCache.prototype.getCurrentTemplateFolders = function ()
 	return Settings.AllowTemplateFolders ? this.folderList().aTemplateFolders : [];
 };
 
+CMailCache.prototype.isTemplateFolder = function (folderFullName)
+{
+	// console.log('isTemplateFolder', folderFullName, -1 !== $.inArray(folderFullName, this.getCurrentTemplateFolders()))
+	return -1 !== $.inArray(folderFullName, this.getCurrentTemplateFolders());
+};
+
 CMailCache.prototype.changeTemplateFolder = function (sFolderName, bTemplate)
 {
 	if (Settings.AllowTemplateFolders)

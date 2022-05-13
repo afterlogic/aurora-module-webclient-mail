@@ -170,6 +170,10 @@ function CMessagePaneView()
 		return !!oCurrFolder && oCurrFolder.fullName().length > 0 && oCurrFolder.type() !== Enums.FolderTypes.Drafts;
 	}, this);
 
+	this.isCurrentTemplateFolder = ko.computed(function () {
+		return MailCache.isTemplateFolder(MailCache.getCurrentFolderFullname());
+	}, this);
+
 	this.topControllers = ko.observableArray();
 	this.bodyControllers = ko.observableArray();
 	this.bottomControllers = ko.observableArray();
@@ -188,10 +192,10 @@ function CMessagePaneView()
 		return bDisable;
 	}, this);
 	this.isVisibleReplyTool = ko.computed(function () {
-		return !this.disableAllSendTools() && this.isCurrentNotDraftOrSent();
+		return !this.disableAllSendTools() && this.isCurrentNotDraftOrSent() && !this.isCurrentTemplateFolder();
 	}, this);
 	this.isVisibleResendTool = ko.computed(function () {
-		return !this.disableAllSendTools() && this.isCurrentSentFolder();
+		return !this.disableAllSendTools() && this.isCurrentSentFolder() && !this.isCurrentTemplateFolder();
 	}, this);
 	this.isVisibleForwardTool = ko.computed(function () {
 		var
@@ -199,7 +203,7 @@ function CMessagePaneView()
 			bAssignedFolder = InformatikSettings.isAssignedFolder(MailCache.getCurrentFolderFullname()),
 			bDisable = InformatikSettings.DisableForward && bCentral && !bAssignedFolder
 		;
-		return !bDisable && !this.disableAllSendTools() && this.isCurrentNotDraftFolder();
+		return !bDisable && !this.disableAllSendTools() && this.isCurrentNotDraftFolder() && !this.isCurrentTemplateFolder();
 	}, this);
 
 	this.accountId = ko.observable(0);

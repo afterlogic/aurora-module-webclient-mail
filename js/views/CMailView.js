@@ -117,6 +117,10 @@ function CMailView()
 
 	this.changeLayoutCommand = Utils.createCommand(this, this.changeLayout);
 
+	this.isTemplateFolder = ko.computed(function () {
+		return MailCache.isTemplateFolder(MailCache.getCurrentFolderFullname());
+	}, this);
+
 	this.checkMailCommand = Utils.createCommand(this, this.executeCheckMail);
 	this.checkMailIndicator = ko.observable(true).extend({ throttle: 50 });
 	ko.computed(function () {
@@ -124,7 +128,7 @@ function CMailView()
 	}, this);
 	this.customModulesDisabledMark = ko.observableArray([]);
 	this.visibleMarkTool = ko.computed(function () {
-		return !Types.isNonEmptyArray(this.customModulesDisabledMark());
+		return !this.isTemplateFolder() && !Types.isNonEmptyArray(this.customModulesDisabledMark());
 	}, this);
 	this.markAsReadCommand = Utils.createCommand(this.oMessageList, this.oMessageList.executeMarkAsRead, this.isEnableGroupOperations);
 	this.markAsUnreadCommand = Utils.createCommand(this.oMessageList, this.oMessageList.executeMarkAsUnread, this.isEnableGroupOperations);
@@ -159,12 +163,12 @@ function CMailView()
 		View: this
 	});
 
-	this.isVisibleReplyTool = ko.computed(function () {
-		return (MailCache.getCurrentFolder() &&
-			MailCache.getCurrentFolderFullname().length > 0 &&
-			MailCache.getCurrentFolderType() !== Enums.FolderTypes.Drafts &&
-			MailCache.getCurrentFolderType() !== Enums.FolderTypes.Sent);
-	}, this);
+	// this.isVisibleReplyTool = ko.computed(function () {
+	// 	return (MailCache.getCurrentFolder() &&
+	// 		MailCache.getCurrentFolderFullname().length > 0 &&
+	// 		MailCache.getCurrentFolderType() !== Enums.FolderTypes.Drafts &&
+	// 		MailCache.getCurrentFolderType() !== Enums.FolderTypes.Sent);
+	// }, this);
 
 	this.isSpamFolder = ko.computed(function () {
 		return MailCache.getCurrentFolderType() === Enums.FolderTypes.Spam;
@@ -172,13 +176,14 @@ function CMailView()
 
 	this.customModulesDisabledSpam = ko.observableArray([]);
 	this.allowedSpamAction = ko.computed(function () {
-		return Settings.AllowSpamFolder && this.folderList().spamFolder() && !this.isSpamFolder() &&
+		return Settings.AllowSpamFolder && this.folderList().spamFolder() &&
+				!this.isSpamFolder() && !this.isTemplateFolder() &&
 				!Types.isNonEmptyArray(this.customModulesDisabledSpam()) &&
 				!this.oMessageList.isEverywhereSearch();
 	}, this);
 
 	this.allowedNotSpamAction = ko.computed(function () {
-		return Settings.AllowSpamFolder && this.isSpamFolder();
+		return Settings.AllowSpamFolder && this.isSpamFolder() && !this.isTemplateFolder();
 	}, this);
 
 	this.isTrashFolder = ko.computed(function () {
@@ -443,6 +448,9 @@ CMailView.prototype.onRoute = function (aParams)
 
 CMailView.prototype.onShow = function ()
 {
+	if (_.isFunction(this.oFolderList.onShow)) {
+		this.oFolderList.onShow();
+	}
 	this.oMessageList.onShow();
 	if (this.allowPreviewPane() && _.isFunction(this.messagePane().onShow))
 	{
