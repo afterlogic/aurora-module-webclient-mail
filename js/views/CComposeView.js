@@ -1035,10 +1035,12 @@ CComposeView.prototype.setDataFromMessage = function (oMessage)
 	this.sendReadingConfirmation(oMessage.readingConfirmationAddressee() !== '');
 
 	var bDraft = !!oMessage.folderObject() && (oMessage.folderObject().type() === Enums.FolderTypes.Drafts);
-	this.triggerToolbarControllersAfterPopulatingMessage(bDraft, oMessage.isPlain(), oMessage.textRaw(), oMessage.sensitivity());
+	this.triggerToolbarControllersAfterPopulatingMessage(bDraft, oMessage.isPlain(), oMessage.textRaw(),
+		oMessage.sensitivity(), oMessage.Custom);
 };
 
-CComposeView.prototype.triggerToolbarControllersAfterPopulatingMessage = function (bDraft, bPlain, sRawText, iSensitivity)
+CComposeView.prototype.triggerToolbarControllersAfterPopulatingMessage = function (bDraft, bPlain,
+	sRawText, iSensitivity, customData)
 {
 	_.each(this.allControllers(), function (oController) {
 		if (_.isFunction(oController.doAfterPopulatingMessage))
@@ -1047,7 +1049,8 @@ CComposeView.prototype.triggerToolbarControllersAfterPopulatingMessage = functio
 				bDraft: bDraft,
 				bPlain: bPlain,
 				sRawText: sRawText,
-				iSensitivity: iSensitivity
+				iSensitivity: iSensitivity,
+				customData
 			});
 		}
 	}.bind(this));
