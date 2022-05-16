@@ -440,10 +440,9 @@ CHtmlEditorView.prototype.init = function (sText, bPlain, sTabIndex, sPlaceholde
 	this.oCrea.setTabIndex(sTabIndex);
 	this.clearUndoRedo();
 	this.setText(sText, bPlain);
-	this.setFontValuesFromText();
 	this.aUploadedImagesData = [];
 	this.selectedFont(this.sDefaultFont);
-	this.selectedSize(this.iDefaultSize);
+	this.selectedSize(this.iDefaultSize.toString());
 		
 	if (Settings.AllowInsertTemplateOnCompose) {
 		this.fillTemplates();
