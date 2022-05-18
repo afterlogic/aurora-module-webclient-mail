@@ -69,13 +69,9 @@ CCrea.prototype.bEditing = false;
  * @type {Array}
  */
 CCrea.prototype.aSizes = [
-    {inNumber: 1, inPixels: 10},
-    {inNumber: 2, inPixels: 13},
-    {inNumber: 3, inPixels: 16},
-    {inNumber: 4, inPixels: 18},
-    {inNumber: 5, inPixels: 24},
-    {inNumber: 6, inPixels: 32},
-    {inNumber: 7, inPixels: 48}
+    {inNumber: 2, inPixels: 12},
+    {inNumber: 3, inPixels: 15},
+    {inNumber: 5, inPixels: 22}
 ];
 
 CCrea.prototype.bInUrl = false;
@@ -1316,19 +1312,21 @@ CCrea.prototype.fontName = function (sFontName)
 /**
  * Sets font size.
  *
- * @param {string} sFontSize
+ * @param {string} fontSize
  */
-CCrea.prototype.fontSize = function (sFontSize)
+CCrea.prototype.fontSize = function (fontSize)
 {
-    var bFirstTime = !this.aRanges;
+	const fontSizeInPixels = this.convertFontSizeToPixels(fontSize);
+	this.setFocus(true);
+	this.execCom('FontSize', fontSize);
+	const fontElements = window.getSelection().anchorNode.parentNode;
+	fontElements.removeAttribute('size');
+	fontElements.style.fontSize = fontSizeInPixels;
 
-    this.setFocus(true);
-    this.execCom('FontSize', sFontSize);
-
-    if (bFirstTime)
-    {
-        this.setBasicStyles(this.sBasicFontName, this.convertFontSizeToPixels(sFontSize), this.sBasicDirection);
-    }
+	const isFirstTime = !this.aRanges;
+	if (isFirstTime) {
+		this.setBasicStyles(this.sBasicFontName, fontSizeInPixels, this.sBasicDirection);
+	}
 };
 
 /**
