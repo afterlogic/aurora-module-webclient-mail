@@ -426,29 +426,7 @@ export default {
 
   watch: {
     $route (to, from) {
-      if (this.$route.path === '/system/mail-servers/create') {
-        this.createMode = true
-        this.showServerFields = false
-        this.populateServer()
-      } else {
-        this.createMode = false
-
-        const search = typesUtils.pString(this.$route?.params?.search)
-        const page = typesUtils.pPositiveInt(this.$route?.params?.page)
-        if (this.search !== search || this.page !== page) {
-          this.search = search
-          this.enteredSearch = search
-          this.page = page
-          this.selectedPage = page
-          this.populate()
-        }
-
-        const serverId = typesUtils.pNonNegativeInt(this.$route?.params?.id)
-        if (this.currentServerId !== serverId) {
-          this.currentServerId = serverId
-          this.populateServer()
-        }
-      }
+      this.parseRoute()
     },
 
     selectedPage () {
@@ -475,7 +453,7 @@ export default {
       }
       if (!this.smtpSsl && this.smtpPort === 465) {
         this.smtpPort = 25
-      }      
+      }
       if (!this.setExternalAccessServers) {
         this.externalAccessSmtpUseSsl= this.smtpSsl
       }
@@ -542,6 +520,8 @@ export default {
     this.tenantOptions = tenantOptions
 
     this.populateOauthConnectorsData()
+
+    this.parseRoute()
   },
 
   methods: {
@@ -553,6 +533,32 @@ export default {
       const path = '/system/mail-servers' + searchRoute + pageRoute + idRoute
       if (path !== this.$route.path) {
         this.$router.push(path)
+      }
+    },
+
+    parseRoute () {
+      if (this.$route.path === '/system/mail-servers/create') {
+        this.createMode = true
+        this.showServerFields = false
+        this.populateServer()
+      } else {
+        this.createMode = false
+
+        const search = typesUtils.pString(this.$route?.params?.search)
+        const page = typesUtils.pPositiveInt(this.$route?.params?.page)
+        if (this.search !== search || this.page !== page) {
+          this.search = search
+          this.enteredSearch = search
+          this.page = page
+          this.selectedPage = page
+          this.populate()
+        }
+
+        const serverId = typesUtils.pNonNegativeInt(this.$route?.params?.id)
+        if (this.currentServerId !== serverId) {
+          this.currentServerId = serverId
+          this.populateServer()
+        }
       }
     },
 
