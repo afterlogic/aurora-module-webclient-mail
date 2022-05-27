@@ -24,7 +24,8 @@
 				css: {'has_ical_attachment': hasIcalAttachment(), 'has_vcard_attachment': hasVcardAttachment()}"></span>
 			<span class="marker"></span>
 			<span class="from fadeout">
-				<span data-bind="text: fromOrToText()"></span>
+				<span data-bind="i18n: {'key': '%MODULENAME%/LABEL_NOTIFICATION'}, visible: isNotification"></span>
+				<span data-bind="text: fromOrToText(), visible: !isNotification()"></span>
 			</span>
 			<span class="separator"></span>
 			<span class="thread-pin" data-bind="text: threadCount(), visible: threadCountVisible(), click: openThread, css: {'unread': threadUnreadCount() > 0}, customTooltip: threadCountHint"></span>

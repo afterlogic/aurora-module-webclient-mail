@@ -78,6 +78,7 @@ function CMessageModel()
 	this.oBcc = new CAddressListModel();
 	this.bcc = ko.observable('');
 	this.oReplyTo = new CAddressListModel();
+	this.isNotification = ko.observable(false);
 
 	this.seen = ko.observable(false);
 
@@ -480,6 +481,12 @@ CMessageModel.prototype.parse = function (oData, iAccountId, bThreadPart, bTrust
 		this.to(this.oTo.getFull());
 		this.cc(this.oCc.getFull());
 		this.bcc(this.oBcc.getFull());
+		
+		const
+			fromEmail = this.oFrom.getEmails(),
+			recipientsEmails = this.oTo.getEmails().concat(this.oCc.getEmails(), this.oBcc.getEmails())
+		;
+		this.isNotification(_.isEqual(fromEmail, recipientsEmails));
 
 		this.hasAttachments(!!oData.HasAttachments);
 		this.hasIcalAttachment(!!oData.HasIcalAttachment);

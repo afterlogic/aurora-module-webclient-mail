@@ -29,7 +29,17 @@
 			<!-- ko template: {name: '%ModuleName%_Message_ToolbarView'} --><!-- /ko -->
 
 			<div class="message_info" data-bind="visible: !detailsVisible()">
-				<div class="message_info_line">
+				<div class="message_info_line"
+					 data-bind="visible: currentMessage() && currentMessage().isNotification()"
+				>
+					<span class="from contact address_capsule found_contact" style="cursor: default;"
+						  data-bind="i18n: {'key': '%MODULENAME%/LABEL_NOTIFICATION'}"
+					></span>
+				</div>
+
+				<div class="message_info_line"
+					 data-bind="visible: currentMessage() && !currentMessage().isNotification()"
+				>
 					<span class="from contact address_capsule">
 						<span class="control address" data-bind="text: sMeSender && currentAccountEmail() === fromEmail() ? sMeSender : from,
 								attr: {'data-email': fromEmail, 'data-name': oFromAddr() ? oFromAddr().sName : ''}"></span>
@@ -46,6 +56,14 @@
 			</div>
 
 			<div class="message_info message_detail_info" data-bind="visible: detailsVisible()">
+				<div class="message_info_line"
+					 data-bind="visible: currentMessage() && currentMessage().isNotification()"
+				>
+					<span class="from contact address_capsule found_contact" style="cursor: default;"
+						  data-bind="i18n: {'key': '%MODULENAME%/LABEL_NOTIFICATION'}"
+					></span>
+				</div>
+
 				<div class="message_info_line">
 					<span class="title" data-bind="i18n: {'key': '%MODULENAME%/LABEL_FROM'}"></span>:
 					<span class="contact address_capsule">
