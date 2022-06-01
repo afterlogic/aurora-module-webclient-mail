@@ -316,9 +316,10 @@ function CComposeView()
 	}, this);
 
 	this.toolbarControllers = ko.observableArray([]);
-	this.messageRowControllers = ko.observableArray([])
+	this.messageRowControllers = ko.observableArray([]);
+	this.uploadAttachmentsController = ko.observableArray([]);
 	this.allControllers = ko.computed(function () {
-		return _.union(this.toolbarControllers(), this.messageRowControllers());
+		return _.union(this.toolbarControllers(), this.messageRowControllers(), this.uploadAttachmentsController());
 	}, this);
 	this.disableHeadersEdit = ko.computed(function () {
 		var bDisableHeadersEdit = false;
@@ -2032,6 +2033,17 @@ CComposeView.prototype.registerMessageRowController = function (oController)
 		if (_.isFunction(oController.assignComposeExtInterface))
 		{
 			oController.assignComposeExtInterface(this.getExtInterface());
+		}
+	}
+};
+
+CComposeView.prototype.registerUploadAttachmentsController = function (controller)
+{
+	const allowRegister = App.isMobile() ? controller.bAllowMobile : !controller.bOnlyMobile;
+	if (allowRegister) {
+		this.uploadAttachmentsController.push(controller);
+		if (_.isFunction(controller.assignComposeExtInterface)) {
+			controller.assignComposeExtInterface(this.getExtInterface());
 		}
 	}
 };
