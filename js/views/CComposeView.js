@@ -1131,6 +1131,19 @@ CComposeView.prototype.addFilesAsAttachment = function (aFiles)
 };
 
 /**
+ * @param {array} attachments
+ */
+CComposeView.prototype.addUploadingAttachments = function (attachments)
+{
+	if (Array.isArray(attachments) && attachments.length > 0) {
+		attachments.forEach(attachment => {
+			this.attachments.push(attachment);
+		});
+		this.messageUploadAttachmentsStarted(true);
+	}
+};
+
+/**
  * @param {Object} oResponse
  * @param {Object} oRequest
  */
@@ -1970,7 +1983,7 @@ CComposeView.prototype.registerOwnToolbarControllers = function ()
 		toolbarControllers: ko.computed(function () {
 			return _.filter(this.toolbarControllers(), function (oController) {
 				return oController.bSendButton;
-			})
+			});
 		}, this)
 	});
 	this.registerToolbarController({
@@ -2102,6 +2115,9 @@ CComposeView.prototype.getExtInterface = function ()
 			var oFolderList = MailCache.oFolderListItems[iAccountID];
 			return oFolderList ? oFolderList.draftsFolderFullName() : '';
 		},
+		addUploadingAttachments: _.bind(this.addUploadingAttachments, this),
+		onFilesUpload: _.bind(this.onFilesUpload, this),
+		koSenderAccountId: this.senderAccountId,
 		koAllAttachmentsUploaded: this.allAttachmentsUploaded,
 		clearFolderCache: function (iAccountId, sDraftFolder) {
 			if (MainTab)
