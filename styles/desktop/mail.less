@@ -500,11 +500,20 @@
 			display: block;
 		}
 	}
-	
+
 	.appointment {
 		background: @theme-mail-viewer-appointment-background;
 		border-bottom: @theme-mail-viewer-appointment-border-bottom;
 		padding: 15px;
+
+		.row.row_info {
+			margin: 0px 0px 12px;
+
+			& > * {
+				font-size: 11pt;
+				color: #515151;
+			}
+		}
 
 		.row.fluid {
 			padding-left: 100px;
@@ -536,7 +545,7 @@
 
 		.buttons {
 			display: inline-block;
-			margin-top: 7px;
+			margin: 0 0 8px 0;
 
 			.button {
 				margin-right: 5px;
