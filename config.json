@@ -1,253 +1,253 @@
 {
-  "Disabled": [
-    false,
-    "bool"
-  ],
-  "Disabled_Description": [
-    "",
-    "string"
-  ],
-  "AllowAppRegisterMailto": [
-    true,
-    "bool"
-  ],
-  "AllowAppRegisterMailto_Description": [
-    "",
-    "string"
-  ],
-  "AllowChangeInputDirection": [
-    false,
-    "bool"
-  ],
-  "AllowChangeInputDirection_Description": [
-    "",
-    "string"
-  ],
-  "FoldersExpandedByDefault": [
-    false,
-    "bool"
-  ],
-  "FoldersExpandedByDefault_Description": [
-    "",
-    "string"
-  ],
-  "AllowSpamFolder": [
-    true,
-    "bool"
-  ],
-  "AllowSpamFolder_Description": [
-    "",
-    "string"
-  ],
-  "AllowAddNewFolderOnMainScreen": [
-    false,
-    "bool"
-  ],
-  "AllowAddNewFolderOnMainScreen_Description": [
-    "",
-    "string"
-  ],
-  "ComposeToolbarOrder": [
-    [
-      "back",
-      "send",
-      "save",
-      "importance",
-      "MailSensitivity",
-      "confirmation",
-      "OpenPgp"
-    ],
-    "array"
-  ],
-  "ComposeToolbarOrder_Description": [
-    "",
-    "string"
-  ],
-  "DefaultFontName": [
-    "Tahoma",
-    "string"
-  ],
-  "DefaultFontName_Description": [
-    "",
-    "string"
-  ],
-  "DefaultFontSize": [
-    3,
-    "int"
-  ],
-  "DefaultFontSize_Description": [
-    "",
-    "string"
-  ],
-  "AlwaysTryUseImageWhilePasting": [
-    true,
-    "bool"
-  ],
-  "AlwaysTryUseImageWhilePasting_Description": [
-    "",
-    "string"
-  ],
-  "AllowHorizontalLineButton": [
-    false,
-    "bool"
-  ],
-  "AllowHorizontalLineButton_Description": [
-    "",
-    "string"
-  ],
-  "JoinReplyPrefixes": [
-    true,
-    "bool"
-  ],
-  "JoinReplyPrefixes_Description": [
-    "",
-    "string"
-  ],
-  "MailsPerPage": [
-    20,
-    "int"
-  ],
-  "MailsPerPage_Description": [
-    "",
-    "string"
-  ],
-  "MaxMessagesBodiesSizeToPrefetch": [
-    50000,
-    "int"
-  ],
-  "MaxMessagesBodiesSizeToPrefetch_Description": [
-    "",
-    "string"
-  ],
-  "MessageBodyTruncationThreshold": [
-    650000,
-    "int"
-  ],
-  "MessageBodyTruncationThreshold_Description": [
-    "",
-    "string"
-  ],
-  "ShowEmailAsTabName": [
-    true,
-    "bool"
-  ],
-  "ShowEmailAsTabName_Description": [
-    "",
-    "string"
-  ],
-  "AllowOtherModulesToReplaceTabsbarHeader": [
-    false,
-    "bool"
-  ],
-  "AllowOtherModulesToReplaceTabsbarHeader_Description": [
-    "",
-    "string"
-  ],
-  "AllowShowMessagesCountInFolderList": [
-    false,
-    "bool"
-  ],
-  "AllowShowMessagesCountInFolderList_Description": [
-    "",
-    "string"
-  ],
-  "AllowSearchMessagesBySubject": [
-    false,
-    "bool"
-  ],
-  "AllowSearchMessagesBySubject_Description": [
-    "",
-    "string"
-  ],
-  "PrefixesToRemoveBeforeSearchMessagesBySubject": [
-    [
-      "Re",
-      "Fwd"
-    ],
-    "array"
-  ],
-  "PrefixesToRemoveBeforeSearchMessagesBySubject_Description": [
-    "",
-    "string"
-  ],
-  "AllowHorizontalLayout": [
-    false,
-    "bool"
-  ],
-  "AllowHorizontalLayout_Description": [
-    "",
-    "string"
-  ],
-  "HorizontalLayoutByDefault": [
-    false,
-    "bool"
-  ],
-  "HorizontalLayoutByDefault_Description": [
-    "",
-    "string"
-  ],
-  "DisableRtlRendering": [
-    false,
-    "bool"
-  ],
-  "DisableRtlRendering_Description": [
-    "",
-    "string"
-  ],
-  "AllowQuickReply": [
-    true,
-    "bool"
-  ],
-  "AllowQuickReply_Description": [
-    "",
-    "string"
-  ],
-  "AllowQuickSendOnCompose": [
-    false,
-    "bool"
-  ],
-  "AllowQuickSendOnCompose_Description": [
-    "",
-    "string"
-  ],
-  "AllowUserGroupsInComposeAutocomplete": [
-    true,
-    "bool"
-  ],
-  "AllowUserGroupsInComposeAutocomplete_Description": [
-    "",
-    "string"
-  ],
-  "MarkMessageSeenWhenViewing": [
-    true,
-    "bool"
-  ],
-  "MarkMessageSeenWhenViewing_Description": [
-    "",
-    "string"
-  ],
-  "MarkMessageSeenWhenAnswerForward": [
-    false,
-    "bool"
-  ],
-  "MarkMessageSeenWhenAnswerForward_Description": [
-    "",
-    "string"
-  ],
-  "UserLoginPartInAccountDropdown": [
-    false,
-    "bool"
-  ],
-  "UserLoginPartInAccountDropdown_Description": [
-    "",
-    "string"
-  ],
-  "UseMeRecipientForMessages": [
-    true,
-    "bool"
-  ],
-  "UseMeRecipientForMessages_Description": [
-    "",
-    "string"
-  ]
+	"Disabled": [
+		false,
+		"bool"
+	],
+	"Disabled_Description": [
+		"",
+		"string"
+	],
+	"AllowAppRegisterMailto": [
+		true,
+		"bool"
+	],
+	"AllowAppRegisterMailto_Description": [
+		"",
+		"string"
+	],
+	"AllowChangeInputDirection": [
+		false,
+		"bool"
+	],
+	"AllowChangeInputDirection_Description": [
+		"",
+		"string"
+	],
+	"FoldersExpandedByDefault": [
+		false,
+		"bool"
+	],
+	"FoldersExpandedByDefault_Description": [
+		"",
+		"string"
+	],
+	"AllowSpamFolder": [
+		true,
+		"bool"
+	],
+	"AllowSpamFolder_Description": [
+		"",
+		"string"
+	],
+	"AllowAddNewFolderOnMainScreen": [
+		false,
+		"bool"
+	],
+	"AllowAddNewFolderOnMainScreen_Description": [
+		"",
+		"string"
+	],
+	"ComposeToolbarOrder": [
+		[
+			"back",
+			"send",
+			"save",
+			"importance",
+			"MailSensitivity",
+			"confirmation",
+			"OpenPgp"
+		],
+		"array"
+	],
+	"ComposeToolbarOrder_Description": [
+		"",
+		"string"
+	],
+	"DefaultFontName": [
+		"Tahoma",
+		"string"
+	],
+	"DefaultFontName_Description": [
+		"",
+		"string"
+	],
+	"DefaultFontSize": [
+		3,
+		"int"
+	],
+	"DefaultFontSize_Description": [
+		"",
+		"string"
+	],
+	"AlwaysTryUseImageWhilePasting": [
+		true,
+		"bool"
+	],
+	"AlwaysTryUseImageWhilePasting_Description": [
+		"",
+		"string"
+	],
+	"AllowHorizontalLineButton": [
+		false,
+		"bool"
+	],
+	"AllowHorizontalLineButton_Description": [
+		"",
+		"string"
+	],
+	"JoinReplyPrefixes": [
+		true,
+		"bool"
+	],
+	"JoinReplyPrefixes_Description": [
+		"",
+		"string"
+	],
+	"MailsPerPage": [
+		20,
+		"int"
+	],
+	"MailsPerPage_Description": [
+		"",
+		"string"
+	],
+	"MaxMessagesBodiesSizeToPrefetch": [
+		50000,
+		"int"
+	],
+	"MaxMessagesBodiesSizeToPrefetch_Description": [
+		"",
+		"string"
+	],
+	"MessageBodyTruncationThreshold": [
+		650000,
+		"int"
+	],
+	"MessageBodyTruncationThreshold_Description": [
+		"",
+		"string"
+	],
+	"ShowEmailAsTabName": [
+		true,
+		"bool"
+	],
+	"ShowEmailAsTabName_Description": [
+		"",
+		"string"
+	],
+	"AllowOtherModulesToReplaceTabsbarHeader": [
+		false,
+		"bool"
+	],
+	"AllowOtherModulesToReplaceTabsbarHeader_Description": [
+		"",
+		"string"
+	],
+	"AllowShowMessagesCountInFolderList": [
+		false,
+		"bool"
+	],
+	"AllowShowMessagesCountInFolderList_Description": [
+		"",
+		"string"
+	],
+	"AllowSearchMessagesBySubject": [
+		false,
+		"bool"
+	],
+	"AllowSearchMessagesBySubject_Description": [
+		"",
+		"string"
+	],
+	"PrefixesToRemoveBeforeSearchMessagesBySubject": [
+		[
+			"Re",
+			"Fwd"
+		],
+		"array"
+	],
+	"PrefixesToRemoveBeforeSearchMessagesBySubject_Description": [
+		"",
+		"string"
+	],
+	"AllowHorizontalLayout": [
+		false,
+		"bool"
+	],
+	"AllowHorizontalLayout_Description": [
+		"",
+		"string"
+	],
+	"HorizontalLayoutByDefault": [
+		false,
+		"bool"
+	],
+	"HorizontalLayoutByDefault_Description": [
+		"",
+		"string"
+	],
+	"DisableRtlRendering": [
+		false,
+		"bool"
+	],
+	"DisableRtlRendering_Description": [
+		"",
+		"string"
+	],
+	"AllowQuickReply": [
+		true,
+		"bool"
+	],
+	"AllowQuickReply_Description": [
+		"",
+		"string"
+	],
+	"AllowQuickSendOnCompose": [
+		false,
+		"bool"
+	],
+	"AllowQuickSendOnCompose_Description": [
+		"",
+		"string"
+	],
+	"AllowUserGroupsInComposeAutocomplete": [
+		true,
+		"bool"
+	],
+	"AllowUserGroupsInComposeAutocomplete_Description": [
+		"",
+		"string"
+	],
+	"MarkMessageSeenWhenViewing": [
+		true,
+		"bool"
+	],
+	"MarkMessageSeenWhenViewing_Description": [
+		"",
+		"string"
+	],
+	"MarkMessageSeenWhenAnswerForward": [
+		false,
+		"bool"
+	],
+	"MarkMessageSeenWhenAnswerForward_Description": [
+		"",
+		"string"
+	],
+	"UserLoginPartInAccountDropdown": [
+		false,
+		"bool"
+	],
+	"UserLoginPartInAccountDropdown_Description": [
+		"",
+		"string"
+	],
+	"UseMeRecipientForMessages": [
+		true,
+		"bool"
+	],
+	"UseMeRecipientForMessages_Description": [
+		"",
+		"string"
+	]
 }
