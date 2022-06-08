@@ -129,6 +129,10 @@ module.exports = function (oAppData) {
 					var ComposeView = GetComposeView();
 					ComposeView.registerMessageRowController(oController);
 				},
+				registerComposeUploadAttachmentsController: function (controller) {
+					const ComposeView = GetComposeView();
+					ComposeView.registerUploadAttachmentsController(controller);
+				},
 				getComposeMessageWithData: function () {
 					var
 						bAllowSendMail = true,
@@ -203,6 +207,10 @@ module.exports = function (oAppData) {
 				registerComposeMessageRowController: function (oController) {
 					var ComposePopup = require('modules/%ModuleName%/js/popups/ComposePopup.js');
 					ComposePopup.registerMessageRowController(oController);
+				},
+				registerComposeUploadAttachmentsController: function (controller) {
+					const ComposePopup = require('modules/%ModuleName%/js/popups/ComposePopup.js');
+					ComposePopup.registerUploadAttachmentsController(controller);
 				},
 				getSearchMessagesInInbox: function () {
 					return _.bind(Cache.searchMessagesInInbox, Cache);

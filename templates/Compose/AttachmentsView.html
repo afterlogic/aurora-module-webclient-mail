@@ -11,7 +11,9 @@
 					<span class="icon" data-bind="customTooltip: '%MODULENAME%/ACTION_ATTACH_FROM_FILES'"></span>
 					<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ATTACH_FROM_FILES'}"></span>
 				</span>
-				{%INCLUDE-START/Compose-Attach-Buttons/INCLUDE-END%}
+				<!-- ko foreach: uploadAttachmentsController -->
+					<!-- ko template: { name: $data.ViewTemplate, data: $data} --><!-- /ko -->
+				<!-- /ko -->
 			</div>
 			<div class="panel_center" data-bind="customScrollbar: {x: false}">
 				<div class="scroll-inner">

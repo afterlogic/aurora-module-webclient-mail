@@ -316,9 +316,10 @@ function CComposeView()
 	}, this);
 
 	this.toolbarControllers = ko.observableArray([]);
-	this.messageRowControllers = ko.observableArray([])
+	this.messageRowControllers = ko.observableArray([]);
+	this.uploadAttachmentsController = ko.observableArray([]);
 	this.allControllers = ko.computed(function () {
-		return _.union(this.toolbarControllers(), this.messageRowControllers());
+		return _.union(this.toolbarControllers(), this.messageRowControllers(), this.uploadAttachmentsController());
 	}, this);
 	this.disableHeadersEdit = ko.computed(function () {
 		var bDisableHeadersEdit = false;
@@ -1126,6 +1127,19 @@ CComposeView.prototype.addFilesAsAttachment = function (aFiles)
 		this.messageUploadAttachmentsStarted(true);
 
 		CoreAjax.send('Files', 'GetFilesForUpload', { 'Hashes': aHashes }, this.onFilesUpload, this);
+	}
+};
+
+/**
+ * @param {array} attachments
+ */
+CComposeView.prototype.addUploadingAttachments = function (attachments)
+{
+	if (Array.isArray(attachments) && attachments.length > 0) {
+		attachments.forEach(attachment => {
+			this.attachments.push(attachment);
+		});
+		this.messageUploadAttachmentsStarted(true);
 	}
 };
 
@@ -1969,7 +1983,7 @@ CComposeView.prototype.registerOwnToolbarControllers = function ()
 		toolbarControllers: ko.computed(function () {
 			return _.filter(this.toolbarControllers(), function (oController) {
 				return oController.bSendButton;
-			})
+			});
 		}, this)
 	});
 	this.registerToolbarController({
@@ -2036,6 +2050,17 @@ CComposeView.prototype.registerMessageRowController = function (oController)
 	}
 };
 
+CComposeView.prototype.registerUploadAttachmentsController = function (controller)
+{
+	const allowRegister = App.isMobile() ? controller.bAllowMobile : !controller.bOnlyMobile;
+	if (allowRegister) {
+		this.uploadAttachmentsController.push(controller);
+		if (_.isFunction(controller.assignComposeExtInterface)) {
+			controller.assignComposeExtInterface(this.getExtInterface());
+		}
+	}
+};
+
 /**
  * @returns {Object}
  */
@@ -2090,6 +2115,9 @@ CComposeView.prototype.getExtInterface = function ()
 			var oFolderList = MailCache.oFolderListItems[iAccountID];
 			return oFolderList ? oFolderList.draftsFolderFullName() : '';
 		},
+		addUploadingAttachments: _.bind(this.addUploadingAttachments, this),
+		onFilesUpload: _.bind(this.onFilesUpload, this),
+		koSenderAccountId: this.senderAccountId,
 		koAllAttachmentsUploaded: this.allAttachmentsUploaded,
 		clearFolderCache: function (iAccountId, sDraftFolder) {
 			if (MainTab)
