@@ -94,7 +94,9 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 	}, this);
 
 	this.folderList = MailCache.folderList;
-	this.folderList.subscribe(this.onFolderListSubscribe, this);
+	this.folderList.subscribe(function () {
+		setTimeout(this.onFolderListSubscribe.bind(this));
+	}, this);
 	this.folderFullName = ko.observable('');
 	this.folderType = ko.observable(Enums.FolderTypes.User);
 	this.filters = ko.observable('');
