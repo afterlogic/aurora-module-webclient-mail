@@ -1,0 +1,238 @@
+.theme-thread-pin() {
+	@thread-pin-background: transparent;
+	@thread-pin-color: #ffffff;
+	@thread-pin-border: 1px solid #ffffff;
+
+	@thread-pin-selected-background: transparent;
+	@thread-pin-selected-color: #ffffff;
+	@thread-pin-selected-border: 1px solid #ffffff;
+
+	@thread-pin-unread-background: @background-color-4;
+	@thread-pin-unread-color: #ffffff;
+	@thread-pin-unread-border: 1px solid @background-color-4;
+
+	@thread-pin-unread-selected-background: @background-color-4;
+	@thread-pin-unread-selected-color: #ffffff;
+	@thread-pin-unread-selected-border: 1px solid @background-color-4;
+}
+
+.center_panel .items_list .item {
+	.data .thread-pin {
+		border-radius: 12px;
+		padding: 4px 6px 3px;
+	}
+
+	.data .thread-pin,
+	&.checked .data .thread-pin,
+	&.selected .data .thread-pin {
+		&:hover {
+			background-color: transparent;
+			border-color: @text-color-1;
+			color: @text-color-1;
+		}
+
+		&.unread:hover {
+			background-color: darken(@background-color-4, 5%);
+			border-color: darken(@background-color-4, 5%);
+			color: @text-color-1;
+		}
+	}
+}
+
+.theme-message-toolbar-item() {};
+
+.theme-layout-horiz-split() {};
+
+@theme-mail-message-header-background: @background-color-1;
+@theme-mail-viewer-notice-background: #ffffc5;
+@theme-mail-viewer-notice-link-color: @action-color-1;
+@theme-mail-viewer-appointment-background: lighten(#033f49, 10%);
+@theme-mail-viewer-appointment-border-bottom: 1px solid @border-color;
+@theme-mail-compose-showcc-link-color: @action-color-1;
+@theme-mail-compose-showcc-link-hover-color: darken(@action-color-1, 10%);
+@theme-mail-compose-minimized-background: @action-color-1;
+
+.panel.item_viewer.message_viewer {
+	.message_header {
+		&, .title, .subject {
+			color: @text-color-3;
+		}
+
+		.table-compressor {
+			color: @background-color-3;
+
+			.arrow:after {
+				background: @theme-mail-message-header-background;
+			}
+		}
+	}
+
+	.panels.has_attachments .message_panel {
+		border-right: 1px solid @border-color;
+	}
+
+	.message_content .message_body_info {
+		color: @text-color-1;
+	}
+
+	.appointment {
+		color: #E4E4E4;
+
+		.row.row_info > * {
+			color: darken(#E4E4E4, 5%);
+		}
+	}
+
+	.message_content_not_empty_text {
+		background: #ffffff;
+	}
+}
+
+.auroraMain .attachments,
+.panel.item_viewer.message_viewer .attachments {
+	color: #E4E4E4;
+
+	.download_menu .link {
+		&.hover {
+			color: @text-color-3 !important;
+		}
+
+		.icon {
+			color: @background-color-4;
+		}
+	}
+
+	&.upload .item .cancel {
+		background: #F15B46;
+	}
+
+	.item {
+		color: #E4E4E4;
+
+		.item_content {
+			background: #2D303B;
+			border: solid 1px #3A3D4C;
+			box-shadow: none;
+		}
+
+		.image {
+			border-bottom: 1px solid #3A3D4C;
+		}
+
+		.size {
+			color: #616162;
+		}
+		
+		.progress .progress-percent {
+			color: #E4E4E4 !important;
+		}
+	}
+}
+
+.auroraMain {
+	.MailComposeLayout .panels, .compose_popup .panels,
+	.compose_popup .popup_panel {
+		background: none;
+	}
+
+	.panel.compose {
+		background: none;
+		border: solid 1px @border-color;
+
+		input,
+		textarea,
+		select,
+		.input {
+			border: none !important;
+		}
+
+		.panel.message_panel {
+			background: @background-color-2;
+			border-radius: 0;
+			border-top: 1px solid @border-color;
+			border-right: 1px solid @border-color;
+
+			.table-compressor .arrow:after {
+				background: @background-color-2;
+				color: @background-color-3;
+			}
+
+			.panel_top {
+				padding: 0;
+			}
+
+			.panel_bottom {
+				padding: 3px 10px 4px;
+
+				.hotkey_value {
+					color: darken(@text-color-1, 5%);
+					text-shadow: none;
+				}
+
+				.hotkey_action {
+					color: @text-color-1;
+					text-shadow: none;
+				}
+			}
+		}
+
+		.panel_content > .toolbar {
+			background: @background-color-2;
+
+			.back .icon,
+			.new_window .icon,
+			.save_and_close .icon,
+			.minimize .icon,
+			.maximize .icon,
+			.confirmation .icon,
+			.pgp .icon {
+				color: @text-color-2;
+			}
+		}
+
+		table.fields {
+			input,
+			select,
+			textarea,
+			.input {
+				background: @background-color-2;
+			}
+
+			& > tbody > tr {
+				border-bottom: 1px solid @border-color;
+			}
+
+			td.label {
+				width: 110px;
+			}
+
+			td.value {
+				padding: 4px 11px 4px 0px;
+
+				td.value {
+					padding: 0px;
+				}
+			}
+		}
+
+		.attachments_panel {
+			background: @background-color-2;
+			border-top: solid 1px @border-color;
+		}
+
+		.html_editor {
+			padding: 3px 9px;
+
+			.workarea {
+				border-radius: 0 0 4px 4px;
+			}
+		}
+	}
+
+	.html_editor {
+		select {
+			background: transparent;
+			color: #595959 !important;
+		}
+	}
+}
