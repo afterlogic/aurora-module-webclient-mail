@@ -573,8 +573,10 @@ CMailCache.prototype.getMessagesWithThreads = function (sFolderFullName, oUidLis
  * @param {Object} oUidList
  * @param {number} iOffset
  * @param {boolean} bFillMessages
+ * @param {boolean} bStopLoading
+ * @param {boolean} isFirstTime
  */
-CMailCache.prototype.setMessagesFromUidList = function (oUidList, iOffset, bFillMessages, bStopLoading)
+CMailCache.prototype.setMessagesFromUidList = function (oUidList, iOffset, bFillMessages, bStopLoading = false, isFirstTime = false)
 {
 	var
 		iLimit = bFillMessages ? this.limit() : Settings.MailsPerPage,
@@ -611,6 +613,8 @@ CMailCache.prototype.setMessagesFromUidList = function (oUidList, iOffset, bFill
 		;
 		if (isFolderChanged || !isMoreDataExpected) {
 			this.messagesLoading(false); // it will be reassigned later, this needed correct applying of message list
+		}
+		if (isFirstTime || isFolderChanged || !isMoreDataExpected) {
 			this.messages(this.getMessagesWithThreads(this.getCurrentFolderFullname(), oUidList, aMessages));
 		}
 
@@ -1313,8 +1317,8 @@ CMailCache.prototype.showExternalPictures = function (bAlwaysForSender)
 };
 
 /**
- * @param {string|null} sUid
  * @param {string} sFolder
+ * @param {string} sFilters
  */
 CMailCache.prototype.setCurrentFolder = function (sFolder, sFilters)
 {
@@ -1992,6 +1996,7 @@ CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 		bHasFolderChanges = oFolder.hasChanges();
 		oFolder.removeAllMessageListsFromCacheIfHasChanges();
 		oUidList = oFolder.getUidList(oResult.Search, oResult.Filters, oParameters.SortBy, oParameters.SortOrder, true);
+		const isFirestTime = oUidList.resultCount() === -1;
 		oUidList.setUidsAndCount(oParameters.Offset, oResult);
 		this.parseAndCacheMessages(oResult['@Collection'], oFolder, bTrustThreadInfo, aNewFolderMessages);
 		
@@ -2002,7 +2007,7 @@ CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 			{
 				this.messagesLoading(false);
 				this.waitForUnseenMessages(false);
-				this.setMessagesFromUidList(oUidList, this.offset(), true, true);
+				this.setMessagesFromUidList(oUidList, this.offset(), true, true, isFirestTime);
 				if (!this.messagesLoading())
 				{
 					this.setAutocheckmailTimer();
@@ -2306,7 +2311,6 @@ CMailCache.prototype.getCurrentTemplateFolders = function ()
 
 CMailCache.prototype.isTemplateFolder = function (folderFullName)
 {
-	// console.log('isTemplateFolder', folderFullName, -1 !== $.inArray(folderFullName, this.getCurrentTemplateFolders()))
 	return -1 !== $.inArray(folderFullName, this.getCurrentTemplateFolders());
 };
 

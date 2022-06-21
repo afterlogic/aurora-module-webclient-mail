@@ -65,6 +65,9 @@ CUidListModel.prototype.setUidsAndCount = function (iOffset, oResult)
 {
 	if (oResult['@Object'] === 'Collection/MessageCollection')
 	{
+		if (!Array.isArray(oResult.Uids)) {
+			oResult.Uids = _.values(oResult.Uids);
+		}
 		_.each(oResult.Uids, function (sUid, iIndex) {
 			
 			this.collection()[iIndex + iOffset] = sUid.toString();
