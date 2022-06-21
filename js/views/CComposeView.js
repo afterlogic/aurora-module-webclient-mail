@@ -989,7 +989,7 @@ CComposeView.prototype.onMessageResponse = function (oMessage)
 		var oParams = {
 			AccountId: oMessage.accountId(),
 			FolderFullName: oMessage.folder(),
-			MessageUid: oMessage.longUid(),
+			MessageUid: oMessage.uid(),
 			Compose: this
 		};
 		if (this.allAttachmentsUploaded())
