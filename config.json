@@ -4,7 +4,7 @@
 		"bool"
 	],
 	"Disabled_Description": [
-		"",
+		"Setting to true disables the module",
 		"string"
 	],
 	"AllowAppRegisterMailto": [
@@ -12,7 +12,7 @@
 		"bool"
 	],
 	"AllowAppRegisterMailto_Description": [
-		"",
+		"Enables setting the product installation as mailto: links handler",
 		"string"
 	],
 	"AllowChangeInputDirection": [
@@ -20,7 +20,7 @@
 		"bool"
 	],
 	"AllowChangeInputDirection_Description": [
-		"",
+		"Enables switching between RTL and LTR input directions",
 		"string"
 	],
 	"FoldersExpandedByDefault": [
@@ -28,7 +28,7 @@
 		"bool"
 	],
 	"FoldersExpandedByDefault_Description": [
-		"",
+		"If true, email folders hierarchy is displayed fully expanded by default, collapsed otherwise",
 		"string"
 	],
 	"AllowSpamFolder": [
@@ -36,7 +36,7 @@
 		"bool"
 	],
 	"AllowSpamFolder_Description": [
-		"",
+		"Enables the use of Spam folder and moving messages from/to Spam with a button",
 		"string"
 	],
 	"AllowAddNewFolderOnMainScreen": [
@@ -44,7 +44,7 @@
 		"bool"
 	],
 	"AllowAddNewFolderOnMainScreen_Description": [
-		"",
+		"If true, New Folder button is added on mail screen",
 		"string"
 	],
 	"ComposeToolbarOrder": [
@@ -60,7 +60,7 @@
 		"array"
 	],
 	"ComposeToolbarOrder_Description": [
-		"",
+		"Defines list of controls shown on compose toolbar in their order from left to right",
 		"string"
 	],
 	"DefaultFontName": [
@@ -68,7 +68,7 @@
 		"string"
 	],
 	"DefaultFontName_Description": [
-		"",
+		"Font name used by default when composing email message",
 		"string"
 	],
 	"DefaultFontSize": [
@@ -76,7 +76,7 @@
 		"int"
 	],
 	"DefaultFontSize_Description": [
-		"",
+		"Font size used by default when composing email message",
 		"string"
 	],
 	"AlwaysTryUseImageWhilePasting": [
@@ -84,7 +84,7 @@
 		"bool"
 	],
 	"AlwaysTryUseImageWhilePasting_Description": [
-		"",
+		"If true, complex content like tables will be pasted as image by default",
 		"string"
 	],
 	"AllowHorizontalLineButton": [
@@ -92,7 +92,7 @@
 		"bool"
 	],
 	"AllowHorizontalLineButton_Description": [
-		"",
+		"If true, Insert Horizontal Line button is added to compose toolbar",
 		"string"
 	],
 	"JoinReplyPrefixes": [
@@ -100,7 +100,7 @@
 		"bool"
 	],
 	"JoinReplyPrefixes_Description": [
-		"",
+		"If true, multiple prefixes such as Re: or Fwd: will be merged as much as possible when composing a new reply/forward",
 		"string"
 	],
 	"MailsPerPage": [
@@ -108,7 +108,7 @@
 		"int"
 	],
 	"MailsPerPage_Description": [
-		"",
+		"Default number of mail messages displayed per page",
 		"string"
 	],
 	"MaxMessagesBodiesSizeToPrefetch": [
@@ -116,7 +116,7 @@
 		"int"
 	],
 	"MaxMessagesBodiesSizeToPrefetch_Description": [
-		"",
+		"Sets a limit of message bodies to be prefetched, in bytes",
 		"string"
 	],
 	"MessageBodyTruncationThreshold": [
@@ -132,7 +132,7 @@
 		"bool"
 	],
 	"ShowEmailAsTabName_Description": [
-		"",
+		"If true, email address will be shown instead of Mail screen tab name",
 		"string"
 	],
 	"AllowOtherModulesToReplaceTabsbarHeader": [
@@ -148,15 +148,15 @@
 		"bool"
 	],
 	"AllowShowMessagesCountInFolderList_Description": [
-		"",
+		"If true, number of messages will be displayed for all folders in the list",
 		"string"
 	],
 	"AllowSearchMessagesBySubject": [
-		false,
+		true,
 		"bool"
 	],
 	"AllowSearchMessagesBySubject_Description": [
-		"",
+		"Enables the feature of searching for text selection in Subject area of preview pane",
 		"string"
 	],
 	"PrefixesToRemoveBeforeSearchMessagesBySubject": [
@@ -175,7 +175,7 @@
 		"bool"
 	],
 	"AllowHorizontalLayout_Description": [
-		"",
+		"If true, users are able to switch betwee vertical and horizontal layouts of mail screen",
 		"string"
 	],
 	"HorizontalLayoutByDefault": [
@@ -183,7 +183,7 @@
 		"bool"
 	],
 	"HorizontalLayoutByDefault_Description": [
-		"",
+		"If true, horizontal layout is used on mail screen by default",
 		"string"
 	],
 	"DisableRtlRendering": [
@@ -199,7 +199,7 @@
 		"bool"
 	],
 	"AllowQuickReply_Description": [
-		"",
+		"If true, a quick reply pane is available under message preview",
 		"string"
 	],
 	"AllowQuickSendOnCompose": [
@@ -207,7 +207,7 @@
 		"bool"
 	],
 	"AllowQuickSendOnCompose_Description": [
-		"",
+		"Enables Ctrl-Enter shortcut for sending mail out",
 		"string"
 	],
 	"AllowUserGroupsInComposeAutocomplete": [
@@ -215,7 +215,7 @@
 		"bool"
 	],
 	"AllowUserGroupsInComposeAutocomplete_Description": [
-		"",
+		"If true, user groups become available in address autocompletion when composing a message",
 		"string"
 	],
 	"MarkMessageSeenWhenViewing": [
@@ -223,7 +223,7 @@
 		"bool"
 	],
 	"MarkMessageSeenWhenViewing_Description": [
-		"",
+		"If true, message automatically becomes read when viewed by selecting it in message list",
 		"string"
 	],
 	"MarkMessageSeenWhenAnswerForward": [
@@ -231,7 +231,7 @@
 		"bool"
 	],
 	"MarkMessageSeenWhenAnswerForward_Description": [
-		"",
+		"If true, message becomes read when forwarded or replied to",
 		"string"
 	],
 	"UserLoginPartInAccountDropdown": [
@@ -247,7 +247,7 @@
 		"bool"
 	],
 	"UseMeRecipientForMessages_Description": [
-		"",
+		"If true, 'me' will be displayed insted of user's email address in headers section of message preview pane (collapsed view only)",
 		"string"
 	]
 }
