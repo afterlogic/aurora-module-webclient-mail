@@ -2081,6 +2081,9 @@ CComposeView.prototype.getExtInterface = function ()
 		getRecipientEmails: _.bind(function () {
 			return this.recipientEmails();
 		}, this),
+		getRecipientsInfo: _.bind(function () {
+			return _.values(this.recipientsInfo());
+		}, this),
 		getSelectedSender: _.bind(this.selectedSender, this),
 		saveSilently: _.bind(this.executeSave, this, true),
 		setPlainTextMode: _.bind(this.plainText, this, true),
