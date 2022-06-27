@@ -26,6 +26,7 @@ var
 
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
 	AlertPopup = require('%PathToCoreWebclientModule%/js/popups/AlertPopup.js'),
+	ConfirmPopup = require('%PathToCoreWebclientModule%/js/popups/ConfirmPopup.js'),
 	SelectFilesPopup = ModulesManager.run('FilesWebclient', 'getSelectFilesPopup'),
 
 	InformatikMailUtils = require('modules/%ModuleName%/js/utils/InformatikMail.js'),
@@ -576,8 +577,6 @@ CComposeView.prototype.getMessageOnRoute = function ()
  */
 CComposeView.prototype.onShow = function ()
 {
-	window.auroraLogs = [];
-
 	// onShow is called before onRoute so reset is called here before anything else
 	this.reset();
 
@@ -1617,12 +1616,11 @@ CComposeView.prototype.getSendSaveParameters = function ({removeSignatureAnchor 
 		'InReplyTo': this.inReplyTo(),
 		'References': this.references()
 	};
-	Utils.log('getSendSaveParameters', 'Subject', oParameters.Subject);
+
 	_.each(this.allControllers(), function (oController) {
 		if (_.isFunction(oController.doAfterPreparingSendMessageParameters))
 		{
 			oController.doAfterPreparingSendMessageParameters(oParameters, method);
-			Utils.log('getSendSaveParameters', 'After', oController.constructor.name, 'Subject', oParameters.Subject);
 		}
 	});
 
@@ -1741,6 +1739,19 @@ CComposeView.prototype.executeSend = function (mParam)
 				bCancelSend = bCancelSend || oController.doBeforeSend(fContinueSending);
 			}
 		});
+
+		if (!bCancelSend && this.subject() === '') {
+			const
+				confirmText = TextUtils.i18n('COREWEBCLIENT/CONFIRM_MESSAGE_SUBJECT_EMPTY'),
+				confirmHandler = (continueSend => {
+					if (continueSend) {
+						fContinueSending();
+					}
+				})
+			;
+			Popups.showPopup(ConfirmPopup, [confirmText, confirmHandler]);
+			bCancelSend = true;
+		}
 
 		if (!bCancelSend)
 		{
