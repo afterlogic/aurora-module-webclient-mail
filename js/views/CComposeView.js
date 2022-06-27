@@ -576,6 +576,8 @@ CComposeView.prototype.getMessageOnRoute = function ()
  */
 CComposeView.prototype.onShow = function ()
 {
+	window.auroraLogs = [];
+
 	// onShow is called before onRoute so reset is called here before anything else
 	this.reset();
 
@@ -1615,11 +1617,12 @@ CComposeView.prototype.getSendSaveParameters = function ({removeSignatureAnchor 
 		'InReplyTo': this.inReplyTo(),
 		'References': this.references()
 	};
-
+	Utils.log('getSendSaveParameters', 'Subject', oParameters.Subject);
 	_.each(this.allControllers(), function (oController) {
 		if (_.isFunction(oController.doAfterPreparingSendMessageParameters))
 		{
 			oController.doAfterPreparingSendMessageParameters(oParameters, method);
+			Utils.log('getSendSaveParameters', 'After', oController.constructor.name, 'Subject', oParameters.Subject);
 		}
 	});
 
