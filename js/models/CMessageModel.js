@@ -731,23 +731,6 @@ CMessageModel.prototype.openThread = function ()
 };
 
 /**
- * @returns {Array}
- */
-CMessageModel.prototype.getAttachmentsHashes = function ()
-{
-	var
-		aNotInlineAttachments = _.filter(this.attachments(), function (oAttach) {
-			return !oAttach.linked();
-		}),
-		aHashes = _.map(aNotInlineAttachments, function (oAttach) {
-			return oAttach.hash();
-		})
-	;
-
-	return aHashes;
-};
-
-/**
  * @param {Object} oResponse
  * @param {Object} oRequest
  */

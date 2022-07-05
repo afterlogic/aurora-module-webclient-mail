@@ -958,9 +958,13 @@ CMessagePaneView.prototype.startAutosaveTimer = function ()
 
 CMessagePaneView.prototype.executeAllAttachmentsDownloadMethod = function (fHandler)
 {
-	if (this.currentMessage())
-	{
-		fHandler(this.currentMessage().accountId(), this.currentMessage().getAttachmentsHashes());
+	const message = this.currentMessage();
+	if (message) {
+		const
+			notInlineAttachments = message.notInlineAttachments(),
+			hashes = notInlineAttachments.map(attach => attach.hash())
+		;
+		fHandler(message.accountId(), hashes, notInlineAttachments);
 	}
 };
 
