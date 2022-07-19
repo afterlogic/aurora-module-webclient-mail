@@ -124,7 +124,7 @@
 		"int"
 	],
 	"MessageBodyTruncationThreshold_Description": [
-		"",
+		"Sets a limit for message body size to be fetched",
 		"string"
 	],
 	"ShowEmailAsTabName": [
@@ -140,7 +140,7 @@
 		"bool"
 	],
 	"AllowOtherModulesToReplaceTabsbarHeader_Description": [
-		"",
+		"If set to true, other modules can supply custom HeaderItemView template instead of default one of this module",
 		"string"
 	],
 	"AllowShowMessagesCountInFolderList": [
@@ -191,7 +191,7 @@
 		"bool"
 	],
 	"DisableRtlRendering_Description": [
-		"",
+		"If set to true, messages are always displayed in left-to-right view, regarldess of their content",
 		"string"
 	],
 	"AllowQuickReply": [
@@ -239,7 +239,7 @@
 		"bool"
 	],
 	"UserLoginPartInAccountDropdown_Description": [
-		"",
+		"If set to true, only username is displayed in account dropdown, instead of full email address",
 		"string"
 	],
 	"UseMeRecipientForMessages": [
@@ -247,7 +247,7 @@
 		"bool"
 	],
 	"UseMeRecipientForMessages_Description": [
-		"If true, 'me' will be displayed insted of user's email address in headers section of message preview pane (collapsed view only)",
+		"If true, 'me' will be displayed instead of user's email address in headers section of message preview pane (collapsed view only)",
 		"string"
 	]
 }
