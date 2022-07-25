@@ -767,7 +767,7 @@ CMessageListView.prototype.isSavingDraft = function (oMessage)
  */
 CMessageListView.prototype.routeForMessage = function (oMessage)
 {
-	if (oMessage !== null && !this.isSavingDraft(oMessage))
+	if (oMessage && oMessage.longUid && !this.isSavingDraft(oMessage))
 	{
 		var
 			oFolder = MailCache.getCurrentFolder(),

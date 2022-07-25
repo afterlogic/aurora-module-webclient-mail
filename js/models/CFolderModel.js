@@ -1166,12 +1166,12 @@ CFolderModel.prototype.onGetMessageResponse = function (oResponse, oRequest)
 		if (oMessage)
 		{
 			Routing.replaceHashWithoutMessageUid(oMessage.longUid());
-			if (!oMessage.deleted())
+			if (!bSelected && !oMessage.deleted())
 			{
 				this.removeMessageFromDict(sUid);
 			}
 		}
-		
+
 		oMessage = null;
 		bPassResponse = true;
 	}

@@ -281,7 +281,7 @@ CMailView.prototype.executeCheckMail = function ()
  */
 CMailView.prototype.openMessageInNewWindow = function (oMessage)
 {
-	if (oMessage)
+	if (oMessage && oMessage.longUid)
 	{
 		var
 			iAccountId = oMessage.accountId(),

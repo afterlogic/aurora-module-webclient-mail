@@ -237,7 +237,7 @@ Prefetcher.startThreadListPrefetch = function ()
 	;
 
 	_.each(MailCache.messages(), function (oCacheMess) {
-		if (oCacheMess.threadCount() > 0)
+		if (oCacheMess && oCacheMess.threadCount && oCacheMess.threadCount() > 0)
 		{
 			var
 				iAccountId = oCacheMess.accountId(),
