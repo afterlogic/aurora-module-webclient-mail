@@ -117,6 +117,8 @@ CComposeViewAutoEncrypt.prototype.groupAllRecipients = function (aRecipients)
 		aRecipientsEncrypt = [],
 		aRecipientsSign = [],
 		aRecipientsSignEncrypt = [],
+		encryptContactsUuids = [],
+		signEncryptContactsUuids = [],
 		iSendingCount = 0
 	;
 	_.each(aRecipients, function (sRecipient) {
@@ -128,10 +130,12 @@ CComposeViewAutoEncrypt.prototype.groupAllRecipients = function (aRecipients)
 				if (oRecipientInfo.signMessage)
 				{
 					aRecipientsSignEncrypt.push(sRecipient);
+					signEncryptContactsUuids.push(oRecipientInfo.uuid);
 				}
 				else
 				{
 					aRecipientsEncrypt.push(sRecipient);
+					encryptContactsUuids.push(oRecipientInfo.uuid);
 				}
 			}
 			else if (oRecipientInfo.signMessage)
@@ -171,6 +175,8 @@ CComposeViewAutoEncrypt.prototype.groupAllRecipients = function (aRecipients)
 		encrypt: aRecipientsEncrypt,
 		sign: aRecipientsSign,
 		signEncrypt: aRecipientsSignEncrypt,
+		encryptContactsUuids,
+		signEncryptContactsUuids,
 		simpleCount: aRecipientsSimple.length,
 		encryptCount: aRecipientsEncrypt.length,
 		signCount: aRecipientsSign.length,
@@ -253,17 +259,23 @@ CComposeViewAutoEncrypt.prototype.proceedEncryptSignAndSend = function (oRecipie
 	}
 	if (oRecipients.signCount > 0)
 	{
-		ModulesManager.run('OpenPgpWebclient', 'encryptSign', [false, true, sData, oRecipients.sign, 
-			fOkCallback.bind(this, oRecipients.sign, oRecipients.encryptCount === 0 && oRecipients.signEncryptCount === 0), sFromEmail, sPassword]);
+		ModulesManager.run('OpenPgpWebclient', 'encryptSign', [false, true, sData, oRecipients.sign, [],
+			fOkCallback.bind(this, oRecipients.sign, oRecipients.encryptCount === 0 && oRecipients.signEncryptCount === 0),
+			sFromEmail, sPassword]);
+	}
+	if (oRecipients.encryptContactsUuids.length > 0) {
+		
 	}
 	if (oRecipients.encryptCount > 0)
 	{
 		ModulesManager.run('OpenPgpWebclient', 'encryptSign', [true, false, sData, oRecipients.encrypt,
+			oRecipients.encryptContactsUuids,
 			fOkCallback.bind(this, oRecipients.encrypt, oRecipients.signEncryptCount === 0), sFromEmail]);
 	}
 	if (oRecipients.signEncryptCount > 0)
 	{
-		ModulesManager.run('OpenPgpWebclient', 'encryptSign', [true, true, sData, oRecipients.signEncrypt, 
+		ModulesManager.run('OpenPgpWebclient', 'encryptSign', [true, true, sData, oRecipients.signEncrypt,
+			oRecipients.signEncryptContactsUuids,
 			fOkCallback.bind(this, oRecipients.signEncrypt, true), sFromEmail, sPassword]);
 	}
 };
