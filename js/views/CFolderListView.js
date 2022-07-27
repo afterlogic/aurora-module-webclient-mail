@@ -89,6 +89,10 @@ function CFolderListView()
 	}, this);
 
 	this.underNewMessageButtonControllers = ko.observableArray([]);
+	this.underInboxFolderControllers = ko.observableArray([]);
+	this.folderListControllers = ko.computed(function () {
+		return this.underNewMessageButtonControllers().concat(this.underInboxFolderControllers());
+	}, this);
 	App.broadcastEvent('%ModuleName%::RegisterFolderListController', _.bind(function (controller, place) {
 		this.registerController(controller, place);
 	}, this));
@@ -98,7 +102,7 @@ CFolderListView.prototype.ViewTemplate = '%ModuleName%_FoldersView';
 
 CFolderListView.prototype.onShow = function ()
 {
-	this.underNewMessageButtonControllers().forEach(controller => {
+	this.folderListControllers().forEach(controller => {
 		if (_.isFunction(controller.onShow)) {
 			controller.onShow();
 		}
@@ -118,6 +122,9 @@ CFolderListView.prototype.registerController = function (controller, place) {
 	switch (place) {
 		case 'UnderNewMessageButton':
 			this.underNewMessageButtonControllers.push(controller);
+			break;
+		case 'UnderInboxFolder':
+			this.underInboxFolderControllers.push(controller);
 			break;
 	}
 };

@@ -42,6 +42,13 @@
 		<div class="children" data-bind="template: { name: '%ModuleName%_FolderView', foreach: subfolders }"></div>
 		<!-- /ko -->
 	</div>
+
+	<!-- ko if: type() === Enums.FolderTypes.Inbox -->
+		<!-- ko foreach: $parent.underInboxFolderControllers -->
+			<!-- ko template: { name: $data.ViewTemplate, data: $data} --><!-- /ko -->
+		<!-- /ko -->
+	<!-- /ko -->
+
 	<!-- ko if: bNamespace -->
 		<!-- ko template: {name: '%ModuleName%_FolderView', foreach: subfolders} --><!-- /ko -->
 	<!-- /ko -->
