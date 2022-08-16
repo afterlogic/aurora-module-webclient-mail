@@ -1,4 +1,5 @@
 import settings from './settings'
+import store from 'src/store'
 
 import MailServersAdminSettings from './components/MailServersAdminSettings'
 import MailAdminSettingsPerTenant from './components/MailAdminSettingsPerTenant'
@@ -59,17 +60,22 @@ export default {
   },
 
   getAdminTenantTabs () {
-    return [
-      {
-        tabName: 'mail-quota',
-        tabTitle: 'MAILWEBCLIENT.HEADING_BROWSER_TAB',
-        tabRouteChildren: [
-          { path: 'id/:id/mail-quota', component: MailAdminSettingsPerTenant },
-          { path: 'search/:search/id/:id/mail-quota', component: MailAdminSettingsPerTenant },
-          { path: 'page/:page/id/:id/mail-quota', component: MailAdminSettingsPerTenant },
-          { path: 'search/:search/page/:page/id/:id/mail-quota', component: MailAdminSettingsPerTenant },
-        ],
-      }
-    ]
+    const isUserSuperAdmin = store.getters['user/isUserSuperAdmin']
+    if (isUserSuperAdmin) {
+      return [
+        {
+          tabName: 'mail-quota',
+          tabTitle: 'MAILWEBCLIENT.HEADING_BROWSER_TAB',
+          tabRouteChildren: [
+            { path: 'id/:id/mail-quota', component: MailAdminSettingsPerTenant },
+            { path: 'search/:search/id/:id/mail-quota', component: MailAdminSettingsPerTenant },
+            { path: 'page/:page/id/:id/mail-quota', component: MailAdminSettingsPerTenant },
+            { path: 'search/:search/page/:page/id/:id/mail-quota', component: MailAdminSettingsPerTenant },
+          ],
+        }
+      ]
+    } else {
+      return []
+    }
   },
 }
