@@ -157,14 +157,14 @@ function CMailCache()
 			const inboxMessagesDeletedUids = this.messages().filter(message => message.deleted()).map(message => message.uid());
 			const inboxDeletedUids = Types.pArray(allDeletedFromInboxMessagesUids[this.uidList().iAccountId]);
 			const inboxIntersection = inboxMessagesUids.filter(uid => inboxDeletedUids.includes(uid));
-			App.sendLogMessage(JSON.stringify({inboxMessagesUids, inboxMessagesDeletedUids, inboxDeletedUids, inboxIntersection}));
+//			App.sendLogMessage(JSON.stringify({inboxMessagesUids, inboxMessagesDeletedUids, inboxDeletedUids, inboxIntersection}));
 		}
 		if (this.uidList().sFullName === this.ALL_MAIL_FOLDERNAME) {
 			const allMailMessagesUids = this.messages().filter(message => !message.deleted()).map(message => message.uid());
 			const allMailMessagesDeletedUids = this.messages().filter(message => message.deleted()).map(message => message.uid());
 			const allMailDeletedUids = Types.pArray(allDeletedFromAllMailMessagesUids[this.uidList().iAccountId]);
 			const allMailIntersection = allMailMessagesUids.filter(uid => allMailDeletedUids.includes(uid));
-			App.sendLogMessage(JSON.stringify({allMailMessagesUids, allMailMessagesDeletedUids, allMailDeletedUids, allMailIntersection}));
+//			App.sendLogMessage(JSON.stringify({allMailMessagesUids, allMailMessagesDeletedUids, allMailDeletedUids, allMailIntersection}));
 		}
 
 		if (this.messages().length > 0)
@@ -836,6 +836,8 @@ CMailCache.prototype.changeCurrentPage = function (iPage)
  */
 CMailCache.prototype.requestCurrentMessageList = function (sFolder, iPage, sSearch, sFilter, sSortBy, iSortOrder, bFillMessages)
 {
+	const pageBeforeReqiuest = this.page();
+	const prevPageBeforeReqiuest = this.prevPage();
 	this.changeCurrentPage(iPage);
 	var
 		iRequestPage = Math.min(this.page(), this.prevPage()),
@@ -845,6 +847,13 @@ CMailCache.prototype.requestCurrentMessageList = function (sFolder, iPage, sSear
 	;
 	if (oRequestData)
 	{
+		if (oRequestData.RequestStarted && sSearch === '' && sFilter === '') {
+			App.sendLogMessage(JSON.stringify({
+				Method: 'requestCurrentMessageList',
+				bFillMessages, sFolder, iPage,
+				pageBeforeReqiuest, prevPageBeforeReqiuest
+			}));
+		}
 		var
 			iCheckmailIntervalMilliseconds = UserSettings.AutoRefreshIntervalMinutes * 60 * 1000,
 			iFolderUpdateDiff = oRequestData.Folder.oRelevantInformationLastMoment ? moment().diff(oRequestData.Folder.oRelevantInformationLastMoment) : iCheckmailIntervalMilliseconds + 1
@@ -987,6 +996,15 @@ CMailCache.prototype.requestMessageListWithOffset = function (sFolder, iOffset, 
 		}
 		else
 		{
+			if (sSearch === '' && sFilters === '') {
+				App.sendLogMessage(JSON.stringify({
+					Method: 'requestMessageListWithOffset',
+					bFillMessages, sFolder, bHasChanges, bCacheIsEmpty, iUidsOffset,
+					page: this.page(), prevPage: this.prevPage(),
+					'aUids.length': aUids.length, 'oUidList.resultCount()': oUidList.resultCount(),
+					'this.limit()': this.limit()
+				}));
+			}
 			Ajax.send('GetMessages', oParameters, fCallBack, this);
 		}
 	}
@@ -2081,11 +2099,11 @@ CMailCache.prototype.onMoveMessagesResponse = function (oResponse, oRequest)
 		bFillMessages = false
 	;
 	
-	App.sendLogMessage(JSON.stringify({
-		Message: 'onMoveMessagesResponse',
-		Uids: aUids,
-		Result: oResult
-	}));
+//	App.sendLogMessage(JSON.stringify({
+//		Message: 'onMoveMessagesResponse',
+//		Uids: aUids,
+//		Result: oResult
+//	}));
 
 	if (oResult === false)
 	{
