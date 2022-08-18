@@ -217,12 +217,21 @@ function CMailView()
 	}, this));
 
 	App.broadcastEvent('%ModuleName%::ConstructView::after', {'Name': this.ViewConstructorName, 'View': this});
+
+	this.displaySendDebugLogsButton = ko.computed(function () {
+		return App.getUserId() === 103;
+	}, this);
 }
 
 _.extendOwn(CMailView.prototype, CAbstractScreenView.prototype);
 
 CMailView.prototype.ViewTemplate = '%ModuleName%_MailView';
 CMailView.prototype.ViewConstructorName = 'CMailView';
+
+CMailView.prototype.sendDebugLogs = function ()
+{
+	MailCache.sendDebugLogs();
+};
 
 /**
  * Checks if there are changes in Mail screen.

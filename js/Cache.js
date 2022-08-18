@@ -41,6 +41,12 @@ var
 	allDeletedFromAllMailMessagesUids = {}
 ;
 
+let logData = [];
+function addToLog(data) {
+	logData.unshift(data);
+	logData = logData.slice(0, 100);
+}
+
 /**
  * @constructor
  */
@@ -191,9 +197,6 @@ function CMailCache()
 	this.limit = ko.computed(function () {
 		return Settings.MailsPerPage * _.max([this.page(), this.prevPage()]);
 	}, this);
-	this.offset = ko.computed(function () {
-		return 0;
-	}, this);
 	
 	this.messagesLoading = ko.observable(false);
 	this.messagesLoadingError = ko.observable(false);
@@ -223,6 +226,11 @@ function CMailCache()
 		}
 	}, this));
 }
+
+CMailCache.prototype.sendDebugLogs = function () {
+	App.sendLogMessage(JSON.stringify(logData));
+	logData = [];
+};
 
 CMailCache.prototype.requirePrefetcher = function ()
 {
@@ -614,8 +622,15 @@ CMailCache.prototype.setMessagesFromUidList = function (oUidList, iOffset, bFill
 		if (isFolderChanged || !isMoreDataExpected) {
 			this.messagesLoading(false); // it will be reassigned later, this needed correct applying of message list
 		}
-		if (isFirstTime || isFolderChanged || !isMoreDataExpected) {
+		if (isFirstTime || isFolderChanged && this.uidList().collection()[0] || !isMoreDataExpected) {
 			this.messages(this.getMessagesWithThreads(this.getCurrentFolderFullname(), oUidList, aMessages));
+		} else if (isFolderChanged && !this.uidList().collection()[0]) {
+			addToLog({method: 'setMessagesFromUidList (!!!)', isFirstTime, isFolderChanged, isMoreDataExpected,
+				'this.uidList().collection()[0]': this.uidList().collection()[0],
+				'this.uidList().collection()[last]': this.uidList().collection().length > 0 ? this.uidList().collection()[this.uidList().collection().length - 1]: null,
+				'this.uidList().collection().length': this.uidList().collection().length
+			});
+			this.sendDebugLogs();
 		}
 
 		if (this.currentMessage() && (this.currentMessage().deleted() ||
@@ -847,12 +862,12 @@ CMailCache.prototype.requestCurrentMessageList = function (sFolder, iPage, sSear
 	;
 	if (oRequestData)
 	{
-		if (oRequestData.RequestStarted && sSearch === '' && sFilter === '') {
-			App.sendLogMessage(JSON.stringify({
-				Method: 'requestCurrentMessageList',
+		if (oRequestData.RequestStarted && sFolder === 'INBOX' && sFilter === '') {
+			addToLog({
+				method: 'requestCurrentMessageList',
 				bFillMessages, sFolder, iPage,
 				pageBeforeReqiuest, prevPageBeforeReqiuest
-			}));
+			});
 		}
 		var
 			iCheckmailIntervalMilliseconds = UserSettings.AutoRefreshIntervalMinutes * 60 * 1000,
@@ -933,7 +948,7 @@ CMailCache.prototype.requestMessageListWithOffset = function (sFolder, iOffset, 
 		oUidList = (oFolder) ? oFolder.getUidList(sSearch, sFilters, sSortBy, iSortOrder) : null,
 		bHasChanges = oFolder.hasChanges() || oUidList.hasChanges(),
 		bCacheIsEmpty = oUidList && oUidList.resultCount() === -1,
-		iUidsOffset =  bFillMessages ? this.offset() : iOffset,
+		iUidsOffset =  bFillMessages ? 0 : iOffset,
 		oParameters = {
 			'Folder': sFolder,
 			'Offset': bHasChanges ? 0 : iOffset,
@@ -984,6 +999,16 @@ CMailCache.prototype.requestMessageListWithOffset = function (sFolder, iOffset, 
 			(bCacheIsEmpty) ||
 			((iUidsOffset + aUids.length < oUidList.resultCount()) && (aUids.length < this.limit()))
 		;
+		addToLog({method: 'requestMessageListWithOffset', bDataExpected, iUidsOffset, bCacheIsEmpty,
+			'aUids.length': aUids.length,
+			'oUidList.resultCount()': oUidList.resultCount(),
+			limit: this.limit(),
+			page: this.page(),
+			prevPage: this.prevPage(),
+			'oUidList.collection()[0]': oUidList.collection()[0],
+			'oUidList.collection()[last]': oUidList.collection().length > 0 ? oUidList.collection()[oUidList.collection().length - 1]: null,
+			'oUidList.collection().length': oUidList.collection().length
+		});
 		bStartRequest = !bDoNotRequest && (oFolder.hasChanges() || bDataExpected);
 	}
 	
@@ -996,14 +1021,14 @@ CMailCache.prototype.requestMessageListWithOffset = function (sFolder, iOffset, 
 		}
 		else
 		{
-			if (sSearch === '' && sFilters === '') {
-				App.sendLogMessage(JSON.stringify({
-					Method: 'requestMessageListWithOffset',
+			if (sFolder === 'INBOX' && sFilters === '') {
+				addToLog({
+					method: 'requestMessageListWithOffset',
 					bFillMessages, sFolder, bHasChanges, bCacheIsEmpty, iUidsOffset,
 					page: this.page(), prevPage: this.prevPage(),
 					'aUids.length': aUids.length, 'oUidList.resultCount()': oUidList.resultCount(),
 					'this.limit()': this.limit()
-				}));
+				});
 			}
 			Ajax.send('GetMessages', oParameters, fCallBack, this);
 		}
@@ -1218,7 +1243,7 @@ CMailCache.prototype.excludeDeletedMessages = function ()
 {
 	_.delay(_.bind(function () {
 //		var iOffset = (this.page() - 1) * Settings.MailsPerPage;
-		this.setMessagesFromUidList(this.uidList(), this.offset(), true);
+		this.setMessagesFromUidList(this.uidList(), 0, true);
 	}, this), 500);
 };
 
@@ -1592,7 +1617,7 @@ CMailCache.prototype.executeGroupOperationForFolder = function (sMethod, oFolder
 
 	if (this.uidList().filters() !== Enums.FolderFilter.Unseen || this.waitForUnseenMessages())
 	{
-		this.setMessagesFromUidList(this.uidList(), this.offset(), true);
+		this.setMessagesFromUidList(this.uidList(), 0, true);
 	}
 };
 
@@ -2014,7 +2039,7 @@ CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 		bHasFolderChanges = oFolder.hasChanges();
 		oFolder.removeAllMessageListsFromCacheIfHasChanges();
 		oUidList = oFolder.getUidList(oResult.Search, oResult.Filters, oParameters.SortBy, oParameters.SortOrder, true);
-		const isFirestTime = oUidList.resultCount() === -1;
+		const isFirstTime = oUidList.resultCount() === -1;
 		oUidList.setUidsAndCount(oParameters.Offset, oResult);
 		this.parseAndCacheMessages(oResult['@Collection'], oFolder, bTrustThreadInfo, aNewFolderMessages);
 		
@@ -2025,7 +2050,7 @@ CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 			{
 				this.messagesLoading(false);
 				this.waitForUnseenMessages(false);
-				this.setMessagesFromUidList(oUidList, this.offset(), true, true, isFirestTime);
+				this.setMessagesFromUidList(oUidList, 0, true, true, isFirstTime);
 				if (!this.messagesLoading())
 				{
 					this.setAutocheckmailTimer();
