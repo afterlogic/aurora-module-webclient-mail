@@ -622,15 +622,8 @@ CMailCache.prototype.setMessagesFromUidList = function (oUidList, iOffset, bFill
 		if (isFolderChanged || !isMoreDataExpected) {
 			this.messagesLoading(false); // it will be reassigned later, this needed correct applying of message list
 		}
-		if (isFirstTime || isFolderChanged && this.uidList().collection()[0] || !isMoreDataExpected) {
+		if (isFirstTime || isFolderChanged || !isMoreDataExpected) {
 			this.messages(this.getMessagesWithThreads(this.getCurrentFolderFullname(), oUidList, aMessages));
-		} else if (isFolderChanged && !this.uidList().collection()[0]) {
-			addToLog({method: 'setMessagesFromUidList (!!!)', isFirstTime, isFolderChanged, isMoreDataExpected,
-				'this.uidList().collection()[0]': this.uidList().collection()[0],
-				'this.uidList().collection()[last]': this.uidList().collection().length > 0 ? this.uidList().collection()[this.uidList().collection().length - 1]: null,
-				'this.uidList().collection().length': this.uidList().collection().length
-			});
-			this.sendDebugLogs();
 		}
 
 		if (this.currentMessage() && (this.currentMessage().deleted() ||

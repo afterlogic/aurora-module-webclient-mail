@@ -591,8 +591,9 @@ CMessageListView.prototype.onRoute = function (aParams)
 		sCurrentFolder = this.folderFullName() || this.folderList().inboxFolderFullName(),
 		bRouteChanged = this.currentPage() !== oParams.Page ||
 			sCurrentFolder !== oParams.Folder ||
-			this.filters() !== oParams.Filters || (oParams.Filters === Enums.FolderFilter.Unseen && MailCache.waitForUnseenMessages()) ||
+			this.filters() !== oParams.Filters ||
 			this.search() !== oParams.Search || this.sSortBy !== oParams.SortBy || this.iSortOrder !== oParams.SortOrder,
+		bWaitForUnseenMessages = oParams.Filters === Enums.FolderFilter.Unseen && MailCache.waitForUnseenMessages(),
 		bMailsPerPageChanged = Settings.MailsPerPage !== this.oPageSwitcher.perPage()
 	;
 	
@@ -646,6 +647,8 @@ CMessageListView.prototype.onRoute = function (aParams)
 		MailCache.resetCurrentPage();
 		this.requestMessageList(1);
 		this.messageListParamsChanged(true);
+	} else if (bWaitForUnseenMessages) {
+		this.requestMessageList();
 	}
 
 	this.highlightTrigger.notifySubscribers(true);
