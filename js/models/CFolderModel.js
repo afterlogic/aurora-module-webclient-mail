@@ -1204,7 +1204,7 @@ CFolderModel.prototype.onGetMessageResponse = function (oResponse, oRequest)
 			Routing.replaceHashWithoutMessageUid(oMessage.uid());
 			Routing.replaceHashWithoutMessageUid(oMessage.unifiedUid());
 		}
-		if (oMessage && !oMessage.deleted())
+		if (oMessage && !oMessage.deleted() && oResponse.ErrorCode !== Enums.Errors.NotDisplayedError)
 		{
 			this.removeMessageFromDict(sUid);
 		}

@@ -350,16 +350,24 @@ CMailCache.prototype.calcNextMessageUid = function ()
 		}
 		else
 		{
-			var aUids = _.filter(this.uidList().collection(), function (sUid) {
-				var oMessage = oFolder.getMessageByUid(sUid);
-				return oMessage && !oMessage.deleted();
+			const currMessageIndex = this.messages().findIndex(message => {
+				const messageUid = this.oUnifiedInbox.selected() ? message.unifiedUid() : message.uid();
+				return sCurrentUid === messageUid;
 			});
-			_.each(aUids, function (sUid, iIndex, aCollection) {
-				if (sUid === sCurrentUid && iIndex > 0)
-				{
-					sNextUid = aCollection[iIndex - 1] || '';
-				}
-			});
+			const nextMessage = currMessageIndex > 0 ? this.messages()[currMessageIndex - 1] : null;
+			if (nextMessage) {
+				sNextUid = this.oUnifiedInbox.selected() ? nextMessage.unifiedUid() : nextMessage.uid();
+			}
+//			var aUids = _.filter(this.uidList().collection(), function (sUid) {
+//				var oMessage = oFolder.getMessageByUid(sUid);
+//				return oMessage && !oMessage.deleted();
+//			});
+//			_.each(aUids, function (sUid, iIndex, aCollection) {
+//				if (sUid === sCurrentUid && iIndex > 0)
+//				{
+//					sNextUid = aCollection[iIndex - 1] || '';
+//				}
+//			});
 			if (sNextUid === '' && MainTab)
 			{
 				this.requirePrefetcher();
@@ -408,16 +416,24 @@ CMailCache.prototype.calcPrevMessageUid = function ()
 		}
 		else
 		{
-			var aUids = _.filter(this.uidList().collection(), function (sUid) {
-				var oMessage = oFolder.getMessageByUid(sUid);
-				return oMessage && !oMessage.deleted();
+			const currMessageIndex = this.messages().findIndex(message => {
+				const messageUid = this.oUnifiedInbox.selected() ? message.unifiedUid() : message.uid();
+				return sCurrentUid === messageUid;
 			});
-			_.each(aUids, function (sUid, iIndex, aCollection) {
-				if (sUid === sCurrentUid && (iIndex + 1) < aCollection.length)
-				{
-					sPrevUid = aCollection[iIndex + 1] || '';
-				}
-			});
+			const prevMessage = currMessageIndex > -1 ? this.messages()[currMessageIndex + 1] : null;
+			if (prevMessage) {
+				sPrevUid = this.oUnifiedInbox.selected() ? prevMessage.unifiedUid() : prevMessage.uid();
+			}
+//			var aUids = _.filter(this.uidList().collection(), function (sUid) {
+//				var oMessage = oFolder.getMessageByUid(sUid);
+//				return oMessage && !oMessage.deleted();
+//			});
+//			_.each(aUids, function (sUid, iIndex, aCollection) {
+//				if (sUid === sCurrentUid && (iIndex + 1) < aCollection.length)
+//				{
+//					sPrevUid = aCollection[iIndex + 1] || '';
+//				}
+//			});
 			if (sPrevUid === '' && MainTab)
 			{
 				this.requirePrefetcher();
