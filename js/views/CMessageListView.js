@@ -195,8 +195,6 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 		'owner': this
 	});
 	
-	this.messageListParamsChanged = ko.observable(false).extend({'autoResetToFalse': 100});
-
 	this.isEmptyList = ko.computed(function () {
 		return this.collection().length === 0;
 	}, this);
@@ -646,7 +644,6 @@ CMessageListView.prototype.onRoute = function (aParams)
 	{
 		MailCache.resetCurrentPage();
 		this.requestMessageList(1);
-		this.messageListParamsChanged(true);
 	} else if (bWaitForUnseenMessages) {
 		this.requestMessageList();
 	}

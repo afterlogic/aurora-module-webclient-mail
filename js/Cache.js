@@ -632,14 +632,19 @@ CMailCache.prototype.setMessagesFromUidList = function (oUidList, iOffset, bFill
 		}
 
 		const
-			isFolderChanged = this.messages().length > 0 && this.messages()[0].folder() !== this.getCurrentFolderFullname(),
+			isListParamsChanged = oUidList.iAccountId !== this.uidList().iAccountId
+					|| oUidList.sFullName !== this.uidList().sFullName
+					|| oUidList.search() !== this.uidList().search()
+					|| oUidList.filters() !== this.uidList().filters()
+					|| oUidList.sortBy() !== this.uidList().sortBy()
+					|| oUidList.sortOrder() !== this.uidList().sortOrder(),
 			isCacheEmpty = oUidList.resultCount() === -1,
 			isMoreDataExpected = isCacheEmpty || (iOffset + aUids.length < oUidList.resultCount()) && (aUids.length < this.limit())
 		;
-		if (isFolderChanged || !isMoreDataExpected) {
+		if (isListParamsChanged || !isMoreDataExpected) {
 			this.messagesLoading(false); // it will be reassigned later, this needed correct applying of message list
 		}
-		if (isFirstTime || isFolderChanged || !isMoreDataExpected) {
+		if (isFirstTime || isListParamsChanged || !isMoreDataExpected) {
 			this.messages(this.getMessagesWithThreads(this.getCurrentFolderFullname(), oUidList, aMessages));
 		}
 
