@@ -7,6 +7,8 @@ var
 
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 
+	Settings = require('modules/%ModuleName%/js/Settings.js'),
+
 	MessageUtils = {}
 ;
 
@@ -109,7 +111,7 @@ MessageUtils.showExternalPictures = function ($html, onAfterPrepareNotLoadedImag
 {
 	let notLoadedImagesSources = [];
 	const startTime = moment();
-	const maxMillisecondsToLoad = 2000;
+	const maxMillisecondsToLoad = Settings.PdfImagesLoadTimeLimitSeconds * 1000;
 	const getOnloadImageHandler = (imageSrc) => {
 		return () => {
 			const loadMilliseconds = moment().diff(startTime);

@@ -76,7 +76,10 @@ module.exports = {
 
 	userMailAccountsCount: ko.observable(0),
 	mailAccountsEmails: ko.observableArray([]),
-	
+
+	// from MailWebclient module
+	PdfImagesLoadTimeLimitSeconds: 2,
+
 	/**
 	 * Initializes settings from AppData object sections.
 	 * 
@@ -171,7 +174,12 @@ module.exports = {
 		{
 			this.AllowAliases = Types.pBool(oAppDataAliasesSection.AllowAliases, this.AllowAliases);
 		}
-		
+
+		const appDataInformatikSection = oAppData.InformatikProjects;
+		if (!_.isEmpty(appDataInformatikSection)) {
+			this.PdfImagesLoadTimeLimitSeconds = Types.pInt(appDataInformatikSection.PdfImagesLoadTimeLimitSeconds, this.PdfImagesLoadTimeLimitSeconds);
+		}
+
 		App.registerUserAccountsCount(this.userMailAccountsCount);
 		App.registerAccountsWithPass(this.mailAccountsEmails);
 	},
