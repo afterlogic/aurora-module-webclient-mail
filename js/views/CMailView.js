@@ -47,9 +47,10 @@ function CMailView()
 
 	this.oFolderList = new CFolderListView();
 	this.isUnifiedFolderCurrent = MailCache.oUnifiedInbox.selected;
-	this.oMessageList = new CMessageListView(this.openMessageInNewWindowBound);
+	this.oBaseMessageList = new CMessageListView(this.openMessageInNewWindowBound);
+	this.messageList = ko.observable(this.oBaseMessageList);
 	this.isSearchMultiFolders = ko.computed(function () {
-		return this.oMessageList.searchFoldersMode() === Enums.SearchFoldersMode.Sub || this.oMessageList.searchFoldersMode() === Enums.SearchFoldersMode.All;
+		return this.messageList().searchFoldersMode() === Enums.SearchFoldersMode.Sub || this.messageList().searchFoldersMode() === Enums.SearchFoldersMode.All;
 	}, this);
 
 	this.oBaseMessagePaneView = MessagePaneView;
@@ -69,7 +70,7 @@ function CMailView()
 		}
 	}, this);
 
-	this.isEnableGroupOperations = this.oMessageList.isEnableGroupOperations;
+	this.isEnableGroupOperations = this.messageList().isEnableGroupOperations;
 
 	this.sCustomBigButtonModule = '';
 	this.fCustomBigButtonHandler = null;
@@ -105,9 +106,9 @@ function CMailView()
 	this.visibleMarkTool = ko.computed(function () {
 		return !this.isTemplateFolder() && !Types.isNonEmptyArray(this.customModulesDisabledMark());
 	}, this);
-	this.markAsReadCommand = Utils.createCommand(this.oMessageList, this.oMessageList.executeMarkAsRead, this.isEnableGroupOperations);
-	this.markAsUnreadCommand = Utils.createCommand(this.oMessageList, this.oMessageList.executeMarkAsUnread, this.isEnableGroupOperations);
-	this.markAllReadCommand = Utils.createCommand(this.oMessageList, this.oMessageList.executeMarkAllRead);
+	this.markAsReadCommand = Utils.createCommand(this.messageList(), this.messageList().executeMarkAsRead, this.isEnableGroupOperations);
+	this.markAsUnreadCommand = Utils.createCommand(this.messageList(), this.messageList().executeMarkAsUnread, this.isEnableGroupOperations);
+	this.markAllReadCommand = Utils.createCommand(this.messageList(), this.messageList().executeMarkAllRead);
 	this.customModulesDisabledMove = ko.observableArray([]);
 	this.visibleMoveTool = ko.computed(function () {
 		return !MailCache.oUnifiedInbox.selected() && !Types.isNonEmptyArray(this.customModulesDisabledMove());
@@ -118,14 +119,14 @@ function CMailView()
 	this.moveToFolderTemplate = '%ModuleName%_Messages_MoveButtonView'; // can be override by other modules
 	this.moveToFolderCommand = Utils.createCommand(this, function () {}, this.isEnableGroupOperations);
 
-	this.deleteCommand = Utils.createCommand(this.oMessageList, this.oMessageList.executeDelete, this.isEnableGroupOperations);
+	this.deleteCommand = Utils.createCommand(this.messageList(), this.messageList().executeDelete, this.isEnableGroupOperations);
 	this.selectedCount = ko.computed(function () {
-		return this.oMessageList.checkedUids().length;
+		return this.messageList().checkedUids().length;
 	}, this);
-	this.emptyTrashCommand = Utils.createCommand(MailCache, MailCache.executeEmptyTrash, this.oMessageList.isNotEmptyList);
-	this.emptySpamCommand = Utils.createCommand(MailCache, MailCache.executeEmptySpam, this.oMessageList.isNotEmptyList);
-	this.spamCommand = Utils.createCommand(this.oMessageList, this.oMessageList.executeSpam, this.isEnableGroupOperations);
-	this.notSpamCommand = Utils.createCommand(this.oMessageList, this.oMessageList.executeNotSpam, this.isEnableGroupOperations);
+	this.emptyTrashCommand = Utils.createCommand(MailCache, MailCache.executeEmptyTrash, this.messageList().isNotEmptyList);
+	this.emptySpamCommand = Utils.createCommand(MailCache, MailCache.executeEmptySpam, this.messageList().isNotEmptyList);
+	this.spamCommand = Utils.createCommand(this.messageList(), this.messageList().executeSpam, this.isEnableGroupOperations);
+	this.notSpamCommand = Utils.createCommand(this.messageList(), this.messageList().executeNotSpam, this.isEnableGroupOperations);
 
 	this.isSpamFolder = ko.computed(function () {
 		return MailCache.getCurrentFolderType() === Enums.FolderTypes.Spam;
@@ -216,6 +217,37 @@ CMailView.prototype.removeCustomPreviewPane = function (sModuleName)
 		if (_.isFunction(this.messagePane().onShow))
 		{
 			this.messagePane().onShow();
+		}
+	}
+};
+
+CMailView.prototype.setCustomMessageList = function (sModuleName, oPreviewPane)
+{
+	if (this.messageList().__customModuleName !== sModuleName) {
+		if (_.isFunction(this.messageList().onHide)) {
+			this.messageList().onHide();
+		}
+
+		oPreviewPane.__customModuleName = sModuleName;
+		this.messageList(oPreviewPane);
+
+		if (_.isFunction(this.messageList().onShow)) {
+			this.messageList().onShow();
+		}
+	}
+};
+
+CMailView.prototype.removeCustomMessageList = function (sModuleName)
+{
+	if (this.messageList().__customModuleName === sModuleName) {
+		if (_.isFunction(this.messageList().onHide)) {
+			this.messageList().onHide();
+		}
+
+		this.messageList(this.oBaseMessageList);
+
+		if (_.isFunction(this.messageList().onShow)) {
+			this.messageList().onShow();
 		}
 	}
 };
@@ -335,7 +367,7 @@ CMailView.prototype.onRoute = function (aParams)
 
 	AccountList.changeCurrentAccountByHash(oParams.AccountHash);
 
-	this.oMessageList.onRoute(aParams);
+	this.messageList().onRoute(aParams);
 	if (_.isFunction(this.messagePane().onRoute))
 	{
 		this.messagePane().onRoute(aParams, oParams);
@@ -364,7 +396,7 @@ CMailView.prototype.onShow = function ()
 	if (_.isFunction(this.oFolderList.onShow)) {
 		this.oFolderList.onShow();
 	}
-	this.oMessageList.onShow();
+	this.messageList().onShow();
 	if (_.isFunction(this.messagePane().onShow))
 	{
 		this.messagePane().onShow();
@@ -373,7 +405,7 @@ CMailView.prototype.onShow = function ()
 
 CMailView.prototype.onHide = function ()
 {
-	this.oMessageList.onHide();
+	this.messageList().onHide();
 	if (_.isFunction(this.messagePane().onHide))
 	{
 		this.messagePane().onHide();
@@ -391,9 +423,9 @@ CMailView.prototype.bindMessagePane = function ()
 
 CMailView.prototype.onBind = function ()
 {
-	var oMessageList = this.oMessageList;
+	var oMessageList = this.messageList();
 
-	this.oMessageList.onBind(this.$viewDom);
+	oMessageList.onBind(this.$viewDom);
 	this.bindMessagePane();
 
 	$(this.domFoldersMoveTo()).on('click', 'span.folder', function (oEvent) {
@@ -423,7 +455,7 @@ CMailView.prototype.hotKeysBind = function ()
 		var
 			sKey = ev.keyCode,
 			bComputed = ev && !ev.ctrlKey && !ev.altKey && !ev.shiftKey && !Utils.isTextFieldFocused() && this.shown(),
-			oList = this.oMessageList,
+			oList = this.messageList(),
 			oFirstMessage = oList.collection()[0],
 			bGotoSearch = oFirstMessage && MailCache.currentMessage() && oFirstMessage.longUid() === MailCache.currentMessage().longUid()
 		;
@@ -454,7 +486,7 @@ CMailView.prototype.hotKeysBind = function ()
  */
 CMailView.prototype.routeMessageView = function (sFolderName, iUid)
 {
-	Routing.setHash(LinksUtils.getMailbox(sFolderName, this.oMessageList.oPageSwitcher.currentPage(), iUid));
+	Routing.setHash(LinksUtils.getMailbox(sFolderName, this.messageList().oPageSwitcher.currentPage(), iUid));
 };
 
 /**
@@ -470,7 +502,7 @@ CMailView.prototype.dragAndDropHelper = function (oMessage, ctrlOrCmdUsed)
 
 	var
 		oHelper = Utils.draggableItems(),
-		aUids = this.oMessageList.checkedOrSelectedUids(),
+		aUids = this.messageList().checkedOrSelectedUids(),
 		iCount = aUids.length
 	;
 
@@ -505,11 +537,11 @@ CMailView.prototype.messagesDrop = function (oToFolder, oEvent, oUi)
 			Utils.uiDropHelperAnim(oEvent, oUi);
 			if(this.needToCopyDraggedItems())
 			{
-				this.oMessageList.executeCopyToFolder(oToFolder.fullName());
+				this.messageList().executeCopyToFolder(oToFolder.fullName());
 			}
 			else
 			{
-				this.oMessageList.executeMoveToFolder(oToFolder.fullName());
+				this.messageList().executeMoveToFolder(oToFolder.fullName());
 			}
 
 			this.uncheckMessages();
@@ -519,9 +551,9 @@ CMailView.prototype.messagesDrop = function (oToFolder, oEvent, oUi)
 
 CMailView.prototype.searchFocus = function ()
 {
-	if (this.oMessageList.selector.useKeyboardKeys() && !Utils.isTextFieldFocused())
+	if (this.messageList().selector.useKeyboardKeys() && !Utils.isTextFieldFocused())
 	{
-		this.oMessageList.isFocused(true);
+		this.messageList().isFocused(true);
 	}
 };
 
