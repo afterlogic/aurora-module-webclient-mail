@@ -3,9 +3,10 @@
 var
 	_ = require('underscore'),
 	$ = require('jquery'),
-	
+	moment = require('moment'),
+
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
-	
+
 	MessageUtils = {}
 ;
 
@@ -89,22 +90,85 @@ MessageUtils.showInlinePictures = function ($html, aAttachments, aFoundCids, sAp
 	});
 };
 
+function getImageSourseFromStyle(imageStyle) {
+	const regex = /.*url\(([^)]+)\).*/gm;
+	const matches = regex.exec(imageStyle);
+	if (matches.length === 2) {
+		return matches[1];
+	}
+	return null;
+}
+
 /**
  * Displays external images.
  *
  * @param {object} $html JQuery element containing message body html
+ * @param {function} onAfterPrepareNotLoadedImagesSources
  */
-MessageUtils.showExternalPictures = function ($html)
+MessageUtils.showExternalPictures = function ($html, onAfterPrepareNotLoadedImagesSources)
 {
+	let notLoadedImagesSources = [];
+	const startTime = moment();
+	const maxMillisecondsToLoad = 2000;
+	const getOnloadImageHandler = (imageSrc) => {
+		return () => {
+			const loadMilliseconds = moment().diff(startTime);
+			if (loadMilliseconds < maxMillisecondsToLoad) {
+				notLoadedImagesSources = notLoadedImagesSources.filter(src => src !== imageSrc);
+			}
+		};
+	};
+
 	$('[data-x-src]', $html).each(function () {
-		$(this).attr('src', $(this).attr('data-x-src')).removeAttr('data-x-src');
+		const imageSrc = $(this).attr('data-x-src');
+		notLoadedImagesSources.push(imageSrc);
+		$(this)
+			.on('load', getOnloadImageHandler(imageSrc))
+			.attr('src', imageSrc)
+			.removeAttr('data-x-src')
+		;
 	});
 
 	$('[data-x-style-url]', $html).each(function () {
-		var sStyle = $.trim($(this).attr('style'));
-		sStyle = '' === sStyle ? '' : (';' === sStyle.substr(-1) ? sStyle + ' ' : sStyle + '; ');
-		$(this).attr('style', sStyle + $(this).attr('data-x-style-url')).removeAttr('data-x-style-url');
+		let styleAttr = $.trim($(this).attr('style'));
+		if (styleAttr !== '') {
+			styleAttr = ';' === styleAttr.substr(-1) ? `${styleAttr} ` : `${styleAttr}; `;
+		}
+		const imageStyle = $(this).attr('data-x-style-url');
+		$(this)
+			.attr('style', `${styleAttr}${imageStyle}`)
+			.removeAttr('data-x-style-url')
+		;
+
+		const imageSrc = getImageSourseFromStyle(imageStyle);
+		if (imageSrc !== null) {
+			notLoadedImagesSources.push(imageSrc);
+			const image = new Image();
+			image.onload = getOnloadImageHandler(imageSrc);
+			image.src = imageSrc;
+		}
 	});
+
+	setTimeout(() => {
+		onAfterPrepareNotLoadedImagesSources(notLoadedImagesSources);
+	}, maxMillisecondsToLoad);
+};
+
+MessageUtils.getAllExternalPicturesSourses = function ($html) {
+	const allExternalImagesSourses = [];
+
+	$('[data-x-src]', $html).each(function () {
+		allExternalImagesSourses.push($(this).attr('data-x-src'));
+	});
+
+	$('[data-x-style-url]', $html).each(function () {
+		const imageSrc = getImageSourseFromStyle($(this).attr('data-x-style-url'));
+		if (imageSrc !== null) {
+			allExternalImagesSourses.push(imageSrc);
+		}
+	});
+
+	return allExternalImagesSourses;
 };
 
 /**

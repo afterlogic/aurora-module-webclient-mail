@@ -697,9 +697,19 @@ CMessageModel.prototype.showInlinePictures = function (sAppPath)
  */
 CMessageModel.prototype.showExternalPictures = function ()
 {
-	MessageUtils.showExternalPictures(this.$text);
+	MessageUtils.showExternalPictures(this.$text, (notLoadedImagesSources) => {
+		this.notLoadedImagesSources = notLoadedImagesSources;
+	});
 
 	this.isExternalsShown(true);
+};
+
+CMessageModel.prototype.getNotLoadedImagesSources = function ()
+{
+	if (this.isExternalsShown()) {
+		return Array.isArray(this.notLoadedImagesSources) ? this.notLoadedImagesSources : [];
+	}
+	return MessageUtils.getAllExternalPicturesSourses(this.$text);
 };
 
 /**
