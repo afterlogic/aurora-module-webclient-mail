@@ -706,10 +706,17 @@ CMessageModel.prototype.showExternalPictures = function ()
 
 CMessageModel.prototype.getNotLoadedImagesSources = function ()
 {
-	if (this.isExternalsShown()) {
-		return Array.isArray(this.notLoadedImagesSources) ? this.notLoadedImagesSources : [];
-	}
-	return MessageUtils.getAllExternalPicturesSourses(this.$text);
+	return new Promise((resolve) => {
+		if (!this.hasExternals()) {
+			resolve([]);
+		} else if (this.isExternalsShown()) {
+			resolve(Array.isArray(this.notLoadedImagesSources) ? this.notLoadedImagesSources : []);
+		} else {
+			MessageUtils.getNotLoadedImagesSources(this.$text, (notLoadedImagesSources) => {
+				resolve(notLoadedImagesSources);
+			});
+		}
+	});
 };
 
 /**

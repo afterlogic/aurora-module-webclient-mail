@@ -156,6 +156,51 @@ MessageUtils.showExternalPictures = function ($html, onAfterPrepareNotLoadedImag
 	}, maxMillisecondsToLoad);
 };
 
+MessageUtils.getNotLoadedImagesSources = function ($html, onAfterPrepareNotLoadedImagesSources)
+{
+	let notLoadedImagesSources = [];
+	const startTime = moment();
+	const maxMillisecondsToLoad = Settings.PdfImagesLoadTimeLimitSeconds * 1000;
+	const getOnloadImageHandler = (imageSrc) => {
+		return () => {
+			const loadMilliseconds = moment().diff(startTime);
+			if (loadMilliseconds < maxMillisecondsToLoad) {
+				notLoadedImagesSources = notLoadedImagesSources.filter(src => src !== imageSrc);
+				if (notLoadedImagesSources.length === 0) {
+					onAfterPrepareNotLoadedImagesSources(notLoadedImagesSources);
+				}
+			}
+		};
+	};
+
+	$('[data-x-src]', $html).each(function () {
+		const imageSrc = $(this).attr('data-x-src');
+		notLoadedImagesSources.push(imageSrc);
+		const image = new Image();
+		image.onload = getOnloadImageHandler(imageSrc);
+		image.src = imageSrc;
+	});
+
+	$('[data-x-style-url]', $html).each(function () {
+		const imageStyle = $(this).attr('data-x-style-url');
+		const imageSrc = getImageSourseFromStyle(imageStyle);
+		if (imageSrc !== null) {
+			notLoadedImagesSources.push(imageSrc);
+			const image = new Image();
+			image.onload = getOnloadImageHandler(imageSrc);
+			image.src = imageSrc;
+		}
+	});
+
+	if (notLoadedImagesSources.length === 0) {
+		onAfterPrepareNotLoadedImagesSources(notLoadedImagesSources);
+	} else {
+		setTimeout(() => {
+			onAfterPrepareNotLoadedImagesSources(notLoadedImagesSources);
+		}, maxMillisecondsToLoad);
+	}
+};
+
 MessageUtils.getAllExternalPicturesSourses = function ($html) {
 	const allExternalImagesSourses = [];
 
