@@ -163,14 +163,14 @@ function CMailCache()
 			const inboxMessagesDeletedUids = this.messages().filter(message => message.deleted()).map(message => message.uid());
 			const inboxDeletedUids = Types.pArray(allDeletedFromInboxMessagesUids[this.uidList().iAccountId]);
 			const inboxIntersection = inboxMessagesUids.filter(uid => inboxDeletedUids.includes(uid));
-//			App.sendLogMessage(JSON.stringify({inboxMessagesUids, inboxMessagesDeletedUids, inboxDeletedUids, inboxIntersection}));
+			App.sendLogMessage(JSON.stringify({inboxMessagesUids, inboxMessagesDeletedUids, inboxDeletedUids, inboxIntersection}));
 		}
 		if (this.uidList().sFullName === this.ALL_MAIL_FOLDERNAME) {
 			const allMailMessagesUids = this.messages().filter(message => !message.deleted()).map(message => message.uid());
 			const allMailMessagesDeletedUids = this.messages().filter(message => message.deleted()).map(message => message.uid());
 			const allMailDeletedUids = Types.pArray(allDeletedFromAllMailMessagesUids[this.uidList().iAccountId]);
 			const allMailIntersection = allMailMessagesUids.filter(uid => allMailDeletedUids.includes(uid));
-//			App.sendLogMessage(JSON.stringify({allMailMessagesUids, allMailMessagesDeletedUids, allMailDeletedUids, allMailIntersection}));
+			App.sendLogMessage(JSON.stringify({allMailMessagesUids, allMailMessagesDeletedUids, allMailDeletedUids, allMailIntersection}));
 		}
 
 		if (this.messages().length > 0)
