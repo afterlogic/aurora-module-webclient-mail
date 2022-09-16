@@ -109,6 +109,15 @@ CFolderListView.prototype.onShow = function ()
 	});
 };
 
+CFolderListView.prototype.onRoute = function (aParams)
+{
+	this.folderListControllers().forEach(controller => {
+		if (_.isFunction(controller.onRoute)) {
+			controller.onRoute(aParams);
+		}
+	});
+};
+
 CFolderListView.prototype.addNewFolder = function ()
 {
 	Popups.showPopup(CreateFolderPopup);

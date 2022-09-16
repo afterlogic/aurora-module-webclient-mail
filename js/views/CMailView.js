@@ -231,6 +231,10 @@ CMailView.prototype.setCustomMessageList = function (sModuleName, oPreviewPane)
 		oPreviewPane.__customModuleName = sModuleName;
 		this.messageList(oPreviewPane);
 
+		if (_.isFunction(this.messageList().onBind)) {
+			this.messageList().onBind(this.$viewDom);
+		}
+
 		if (_.isFunction(this.messageList().onShow)) {
 			this.messageList().onShow();
 		}
@@ -245,6 +249,10 @@ CMailView.prototype.removeCustomMessageList = function (sModuleName)
 		}
 
 		this.messageList(this.oBaseMessageList);
+
+		if (_.isFunction(this.messageList().onBind)) {
+			this.messageList().onBind(this.$viewDom);
+		}
 
 		if (_.isFunction(this.messageList().onShow)) {
 			this.messageList().onShow();
@@ -367,6 +375,9 @@ CMailView.prototype.onRoute = function (aParams)
 
 	AccountList.changeCurrentAccountByHash(oParams.AccountHash);
 
+	if (_.isFunction(this.oFolderList.onRoute)) {
+		this.oFolderList.onRoute(aParams);
+	}
 	this.messageList().onRoute(aParams);
 	if (_.isFunction(this.messagePane().onRoute))
 	{
