@@ -393,7 +393,7 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 		this.createDatePickerObject(this.searchDateEndDom(), this.searchDateEnd);
 	}, this), 1000);
 	
-	this.customMessageItemViewTemplate = ko.observable('');
+	this.customMessageItemViewTemplate = ko.observable('');;
 	
 	App.broadcastEvent('%ModuleName%::ConstructView::after', {'Name': this.ViewConstructorName, 'View': this, 'MailCache': MailCache});
 }
