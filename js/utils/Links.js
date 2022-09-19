@@ -249,9 +249,7 @@ LinksUtils.parseMailbox = function (aParamsToParse)
 			sTemp = Types.pString(aParams[iIndex]);
 			if ('custom:' !== sTemp.substr(0, 7))
 			{
-//				if (aParams[iIndex-1] !== '__senders__') {
-					sSearch = sTemp;
-//				}
+				sSearch = sTemp;
 				iIndex++;
 			}
 		}
