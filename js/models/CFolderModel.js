@@ -167,6 +167,7 @@ CFolderModel.prototype.removeMessageFromDict = function (sUid)
 	this.aMessagesDictionaryUids = _.without(this.aMessagesDictionaryUids, sUid);
 	this.aRequestedUids = _.without(this.aRequestedUids, sUid);
 	this.aRequestedThreadUids = _.without(this.aRequestedThreadUids, sUid);
+	App.broadcastEvent('%ModuleName%::removeMessageFromDict::after', [this.iAccountId, this.fullName(), sUid]);
 };
 
 /**

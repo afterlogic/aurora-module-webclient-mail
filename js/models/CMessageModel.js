@@ -221,6 +221,13 @@ function CMessageModel()
 	this.customLabels = ko.observableArray([]);
 }
 
+CMessageModel.prototype.isEqual = function (message)
+{
+	return	this.accountId() === message.accountId() &&
+			this.folder() === message.folder() &&
+			this.uid() === message.uid();
+};
+
 CMessageModel.prototype.setCustomLabel = function (sId, sText, sCssClass)
 {
 	if (Types.isString(sId) && Types.isNonEmptyString(sText) && Types.isString(sCssClass))

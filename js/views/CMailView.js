@@ -70,7 +70,9 @@ function CMailView()
 		}
 	}, this);
 
-	this.isEnableGroupOperations = this.messageList().isEnableGroupOperations;
+	this.isEnableGroupOperations = ko.computed(() => {
+		return this.messageList().isEnableGroupOperations();
+	});
 
 	this.sCustomBigButtonModule = '';
 	this.fCustomBigButtonHandler = null;
@@ -106,9 +108,15 @@ function CMailView()
 	this.visibleMarkTool = ko.computed(function () {
 		return !this.isTemplateFolder() && !Types.isNonEmptyArray(this.customModulesDisabledMark());
 	}, this);
-	this.markAsReadCommand = Utils.createCommand(this.messageList(), this.messageList().executeMarkAsRead, this.isEnableGroupOperations);
-	this.markAsUnreadCommand = Utils.createCommand(this.messageList(), this.messageList().executeMarkAsUnread, this.isEnableGroupOperations);
-	this.markAllReadCommand = Utils.createCommand(this.messageList(), this.messageList().executeMarkAllRead);
+	this.markAsReadCommand = Utils.createCommand(this.messageList(), () => {
+		this.messageList().executeMarkAsRead();
+	}, this.isEnableGroupOperations);
+	this.markAsUnreadCommand = Utils.createCommand(this.messageList(), () => {
+		this.messageList().executeMarkAsUnread();
+	}, this.isEnableGroupOperations);
+	this.markAllReadCommand = Utils.createCommand(this.messageList(), () => {
+		this.messageList().executeMarkAllRead();
+	});
 	this.customModulesDisabledMove = ko.observableArray([]);
 	this.visibleMoveTool = ko.computed(function () {
 		return !MailCache.oUnifiedInbox.selected() && !Types.isNonEmptyArray(this.customModulesDisabledMove());
@@ -119,14 +127,20 @@ function CMailView()
 	this.moveToFolderTemplate = '%ModuleName%_Messages_MoveButtonView'; // can be override by other modules
 	this.moveToFolderCommand = Utils.createCommand(this, function () {}, this.isEnableGroupOperations);
 
-	this.deleteCommand = Utils.createCommand(this.messageList(), this.messageList().executeDelete, this.isEnableGroupOperations);
+	this.deleteCommand = Utils.createCommand(this.messageList(), () => {
+		this.messageList().executeDelete();
+	}, this.isEnableGroupOperations);
 	this.selectedCount = ko.computed(function () {
 		return this.messageList().checkedUids().length;
 	}, this);
-	this.emptyTrashCommand = Utils.createCommand(MailCache, MailCache.executeEmptyTrash, this.messageList().isNotEmptyList);
-	this.emptySpamCommand = Utils.createCommand(MailCache, MailCache.executeEmptySpam, this.messageList().isNotEmptyList);
-	this.spamCommand = Utils.createCommand(this.messageList(), this.messageList().executeSpam, this.isEnableGroupOperations);
-	this.notSpamCommand = Utils.createCommand(this.messageList(), this.messageList().executeNotSpam, this.isEnableGroupOperations);
+	this.emptyTrashCommand = Utils.createCommand(MailCache, MailCache.executeEmptyTrash, () => this.messageList().isNotEmptyList());
+	this.emptySpamCommand = Utils.createCommand(MailCache, MailCache.executeEmptySpam, () => this.messageList().isNotEmptyList());
+	this.spamCommand = Utils.createCommand(this.messageList(), () => {
+		this.messageList().executeSpam();
+	}, this.isEnableGroupOperations);
+	this.notSpamCommand = Utils.createCommand(this.messageList(), () => {
+		this.messageList().executeNotSpam();
+	}, this.isEnableGroupOperations);
 
 	this.isSpamFolder = ko.computed(function () {
 		return MailCache.getCurrentFolderType() === Enums.FolderTypes.Spam;
@@ -221,42 +235,35 @@ CMailView.prototype.removeCustomPreviewPane = function (sModuleName)
 	}
 };
 
-CMailView.prototype.setCustomMessageList = function (sModuleName, oPreviewPane)
+CMailView.prototype.setCustomMessageList = function (customModuleName, customMessageList)
 {
-	if (this.messageList().__customModuleName !== sModuleName) {
-		if (_.isFunction(this.messageList().onHide)) {
-			this.messageList().onHide();
-		}
-
-		oPreviewPane.__customModuleName = sModuleName;
-		this.messageList(oPreviewPane);
-
-		if (_.isFunction(this.messageList().onBind)) {
-			this.messageList().onBind(this.$viewDom);
-		}
-
-		if (_.isFunction(this.messageList().onShow)) {
-			this.messageList().onShow();
-		}
+	if (this.messageList().__customModuleName !== customModuleName) {
+		customMessageList.__customModuleName = customModuleName;
+		this.changeMessageList(customMessageList);
 	}
 };
 
-CMailView.prototype.removeCustomMessageList = function (sModuleName)
+CMailView.prototype.removeCustomMessageList = function (customModuleName)
 {
-	if (this.messageList().__customModuleName === sModuleName) {
-		if (_.isFunction(this.messageList().onHide)) {
-			this.messageList().onHide();
-		}
+	if (this.messageList().__customModuleName === customModuleName) {
+		this.changeMessageList(this.oBaseMessageList);
+	}
+};
 
-		this.messageList(this.oBaseMessageList);
+CMailView.prototype.changeMessageList = function (newMessageList)
+{
+	if (_.isFunction(this.messageList().onHide)) {
+		this.messageList().onHide();
+	}
 
-		if (_.isFunction(this.messageList().onBind)) {
-			this.messageList().onBind(this.$viewDom);
-		}
+	this.messageList(newMessageList);
 
-		if (_.isFunction(this.messageList().onShow)) {
-			this.messageList().onShow();
-		}
+	if (_.isFunction(this.messageList().onBind)) {
+		this.messageList().onBind(this.$viewDom);
+	}
+
+	if (_.isFunction(this.messageList().onShow)) {
+		this.messageList().onShow();
 	}
 };
 
