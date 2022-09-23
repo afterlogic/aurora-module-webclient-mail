@@ -387,11 +387,6 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 	this.attachmentsPlaceholder = ko.computed(function () {
 		return TextUtils.i18n('%MODULENAME%/LABEL_HAS_ATTACHMENTS');
 	}, this);
-
-	_.delay(_.bind(function(){
-		this.createDatePickerObject(this.searchDateStartDom(), this.searchDateStart);
-		this.createDatePickerObject(this.searchDateEndDom(), this.searchDateEnd);
-	}, this), 1000);
 	
 	this.customMessageItemViewTemplate = ko.observable('');;
 	
@@ -836,6 +831,11 @@ CMessageListView.prototype.onBind = function ($viewDom)
 		$('.message_list', $viewDom),
 		$('.message_list_scroll.scroll-inner', $viewDom)
 	);
+
+	_.delay(_.bind(function(){
+		this.createDatePickerObject(this.searchDateStartDom(), this.searchDateStart);
+		this.createDatePickerObject(this.searchDateEndDom(), this.searchDateEnd);
+	}, this), 1000);
 
 	this.initUploader();
 };
