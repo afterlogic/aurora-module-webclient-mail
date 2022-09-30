@@ -429,8 +429,10 @@ CMessageListView.prototype.createDatePickerObject = function (oElement, value)
  * @param {string} sFolder
  * @param {number} iPage
  * @param {string} sUid
+ * @param {string} sSearch
+ * @param {string} sFilters
  * @param {string} sSortBy
- * @param {string} iSortOrder
+ * @param {number} iSortOrder
  */
 CMessageListView.prototype.changeRoutingForMessageList = function (sFolder, iPage, sUid, sSearch, sFilters, sSortBy, iSortOrder)
 {
@@ -789,6 +791,11 @@ CMessageListView.prototype.routeForMessage = function (oMessage)
 			}
 		}
 	}
+};
+
+CMessageListView.prototype.unbind = function ()
+{
+	this.selector.unbind();
 };
 
 /**

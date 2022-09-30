@@ -255,6 +255,9 @@ CMailView.prototype.changeMessageList = function (newMessageList)
 	if (_.isFunction(this.messageList().onHide)) {
 		this.messageList().onHide();
 	}
+	if (_.isFunction(this.messageList().unbind)) {
+		this.messageList().unbind();
+	}
 
 	this.messageList(newMessageList);
 
