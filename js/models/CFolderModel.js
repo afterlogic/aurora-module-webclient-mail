@@ -1538,6 +1538,7 @@ CFolderModel.prototype.triggerTemplateState = function ()
 
 		var
 			oParameters = {
+				'AccountID': this.iAccountId,
 				'FolderFullName': this.fullName(),
 				'SetTemplate': this.isTemplateStorage()
 			}
