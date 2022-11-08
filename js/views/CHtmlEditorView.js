@@ -4,6 +4,8 @@ var
 	_ = require('underscore'),
 	$ = require('jquery'),
 	ko = require('knockout'),
+	codemirror = require('codemirror'),
+	langHtml = require('@codemirror/lang-html'),
 	
 	AddressUtils = require('%PathToCoreWebclientModule%/js/utils/Address.js'),
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
@@ -39,6 +41,7 @@ function CHtmlEditorView(bInsertImageAsBase64, bAllowComposePlainText, oParent)
 	this.creaId = 'creaId' + Math.random().toString().replace('.', '');
 	this.textFocused = ko.observable(false);
 	this.workareaDom = ko.observable();
+	this.htmlSourceDom = ko.observable();
 	this.plaintextDom = ko.observable();
 	this.uploaderAreaDom = ko.observable();
 	this.editorUploaderBodyDragOver = ko.observable(false);
@@ -76,6 +79,8 @@ function CHtmlEditorView(bInsertImageAsBase64, bAllowComposePlainText, oParent)
 			? TextUtils.i18n('%MODULENAME%/LINK_TURNOFF_PLAINTEXT')
 			: TextUtils.i18n('%MODULENAME%/LINK_TURNON_PLAINTEXT');
 	}, this);
+
+	this.editSourceMode = ko.observable(false);
 
 	this.lockFontSubscribing = ko.observable(false);
 	this.bAllowImageDragAndDrop = !Browser.ie10AndAbove;
@@ -451,6 +456,8 @@ CHtmlEditorView.prototype.init = function (sText, bPlain, sTabIndex, sPlaceholde
 
 	this.oCrea.setTabIndex(sTabIndex);
 	this.clearUndoRedo();
+	this.editSourceMode(false);
+	this.view = null;
 	this.setText(sText, bPlain);
 	this.setFontValuesFromText();
 	this.aUploadedImagesData = [];
@@ -583,6 +590,10 @@ CHtmlEditorView.prototype.getText = function (bRemoveSignatureAnchor)
 {
 	if (this.plainTextMode()) {
 		return this.plaintextDom() ? $(this.plaintextDom()).val() : '';
+	}
+
+	if (this.editSourceMode() && this.view) {
+		return this.view.viewState.state.doc.toString();
 	}
 
 	const sText = this.oCrea ? this.oCrea.getText(bRemoveSignatureAnchor) : '';
@@ -1311,6 +1322,40 @@ CHtmlEditorView.prototype.changeTextMode = function ()
 CHtmlEditorView.prototype.setPlainTextMode = function (bPlainTextMode)
 {
 	this.plainTextMode(bPlainTextMode);
+};
+
+CHtmlEditorView.prototype.triggerSourceEdit = function ()
+{
+	const parent = this.htmlSourceDom() && this.htmlSourceDom().length ? this.htmlSourceDom()[0] : null;
+	if (parent) {
+		if (this.editSourceMode()) {
+			const doc = this.view && this.view.viewState.state.doc.toString();
+			if (doc) {
+				this.setText(doc);
+			}
+			this.editSourceMode(false);
+		} else {
+			const doc = this.getText();
+			if (this.view) {
+				this.view.dispatch({
+					changes: {
+						from: 0,
+						to: this.view.viewState.state.doc.length,
+						insert: doc
+					}
+				});
+			} else {
+				const { EditorView, basicSetup } = codemirror;
+				const { html } = langHtml;
+				this.view = new EditorView({
+					doc,
+					extensions: [basicSetup, html()],
+					parent
+				});
+			}
+			this.editSourceMode(true);
+		}
+	}
 };
 
 module.exports = CHtmlEditorView;

@@ -1,7 +1,7 @@
 <div class="html_editor" data-bind="css: {'inactive': inactive() && !disableEdit()}, onEsc: onEscHandler, initDom: htmlEditorDom">
 	<div class="disable_mask" data-bind="visible: disableEdit"></div>
 	<div class="toolbar" data-bind="initDom: toolbarDom">
-		<div class="disable_mask disable_toolbar_mask" data-bind="visible: plainTextMode"></div>
+		<div class="disable_mask disable_toolbar_mask" data-bind="visible: plainTextMode() || editSourceMode()"></div>
 		<div class="content">
 			<a href="javascript:void(0);" class="item undo" data-bind="click: undo, customTooltip: '%MODULENAME%/ACTION_UNDO'">
 				<span class="icon"></span>
@@ -146,22 +146,37 @@
 					</span>
 				</span>
 			</a>
+			
+			<span class="separator" data-bind="visible: templates().length > 0"></span>
+			
+			<a href="javascript:void(0);" class="item source"
+			   data-bind="click: triggerSourceEdit, customTooltip: '%MODULENAME%/ACTION_SOURCE',
+			   style: { zIndex: plainTextMode() ? '1' : '101' }"
+			>
+				<span class="icon">Source</span>
+			</a>
 		</div>
 	</div>
 
 	<div class="workarea" data-bind="customScrollbar: {x: true, y: true}, initDom: workareaDom">
-		<div class="scroll-inner" data-bind="attr: {'id': creaId}, visible: !plainTextMode()"></div>
+		<div class="scroll-inner"
+			 data-bind="attr: {'id': creaId}, visible: !plainTextMode() && !editSourceMode()"
+		></div>
+
+		<div class="html_source_container"
+			 data-bind="initDom: htmlSourceDom, visible: !plainTextMode() && editSourceMode()"
+		></div>
 
 		<div data-bind="initDom: uploaderAreaDom, css: {'active': editorUploaderBodyDragOver}" class="uploader_mask">
 			<div class="inner"></div>
 		</div>
 
-		<div data-bind="visible: plainTextMode" class="plaintext">
+		<div data-bind="visible: plainTextMode()" class="plaintext">
 			<textarea data-bind="initDom: plaintextDom"></textarea>
 		</div>
 
 		<a href="javascript: void(0);" class="plaintext_switcher"
-		   data-bind="visible: bAllowComposePlainText && !disableEdit(),
+		   data-bind="visible: bAllowComposePlainText && !disableEdit() && !editSourceMode(),
 		   text: changeTextModeTitle, click: changeTextMode"
 		></a>
 	</div>
