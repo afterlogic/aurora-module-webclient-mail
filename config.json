@@ -95,6 +95,14 @@
 		"If true, Insert Horizontal Line button is added to compose toolbar",
 		"string"
 	],
+	"AllowComposePlainText": [
+		false,
+		"bool"
+	],
+	"AllowComposePlainText_Description": [
+		"If true, Plain Text switcher is added to compose HTML editor",
+		"string"
+	],
 	"JoinReplyPrefixes": [
 		true,
 		"bool"

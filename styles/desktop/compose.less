@@ -217,12 +217,29 @@
 			}
 		}
 	}
-	
+
 	.html_editor {
 		padding: 0px 11px 21px 11px;
+
 		.disable_mask {
 			height: calc(100% - 22px);
 			width: calc(100% - 22px);
+		}
+
+		.toolbar {
+			position: relative;
+		}
+		.disable_mask.disable_toolbar_mask {
+			height: 100%;
+			width: 100%;
+			left: 0;
+		}
+
+		.plaintext_switcher {
+			bottom: 0;
+			position: absolute;
+			margin: 6px;
+			right: 0;
 		}
 	}
 

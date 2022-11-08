@@ -41,6 +41,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			'DefaultFontSize' => $this->getConfig('DefaultFontSize', 3),
 			'AlwaysTryUseImageWhilePasting' => $this->getConfig('AlwaysTryUseImageWhilePasting', true),
 			'AllowHorizontalLineButton' => $this->getConfig('AllowHorizontalLineButton', false),
+			'AllowComposePlainText' => $this->getConfig('AllowComposePlainText', false),
 			'JoinReplyPrefixes' => $this->getConfig('JoinReplyPrefixes', false),
 			'MailsPerPage' => $this->getConfig('MailsPerPage', 20),
 			'MaxMessagesBodiesSizeToPrefetch' => $this->getConfig('MaxMessagesBodiesSizeToPrefetch', 50000),

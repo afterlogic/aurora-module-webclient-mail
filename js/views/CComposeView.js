@@ -86,7 +86,7 @@ function CComposeView()
 	this.sending = ko.observable(false);
 	this.saving = ko.observable(false);
 
-	this.oHtmlEditor = new CHtmlEditorView(false, this);
+	this.oHtmlEditor = new CHtmlEditorView(false, Settings.AllowComposePlainText, this);
 
 	this.visibleBcc = ko.observable(false);
 	this.visibleBcc.subscribe(function () {
@@ -204,10 +204,9 @@ function CComposeView()
 		return aEmails;
 	}, this);
 	this.subject = ko.observable('').extend({'reversible': true});
-	this.plainText = ko.observable(false);
 	this.textBody = ko.observable('');
 	this.textBody.subscribe(function (value) {
-		this.oHtmlEditor.setText(this.textBody(), this.plainText());
+		this.oHtmlEditor.setText(this.textBody(), this.oHtmlEditor.plainTextMode());
 		this.oHtmlEditor.commit();
 	}, this);
 
@@ -597,7 +596,7 @@ CComposeView.prototype.onShow = function ()
 //	if (!this.oHtmlEditor.isInitialized())
 //	{
 		// Crea $container must be recreated because compose popup is destroyed after it is closed
-		this.oHtmlEditor.init(this.textBody(), this.plainText(), '7');
+		this.oHtmlEditor.init(this.textBody(), this.oHtmlEditor.plainTextMode(), '7');
 		this.oHtmlEditor.commit();
 //	}
 
@@ -619,8 +618,7 @@ CComposeView.prototype.onShow = function ()
 
 CComposeView.prototype.reset = function ()
 {
-	this.plainText(false);
-	this.textBody('');
+	this.setTextBody('', false);
 
 	this.bUploadStatus = false;
 	window.clearTimeout(this.iUploadAttachmentsTimer);
@@ -635,6 +633,12 @@ CComposeView.prototype.reset = function ()
 	this.isDraftsCleared(false);
 
 	this.ignoreHasUnsavedChanges(false);
+};
+
+CComposeView.prototype.setTextBody = function (textBody, isPlain)
+{
+	this.oHtmlEditor.plainTextMode(isPlain);
+	this.textBody(textBody);
 };
 
 /**
@@ -684,43 +688,37 @@ CComposeView.prototype.onRoute = function (aParams)
 				{
 					this.subject(oData.subject);
 				}
-				if (!oData.isHtml)
-				{
-					this.plainText(true);
-				}
 				if (oData.selectedSenderId)
 				{
 					this.selectedSender(oData.selectedSenderId);
 				}
-				var sBody = '<div></div>';
-				if (oData.body)
-				{
-					sBody = oData.isHtml ? '<div>' + oData.body + '</div>' : oData.body;
-					this.textBody(sBody);
+				let isPlain = !oData.isHtml;
+				let bodyText = '<div></div>';
+				if (oData.body) {
+					bodyText = oData.isHtml ? '<div>' + oData.body + '</div>' : oData.body;
 				}
-				if (oData.replyToMessage)
-				{
+				if (oData.replyToMessage) {
 					var oReplyData = SendingUtils.getReplyDataFromMessage(oData.replyToMessage, Enums.ReplyType.Reply, App.currentAccountId(), null, true);
-
-					this.plainText(false);
 					this.draftInfo(oReplyData.DraftInfo);
 					this.draftUid(oReplyData.DraftUid);
 					this.setRecipient(this.toAddr, oReplyData.To);
 					this.setRecipient(this.ccAddr, oReplyData.Cc);
 					this.setRecipient(this.bccAddr, oReplyData.Bcc);
 					this.subject(oReplyData.Subject);
-					this.textBody(oReplyData.Text);
+					isPlain = false;
+					bodyText = oReplyData.Text;
 					this.attachments(oReplyData.Attachments);
 					this.inReplyTo(oReplyData.InReplyTo);
 					this.references(oReplyData.References);
 
 					this.requestAttachmentsTempName();
 				}
-				if (oData.attachments)
-				{
+				if (oData.attachments) {
 					this.addAttachments(oData.attachments);
 				}
-				this.triggerToolbarControllersAfterPopulatingMessage(true, !oData.isHtml, sBody);
+
+				this.setTextBody(bodyText, isPlain);
+				this.triggerToolbarControllersAfterPopulatingMessage(true, isPlain, bodyText);
 				this.commit(true);
 			}
 
@@ -750,7 +748,7 @@ CComposeView.prototype.fillDefault = function (oParams)
 	}
 	else if (sSignature !== '')
 	{
-		this.textBody('<br /><br />' + sSignature + '<br />');
+		this.setTextBody('<br /><br />' + sSignature + '<br />', false);
 	}
 
 	if (oToAddr)
@@ -763,7 +761,7 @@ CComposeView.prototype.fillDefault = function (oParams)
 			this.setRecipient(this.bccAddr, oToAddr.bcc);
 			if (oToAddr.body !== '')
 			{
-				this.textBody('<div>' + oToAddr.body + '</div>');
+				this.setTextBody('<div>' + oToAddr.body + '</div>', false);
 			}
 		}
 	}
@@ -913,7 +911,7 @@ CComposeView.prototype.onMessageResponse = function (oMessage)
 				this.setRecipient(this.ccAddr, oReplyData.Cc);
 				this.setRecipient(this.bccAddr, oReplyData.Bcc);
 				this.subject(oReplyData.Subject);
-				this.textBody(oReplyData.Text);
+				this.setTextBody(oReplyData.Text, false);
 				this.attachments(oReplyData.Attachments);
 				this.inReplyTo(oReplyData.InReplyTo);
 				this.references(oReplyData.References);
@@ -937,7 +935,7 @@ CComposeView.prototype.onMessageResponse = function (oMessage)
 				this.setRecipient(this.toAddr, oReplyData.To);
 				this.setRecipient(this.ccAddr, oReplyData.Cc);
 				this.subject(oReplyData.Subject);
-				this.textBody(oReplyData.Text);
+				this.setTextBody(oReplyData.Text, false);
 				this.attachments(oReplyData.Attachments);
 				this.inReplyTo(oReplyData.InReplyTo);
 				this.references(oReplyData.References);
@@ -1037,8 +1035,7 @@ CComposeView.prototype.setDataFromMessage = function (oMessage)
 	this.setRecipient(this.bccAddr, oMessage.oBcc.getFull());
 	this.subject(oMessage.subject());
 	this.attachments(oMessage.attachments());
-	this.plainText(oMessage.isPlain());
-	this.textBody(sTextBody);
+	this.setTextBody(sTextBody, oMessage.isPlain());
 	this.selectedImportance(oMessage.importance());
 	this.sendReadingConfirmation(oMessage.readingConfirmationAddressee() !== '');
 
@@ -1373,8 +1370,7 @@ CComposeView.prototype.setMessageDataInNewTab = function (oParameters)
 		oAttach.parse(oRawAttach);
 		return oAttach;
 	}, this));
-	this.plainText(oParameters.plainText);
-	this.textBody(oParameters.textBody);
+	this.setTextBody(oParameters.textBody, oParameters.plainTextMode);
 	this.selectedImportance(oParameters.selectedImportance);
 	this.sendReadingConfirmation(oParameters.sendReadingConfirmation);
 	this.changedInPreviousWindow(oParameters.changedInPreviousWindow);
@@ -1624,8 +1620,8 @@ CComposeView.prototype.getSendSaveParameters = function (bRemoveSignatureAnchor,
 		'Cc': this.ccAddr(),
 		'Bcc': this.bccAddr(),
 		'Subject': this.subject(),
-		'Text': this.plainText() ? this.oHtmlEditor.getPlainText() : this.oHtmlEditor.getText(bRemoveSignatureAnchor),
-		'IsHtml': !this.plainText(),
+		'Text': this.oHtmlEditor.getText(bRemoveSignatureAnchor),
+		'IsHtml': !this.oHtmlEditor.plainTextMode(),
 		'Importance': this.selectedImportance(),
 		'SendReadingConfirmation': this.sendReadingConfirmation(),
 		'Attachments': oAttachments,
@@ -1893,8 +1889,8 @@ CComposeView.prototype.getMessageDataForNewTab = function ()
 		bccAddr: this.bccAddr(),
 		subject: this.subject(),
 		attachments: aAttachments,
-		plainText: this.plainText(),
-		textBody: this.plainText() ? this.oHtmlEditor.getPlainText() : this.oHtmlEditor.getText(),
+		plainTextMode: this.oHtmlEditor.plainTextMode(),
+		textBody: this.oHtmlEditor.getText(),
 		selectedImportance: this.selectedImportance(),
 		sendReadingConfirmation: this.sendReadingConfirmation(),
 		changedInPreviousWindow: this.isChanged(),
@@ -2068,7 +2064,7 @@ CComposeView.prototype.getExtInterface = function ()
 {
 	return {
 		isHtml: _.bind(function () {
-			return !this.plainText();
+			return !this.oHtmlEditor.plainTextMode();
 		}, this),
 		hasAttachments: _.bind(function () {
 			return this.notInlineAttachments().length > 0;
@@ -2086,13 +2082,13 @@ CComposeView.prototype.getExtInterface = function ()
 		}, this),
 		getSelectedSender: _.bind(this.selectedSender, this),
 		saveSilently: _.bind(this.executeSave, this, true),
-		setPlainTextMode: _.bind(this.plainText, this, true),
+		setPlainTextMode: _.bind(this.oHtmlEditor.plainTextMode, this, true),
 		setPlainText: _.bind(function (sText) {
-			this.textBody(sText);
+			this.setTextBody(sText, true);
 		}, this),
-		setHtmlTextMode: _.bind(this.plainText, this, false),
+		setHtmlTextMode: _.bind(this.oHtmlEditor.plainTextMode, this, false),
 		setHtmlText: _.bind(function (sHtml) {
-			this.textBody(sHtml);
+			this.setTextBody(sHtml, false);
 		}, this),
 		undoHtml: _.bind(this.oHtmlEditor.undoAndClearRedo, this.oHtmlEditor),
 		getSubject: _.bind(function () {

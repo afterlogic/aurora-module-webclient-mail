@@ -1,6 +1,7 @@
 <div class="html_editor" data-bind="css: {'inactive': inactive() && !disableEdit()}, onEsc: onEscHandler, initDom: htmlEditorDom">
 	<div class="disable_mask" data-bind="visible: disableEdit"></div>
 	<div class="toolbar" data-bind="initDom: toolbarDom">
+		<div class="disable_mask disable_toolbar_mask" data-bind="visible: plainTextMode"></div>
 		<div class="content">
 			<a href="javascript:void(0);" class="item undo" data-bind="click: undo, customTooltip: '%MODULENAME%/ACTION_UNDO'">
 				<span class="icon"></span>
@@ -149,13 +150,22 @@
 	</div>
 
 	<div class="workarea" data-bind="customScrollbar: {x: true, y: true}, initDom: workareaDom">
-		<div class="scroll-inner" data-bind="attr: {'id': creaId}"></div>
-		
+		<div class="scroll-inner" data-bind="attr: {'id': creaId}, visible: !plainTextMode()"></div>
+
 		<div data-bind="initDom: uploaderAreaDom, css: {'active': editorUploaderBodyDragOver}" class="uploader_mask">
 			<div class="inner"></div>
 		</div>
+
+		<div data-bind="visible: plainTextMode" class="plaintext">
+			<textarea data-bind="initDom: plaintextDom"></textarea>
+		</div>
+
+		<a href="javascript: void(0);" class="plaintext_switcher"
+		   data-bind="visible: bAllowComposePlainText && !disableEdit(),
+		   text: changeTextModeTitle, click: changeTextMode"
+		></a>
 	</div>
-	
+
 	<div class="inline_popup image_tooltip" data-bind="visible: imageSelected,
 		 style: {'top': tooltipPopupTop() + 'px', 'left': tooltipPopupLeft() + 'px'},
 		 text: tooltipText"></div>

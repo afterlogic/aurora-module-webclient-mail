@@ -16,6 +16,7 @@ var
 	
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
 	AlertPopup = require('%PathToCoreWebclientModule%/js/popups/AlertPopup.js'),
+	ConfirmPopup = require('%PathToCoreWebclientModule%/js/popups/ConfirmPopup.js'),
 	
 	CAttachmentModel = require('modules/%ModuleName%/js/models/CAttachmentModel.js'),
 	CCrea = require('modules/%ModuleName%/js/CCrea.js'),
@@ -28,15 +29,17 @@ var
 /**
  * @constructor
  * @param {boolean} bInsertImageAsBase64
+ * @param {boolean} bAllowComposePlainText
  * @param {Object=} oParent
  */
-function CHtmlEditorView(bInsertImageAsBase64, oParent)
+function CHtmlEditorView(bInsertImageAsBase64, bAllowComposePlainText, oParent)
 {
 	this.oParent = oParent;
 	
 	this.creaId = 'creaId' + Math.random().toString().replace('.', '');
 	this.textFocused = ko.observable(false);
 	this.workareaDom = ko.observable();
+	this.plaintextDom = ko.observable();
 	this.uploaderAreaDom = ko.observable();
 	this.editorUploaderBodyDragOver = ko.observable(false);
 	
@@ -65,6 +68,15 @@ function CHtmlEditorView(bInsertImageAsBase64, oParent)
 	this.bAllowFileUpload = !(bInsertImageAsBase64 && window.File === undefined);
 	this.bAllowInsertImage = Settings.AllowInsertImage;
 	this.bAllowHorizontalLineButton = Settings.AllowHorizontalLineButton;
+
+	this.bAllowComposePlainText = bAllowComposePlainText;
+	this.plainTextMode = ko.observable(false);
+	this.changeTextModeTitle = ko.computed(function () {
+		return this.plainTextMode()
+			? TextUtils.i18n('%MODULENAME%/LINK_TURNOFF_PLAINTEXT')
+			: TextUtils.i18n('%MODULENAME%/LINK_TURNON_PLAINTEXT');
+	}, this);
+
 	this.lockFontSubscribing = ko.observable(false);
 	this.bAllowImageDragAndDrop = !Browser.ie10AndAbove;
 
@@ -569,9 +581,11 @@ CHtmlEditorView.prototype.getPlainText = function ()
  */
 CHtmlEditorView.prototype.getText = function (bRemoveSignatureAnchor)
 {
-	var
-		sText = this.oCrea ? this.oCrea.getText(bRemoveSignatureAnchor) : ''
-	;
+	if (this.plainTextMode()) {
+		return this.plaintextDom() ? $(this.plaintextDom()).val() : '';
+	}
+
+	const sText = this.oCrea ? this.oCrea.getText(bRemoveSignatureAnchor) : '';
 	return (this.sPlaceholderText !== '' && this.removeAllTags(sText) === this.sPlaceholderText) ? '' : sText;
 };
 
@@ -585,20 +599,24 @@ CHtmlEditorView.prototype.getEditableArea = function ()
  * @param {string} sText
  * @param {boolean} bPlain
  */
-CHtmlEditorView.prototype.setText = function (sText, bPlain)
+CHtmlEditorView.prototype.setText = function (sText, bPlain = null)
 {
-	if (this.oCrea && !this.disableEdit())
-	{
-		if (bPlain)
-		{
-			this.oCrea.setPlainText(sText);
+	if (this.oCrea && !this.disableEdit()) {
+		if (bPlain !== null) {
+			this.plainTextMode(!!bPlain);
 		}
-		else
-		{
+		if (this.plainTextMode()) {
+			if (sText.indexOf('<br') !== -1 || sText.indexOf('<div') !== -1 || sText.indexOf('<span') !== -1) {
+				sText = TextUtils.htmlToPlain(sText);
+			}
+			this.plaintextDom().val(sText);
+		} else {
+			if (sText.indexOf('<br') === -1 && sText.indexOf('<div') === -1 && sText.indexOf('<span') === -1) {
+				sText = TextUtils.plainToHtml(sText);
+			}
 			this.oCrea.setText(sText);
 		}
-		if (this.inactive() && sText === '')
-		{
+		if (this.inactive() && sText === '') {
 			this.setPlaceholder();
 		}
 	}
@@ -1258,6 +1276,41 @@ CHtmlEditorView.prototype.setLtrDirection = function ()
 		this.oCrea.setLtrDirection();
 	}
 	return false;
+};
+
+/**
+ * Changes text mode - html or plain text.
+ */
+CHtmlEditorView.prototype.changeTextMode = function ()
+{
+	const changeTextModeHandler = () => {
+		if (this.plainTextMode()) {
+			const plainText = '<div>' + TextUtils.plainToHtml(this.getText()) + '</div>';
+			this.setText(plainText, false);
+		} else {
+			this.setText(this.getPlainText(), true);
+		}
+	};
+
+	if (this.plainTextMode()) {
+		changeTextModeHandler();
+	} else {
+		const confirmText = TextUtils.i18n('%MODULENAME%/CONFIRM_HTML_TO_PLAIN_FORMATTING');
+		Popups.showPopup(ConfirmPopup, [confirmText, function (changeConfirmed) {
+			if (changeConfirmed) {
+				changeTextModeHandler();
+			}
+		}]);
+	}
+};
+
+/**
+ * Turns on/off plain text mode.
+ * @param {boolean} bPlainTextMode
+ */
+CHtmlEditorView.prototype.setPlainTextMode = function (bPlainTextMode)
+{
+	this.plainTextMode(bPlainTextMode);
 };
 
 module.exports = CHtmlEditorView;
