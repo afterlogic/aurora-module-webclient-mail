@@ -177,6 +177,9 @@ CHtmlEditorView.prototype.setInactive = function (bInactive)
 	this.inactive(bInactive);
 	if (this.inactive())
 	{
+		if (this.editSourceMode()) {
+			this.toggleSourceEdit();
+		}
 		this.setPlaceholder();
 	}
 	else
@@ -1336,7 +1339,7 @@ CHtmlEditorView.prototype.setPlainTextMode = function (bPlainTextMode)
 	this.plainTextMode(bPlainTextMode);
 };
 
-CHtmlEditorView.prototype.triggerSourceEdit = function ()
+CHtmlEditorView.prototype.toggleSourceEdit = function ()
 {
 	if (this.editSourceMode()) {
 		this.setText(sourceEditor.getText());

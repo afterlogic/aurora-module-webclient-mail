@@ -15,6 +15,19 @@
 		position: absolute;
 		width: 100%;
 		z-index: 100;
+		left: 0;
+		top: 0;
+	}
+
+	.html_source_container {
+		border: 0;
+		height: 100%;
+		width: 100%;
+		background: white;
+
+		.cm-editor {
+			height: 100%;
+		}
 	}
 
 	.workarea {
@@ -100,6 +113,7 @@
 		border: none;
 		cursor: default;
 		padding: 0px 4px;
+		position: relative;
 		
 		.content {
 			padding: 0px;
@@ -111,6 +125,15 @@
 				height: 32px;
 				margin: 0px 4px;
 				vertical-align: middle;
+
+				.inactive&,
+				.inactive&:hover,
+				.plaintext_mode&,
+				.plaintext_mode&:hover,
+				.edit_source_mode&,
+				.edit_source_mode&:hover {
+					opacity: 0.4;
+				}
 			}
 
 			.button {
@@ -151,6 +174,17 @@
 					background: none;
 					cursor: default;
 					opacity: 0.2;
+					pointer-events: none;
+				}
+
+				.plaintext_mode&,
+				.plaintext_mode&:hover,
+				.edit_source_mode&,
+				.edit_source_mode&:hover {
+					background: none;
+					cursor: default;
+					opacity: 0.2;
+					pointer-events: none;
 				}
 
 				&.select {
@@ -247,12 +281,25 @@
 					background-position: -520px -320px;
 				}
 
-				&.undo .icon {
-					background-position: -560px -320px;
+				
+				&.undo {
+					// .plaintext_mode& {
+					// 	pointer-events: all;
+					// 	opacity: 1;
+					// }
+					.icon {
+						background-position: -560px -320px;
+					}
 				}
 
-				&.redo .icon {
-					background-position: -600px -320px;
+				&.redo {
+					// .plaintext_mode& {
+					// 	pointer-events: all;
+					// 	opacity: 1;
+					// }
+					.icon {
+						background-position: -600px -320px;
+					}
 				}
 
 				&.template {
@@ -289,7 +336,13 @@
 				}
 
 				&.source_code {
-					float: right;
+					.edit_source_mode& {
+						pointer-events: all;
+						opacity: 1;
+						cursor: pointer;
+					}
+
+					// float: right;
 					width: 30px;
 					.icon {
 						background-image: none;
@@ -316,9 +369,9 @@
 						}
 					}
 
-					&.source_code_not_disabled {
-						z-index: 101;
-					}
+					// &.source_code_not_disabled {
+					// 	z-index: 101;
+					// }
 				}
 			}
 		

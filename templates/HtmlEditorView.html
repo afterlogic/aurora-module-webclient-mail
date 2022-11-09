@@ -1,7 +1,7 @@
-<div class="html_editor" data-bind="css: {'inactive': inactive() && !disableEdit()}, onEsc: onEscHandler, initDom: htmlEditorDom">
+<div class="html_editor" data-bind="css: {'inactive': inactive() && !disableEdit(), 'plaintext_mode': plainTextMode(), 'edit_source_mode': editSourceMode()}, onEsc: onEscHandler, initDom: htmlEditorDom">
 	<div class="disable_mask" data-bind="visible: disableEdit"></div>
 	<div class="toolbar" data-bind="initDom: toolbarDom">
-		<div class="disable_mask disable_toolbar_mask" data-bind="visible: plainTextMode() || editSourceMode()"></div>
+		<!-- <div class="disable_mask disable_toolbar_mask" data-bind="visible: editSourceMode()"></div> -->
 		<div class="content">
 			<a href="javascript:void(0);" class="item undo" data-bind="click: undo, customTooltip: '%MODULENAME%/ACTION_UNDO'">
 				<span class="icon"></span>
@@ -147,10 +147,10 @@
 				</span>
 			</a>
 			
-			<span class="separator" data-bind="visible: templates().length > 0"></span>
+			<span class="separator"></span>
 			
 			<a href="javascript:void(0);" class="item source_code"
-			   data-bind="visible: bAllowEditHtmlSource, click: triggerSourceEdit,
+			   data-bind="visible: bAllowEditHtmlSource, click: toggleSourceEdit,
 			   customTooltip: sourceCodeButtonText,
 			   css: {show_preview: editSourceMode, source_code_not_disabled: !plainTextMode()}"
 			>
