@@ -52,6 +52,7 @@ module.exports = {
 	AlwaysTryUseImageWhilePasting: true,
 	AllowHorizontalLineButton: false,
 	AllowComposePlainText: false,
+	AllowEditHtmlSource: false,
 	JoinReplyPrefixes: true,
 	MailsPerPage: 20,
 	MaxMessagesBodiesSizeToPrefetch: 50000,
@@ -141,6 +142,7 @@ module.exports = {
 			this.AlwaysTryUseImageWhilePasting = Types.pBool(oAppDataMailWebclientSection.AlwaysTryUseImageWhilePasting, this.AlwaysTryUseImageWhilePasting);
 			this.AllowHorizontalLineButton = Types.pBool(oAppDataMailWebclientSection.AllowHorizontalLineButton, this.AllowHorizontalLineButton);
 			this.AllowComposePlainText = Types.pBool(oAppDataMailWebclientSection.AllowComposePlainText, this.AllowComposePlainText);
+			this.AllowEditHtmlSource = Types.pBool(oAppDataMailWebclientSection.AllowEditHtmlSource, this.AllowEditHtmlSource);
 			this.JoinReplyPrefixes = Types.pBool(oAppDataMailWebclientSection.JoinReplyPrefixes, this.JoinReplyPrefixes);
 			this.MailsPerPage = Types.pPositiveInt(oAppDataMailWebclientSection.MailsPerPage, this.MailsPerPage);
 			this.MaxMessagesBodiesSizeToPrefetch = Types.pNonNegativeInt(oAppDataMailWebclientSection.MaxMessagesBodiesSizeToPrefetch, this.MaxMessagesBodiesSizeToPrefetch);

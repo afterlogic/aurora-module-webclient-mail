@@ -149,11 +149,12 @@
 			
 			<span class="separator" data-bind="visible: templates().length > 0"></span>
 			
-			<a href="javascript:void(0);" class="item source"
-			   data-bind="click: triggerSourceEdit, customTooltip: '%MODULENAME%/ACTION_SOURCE',
-			   style: { zIndex: plainTextMode() ? '1' : '101' }"
+			<a href="javascript:void(0);" class="item source_code"
+			   data-bind="visible: bAllowEditHtmlSource, click: triggerSourceEdit,
+			   customTooltip: sourceCodeButtonText,
+			   css: {show_preview: editSourceMode, source_code_not_disabled: !plainTextMode()}"
 			>
-				<span class="icon">Source</span>
+				<span class="icon"></span>
 			</a>
 		</div>
 	</div>

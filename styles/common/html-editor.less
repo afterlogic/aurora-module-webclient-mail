@@ -287,6 +287,39 @@
 						}
 					}
 				}
+
+				&.source_code {
+					float: right;
+					width: 30px;
+					.icon {
+						background-image: none;
+						&:before {
+							content: "\e653";
+							speak: none;
+							font-style: normal;
+							font-weight: normal;
+							font-variant: normal;
+							text-transform: none;
+							line-height: 0.5;
+							font-family: 'afterlogic';
+							-webkit-font-smoothing: antialiased;
+							font-size: 30px;
+							color: #595959;
+						}
+					}
+
+					&.show_preview {
+						width: 26px;
+						.icon:before {
+							font-size: 22px;
+							content: "\e65e";
+						}
+					}
+
+					&.source_code_not_disabled {
+						z-index: 101;
+					}
+				}
 			}
 		
 			.dropdown {

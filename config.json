@@ -103,6 +103,14 @@
 		"If true, Plain Text switcher is added to compose HTML editor",
 		"string"
 	],
+	"AllowEditHtmlSource": [
+		false,
+		"bool"
+	],
+	"AllowEditHtmlSource_Description": [
+		"If true, HTML source code editing is added to HTML editor",
+		"string"
+	],
 	"JoinReplyPrefixes": [
 		true,
 		"bool"
