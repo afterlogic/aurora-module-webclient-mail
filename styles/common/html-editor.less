@@ -203,52 +203,77 @@
 					}
 				}
 
+				// .icon {
+				// 	background-image: url("../../images/sprites.png");
+				// 	background-repeat: no-repeat;
+				// 	display: inline-block;
+				// 	height: 16px;
+				// 	vertical-align: middle;
+				// 	width: 16px;
+				// }
+
 				.icon {
-					background-image: url("../../images/sprites.png");
-					background-repeat: no-repeat;
-					display: inline-block;
-					height: 16px;
-					vertical-align: middle;
+					.init-icon-font();
 					width: 16px;
+					height: 16px;
+					font-size: 16px;
+					line-height: 16px;
+	
+					&:before {
+						color: #595959;
+						vertical-align: top;
+					}
 				}
 
-				&.link .icon { 
-					background-position: 0px -320px;
+				&.link .icon:before {
+					content: "\e930";
+					// background-position: 0px -320px;
 				}
 
-				&.unlink .icon {
-					background-position: -40px -320px;
+				&.unlink .icon:before {
+					content: "\e930";
+					// background-position: -40px -320px;
 				}
 
-				&.image .icon {
-					background-position: -440px -320px;
+				&.image .icon:before {
+					content: "\e933";
+					// background-position: -440px -320px;
 				}
 
-				&.slist .icon {
-					background-position: -40px -320px;
+				&.slist .icon:before {
+					content: "\e931";
+					// background-position: -40px -320px;
 				}
 
-				&.uslist .icon {
-					background-position: -80px -320px;
+				&.uslist .icon:before {
+					content: "\e932";
+					// background-position: -80px -320px;
 				}
-
-				&.hline .icon {
+				
+				&.hline .icon:before {
 					background-position: -640px -320px;
 					width: 18px;
 				}
-
-				&.bold .icon {
-					background-position: -200px -320px;
+				
+				&.bold .icon:before {
+					content: "\e92b";
+					// background-position: -200px -320px;
 				}
-
-				&.italic .icon {
-					background-position: -120px -320px;
+				
+				&.italic .icon:before {
+					content: "\e92c";
+					// background-position: -120px -320px;
 				}
-
-				&.underline .icon {
-					background-position: -160px -320px;
+				
+				&.underline .icon:before {
+					content: "\e92d";
+					// background-position: -160px -320px;
 				}
-
+				&.strike_through .icon:before {
+					content: "\e92e";
+					// background-position: -520px -320px;
+				}
+				
 				&.aleft .icon {
 					background-position: -320px -320px;
 				}
@@ -265,59 +290,33 @@
 					background-position: -440px -320px;
 				}
 
-				&.color .icon {
-					background-position: -400px -320px;
+				&.color .icon:before {
+					content: "\e92f";
+					// background-position: -400px -320px;
 				}
-
-				&.background .icon {
-					background-position: -40px -320px;
-				}
-
-				&.clear .icon {
-					background-position: -480px -320px;
-				}
-
-				&.strike_through .icon {
-					background-position: -520px -320px;
-				}
-
 				
-				&.undo {
-					// .plaintext_mode& {
-					// 	pointer-events: all;
-					// 	opacity: 1;
-					// }
-					.icon {
-						background-position: -560px -320px;
-					}
-				}
+				// &.background .icon {
+				// 	background-position: -40px -320px;
+				// }
 
-				&.redo {
-					// .plaintext_mode& {
-					// 	pointer-events: all;
-					// 	opacity: 1;
-					// }
-					.icon {
-						background-position: -600px -320px;
-					}
+				&.clear .icon:before {
+					content: "\e934";
+					// background-position: -480px -320px;
+				}
+				
+				&.undo .icon:before {
+					content: "\e929";					
+					// background-position: -560px -320px;
+				}
+				
+				&.redo .icon:before {
+					content: "\e92a";
+					// background-position: -600px -320px;
 				}
 
 				&.template {
-					.icon {
-						background-image: none;
-						&:before {
-							content: "\e90e";
-							speak: none;
-							font-style: normal;
-							font-weight: normal;
-							font-variant: normal;
-							text-transform: none;
-							line-height: 0.5;
-							font-family: 'afterlogic';
-							-webkit-font-smoothing: antialiased;
-							font-size: 24px;
-							color: #595959;
-						}
+					.icon &:before {
+						content: "\e90e";
 					}
 					.dropdown_content {
 						padding: 0px;
@@ -342,36 +341,15 @@
 						cursor: pointer;
 					}
 
-					// float: right;
-					width: 30px;
-					.icon {
-						background-image: none;
-						&:before {
-							content: "\e653";
-							speak: none;
-							font-style: normal;
-							font-weight: normal;
-							font-variant: normal;
-							text-transform: none;
-							line-height: 0.5;
-							font-family: 'afterlogic';
-							-webkit-font-smoothing: antialiased;
-							font-size: 30px;
-							color: #595959;
-						}
+					.icon:before {
+						content: "\e935";
 					}
 
 					&.show_preview {
-						width: 26px;
 						.icon:before {
-							font-size: 22px;
-							content: "\e65e";
+							content: "\e936";
 						}
 					}
-
-					// &.source_code_not_disabled {
-					// 	z-index: 101;
-					// }
 				}
 			}
 		
