@@ -196,12 +196,10 @@
 		<span class="button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_OK'}, click: changeLink"></span>
 		<span class="button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_CANCEL'}, click: hideChangeLink"></span>
 	</div>
-	<div class="inline_popup" data-bind="visible: visibleImagePopup, 
-			style: {'top': imagePopupTop() + 'px', 'left': imagePopupLeft() + 'px'}">
-		<span class="button" data-bind="i18n: {'key': '%MODULENAME%/ACTION_MAKE_IMAGE_SMALL'}, click: function () { resizeImage(Enums.HtmlEditorImageSizes.Small); }"></span>
-		<span class="button" data-bind="i18n: {'key': '%MODULENAME%/ACTION_MAKE_IMAGE_MEDIUM'}, click: function () { resizeImage(Enums.HtmlEditorImageSizes.Medium); }"></span>
-		<span class="button" data-bind="i18n: {'key': '%MODULENAME%/ACTION_MAKE_IMAGE_LARGE'}, click: function () { resizeImage(Enums.HtmlEditorImageSizes.Large); }"></span>
-		<span class="button" data-bind="i18n: {'key': '%MODULENAME%/ACTION_MAKE_IMAGE_ORIGINAL'}, click: function () { resizeImage(Enums.HtmlEditorImageSizes.Original); }"></span>
+	<div class="inline_popup" data-bind="visible: visibleImagePopup, style: {'top': imagePopupTop() + 'px', 'left': imagePopupLeft() + 'px'}">
+		<!-- ko foreach: imageResizeOptions -->
+		<span class="button" data-bind="text: $data.label, click: function () { $parent.resizeImage($data.value); }"></span>
+		<!-- /ko -->
 		<span class="button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_REMOVE'}, click: function () { oCrea.removeCurrentImage(); }"></span>
 	</div>
 </div>

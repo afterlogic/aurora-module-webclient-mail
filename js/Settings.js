@@ -79,6 +79,13 @@ module.exports = {
 	userMailAccountsCount: ko.observable(0),
 	mailAccountsEmails: ko.observableArray([]),
 
+	ImageResizerOptions: {
+		"%ModuleName%/ACTION_MAKE_IMAGE_SMALL": "300px",
+		"%ModuleName%/ACTION_MAKE_IMAGE_MEDIUM": "600px",
+		"%ModuleName%/ACTION_MAKE_IMAGE_LARGE": "1200px",
+		"%ModuleName%/ACTION_MAKE_IMAGE_ORIGINAL": ""
+	},
+
 	/**
 	 * Initializes settings from AppData object sections.
 	 * 
@@ -165,6 +172,7 @@ module.exports = {
 			this.MarkMessageSeenWhenAnswerForward = Types.pBool(oAppDataMailWebclientSection.MarkMessageSeenWhenAnswerForward, this.MarkMessageSeenWhenAnswerForward);
 			this.UserLoginPartInAccountDropdown = Types.pBool(oAppDataMailWebclientSection.UserLoginPartInAccountDropdown, this.UserLoginPartInAccountDropdown);
 			this.UseMeRecipientForMessages = Types.pBool(oAppDataMailWebclientSection.UseMeRecipientForMessages, this.UseMeRecipientForMessages);
+			this.ImageResizerOptions = Types.pObject(oAppDataMailWebclientSection.TextEditorImageResizerOptions, this.ImageResizerOptions);
 		}
 		
 		if (!_.isEmpty(oAppDataFetchersSection))

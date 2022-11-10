@@ -168,6 +168,15 @@ function CHtmlEditorView(bInsertImageAsBase64, bAllowComposePlainText, oParent)
 			}
 		}, this));
 	}
+
+	this.imageResizeOptions = [];
+
+	_.each(Settings.ImageResizerOptions, (value, label) => {
+		this.imageResizeOptions.push({
+			label: TextUtils.i18n(label),
+			value: value
+		},);
+	});
 }
 
 CHtmlEditorView.prototype.ViewTemplate = '%ModuleName%_HtmlEditorView';
@@ -339,20 +348,8 @@ CHtmlEditorView.prototype.resizeImage = function (sSize)
 		'height': 'auto'
 	};
 	
-	switch (sSize)
-	{
-		case Enums.HtmlEditorImageSizes.Small:
-			oParams.width = '300px';
-			break;
-		case Enums.HtmlEditorImageSizes.Medium:
-			oParams.width = '600px';
-			break;
-		case Enums.HtmlEditorImageSizes.Large:
-			oParams.width = '1200px';
-			break;
-		case Enums.HtmlEditorImageSizes.Original:
-			oParams.width = 'auto';
-			break;
+	if (sSize) {
+		oParams.width = sSize;
 	}
 	
 	this.oCrea.changeCurrentImage(oParams);

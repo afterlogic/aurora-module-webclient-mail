@@ -80,13 +80,6 @@ Enums.ReplyType = {
 	'ForwardAsAttach': 'eml'
 };
 
-Enums.HtmlEditorImageSizes = {
-	'Small': 'small',
-	'Medium': 'medium',
-	'Large': 'large',
-	'Original': 'original'
-};
-
 Enums.UseSignature = {
 	'Off': '0',
 	'On': '1'

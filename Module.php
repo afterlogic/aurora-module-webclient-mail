@@ -64,6 +64,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			'UseMeRecipientForMessages' => $this->getConfig('UseMeRecipientForMessages', false),
 			'HorizontalLayout' => $this->getConfig('HorizontalLayoutByDefault', false),
 			'ShowMessagesCountInFolderList' => $this->getConfig('AllowShowMessagesCountInFolderList', false),
+			'TextEditorImageResizerOptions' => $this->getConfig('TextEditorImageResizerOptions', []),
 		);
 
 		$oUser = \Aurora\System\Api::getAuthenticatedUser();
