@@ -98,6 +98,14 @@ Enums.ServerOwnerType = {
 	'SuperAdmin': 'superadmin'
 };
 
+/**
+ * @enum {string}
+ */
+Enums.StarredMessagesSource = {
+	InboxOnly: 'inbox_only',
+	AllFolders: 'all_folders'
+};
+
 if (typeof window.Enums === 'undefined')
 {
 	window.Enums = {};

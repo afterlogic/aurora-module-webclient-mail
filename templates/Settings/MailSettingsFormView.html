@@ -12,6 +12,15 @@
 				<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_MESSAGES_PER_PAGE'}"></span>
 				<select class="value input" data-bind="options: mailsPerPageValues, value: mailsPerPage"></select>
 			</div>
+			<div class="row" data-bind="visible: bAllowChangeStarredMessagesSource">
+				<span class="label"
+					  data-bind="i18n: {'key': '%MODULENAME%/LABEL_STARRED_MESSAGES_SOURCE'}"
+				></span>
+				<select class="value input"
+						data-bind="options: starredMessagesSourceValues,
+						value: starredMessagesSource, optionsText: 'text', optionsValue: 'value'"
+				></select>
+			</div>
 			<div class="row">
 				<span class="value offset">
 					<label class="custom_checkbox" data-bind="css: {'checked': allowAutosaveInDrafts}">

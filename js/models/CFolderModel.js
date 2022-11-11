@@ -984,7 +984,11 @@ CFolderModel.prototype.initComputedFields = function ()
 		// At the moment the application supports only one type of virtual folders - for starred messages.
 		if (this.bVirtual)
 		{
-			return Routing.buildHashFromArray(LinksUtils.getMailbox(this.fullName(), 1, '', '', Enums.FolderFilter.Flagged));
+			let search = '';
+			if (Settings.AllowChangeStarredMessagesSource && Settings.StarredMessagesSource === Enums.StarredMessagesSource.AllFolders) {
+				search = 'folders:all';
+			}
+			return Routing.buildHashFromArray(LinksUtils.getMailbox(this.fullName(), 1, '', search, Enums.FolderFilter.Flagged));
 		}
 		else
 		{

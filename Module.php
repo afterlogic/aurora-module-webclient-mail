@@ -45,6 +45,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			'AllowEditHtmlSource' => $this->getConfig('AllowEditHtmlSource', false),
 			'JoinReplyPrefixes' => $this->getConfig('JoinReplyPrefixes', false),
 			'MailsPerPage' => $this->getConfig('MailsPerPage', 20),
+			'AllowChangeStarredMessagesSource' => $this->getConfig('AllowChangeStarredMessagesSource', false),
 			'MaxMessagesBodiesSizeToPrefetch' => $this->getConfig('MaxMessagesBodiesSizeToPrefetch', 50000),
 			'MessageBodyTruncationThreshold' => $this->getConfig('MessageBodyTruncationThreshold', 650000), // in bytes
 			'ShowEmailAsTabName' => $this->getConfig('ShowEmailAsTabName', true),
@@ -78,6 +79,10 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			{
 				$aSettings['MailsPerPage'] = $oUser->{self::GetName().'::MailsPerPage'};
 			}
+			if (isset($oUser->{self::GetName().'::StarredMessagesSource'}))
+			{
+				$aSettings['StarredMessagesSource'] = $oUser->{self::GetName().'::StarredMessagesSource'};
+			}
 			if (isset($oUser->{self::GetName().'::ShowMessagesCountInFolderList'}))
 			{
 				$aSettings['ShowMessagesCountInFolderList'] = $oUser->{self::GetName().'::ShowMessagesCountInFolderList'};
@@ -104,6 +109,10 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 				if (isset($Args['MailsPerPage']))
 				{
 					$oUser->setExtendedProp(self::GetName().'::MailsPerPage', $Args['MailsPerPage']);
+				}
+				if (isset($Args['StarredMessagesSource']))
+				{
+					$oUser->setExtendedProp(self::GetName().'::StarredMessagesSource', $Args['StarredMessagesSource']);
 				}
 				if (isset($Args['AllowChangeInputDirection']))
 				{

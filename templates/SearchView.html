@@ -60,7 +60,10 @@
 					</span>
 				</span>
 				<div class="buttons">
-					<div class="folders_search" data-bind="css: {'folders_search_expand': bAdvancedSearch}">
+					<div class="folders_search"
+						 data-bind="css: {'folders_search_expand': bAdvancedSearch},
+						 visible: !isStarredFolder()"
+					>
 						<span class="folders_search_label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_SEARCH_IN'}"></span>
 						<span class="folders_search_select" data-bind="dropdown: {}, customTooltip: 'MAILWEBCLIENT/LABEL_SEARCH_IN'">
 							<span class="link control" data-bind="text: selectedSearchFoldersModeText"></span>

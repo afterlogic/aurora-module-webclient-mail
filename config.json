@@ -140,6 +140,14 @@
 		"Default number of mail messages displayed per page",
 		"string"
 	],
+	"AllowChangeStarredMessagesSource": [
+		false,
+		"bool"
+	],
+	"AllowChangeStarredMessagesSource_Description": [
+		"If true, starred messages source can be changed. Two possible sources: inbox only and all folders",
+		"string"
+	],
 	"MaxMessagesBodiesSizeToPrefetch": [
 		50000,
 		"int"

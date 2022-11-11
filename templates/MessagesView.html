@@ -11,17 +11,26 @@
 			<div class="items_list message_list" data-bind="initDom: messagesContainer, css: folderFullName">
 				<span>
 					<span class="list_notification" data-bind="visible: visibleInfoSearchLoading() && !visibleInfoUnseenFilterList()">
-						<span class="link" data-bind="i18n: {'key': '%MODULENAME%/ACTION_STOP_SEARCH'}, click: onStopSearchClick"></span>
+						<span class="link"
+							  data-bind="i18n: {'key': '%MODULENAME%/ACTION_STOP_SEARCH'},
+							  click: onStopSearchClick, visible: allowClearSearch"
+						></span>
 						<span class="description" data-bind="html: searchText"></span>
 					</span>
 
 					<span class="list_notification search_results" data-bind="visible: visibleInfoSearchList">
-						<span class="link" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_CLEAR_SEARCH'}, click: onClearSearchClick"></span>
+						<span class="link"
+							  data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_CLEAR_SEARCH'},
+							  click: onClearSearchClick, visible: allowClearSearch"
+						></span>
 						<span class="description" data-bind="html: searchText"></span>
 					</span>
 
 					<span class="list_notification" data-bind="visible: visibleInfoSearchEmpty">
-						<span class="link" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_CLEAR_SEARCH'}, click: onClearSearchClick"></span>
+						<span class="link"
+							  data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_CLEAR_SEARCH'},
+							  click: onClearSearchClick, visible: allowClearSearch"
+						></span>
 						<span class="description" data-bind="i18n: {'key': '%MODULENAME%/INFO_SEARCH_EMPTY'}"></span>
 					</span>
 

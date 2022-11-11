@@ -55,6 +55,8 @@ module.exports = {
 	AllowEditHtmlSource: false,
 	JoinReplyPrefixes: true,
 	MailsPerPage: 20,
+	AllowChangeStarredMessagesSource: false,
+	StarredMessagesSource: Enums.StarredMessagesSource.InboxOnly,
 	MaxMessagesBodiesSizeToPrefetch: 50000,
 	MessageBodyTruncationThreshold: 650000, // in bytes
 	MessagesSortBy: {},
@@ -152,9 +154,13 @@ module.exports = {
 			this.AllowEditHtmlSource = Types.pBool(oAppDataMailWebclientSection.AllowEditHtmlSource, this.AllowEditHtmlSource);
 			this.JoinReplyPrefixes = Types.pBool(oAppDataMailWebclientSection.JoinReplyPrefixes, this.JoinReplyPrefixes);
 			this.MailsPerPage = Types.pPositiveInt(oAppDataMailWebclientSection.MailsPerPage, this.MailsPerPage);
+			this.AllowChangeStarredMessagesSource = Types.pBool(oAppDataMailWebclientSection.AllowChangeStarredMessagesSource, this.AllowChangeStarredMessagesSource);
+			if (this.AllowChangeStarredMessagesSource) {
+				this.StarredMessagesSource = Types.pEnum(oAppDataMailWebclientSection.StarredMessagesSource, Enums.StarredMessagesSource, Enums.StarredMessagesSource.InboxOnly);
+			}
 			this.MaxMessagesBodiesSizeToPrefetch = Types.pNonNegativeInt(oAppDataMailWebclientSection.MaxMessagesBodiesSizeToPrefetch, this.MaxMessagesBodiesSizeToPrefetch);
 			this.MessageBodyTruncationThreshold = Types.pNonNegativeInt(oAppDataMailWebclientSection.MessageBodyTruncationThreshold, this.MessageBodyTruncationThreshold);
-			
+
 			this.ShowEmailAsTabName = Types.pBool(oAppDataMailWebclientSection.ShowEmailAsTabName, this.ShowEmailAsTabName);
 			this.AllowOtherModulesToReplaceTabsbarHeader = Types.pBool(oAppDataMailWebclientSection.AllowOtherModulesToReplaceTabsbarHeader, this.AllowOtherModulesToReplaceTabsbarHeader);
 			this.AllowShowMessagesCountInFolderList = Types.pBool(oAppDataMailWebclientSection.AllowShowMessagesCountInFolderList, this.AllowShowMessagesCountInFolderList);
@@ -191,18 +197,15 @@ module.exports = {
 	/**
 	 * Updates new settings values after saving on server.
 	 * 
-	 * @param {number} iMailsPerPage
-	 * @param {boolean} bAllowAutosaveInDrafts
-	 * @param {boolean} bAllowChangeInputDirection
-	 * @param {boolean} bShowMessagesCountInFolderList
+	 * @param {object} parameters 
 	 */
-	update: function (iMailsPerPage, bAllowAutosaveInDrafts, bAllowChangeInputDirection, bShowMessagesCountInFolderList)
+	update: function (parameters)
 	{
-		this.AllowAutosaveInDrafts = Types.pBool(bAllowAutosaveInDrafts, this.AllowAutosaveInDrafts);
-		
-		this.AllowChangeInputDirection = Types.pBool(bAllowChangeInputDirection, this.AllowChangeInputDirection);
-		this.MailsPerPage = Types.pPositiveInt(iMailsPerPage, this.MailsPerPage);
-		this.showMessagesCountInFolderList(Types.pBool(bShowMessagesCountInFolderList, this.showMessagesCountInFolderList()));
+		this.AllowAutosaveInDrafts = Types.pBool(parameters.AllowAutosaveInDrafts, this.AllowAutosaveInDrafts);
+		this.AllowChangeInputDirection = Types.pBool(parameters.AllowChangeInputDirection, this.AllowChangeInputDirection);
+		this.MailsPerPage = Types.pPositiveInt(parameters.MailsPerPage, this.MailsPerPage);
+		this.showMessagesCountInFolderList(Types.pBool(parameters.ShowMessagesCountInFolderList, this.showMessagesCountInFolderList()));
+		this.StarredMessagesSource = Types.pEnum(parameters.StarredMessagesSource, Enums.StarredMessagesSource, Enums.StarredMessagesSource.InboxOnly);
 	},
 	
 	/**
