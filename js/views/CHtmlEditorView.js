@@ -84,10 +84,6 @@ function CHtmlEditorView(bInsertImageAsBase64, bAllowComposePlainText, oParent)
 	this.htmlSourceDom.subscribe(() => {
 		sourceEditor.setHtmlSourceDom(this.htmlSourceDom());
 	});
-	sourceEditor.setOnChangeHandler(() => {
-		this.textChanged(true);
-		this.actualTextChanged.valueHasMutated();
-	});
 	this.sourceCodeButtonText = ko.computed(() => {
 		return this.editSourceMode()
 			? TextUtils.i18n('%MODULENAME%/ACTION_EDIT_HTML_PREVIEW')
@@ -464,6 +460,18 @@ CHtmlEditorView.prototype.init = function (sText, bPlain, sTabIndex, sPlaceholde
 			'onUrlClicked': true
 		});
 		this.oCrea.start(this.isEnable());
+
+		sourceEditor.setOnChangeHandler(() => {
+			this.textChanged(true);
+			this.actualTextChanged.valueHasMutated();
+		});
+
+		if (this.plaintextDom()) {
+			this.plaintextDom().on('keyup paste', () => {
+				this.textChanged(true);
+				this.actualTextChanged.valueHasMutated();
+			});
+		}
 	}
 
 	this.oCrea.setTabIndex(sTabIndex);
@@ -601,7 +609,7 @@ CHtmlEditorView.prototype.getPlainText = function ()
 CHtmlEditorView.prototype.getText = function (bRemoveSignatureAnchor)
 {
 	if (this.plainTextMode()) {
-		return this.plaintextDom() ? $(this.plaintextDom()).val() : '';
+		return this.plaintextDom() ? this.plaintextDom().val() : '';
 	}
 
 	if (this.editSourceMode() && sourceEditor.isInitialized()) {

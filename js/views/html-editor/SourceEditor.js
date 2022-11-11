@@ -1,11 +1,22 @@
 'use strict';
 
 const
-	ko = require('knockout'),
-
 	codemirror = require('codemirror'),
-	langHtml = require('@codemirror/lang-html')
+	langHtml = require('@codemirror/lang-html'),
+	parserHtml = require('prettier/parser-html'),
+	prettier = require('prettier/standalone')
 ;
+
+function formatHtml(text) {
+	try {
+		return prettier.format(text, {
+			parser: 'html',
+			plugins: [parserHtml]
+		});
+	} catch (error) {
+		return text;
+	}
+}
 
 module.exports = {
 	view: null,
@@ -34,7 +45,8 @@ module.exports = {
 			: null;
 	},
 
-	setText(doc) {
+	setText(text) {
+		const doc = formatHtml(text);
 		if (this.view && this.view.viewState && this.view.viewState.state && this.view.viewState.state.doc) {
 			this.view.dispatch({
 				changes: {
