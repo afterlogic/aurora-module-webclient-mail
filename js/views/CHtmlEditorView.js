@@ -465,13 +465,13 @@ CHtmlEditorView.prototype.init = function (sText, bPlain, sTabIndex, sPlaceholde
 			this.textChanged(true);
 			this.actualTextChanged.valueHasMutated();
 		});
+	}
 
-		if (this.plaintextDom()) {
-			this.plaintextDom().on('keyup paste', () => {
-				this.textChanged(true);
-				this.actualTextChanged.valueHasMutated();
-			});
-		}
+	if (this.plaintextDom()) {
+		this.plaintextDom().on('keyup paste', () => {
+			this.textChanged(true);
+			this.actualTextChanged.valueHasMutated();
+		});
 	}
 
 	this.oCrea.setTabIndex(sTabIndex);
