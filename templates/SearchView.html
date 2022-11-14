@@ -1,9 +1,9 @@
 <span class="search_block">
 	<span class="input" data-bind="css: {'focus': isFocused, 'search_block_expand': bAdvancedSearch}">
 		<span class="icon search"></span>
-		<input class="field hide" spellcheck="false" type="text" data-bind="value: searchInput" />
+		<input class="field hide" spellcheck="false" type="text" data-bind="value: searchHighlightedInput" />
 		<div class="field" contenteditable="true" spellcheck="false" 
-			 data-bind="highlighter: {valueObserver: searchInput, highlighterValueObserver: searchSpan, highlightTrigger: highlightTrigger}, 
+			 data-bind="highlighter: {valueObserver: searchHighlightedInput, highlighterValueObserver: searchSpan, highlightTrigger: highlightTrigger}, 
 						onEnter: onSearchClick, hasfocus: isFocused" ></div>
 		<div class="fields extended">
 			<span class="search_fieldset">

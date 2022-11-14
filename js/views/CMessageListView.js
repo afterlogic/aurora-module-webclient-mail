@@ -67,26 +67,6 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 
 	this.messagesContainer = ko.observable(null);
 
-	this.searchInput = ko.observable('');
-	this.searchInputFrom = ko.observable('');
-	this.searchInputTo = ko.observable('');
-	this.searchInputSubject = ko.observable('');
-	this.searchInputText = ko.observable('');
-	this.searchSpan = ko.observable('');
-	this.highlightTrigger = ko.observable('');
-	this.selectedSearchFoldersMode = ko.observable('');
-	this.selectedSearchFoldersModeText = ko.computed(function () {
-		if (this.selectedSearchFoldersMode() === Enums.SearchFoldersMode.Sub)
-		{
-			return TextUtils.i18n('%MODULENAME%/LABEL_SEARCH_CURRENT_FOLDER_AND_SUBFOLDERS');
-		}
-		if (this.selectedSearchFoldersMode() === Enums.SearchFoldersMode.All)
-		{
-			return TextUtils.i18n('%MODULENAME%/LABEL_SEARCH_ALL_FOLDERS');
-		}
-		return TextUtils.i18n('%MODULENAME%/LABEL_SEARCH_CURRENT_FOLDER');
-	}, this);
-
 	this.currentMessage = MailCache.currentMessage;
 	this.currentMessage.subscribe(function () {
 		this.isFocused(false);
@@ -103,14 +83,51 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 	this.isStarredFolder = ko.computed(() => {
 		return this.filters() === Enums.FolderFilter.Flagged;
 	});
+	this.isStarredInAllFolders = ko.computed(() => {
+		return this.isStarredFolder()
+			&& Settings.AllowChangeStarredMessagesSource
+			&& Settings.StarredMessagesSource === Enums.StarredMessagesSource.AllFolders;
+	});
 	this.isStarredFolder.subscribe(() => {
 		if (this.isStarredFolder()) {
-			this.clearAdvancedSearch();
+			this.selectedSearchFoldersMode(this.isStarredInAllFolders() ? 'all' : '');
 		}
 	});
 
 	this.allowAdvancedSearch = ko.computed(function () {
 		return !ModulesManager.isModuleIncluded('MailNotesPlugin') || this.folderFullName() !== 'Notes';
+	}, this);
+	this.searchHighlightedInput = ko.observable('');
+	this.searchInput = ko.computed({
+		read: () => {
+			if (this.isStarredInAllFolders()) {
+			return `${this.searchHighlightedInput()} folders:all`;
+			}
+			return this.searchHighlightedInput();
+		},
+		write: (value) => {
+			if (this.isStarredInAllFolders()) {
+				this.searchHighlightedInput(value.replace('folders:all', ''));
+			} else {
+				this.searchHighlightedInput(value);
+			}
+		}
+	});
+	this.searchInputFrom = ko.observable('');
+	this.searchInputTo = ko.observable('');
+	this.searchInputSubject = ko.observable('');
+	this.searchInputText = ko.observable('');
+	this.searchSpan = ko.observable('');
+	this.highlightTrigger = ko.observable('');
+	this.selectedSearchFoldersMode = ko.observable('');
+	this.selectedSearchFoldersModeText = ko.computed(function () {
+		if (this.selectedSearchFoldersMode() === Enums.SearchFoldersMode.Sub) {
+			return TextUtils.i18n('%MODULENAME%/LABEL_SEARCH_CURRENT_FOLDER_AND_SUBFOLDERS');
+		}
+		if (this.selectedSearchFoldersMode() === Enums.SearchFoldersMode.All) {
+			return TextUtils.i18n('%MODULENAME%/LABEL_SEARCH_ALL_FOLDERS');
+		}
+		return TextUtils.i18n('%MODULENAME%/LABEL_SEARCH_CURRENT_FOLDER');
 	}, this);
 
 	this.uidList = MailCache.uidList;
@@ -725,17 +742,14 @@ CMessageListView.prototype.onSearchClick = function ()
 {
 	var
 		sFolder = MailCache.getCurrentFolderFullname(),
-		iPage = 1,
-		sSearch = this.searchInput()
+		iPage = 1
 	;
 	
-	if (this.allowAdvancedSearch() && this.bAdvancedSearch())
-	{
-		sSearch = this.calculateSearchStringFromAdvancedForm();
-		this.searchInput(sSearch);
+	if (this.allowAdvancedSearch() && this.bAdvancedSearch()) {
+		this.searchInput(this.calculateSearchStringFromAdvancedForm());
 		this.bAdvancedSearch(false);
 	}
-	this.changeRoutingForMessageList(sFolder, iPage, '', sSearch, this.filters());
+	this.changeRoutingForMessageList(sFolder, iPage, '', this.searchInput(), this.filters());
 };
 
 CMessageListView.prototype.onRetryClick = function ()
@@ -1091,17 +1105,6 @@ CMessageListView.prototype.executeSort = function (sSortBy)
 	}.bind(this));
 };
 
-CMessageListView.prototype.getDefaultSelectedSearchFoldersMode = function () {
-	if (
-			this.isStarredFolder()
-			&& Settings.AllowChangeStarredMessagesSource
-			&& Settings.StarredMessagesSource === Enums.StarredMessagesSource.AllFolders
-	) {
-		return 'all';
-	}
-	return '';
-}
-
 CMessageListView.prototype.clearAdvancedSearch = function ()
 {
 	this.searchInputFrom('');
@@ -1113,7 +1116,7 @@ CMessageListView.prototype.clearAdvancedSearch = function ()
 	this.searchAttachments('');
 	this.searchDateStart('');
 	this.searchDateEnd('');
-	this.selectedSearchFoldersMode(this.getDefaultSelectedSearchFoldersMode());
+	this.selectedSearchFoldersMode(this.isStarredInAllFolders() ? 'all' : '');
 };
 
 CMessageListView.prototype.onAdvancedSearchClick = function ()
