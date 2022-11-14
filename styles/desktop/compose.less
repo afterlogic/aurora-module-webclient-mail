@@ -220,31 +220,12 @@
 
 	.html_editor {
 		padding: 0px 11px 21px 11px;
+		color: black; /* For Dark themes */
 
 		.disable_mask {
 			height: calc(100% - 22px);
 			width: calc(100% - 22px);
 		}
-
-		// .toolbar {
-		// 	position: relative;
-		// }
-		// .disable_mask.disable_toolbar_mask {
-		// 	height: 100%;
-		// 	width: 100%;
-		// 	// left: 0;
-		// }
-
-		// .html_source_container {
-		// 	border: 0;
-		// 	height: 100%;
-		// 	width: 100%;
-		// 	background: white;
-
-		// 	.cm-editor {
-		// 		height: 100%;
-		// 	}
-		// }
 
 		.plaintext_switcher {
 			bottom: 0;
@@ -256,9 +237,10 @@
 
 		.plaintext {
 			height: 100%;
-			background: white;
 
 			textarea {
+				background: white; /* For Dark themes */
+				color: black !important; /* For Dark themes */
 				border: 0;
 				height: 98%;
 				outline: none;
