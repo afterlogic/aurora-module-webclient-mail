@@ -24,12 +24,17 @@ Ajax.registerAbortRequestHandler(Settings.ServerModuleName, function (oRequest, 
 	{
 		case 'MoveMessages':
 		case 'DeleteMessages':
-			return	oOpenedRequest.Method === 'GetMessage' || 
+			return	oOpenedRequest.Method === 'GetMessage' ||
+					oOpenedRequest.Method === 'GetUnifiedMailboxMessages' ||
+					oOpenedRequest.Method === 'GetMessagesByFolders' ||
 					oOpenedRequest.Method === 'GetMessages' && oOpenedParameters.Folder === oParameters.Folder;
 		case 'GetMessages':
+		case 'GetUnifiedMailboxMessages':
 		case 'SetMessagesSeen':
 		case 'SetMessageFlagged':
-			return oOpenedRequest.Method === 'GetMessages' && oOpenedParameters.Folder === oParameters.Folder;
+			return	oOpenedRequest.Method === 'GetUnifiedMailboxMessages' ||
+					oOpenedRequest.Method === 'GetMessagesByFolders' ||
+					oOpenedRequest.Method === 'GetMessages' && oOpenedParameters.Folder === oParameters.Folder;
 		case 'SetAllMessagesSeen':
 			return (oOpenedRequest.Method === 'GetMessages' || oOpenedRequest.Method === 'GetMessages') &&
 					oOpenedParameters.Folder === oParameters.Folder;
