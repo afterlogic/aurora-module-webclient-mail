@@ -23,18 +23,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 	 */
 	public function init()
 	{
-		\Aurora\Modules\Core\Classes\User::extend(
-			self::GetName(),
-			[
-				'AllowChangeInputDirection'		=> array('bool', $this->getConfig('AllowChangeInputDirection', false)),
-				'MailsPerPage'					=> array('int', $this->getConfig('MailsPerPage', 20)),
-				'ShowMessagesCountInFolderList'	=> array('bool', $this->getConfig('ShowMessagesCountInFolderList', false)),
-				'HorizontalLayout'				=> array('bool', $this->getConfig('HorizontalLayoutByDefault', false)),
-			]
-		);
-
 		$this->subscribeEvent('Mail::UpdateSettings::after', array($this, 'onAfterUpdateSettings'));
-
 	}
 
 	public function GetSettings()
@@ -52,8 +41,11 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			'DefaultFontSize' => $this->getConfig('DefaultFontSize', 3),
 			'AlwaysTryUseImageWhilePasting' => $this->getConfig('AlwaysTryUseImageWhilePasting', true),
 			'AllowHorizontalLineButton' => $this->getConfig('AllowHorizontalLineButton', false),
+			'AllowComposePlainText' => $this->getConfig('AllowComposePlainText', false),
+			'AllowEditHtmlSource' => $this->getConfig('AllowEditHtmlSource', false),
 			'JoinReplyPrefixes' => $this->getConfig('JoinReplyPrefixes', false),
 			'MailsPerPage' => $this->getConfig('MailsPerPage', 20),
+			'AllowChangeStarredMessagesSource' => $this->getConfig('AllowChangeStarredMessagesSource', false),
 			'MaxMessagesBodiesSizeToPrefetch' => $this->getConfig('MaxMessagesBodiesSizeToPrefetch', 50000),
 			'MessageBodyTruncationThreshold' => $this->getConfig('MessageBodyTruncationThreshold', 650000), // in bytes
 			'ShowEmailAsTabName' => $this->getConfig('ShowEmailAsTabName', true),
@@ -73,6 +65,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			'UseMeRecipientForMessages' => $this->getConfig('UseMeRecipientForMessages', false),
 			'HorizontalLayout' => $this->getConfig('HorizontalLayoutByDefault', false),
 			'ShowMessagesCountInFolderList' => $this->getConfig('AllowShowMessagesCountInFolderList', false),
+			'TextEditorImageResizerOptions' => $this->getConfig('TextEditorImageResizerOptions', []),
 		);
 
 		$oUser = \Aurora\System\Api::getAuthenticatedUser();
@@ -85,6 +78,10 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			if (isset($oUser->{self::GetName().'::MailsPerPage'}))
 			{
 				$aSettings['MailsPerPage'] = $oUser->{self::GetName().'::MailsPerPage'};
+			}
+			if (isset($oUser->{self::GetName().'::StarredMessagesSource'}))
+			{
+				$aSettings['StarredMessagesSource'] = $oUser->{self::GetName().'::StarredMessagesSource'};
 			}
 			if (isset($oUser->{self::GetName().'::ShowMessagesCountInFolderList'}))
 			{
@@ -112,6 +109,10 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 				if (isset($Args['MailsPerPage']))
 				{
 					$oUser->setExtendedProp(self::GetName().'::MailsPerPage', $Args['MailsPerPage']);
+				}
+				if (isset($Args['StarredMessagesSource']))
+				{
+					$oUser->setExtendedProp(self::GetName().'::StarredMessagesSource', $Args['StarredMessagesSource']);
 				}
 				if (isset($Args['AllowChangeInputDirection']))
 				{

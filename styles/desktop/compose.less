@@ -217,12 +217,37 @@
 			}
 		}
 	}
-	
+
 	.html_editor {
 		padding: 0px 11px 21px 11px;
+		color: black; /* For Dark themes */
+
 		.disable_mask {
 			height: calc(100% - 22px);
 			width: calc(100% - 22px);
+		}
+
+		.plaintext_switcher {
+			bottom: 0;
+			position: absolute;
+			margin: 6px;
+			right: 0;
+			outline: none;
+		}
+
+		.plaintext {
+			height: 100%;
+
+			textarea {
+				background: white; /* For Dark themes */
+				color: black !important; /* For Dark themes */
+				border: 0;
+				height: 98%;
+				outline: none;
+				padding: 1%;
+				resize: none;
+				width: 98%;
+			}
 		}
 	}
 

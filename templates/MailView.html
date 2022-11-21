@@ -10,7 +10,7 @@
 		<div class="panel center_panel messages_panel" data-bind="css: {'unified_messages_panel': isUnifiedFolderCurrent, 'search_multi_folders': isSearchMultiFolders}">
 			<div class="panel_content">
 				<!-- ko template: { name: '%ModuleName%_Messages_ToolbarView' } --><!-- /ko -->
-				<!-- ko template: { name: oMessageList.ViewTemplate, data: oMessageList} --><!-- /ko -->
+				<!-- ko template: { name: messageList().ViewTemplate, data: messageList() } --><!-- /ko -->
 			</div>
 		</div>
 		

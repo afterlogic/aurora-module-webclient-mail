@@ -606,9 +606,7 @@ CMailCache.prototype.setMessagesFromUidList = function (oUidList, iOffset, bFill
 			this.messagesLoading(true);
 		}
 
-		if (this.currentMessage() && (this.currentMessage().deleted() ||
-			this.currentMessage().folder() !== this.getCurrentFolderFullname() && !this.oUnifiedInbox.selected() && !this.isSearchInMultiFolders(oUidList.search())))
-		{
+		if (this.currentMessage() && this.currentMessage().deleted()) {
 			this.currentMessage(null);
 		}
 	}

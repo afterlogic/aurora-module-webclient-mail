@@ -80,13 +80,6 @@ Enums.ReplyType = {
 	'ForwardAsAttach': 'eml'
 };
 
-Enums.HtmlEditorImageSizes = {
-	'Small': 'small',
-	'Medium': 'medium',
-	'Large': 'large',
-	'Original': 'original'
-};
-
 Enums.UseSignature = {
 	'Off': '0',
 	'On': '1'
@@ -103,6 +96,14 @@ Enums.ServerOwnerType = {
 	'Account': 'account',
 	'Tenant': 'tenant',
 	'SuperAdmin': 'superadmin'
+};
+
+/**
+ * @enum {string}
+ */
+Enums.StarredMessagesSource = {
+	InboxOnly: 'inbox_only',
+	AllFolders: 'all_folders'
 };
 
 if (typeof window.Enums === 'undefined')

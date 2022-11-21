@@ -1,4 +1,4 @@
-<span class="group mark" data-bind="dropdown: {}, css: {disabled: oMessageList.isEmptyList()}, visible: visibleMarkTool">
+<span class="group mark" data-bind="dropdown: {}, css: {disabled: messageList().isEmptyList()}, visible: visibleMarkTool">
 	<span class="item" data-bind="command: markAsReadCommand, customTooltip: '%MODULENAME%/ACTION_MARK_AS_READ'">
 		<span class="icon"></span>
 		<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_MARK_AS_READ'}"></span>

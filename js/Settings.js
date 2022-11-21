@@ -51,8 +51,12 @@ module.exports = {
 	DefaultFontSize: 3,
 	AlwaysTryUseImageWhilePasting: true,
 	AllowHorizontalLineButton: false,
+	AllowComposePlainText: false,
+	AllowEditHtmlSource: false,
 	JoinReplyPrefixes: true,
 	MailsPerPage: 20,
+	AllowChangeStarredMessagesSource: false,
+	StarredMessagesSource: Enums.StarredMessagesSource.InboxOnly,
 	MaxMessagesBodiesSizeToPrefetch: 50000,
 	MessageBodyTruncationThreshold: 650000, // in bytes
 	MessagesSortBy: {},
@@ -76,6 +80,13 @@ module.exports = {
 
 	userMailAccountsCount: ko.observable(0),
 	mailAccountsEmails: ko.observableArray([]),
+
+	ImageResizerOptions: {
+		"%ModuleName%/ACTION_MAKE_IMAGE_SMALL": "300px",
+		"%ModuleName%/ACTION_MAKE_IMAGE_MEDIUM": "600px",
+		"%ModuleName%/ACTION_MAKE_IMAGE_LARGE": "1200px",
+		"%ModuleName%/ACTION_MAKE_IMAGE_ORIGINAL": ""
+	},
 
 	/**
 	 * Initializes settings from AppData object sections.
@@ -139,11 +150,17 @@ module.exports = {
 			this.DefaultFontSize = Types.pPositiveInt(oAppDataMailWebclientSection.DefaultFontSize, this.DefaultFontSize);
 			this.AlwaysTryUseImageWhilePasting = Types.pBool(oAppDataMailWebclientSection.AlwaysTryUseImageWhilePasting, this.AlwaysTryUseImageWhilePasting);
 			this.AllowHorizontalLineButton = Types.pBool(oAppDataMailWebclientSection.AllowHorizontalLineButton, this.AllowHorizontalLineButton);
+			this.AllowComposePlainText = Types.pBool(oAppDataMailWebclientSection.AllowComposePlainText, this.AllowComposePlainText);
+			this.AllowEditHtmlSource = Types.pBool(oAppDataMailWebclientSection.AllowEditHtmlSource, this.AllowEditHtmlSource);
 			this.JoinReplyPrefixes = Types.pBool(oAppDataMailWebclientSection.JoinReplyPrefixes, this.JoinReplyPrefixes);
 			this.MailsPerPage = Types.pPositiveInt(oAppDataMailWebclientSection.MailsPerPage, this.MailsPerPage);
+			this.AllowChangeStarredMessagesSource = Types.pBool(oAppDataMailWebclientSection.AllowChangeStarredMessagesSource, this.AllowChangeStarredMessagesSource);
+			if (this.AllowChangeStarredMessagesSource) {
+				this.StarredMessagesSource = Types.pEnum(oAppDataMailWebclientSection.StarredMessagesSource, Enums.StarredMessagesSource, Enums.StarredMessagesSource.InboxOnly);
+			}
 			this.MaxMessagesBodiesSizeToPrefetch = Types.pNonNegativeInt(oAppDataMailWebclientSection.MaxMessagesBodiesSizeToPrefetch, this.MaxMessagesBodiesSizeToPrefetch);
 			this.MessageBodyTruncationThreshold = Types.pNonNegativeInt(oAppDataMailWebclientSection.MessageBodyTruncationThreshold, this.MessageBodyTruncationThreshold);
-			
+
 			this.ShowEmailAsTabName = Types.pBool(oAppDataMailWebclientSection.ShowEmailAsTabName, this.ShowEmailAsTabName);
 			this.AllowOtherModulesToReplaceTabsbarHeader = Types.pBool(oAppDataMailWebclientSection.AllowOtherModulesToReplaceTabsbarHeader, this.AllowOtherModulesToReplaceTabsbarHeader);
 			this.AllowShowMessagesCountInFolderList = Types.pBool(oAppDataMailWebclientSection.AllowShowMessagesCountInFolderList, this.AllowShowMessagesCountInFolderList);
@@ -161,6 +178,7 @@ module.exports = {
 			this.MarkMessageSeenWhenAnswerForward = Types.pBool(oAppDataMailWebclientSection.MarkMessageSeenWhenAnswerForward, this.MarkMessageSeenWhenAnswerForward);
 			this.UserLoginPartInAccountDropdown = Types.pBool(oAppDataMailWebclientSection.UserLoginPartInAccountDropdown, this.UserLoginPartInAccountDropdown);
 			this.UseMeRecipientForMessages = Types.pBool(oAppDataMailWebclientSection.UseMeRecipientForMessages, this.UseMeRecipientForMessages);
+			this.ImageResizerOptions = Types.pObject(oAppDataMailWebclientSection.TextEditorImageResizerOptions, this.ImageResizerOptions);
 		}
 		
 		if (!_.isEmpty(oAppDataFetchersSection))
@@ -179,18 +197,15 @@ module.exports = {
 	/**
 	 * Updates new settings values after saving on server.
 	 * 
-	 * @param {number} iMailsPerPage
-	 * @param {boolean} bAllowAutosaveInDrafts
-	 * @param {boolean} bAllowChangeInputDirection
-	 * @param {boolean} bShowMessagesCountInFolderList
+	 * @param {object} parameters 
 	 */
-	update: function (iMailsPerPage, bAllowAutosaveInDrafts, bAllowChangeInputDirection, bShowMessagesCountInFolderList)
+	update: function (parameters)
 	{
-		this.AllowAutosaveInDrafts = Types.pBool(bAllowAutosaveInDrafts, this.AllowAutosaveInDrafts);
-		
-		this.AllowChangeInputDirection = Types.pBool(bAllowChangeInputDirection, this.AllowChangeInputDirection);
-		this.MailsPerPage = Types.pPositiveInt(iMailsPerPage, this.MailsPerPage);
-		this.showMessagesCountInFolderList(Types.pBool(bShowMessagesCountInFolderList, this.showMessagesCountInFolderList()));
+		this.AllowAutosaveInDrafts = Types.pBool(parameters.AllowAutosaveInDrafts, this.AllowAutosaveInDrafts);
+		this.AllowChangeInputDirection = Types.pBool(parameters.AllowChangeInputDirection, this.AllowChangeInputDirection);
+		this.MailsPerPage = Types.pPositiveInt(parameters.MailsPerPage, this.MailsPerPage);
+		this.showMessagesCountInFolderList(Types.pBool(parameters.ShowMessagesCountInFolderList, this.showMessagesCountInFolderList()));
+		this.StarredMessagesSource = Types.pEnum(parameters.StarredMessagesSource, Enums.StarredMessagesSource, Enums.StarredMessagesSource.InboxOnly);
 	},
 	
 	/**

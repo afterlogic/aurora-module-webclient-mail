@@ -95,6 +95,35 @@
 		"If true, Insert Horizontal Line button is added to compose toolbar",
 		"string"
 	],
+	"AllowComposePlainText": [
+		false,
+		"bool"
+	],
+	"AllowComposePlainText_Description": [
+		"If true, Plain Text switcher is added to compose HTML editor",
+		"string"
+	],
+	"AllowEditHtmlSource": [
+		false,
+		"bool"
+	],
+	"AllowEditHtmlSource_Description": [
+		"If true, HTML source code editing is added to HTML editor",
+		"string"
+	],
+	"TextEditorImageResizerOptions": [
+		{	
+			"MAILWEBCLIENT/ACTION_MAKE_IMAGE_SMALL": "300px",
+			"MAILWEBCLIENT/ACTION_MAKE_IMAGE_MEDIUM": "600px",
+			"MAILWEBCLIENT/ACTION_MAKE_IMAGE_LARGE": "1200px",
+			"MAILWEBCLIENT/ACTION_MAKE_IMAGE_ORIGINAL": ""
+		},
+		"array"
+	],
+	"TextEditorImageResizerOptions_Description": [
+		"The list of image size options that can be set for an image in the editor. It's possible to set sizes in pixels and percentages.",
+		"string"
+	],
 	"JoinReplyPrefixes": [
 		true,
 		"bool"
@@ -109,6 +138,14 @@
 	],
 	"MailsPerPage_Description": [
 		"Default number of mail messages displayed per page",
+		"string"
+	],
+	"AllowChangeStarredMessagesSource": [
+		false,
+		"bool"
+	],
+	"AllowChangeStarredMessagesSource_Description": [
+		"If true, starred messages source can be changed. Two possible sources: inbox only and all folders",
 		"string"
 	],
 	"MaxMessagesBodiesSizeToPrefetch": [

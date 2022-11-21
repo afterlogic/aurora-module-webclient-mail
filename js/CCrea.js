@@ -178,12 +178,12 @@ CCrea.prototype.start = function (bEditable)
                 if (isValidURL(sText))
                 {
                     oEvent.preventDefault();
-                    self.execCom('insertHTML', '<a href="' + sText + '">' + sText + '</a>');
+                    self.execCom('insertHTML', '<a href="' + sText + '">' + sText.replaceAll('&', '&amp') + '</a>');
                 }
                 else if (isCorrectEmail(sText))
                 {
                     oEvent.preventDefault();
-                    self.execCom('insertHTML', '<a href="mailto:' + sText + '">' + sText + '</a>');
+                    self.execCom('insertHTML', '<a href="mailto:' + sText + '">' + sText.replaceAll('&', '&amp') + '</a>');
                 }
                 else if (sHtml !== '')
                 {

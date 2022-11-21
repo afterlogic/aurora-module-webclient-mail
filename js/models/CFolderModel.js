@@ -167,6 +167,7 @@ CFolderModel.prototype.removeMessageFromDict = function (sUid)
 	this.aMessagesDictionaryUids = _.without(this.aMessagesDictionaryUids, sUid);
 	this.aRequestedUids = _.without(this.aRequestedUids, sUid);
 	this.aRequestedThreadUids = _.without(this.aRequestedThreadUids, sUid);
+	App.broadcastEvent('%ModuleName%::removeMessageFromDict::after', [this.iAccountId, this.fullName(), sUid]);
 };
 
 /**
@@ -983,7 +984,11 @@ CFolderModel.prototype.initComputedFields = function ()
 		// At the moment the application supports only one type of virtual folders - for starred messages.
 		if (this.bVirtual)
 		{
-			return Routing.buildHashFromArray(LinksUtils.getMailbox(this.fullName(), 1, '', '', Enums.FolderFilter.Flagged));
+			let search = '';
+			if (Settings.AllowChangeStarredMessagesSource && Settings.StarredMessagesSource === Enums.StarredMessagesSource.AllFolders) {
+				search = 'folders:all';
+			}
+			return Routing.buildHashFromArray(LinksUtils.getMailbox(this.fullName(), 1, '', search, Enums.FolderFilter.Flagged));
 		}
 		else
 		{
@@ -1537,6 +1542,7 @@ CFolderModel.prototype.triggerTemplateState = function ()
 
 		var
 			oParameters = {
+				'AccountID': this.iAccountId,
 				'FolderFullName': this.fullName(),
 				'SetTemplate': this.isTemplateStorage()
 			}

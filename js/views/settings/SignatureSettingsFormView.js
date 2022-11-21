@@ -34,7 +34,7 @@ function CSignatureSettingsFormView()
 	this.useSignatureRadio = ko.observable(Enums.UseSignature.Off);
 	this.signature = ko.observable('');
 
-	this.oHtmlEditor = new CHtmlEditorView(true);
+	this.oHtmlEditor = new CHtmlEditorView(true, false);
 	this.oHtmlEditor.textFocused.subscribe(function () {
 		if (this.oHtmlEditor.textFocused())
 		{

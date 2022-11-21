@@ -4,7 +4,7 @@ var
 	_ = require('underscore'),
 	$ = require('jquery'),
 	ko = require('knockout'),
-	
+
 	AddressUtils = require('%PathToCoreWebclientModule%/js/utils/Address.js'),
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
@@ -16,27 +16,31 @@ var
 	
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
 	AlertPopup = require('%PathToCoreWebclientModule%/js/popups/AlertPopup.js'),
+	ConfirmPopup = require('%PathToCoreWebclientModule%/js/popups/ConfirmPopup.js'),
 	
 	CAttachmentModel = require('modules/%ModuleName%/js/models/CAttachmentModel.js'),
 	CCrea = require('modules/%ModuleName%/js/CCrea.js'),
 	MailCache = require('modules/%ModuleName%/js/Cache.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	
-	CColorPickerView = require('modules/%ModuleName%/js/views/CColorPickerView.js')
+	CColorPickerView = require('modules/%ModuleName%/js/views/CColorPickerView.js'),
+	sourceEditor = require('modules/%ModuleName%/js/views/html-editor/SourceEditor.js')
 ;
 
 /**
  * @constructor
  * @param {boolean} bInsertImageAsBase64
+ * @param {boolean} bAllowComposePlainText
  * @param {Object=} oParent
  */
-function CHtmlEditorView(bInsertImageAsBase64, oParent)
+function CHtmlEditorView(bInsertImageAsBase64, bAllowComposePlainText, oParent)
 {
 	this.oParent = oParent;
 	
 	this.creaId = 'creaId' + Math.random().toString().replace('.', '');
 	this.textFocused = ko.observable(false);
 	this.workareaDom = ko.observable();
+	this.plaintextDom = ko.observable();
 	this.uploaderAreaDom = ko.observable();
 	this.editorUploaderBodyDragOver = ko.observable(false);
 	
@@ -65,6 +69,27 @@ function CHtmlEditorView(bInsertImageAsBase64, oParent)
 	this.bAllowFileUpload = !(bInsertImageAsBase64 && window.File === undefined);
 	this.bAllowInsertImage = Settings.AllowInsertImage;
 	this.bAllowHorizontalLineButton = Settings.AllowHorizontalLineButton;
+
+	this.bAllowComposePlainText = bAllowComposePlainText;
+	this.plainTextMode = ko.observable(false);
+	this.changeTextModeTitle = ko.computed(function () {
+		return this.plainTextMode()
+			? TextUtils.i18n('%MODULENAME%/LINK_TURNOFF_PLAINTEXT')
+			: TextUtils.i18n('%MODULENAME%/LINK_TURNON_PLAINTEXT');
+	}, this);
+
+	this.bAllowEditHtmlSource = Settings.AllowEditHtmlSource;
+	this.editSourceMode = ko.observable(false);
+	this.htmlSourceDom = ko.observable();
+	this.htmlSourceDom.subscribe(() => {
+		sourceEditor.setHtmlSourceDom(this.htmlSourceDom());
+	});
+	this.sourceCodeButtonText = ko.computed(() => {
+		return this.editSourceMode()
+			? TextUtils.i18n('%MODULENAME%/ACTION_EDIT_HTML_PREVIEW')
+			: TextUtils.i18n('%MODULENAME%/ACTION_EDIT_HTML_SOURCE_CODE');
+	});
+
 	this.lockFontSubscribing = ko.observable(false);
 	this.bAllowImageDragAndDrop = !Browser.ie10AndAbove;
 
@@ -139,6 +164,15 @@ function CHtmlEditorView(bInsertImageAsBase64, oParent)
 			}
 		}, this));
 	}
+
+	this.imageResizeOptions = [];
+
+	_.each(Settings.ImageResizerOptions, (value, label) => {
+		this.imageResizeOptions.push({
+			label: TextUtils.i18n(label),
+			value: value
+		},);
+	});
 }
 
 CHtmlEditorView.prototype.ViewTemplate = '%ModuleName%_HtmlEditorView';
@@ -148,6 +182,9 @@ CHtmlEditorView.prototype.setInactive = function (bInactive)
 	this.inactive(bInactive);
 	if (this.inactive())
 	{
+		if (this.editSourceMode()) {
+			this.toggleSourceEdit();
+		}
 		this.setPlaceholder();
 	}
 	else
@@ -307,20 +344,8 @@ CHtmlEditorView.prototype.resizeImage = function (sSize)
 		'height': 'auto'
 	};
 	
-	switch (sSize)
-	{
-		case Enums.HtmlEditorImageSizes.Small:
-			oParams.width = '300px';
-			break;
-		case Enums.HtmlEditorImageSizes.Medium:
-			oParams.width = '600px';
-			break;
-		case Enums.HtmlEditorImageSizes.Large:
-			oParams.width = '1200px';
-			break;
-		case Enums.HtmlEditorImageSizes.Original:
-			oParams.width = 'auto';
-			break;
+	if (sSize) {
+		oParams.width = sSize;
 	}
 	
 	this.oCrea.changeCurrentImage(oParams);
@@ -435,10 +460,24 @@ CHtmlEditorView.prototype.init = function (sText, bPlain, sTabIndex, sPlaceholde
 			'onUrlClicked': true
 		});
 		this.oCrea.start(this.isEnable());
+
+		sourceEditor.setOnChangeHandler(() => {
+			this.textChanged(true);
+			this.actualTextChanged.valueHasMutated();
+		});
+	}
+
+	if (this.plaintextDom()) {
+		this.plaintextDom().on('keyup paste', () => {
+			this.textChanged(true);
+			this.actualTextChanged.valueHasMutated();
+		});
 	}
 
 	this.oCrea.setTabIndex(sTabIndex);
 	this.clearUndoRedo();
+	this.editSourceMode(false);
+	sourceEditor.clear();
 	this.setText(sText, bPlain);
 	this.setFontValuesFromText();
 	this.aUploadedImagesData = [];
@@ -569,9 +608,15 @@ CHtmlEditorView.prototype.getPlainText = function ()
  */
 CHtmlEditorView.prototype.getText = function (bRemoveSignatureAnchor)
 {
-	var
-		sText = this.oCrea ? this.oCrea.getText(bRemoveSignatureAnchor) : ''
-	;
+	if (this.plainTextMode()) {
+		return this.plaintextDom() ? this.plaintextDom().val() : '';
+	}
+
+	if (this.editSourceMode() && sourceEditor.isInitialized()) {
+		return sourceEditor.getText();
+	}
+
+	const sText = this.oCrea ? this.oCrea.getText(bRemoveSignatureAnchor) : '';
 	return (this.sPlaceholderText !== '' && this.removeAllTags(sText) === this.sPlaceholderText) ? '' : sText;
 };
 
@@ -585,20 +630,24 @@ CHtmlEditorView.prototype.getEditableArea = function ()
  * @param {string} sText
  * @param {boolean} bPlain
  */
-CHtmlEditorView.prototype.setText = function (sText, bPlain)
+CHtmlEditorView.prototype.setText = function (sText, bPlain = null)
 {
-	if (this.oCrea && !this.disableEdit())
-	{
-		if (bPlain)
-		{
-			this.oCrea.setPlainText(sText);
+	if (this.oCrea && !this.disableEdit()) {
+		if (bPlain !== null) {
+			this.plainTextMode(!!bPlain);
 		}
-		else
-		{
+		if (this.plainTextMode()) {
+			if (sText.indexOf('<br') !== -1 || sText.indexOf('<div') !== -1 || sText.indexOf('<span') !== -1) {
+				sText = TextUtils.htmlToPlain(sText);
+			}
+			this.plaintextDom().val(sText);
+		} else {
+			if (sText.indexOf('<br') === -1 && sText.indexOf('<div') === -1 && sText.indexOf('<span') === -1) {
+				sText = TextUtils.plainToHtml(sText);
+			}
 			this.oCrea.setText(sText);
 		}
-		if (this.inactive() && sText === '')
-		{
+		if (this.inactive() && sText === '') {
 			this.setPlaceholder();
 		}
 	}
@@ -1258,6 +1307,52 @@ CHtmlEditorView.prototype.setLtrDirection = function ()
 		this.oCrea.setLtrDirection();
 	}
 	return false;
+};
+
+/**
+ * Changes text mode - html or plain text.
+ */
+CHtmlEditorView.prototype.changeTextMode = function ()
+{
+	const changeTextModeHandler = () => {
+		if (this.plainTextMode()) {
+			const plainText = '<div>' + TextUtils.plainToHtml(this.getText()) + '</div>';
+			this.setText(plainText, false);
+		} else {
+			this.setText(this.getPlainText(), true);
+		}
+	};
+
+	if (this.plainTextMode()) {
+		changeTextModeHandler();
+	} else {
+		const confirmText = TextUtils.i18n('%MODULENAME%/CONFIRM_HTML_TO_PLAIN_FORMATTING');
+		Popups.showPopup(ConfirmPopup, [confirmText, function (changeConfirmed) {
+			if (changeConfirmed) {
+				changeTextModeHandler();
+			}
+		}]);
+	}
+};
+
+/**
+ * Turns on/off plain text mode.
+ * @param {boolean} bPlainTextMode
+ */
+CHtmlEditorView.prototype.setPlainTextMode = function (bPlainTextMode)
+{
+	this.plainTextMode(bPlainTextMode);
+};
+
+CHtmlEditorView.prototype.toggleSourceEdit = function ()
+{
+	if (this.editSourceMode()) {
+		this.setText(sourceEditor.getText());
+		this.editSourceMode(false);
+	} else {
+		sourceEditor.setText(this.getText());
+		this.editSourceMode(true);
+	}
 };
 
 module.exports = CHtmlEditorView;
