@@ -1,25 +1,5 @@
 'use strict';
 
-function AddQuotaSettingsView(Settings, ModulesManager, TextUtils)
-{
-	if (Settings.AllowChangeMailQuotaOnMailServer)
-	{
-		ModulesManager.run('AdminPanelWebclient', 'registerAdminPanelTab', [
-			function(resolve) {
-				require.ensure(
-					['modules/%ModuleName%/js/views/settings/MailQuotaAdminSettingsFormView.js'],
-					function() {
-						resolve(require('modules/%ModuleName%/js/views/settings/MailQuotaAdminSettingsFormView.js'));
-					},
-					'admin-bundle'
-				);
-			},
-			Settings.HashModuleName + '-quota',
-			TextUtils.i18n('%MODULENAME%/LABEL_SETTINGS_TAB')
-		]);
-	}
-}
-
 module.exports = function (oAppData) {
 	require('modules/%ModuleName%/js/enums.js');
 
@@ -27,14 +7,10 @@ module.exports = function (oAppData) {
 		_ = require('underscore'),
 		ko = require('knockout'),
 
-		TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
-
 		App = require('%PathToCoreWebclientModule%/js/App.js'),
 		ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 
 		Settings = require('modules/%ModuleName%/js/Settings.js'),
-
-		bAdminUser = App.getUserRole() === Enums.UserRole.SuperAdmin,
 
 		AccountList = null,
 		ComposeView = null,
@@ -51,47 +27,7 @@ module.exports = function (oAppData) {
 
 	AccountList = require('modules/MailWebclient/js/AccountList.js');
 
-	if (bAdminUser)
-	{
-		return {
-			start: function (ModulesManager) {
-				ModulesManager.run('AdminPanelWebclient', 'registerAdminPanelTab', [
-					function(resolve) {
-						require.ensure(
-							['modules/%ModuleName%/js/views/settings/ServersAdminSettingsPaneView.js'],
-							function() {
-								resolve(require('modules/%ModuleName%/js/views/settings/ServersAdminSettingsPaneView.js'));
-							},
-							'admin-bundle'
-						);
-					},
-					Settings.HashModuleName + '-servers',
-					TextUtils.i18n('%MODULENAME%/LABEL_SERVERS_SETTINGS_TAB')
-				]);
-				ModulesManager.run('AdminPanelWebclient', 'registerAdminPanelTab', [
-					function(resolve) {
-						require.ensure(
-							['modules/%ModuleName%/js/views/settings/MailAdminSettingsFormView.js'],
-							function() {
-								resolve(require('modules/%ModuleName%/js/views/settings/MailAdminSettingsFormView.js'));
-							},
-							'admin-bundle'
-						);
-					},
-					Settings.HashModuleName,
-					TextUtils.i18n('%MODULENAME%/LABEL_SETTINGS_TAB')
-				]);
-				AddQuotaSettingsView(Settings, ModulesManager, TextUtils);
-			},
-			getAccountList: function () {
-				return AccountList;
-			},
-			disableEditDomainsInServer: function () {
-				Settings.disableEditDomainsInServer();
-			}
-		};
-	}
-	else if (App.isUserNormalOrTenant())
+	if (App.isUserNormalOrTenant())
 	{
 		var Cache = require('modules/%ModuleName%/js/Cache.js');
 		Cache.init();
@@ -308,11 +244,6 @@ module.exports = function (oAppData) {
 							Settings.userMailAccountsCount(aAuthAcconts.length);
 							Settings.mailAccountsEmails(aAuthAccountsEmails);
 						}, this);
-
-						if (App.getUserRole() === Enums.UserRole.TenantAdmin)
-						{
-							AddQuotaSettingsView(Settings, ModulesManager, TextUtils);
-						}
 					},
 					getScreens: function () {
 						var oScreens = {};
