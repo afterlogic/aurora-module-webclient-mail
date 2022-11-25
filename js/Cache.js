@@ -982,6 +982,7 @@ CMailCache.prototype.onClearFolder = function (oFolder)
 		var oUidList = (oFolder) ? oFolder.getUidList(this.uidList().search(), this.uidList().filters(), this.uidList().sortBy(), this.uidList().sortOrder()) : null;
 		if (oUidList)
 		{
+			oUidList.resultCount(0);
 			this.uidList(oUidList);
 		}
 		else
