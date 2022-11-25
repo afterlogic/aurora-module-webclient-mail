@@ -40,6 +40,10 @@ SendingUtils.setReplyData = function (sText, sDraftUid)
 	this.sReplyDraftUid = sDraftUid;
 };
 
+function getLongUid(parameters) {
+	return `${parameters.AccountID}:${parameters.DraftFolder}:${parameters.DraftUid}`;
+}
+
 /**
  * @param {string} sMethod
  * @param {Object} oParameters
@@ -89,12 +93,12 @@ SendingUtils.send = function (sMethod, oParameters, bShowLoading, fSendMessageRe
 					if (MainTab)
 					{
 						MainTab.removeOneMessageFromCacheForFolder(oParameters.AccountID, oParameters.DraftFolder, oParameters.DraftUid);
-						MainTab.replaceHashWithoutMessageUid(oParameters.DraftUid);
+						MainTab.replaceHashWithoutMessageUid(getLongUid(oParameters));
 					}
 					else
 					{
 						MailCache.removeOneMessageFromCacheForFolder(oParameters.AccountID, oParameters.DraftFolder, oParameters.DraftUid);
-						Routing.replaceHashWithoutMessageUid(oParameters.DraftUid);
+						Routing.replaceHashWithoutMessageUid(getLongUid(oParameters));
 					}
 				}
 			}
@@ -117,12 +121,12 @@ SendingUtils.send = function (sMethod, oParameters, bShowLoading, fSendMessageRe
 			if (MainTab)
 			{
 				MainTab.startMessagesLoadingWhenDraftSaving(oParameters.AccountID, oParameters.DraftFolder);
-				MainTab.replaceHashWithoutMessageUid(oParameters.DraftUid);
+				MainTab.replaceHashWithoutMessageUid(getLongUid(oParameters));
 			}
 			else
 			{
 				MailCache.startMessagesLoadingWhenDraftSaving(oParameters.AccountID, oParameters.DraftFolder);
-				Routing.replaceHashWithoutMessageUid(oParameters.DraftUid);
+				Routing.replaceHashWithoutMessageUid(getLongUid(oParameters));
 			}
 			break;
 	}
@@ -166,12 +170,12 @@ SendingUtils.sendPostponedMail = function (sDraftUid)
 		if (MainTab)
 		{
 			MainTab.removeOneMessageFromCacheForFolder(oParameters.AccountID, oParameters.DraftFolder, oParameters.DraftUid);
-			MainTab.replaceHashWithoutMessageUid(oParameters.DraftUid);
+			MainTab.replaceHashWithoutMessageUid(getLongUid(oParameters));
 		}
 		else
 		{
 			MailCache.removeOneMessageFromCacheForFolder(oParameters.AccountID, oParameters.DraftFolder, oParameters.DraftUid);
-			Routing.replaceHashWithoutMessageUid(oParameters.DraftUid);
+			Routing.replaceHashWithoutMessageUid(getLongUid(oParameters));
 		}
 	}
 	
