@@ -88,9 +88,14 @@ CAttachmentModel.prototype.copyProperties = function (oSource)
 	this.thumbnailLoaded(oSource.thumbnailLoaded());
 	this.statusText(oSource.statusText());
 	this.uploaded(oSource.uploaded());
-	this.oActionsData = oSource.oActionsData;
-	this.actions(oSource.actions());
+	const newActionsData = {};
+	this.oActionsData = Object.assign(newActionsData, oSource.oActionsData);
+	this.actions([...oSource.actions()]);
 	this.thumbUrlInQueue(oSource.thumbUrlInQueue());
+	this.subFilesExpanded(oSource.subFilesExpanded());
+	this.subFiles([...oSource.subFiles()]);
+
+	App.broadcastEvent('%ModuleName%::CopyFileProperties::after', { file: this, source: oSource });
 };
 
 /**
