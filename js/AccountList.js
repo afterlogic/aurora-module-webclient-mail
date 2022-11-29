@@ -496,7 +496,7 @@ CAccountListModel.prototype.onGetIdentitiesResponse = function (oResponse, oRequ
 			Email: oAccount.email(),
 			FriendlyName: oAccount.friendlyName(),
 			IdAccount: oAccount.id(),
-			EntityId: oAccount.id() * 100000,
+			EntityId: 0, // default identity id
 			Signature: oAccount.signature(),
 			UseSignature: oAccount.useSignature()
 		});
