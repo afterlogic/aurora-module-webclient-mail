@@ -933,6 +933,7 @@ CMailCache.prototype.requestMessageList = function (sFolder, iPage, sSearch, sFi
 		if (oParameters.Folder === this.oUnifiedInbox.fullName())
 		{
 			delete oParameters.Folder;
+			delete oParameters.AccountID;
 			Ajax.send('GetUnifiedMailboxMessages', oParameters, fCallBack, this);
 		}
 		else if (this.isSearchInMultiFolders(oParameters.Search))
