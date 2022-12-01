@@ -101,7 +101,7 @@ module.exports = {
 				}
 			}
 		;
-		if (oParameters && !oParameters.AccountID && oRequest.Method !== "GetUnifiedMailboxMessages")
+		if (oParameters && !oParameters.AccountID && sMethod !== "GetUnifiedMailboxMessages")
 		{
 			oParameters.AccountID = MailCache.currentAccountId();
 		}
