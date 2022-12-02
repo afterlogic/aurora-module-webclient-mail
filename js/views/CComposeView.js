@@ -948,7 +948,7 @@ CComposeView.prototype.onMessageResponse = function (oMessage)
 			case 'drafts':
 				if (-1 !== $.inArray(oMessage.folder(), MailCache.getCurrentTemplateFolders()))
 				{
-					this.templateUid(oMessage.longUid());
+					this.templateUid(oMessage.uid());
 					this.templateFolderName(oMessage.folder());
 				}
 				else
