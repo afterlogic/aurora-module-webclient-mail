@@ -260,7 +260,7 @@ function CMessagePaneView()
 		this.allAttachmentsDownloadMethods.push(oMethod);
 	}, this));
 
-	this.detailsVisible = ko.observable(Storage.getData('MessageDetailsVisible') === '1');
+	this.detailsVisible = ko.observable(Storage.getData('aurora_mail_is-message-details-visible'));
 	this.detailsTooltip = ko.computed(function () {
 		return this.detailsVisible() ? TextUtils.i18n('COREWEBCLIENT/ACTION_HIDE_DETAILS') : TextUtils.i18n('COREWEBCLIENT/ACTION_SHOW_DETAILS');
 	}, this);
@@ -1059,7 +1059,7 @@ CMessagePaneView.prototype.showSourceHeaders = function ()
 CMessagePaneView.prototype.switchDetailsVisibility = function ()
 {
 	this.detailsVisible(!this.detailsVisible());
-	Storage.setData('MessageDetailsVisible', this.detailsVisible() ? '1' : '0');
+	Storage.setData('aurora_mail_is-message-details-visible', this.detailsVisible());
 };
 
 /**

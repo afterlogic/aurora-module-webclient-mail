@@ -134,7 +134,7 @@ MailUtils.isAvailableRegisterMailto = function ()
 
 MailUtils.registerMailto = function (bRegisterOnce)
 {
-	if (MailUtils.isAvailableRegisterMailto() && (!bRegisterOnce || Storage.getData('MailtoAsked') !== true))
+	if (MailUtils.isAvailableRegisterMailto() && (!bRegisterOnce || Storage.getData('aurora_mail_is-mailto-asked') !== true))
 	{
 		window.navigator.registerProtocolHandler(
 			'mailto',
@@ -142,7 +142,7 @@ MailUtils.registerMailto = function (bRegisterOnce)
 			UserSettings.SiteName !== '' ? UserSettings.SiteName : 'WebMail'
 		);
 
-		Storage.setData('MailtoAsked', true);
+		Storage.setData('aurora_mail_is-mailto-asked', true);
 	}
 };
 

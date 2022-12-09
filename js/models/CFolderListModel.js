@@ -22,8 +22,6 @@ function CFolderListModel()
 	this.iAccountId = 0;
 	this.initialized = ko.observable(false);
 
-	this.bExpandFolders = false;
-	this.expandNames = ko.observableArray([]);
 	this.collection = ko.observableArray([]);
 	this.options = ko.observableArray([]);
 	this.sNamespaceFolder = '';
@@ -238,6 +236,23 @@ CFolderListModel.prototype.changeTemplateFolder = function (sFolderName, bTempla
 	}
 };
 
+CFolderListModel.prototype.expandFolders = function ()
+{
+	const expandedFoldersStorageKey = `aurora_mail_account_${this.iAccountId}_expanded-folders`;
+	let expandedFolders = [];
+	if (Settings.FoldersExpandedByDefault && !Storage.hasData(expandedFoldersStorageKey)) {
+		expandedFolders = this.aLinedCollection.filter(folder => folder.subfolders().length > 0);
+	} else if (Storage.hasData(expandedFoldersStorageKey)) {
+		expandedFolders = Storage.getData(expandedFoldersStorageKey)
+				.map(folderFullName => this.oNamedCollection[folderFullName])
+				.filter(folder => !!folder);
+	}
+	expandedFolders.forEach(folder => {
+		folder.expanded(true);
+	});
+	Storage.setData(expandedFoldersStorageKey, expandedFolders.map(folder => folder.name()));
+};
+
 /**
  * Calls a recursive parsing of the folder tree.
  * 
@@ -259,15 +274,10 @@ CFolderListModel.prototype.parse = function (iAccountId, oData, oNamedFolderList
 	this.iAccountId = iAccountId;
 	this.initialized(true);
 
-	this.bExpandFolders = Settings.FoldersExpandedByDefault && !Storage.hasData('folderAccordion');
-	if (!Storage.hasData('folderAccordion'))
-	{
-		Storage.setData('folderAccordion', []);
-	}
-	
 	this.oNamedCollection = {};
 	this.aLinedCollection = [];
 	this.collection(this.parseRecursively(aCollection, oNamedFolderListOld));
+	this.expandFolders();
 };
 
 /**
@@ -329,12 +339,6 @@ CFolderListModel.prototype.parseRecursively = function (aRawCollection, oNamedFo
 			
 			// Remove from the old folder list reference to the folder. The remaining folders will be destroyed.
 			delete oNamedFolderListOld[sFolderFullName];
-
-			if (this.bExpandFolders && oSubFolders !== null)
-			{
-				oFolder.expanded(true);
-				this.expandNames().push(Types.pString(aRawCollection[iIndex].Name));
-			}
 
 			oFolder.setDisplayedLevel(iLevel);
 
@@ -410,11 +414,6 @@ CFolderListModel.prototype.parseRecursively = function (aRawCollection, oNamedFo
 			{
 				oFolder.subfolders([]);
 			}
-		}
-
-		if (this.bExpandFolders)
-		{
-			Storage.setData('folderAccordion', this.expandNames());
 		}
 	}
 

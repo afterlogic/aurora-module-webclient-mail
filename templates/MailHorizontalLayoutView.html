@@ -1,11 +1,11 @@
 <div class="screen MailLayout" style="display: none;">
-	<div class="panels" data-bind="splitterFlex: { name: 'folder_2pane_list', sizes: [20, 80] }">
+	<div class="panels" data-bind="splitterFlex: { storagePrefix: 'aurora_mail_hr_folders_', sizes: [20, 80] }">
 		<div class="panel left_panel folders_panel">
 			<div class="panel_content">
 				<!-- ko template: {name: oFolderList.ViewTemplate, data: oFolderList} --><!-- /ko -->
 			</div>
 		</div>
-		<div class="horiz_split_panel" data-bind="splitterFlex: { name: 'message_2pane_list', sizes: [40, 60], direction: 'vertical' }">
+		<div class="horiz_split_panel" data-bind="splitterFlex: { storagePrefix: 'aurora_mail_hr_messages_', sizes: [40, 60], direction: 'vertical' }">
 			<div class="panel center_panel messages_panel">
 				<div class="panel_content">
 					<!-- ko template: { name: '%ModuleName%_Messages_ToolbarView' } --><!-- /ko -->

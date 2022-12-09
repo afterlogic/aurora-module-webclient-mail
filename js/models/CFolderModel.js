@@ -883,8 +883,7 @@ CFolderModel.prototype.parse = function (oData, sParentFullName, sNamespaceFolde
 {
 	var
 		sName = '',
-		iType = Enums.FolderTypes.User,
-		aFolders = Storage.getData('folderAccordion') || []
+		iType = Enums.FolderTypes.User
 	;
 
 	if (oData['@Object'] === 'Object/Folder')
@@ -920,11 +919,6 @@ CFolderModel.prototype.parse = function (oData, sParentFullName, sNamespaceFolde
 		{
 			this.setRelevantInformation(oData.Extended.UidNext.toString(), oData.Extended.Hash, 
 				oData.Extended.MessageCount, oData.Extended.MessageUnseenCount, false);
-		}
-
-		if (_.find(aFolders, function (sFolder) { return sFolder === this.name(); }, this))
-		{
-			this.expanded(true);
 		}
 
 		this.initSubscriptions(sParentFullName);
@@ -1342,13 +1336,14 @@ CFolderModel.prototype.clearFolder = function (bOkAnswer)
 CFolderModel.prototype.onAccordion = function (oFolder, oEvent)
 {
 	var
+		expandedFoldersStorageKey = `aurora_mail_account_${this.iAccountId}_expanded-folders`,
 		bExpanded = !this.expanded(),
-		aFolders = Storage.getData('folderAccordion') || []
+		aFolders = Storage.getData(expandedFoldersStorageKey) || []
 	;
 
 	if (bExpanded)
 	{
-		aFolders.push(this.name());
+		aFolders.push(this.fullName());
 	}
 	else
 	{
@@ -1356,7 +1351,7 @@ CFolderModel.prototype.onAccordion = function (oFolder, oEvent)
 		aFolders = _.reject(aFolders, function (sFolder) { return sFolder === this.name(); }, this);
 	}
 
-	Storage.setData('folderAccordion', aFolders);
+	Storage.setData(expandedFoldersStorageKey, aFolders);
 	this.expanded(bExpanded);
 
 	this.requireMailCache();
