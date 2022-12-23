@@ -597,7 +597,7 @@ CMessageModel.prototype.getDomText = function (sAppPath, bForcedShowPictures)
 			this.showInlinePictures(sAppPath);
 			if (this.safety() === true)
 			{
-				this.alwaysShowExternalPicturesForSender();
+				this.alwaysShowExternalPicturesForSender(bForcedShowPictures);
 			}
 			else if (bForcedShowPictures && this.isExternalsShown() || this.isExternalsAlwaysShown())
 			{
@@ -705,11 +705,12 @@ CMessageModel.prototype.showExternalPictures = function ()
 
 /**
  * Sets a flag that external images are always displayed.
+ * @param {boolean} bForcedShowPictures
  */
-CMessageModel.prototype.alwaysShowExternalPicturesForSender = function ()
+CMessageModel.prototype.alwaysShowExternalPicturesForSender = function (bForcedShowPictures = false)
 {
 	this.isExternalsAlwaysShown(true);
-	if (this.completelyFilled() && !this.isExternalsShown())
+	if (this.completelyFilled() && (bForcedShowPictures || !this.isExternalsShown()))
 	{
 		this.showExternalPictures();
 	}
