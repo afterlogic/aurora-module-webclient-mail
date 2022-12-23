@@ -637,12 +637,12 @@ CHtmlEditorView.prototype.setText = function (sText, bPlain = null)
 			this.plainTextMode(!!bPlain);
 		}
 		if (this.plainTextMode()) {
-			if (sText.indexOf('<br') !== -1 || sText.indexOf('<div') !== -1 || sText.indexOf('<span') !== -1) {
+			if (TextUtils.isHtml(sText)) {
 				sText = TextUtils.htmlToPlain(sText);
 			}
 			this.plaintextDom().val(sText);
 		} else {
-			if (sText.indexOf('<br') === -1 && sText.indexOf('<div') === -1 && sText.indexOf('<span') === -1) {
+			if (!TextUtils.isHtml(sText)) {
 				sText = TextUtils.plainToHtml(sText);
 			}
 			this.oCrea.setText(sText);
