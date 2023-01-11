@@ -112,7 +112,7 @@
 		"string"
 	],
 	"TextEditorImageResizerOptions": [
-		{	
+		{
 			"MAILWEBCLIENT/ACTION_MAKE_IMAGE_SMALL": "300px",
 			"MAILWEBCLIENT/ACTION_MAKE_IMAGE_MEDIUM": "600px",
 			"MAILWEBCLIENT/ACTION_MAKE_IMAGE_LARGE": "1200px",
