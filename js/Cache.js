@@ -569,7 +569,7 @@ CMailCache.prototype.getMessagesWithThreads = function (sFolderFullName, oUidLis
 	if (oCurrFolder && (sFolderFullName === oCurrFolder.fullName() || this.oUnifiedInbox.selected() && sFolderFullName === 'INBOX') && this.useThreadingInCurrentList(oUidList))
 	{
 		aMessages = _.filter(aOrigMessages, function (oMess) {
-			return !oMess.threadPart();
+			return !!(oMess && oMess.threadPart) && !oMess.threadPart();
 		});
 
 		_.each(aMessages, function (oMess) {
@@ -605,7 +605,7 @@ CMailCache.prototype.setMessagesFromUidList = function (oUidList, iOffset, bFill
 	var
 		iLimit = bFillMessages ? this.limit() : Settings.MailsPerPage,
 		aUids = oUidList.getUidsForOffset(iOffset, iLimit),
-		aMessages = _.map(aUids, function (sUid) {
+		aMessages = _.compact(_.map(aUids, function (sUid) {
 			var
 				iAccountId = oUidList.iAccountId,
 				sFullName = oUidList.sFullName;
@@ -618,7 +618,7 @@ CMailCache.prototype.setMessagesFromUidList = function (oUidList, iOffset, bFill
 				sUid = aParts[1];
 			}
 			return MessagesDictionary.get([iAccountId, sFullName, sUid]);
-		}, this),
+		}, this)),
 		iMessagesCount = aMessages.length
 	;
 	
