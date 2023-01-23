@@ -185,6 +185,7 @@ CCrea.prototype.start = function (bEditable)
                     oEvent.preventDefault();
                     self.execCom('insertHTML', '<a href="mailto:' + sText + '">' + sText.replaceAll('&', '&amp') + '</a>');
                 }
+/* Removed to fix the bug - tables from Excel are pasted with incorrect formatting
                 else if (sHtml !== '')
                 {
                     oEvent.preventDefault();
@@ -197,6 +198,7 @@ CCrea.prototype.start = function (bEditable)
 
                     self.execCom('insertHTML', sHtml);
                 }
+*/
             }
         }
     });

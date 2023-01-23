@@ -80,7 +80,7 @@
 		"string"
 	],
 	"AlwaysTryUseImageWhilePasting": [
-		true,
+		false,
 		"bool"
 	],
 	"AlwaysTryUseImageWhilePasting_Description": [
