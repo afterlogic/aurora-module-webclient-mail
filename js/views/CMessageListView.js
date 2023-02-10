@@ -45,13 +45,13 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 	this.bVisibleSortByTool = Settings.MessagesSortBy.Allow && Settings.MessagesSortBy.List.length > 0;
 	this.sSortBy = Settings.MessagesSortBy.DefaultSortBy;
 	this.iSortOrder = Settings.MessagesSortBy.DefaultSortOrder;
+	this.sortBy = ko.observable(Settings.MessagesSortBy.DefaultSortBy);
+	this.sortOrder = ko.observable(Settings.MessagesSortBy.DefaultSortOrder);
 	this.aSortList = [];
 	_.each(Settings.MessagesSortBy.List, function (oItem) {
 		this.aSortList.push({
 			sText: TextUtils.i18n('%MODULENAME%/' + oItem.LangConst),
-			sSortBy: oItem.SortBy,
-			sortOrder: ko.observable(Settings.MessagesSortBy.DefaultSortBy),
-			selected: ko.observable(oItem.SortBy === Settings.MessagesSortBy.DefaultSortOrder)
+			sSortBy: oItem.SortBy
 		});
 	}.bind(this));
 
@@ -345,7 +345,7 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 		
 		if (!this.pageSwitcherLocked())
 		{
-			this.changeRoutingForMessageList(sFolder, iPage, sUid, sSearch, this.filters(), this.sSortBy, this.iSortOrder);
+			this.changeRoutingForMessageList(sFolder, iPage, sUid, sSearch, this.filters(), this.sortBy(), this.sortOrder());
 		}
 	}, this);
 	this.currentPage = ko.observable(0);
@@ -611,17 +611,8 @@ CMessageListView.prototype.onRoute = function (aParams)
 	this.searchSpan.notifySubscribers();
 	this.sSortBy = oParams.SortBy;
 	this.iSortOrder = oParams.SortOrder;
-	_.each(this.aSortList, function (oSortData) {
-		if (oSortData.sSortBy === this.sSortBy)
-		{
-			oSortData.selected(true);
-			oSortData.sortOrder(this.iSortOrder);
-		}
-		else
-		{
-			oSortData.selected(false);
-		}
-	}.bind(this));
+	this.sortBy(oParams.SortBy);
+	this.sortOrder(oParams.SortOrder);
 
 	this.setCurrentFolder();
 	
@@ -668,7 +659,7 @@ CMessageListView.prototype.requestMessageList = function ()
 	
 	if (sFullName.length > 0)
 	{
-		MailCache.changeCurrentMessageList(sFullName, iPage, this.search(), this.filters(), this.sSortBy, this.iSortOrder);
+		MailCache.changeCurrentMessageList(sFullName, iPage, this.search(), this.filters(), this.sortBy(), this.sortOrder());
 	}
 	else
 	{
@@ -767,7 +758,7 @@ CMessageListView.prototype.onClearSearchClick = function ()
 	;
 
 	this.clearAdvancedSearch();
-	this.changeRoutingForMessageList(sFolder, iPage, sUid, sSearch, this.filters(), this.sSortBy, this.iSortOrder);
+	this.changeRoutingForMessageList(sFolder, iPage, sUid, sSearch, this.filters(), this.sortBy(), this.sortOrder());
 };
 
 CMessageListView.prototype.onClearFilterClick = function ()
@@ -781,7 +772,7 @@ CMessageListView.prototype.onClearFilterClick = function ()
 	;
 
 	this.clearAdvancedSearch();
-	this.changeRoutingForMessageList(sFolder, iPage, sUid, sSearch, sFilters, this.sSortBy, this.iSortOrder);
+	this.changeRoutingForMessageList(sFolder, iPage, sUid, sSearch, sFilters, this.sortBy(), this.sortOrder());
 };
 
 CMessageListView.prototype.onStopSearchClick = function ()
@@ -823,7 +814,7 @@ CMessageListView.prototype.routeForMessage = function (oMessage)
 			}
 			else
 			{
-				this.changeRoutingForMessageList(sFolder, iPage, sUid, sSearch, this.filters(), this.sSortBy, this.iSortOrder);
+				this.changeRoutingForMessageList(sFolder, iPage, sUid, sSearch, this.filters(), this.sortBy(), this.sortOrder());
 				if (App.isMobile() && MailCache.currentMessage() && sUid === MailCache.currentMessage().longUid())
 				{
 					MailCache.currentMessage.valueHasMutated();
@@ -1081,28 +1072,22 @@ CMessageListView.prototype.executeNotSpam = function ()
 
 CMessageListView.prototype.executeSort = function (sSortBy)
 {
-	_.each(this.aSortList, function (oSortData) {
-		if (oSortData.sSortBy === sSortBy)
-		{
-			if (oSortData.selected())
-			{
-				oSortData.sortOrder(oSortData.sortOrder() === Enums.SortOrder.Asc ? Enums.SortOrder.Desc : Enums.SortOrder.Asc);
-			}
-			oSortData.selected(true);
-			var
-				sFolder = MailCache.getCurrentFolderFullname(),
-				iPage = this.oPageSwitcher.currentPage(),
-				sUid = '',
-				sSearch = this.search()
-			;
-			
-			this.changeRoutingForMessageList(sFolder, iPage, sUid, sSearch, this.filters(), oSortData.sSortBy, oSortData.sortOrder());
-		}
-		else
-		{
-			oSortData.selected(false);
-		}
-	}.bind(this));
+	const sCurrentSort = this.sortBy();
+	this.sortBy(sSortBy);
+
+	if (sCurrentSort === sSortBy) {
+		this.sortOrder(this.sortOrder() === Enums.SortOrder.Asc ? Enums.SortOrder.Desc : Enums.SortOrder.Asc); // Asc: 0, Desc: 1
+	} else {
+		this.sortOrder(Settings.MessagesSortBy.DefaultSortOrder);
+	}
+
+	const
+		sFolder = MailCache.getCurrentFolderFullname(),
+		iPage = this.oPageSwitcher.currentPage(),
+		sUid = ''
+	;
+
+	this.changeRoutingForMessageList(sFolder, iPage, sUid, this.search(), this.filters(), this.sortBy(), this.sortOrder());
 };
 
 CMessageListView.prototype.clearAdvancedSearch = function ()

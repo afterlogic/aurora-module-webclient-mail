@@ -1,15 +1,15 @@
-<span class="item sort" data-bind="dropdown: {control: false},
+<span class="item sort" data-bind="dropdown: {control: false}, css: {'sort_asc': messageList().sortOrder() === Enums.SortOrder.Asc, 'sort_desc': messageList().sortOrder() === Enums.SortOrder.Desc},
 		customTooltip: 'COREWEBCLIENT/ACTION_SORT_BY', visible: messageList().bVisibleSortByTool">
 	<span class="icon"></span>
 	<span class="text" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_SORT_BY'}"></span>
-	<span class="icon arrow"></span>
 	<span class="dropdown">
 		<span class="dropdown_helper">
 			<span class="dropdown_arrow"><span></span></span>
 			<span class="dropdown_content" data-bind="foreach: messageList().aSortList">
-				<span class="item" data-bind="click: function () { $parent.messageList().executeSort(sSortBy); }, css: {'selected': selected}">
+				<span class="item" data-bind="click: function () { $parent.messageList().executeSort(sSortBy); }, css: {'selected': $parent.messageList().sortBy() === sSortBy}">
 					<span data-bind="text: sText"></span>
-					<span class="sort-order-icon" data-bind="visible: selected(), css: {'sort-order-desc-icon': sortOrder() === Enums.SortOrder.Desc}"></span>
+					<span class="sort-order-icon" data-bind="visible: $parent.messageList().sortBy() === sSortBy, 
+						css: {'sort-order-desc-icon': $parent.messageList().sortOrder() === Enums.SortOrder.Desc}"></span>
 				</span>
 			</span>
 		</span>
