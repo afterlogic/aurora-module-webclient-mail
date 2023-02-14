@@ -30,11 +30,6 @@ Enums.FolderTypes = {
 	'AllInboxes': 11
 };
 
-Enums.SortOrder = {
-	'Asc': 0,
-	'Desc': 1
-};
-
 Enums.SearchFoldersMode = {
 	Current: '',
 	Sub: 'sub',
