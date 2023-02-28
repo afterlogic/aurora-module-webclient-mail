@@ -12,29 +12,29 @@
 					<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ATTACH_FROM_FILES'}"></span>
 				</span>
 				{%INCLUDE-START/Compose-Attach-Buttons/INCLUDE-END%}
+				<div class="attachments_info" data-bind="visible: notInlineAttachments().length > 0">
+					<div>
+						<span data-bind="i18n: {'key': '%MODULENAME%/INFO_ATTACHMENTS_SIZE'}"
+							  class="attachments_info_label"
+						></span>
+						<span data-bind="text: notInlineAttachmentsSize"
+							  class="attachments_info_value"
+						></span>
+					</div>
+					<div>
+						<span data-bind="i18n: {'key': '%MODULENAME%/INFO_ATTACHMENTS_NUMBER'}"
+							  class="attachments_info_label"
+						></span>
+						<span data-bind="text: notInlineAttachments().length"
+							  class="attachments_info_value"
+						></span>
+					</div>
+				</div>
 			</div>
 			<div class="panel_center" data-bind="customScrollbar: {x: false}">
 				<div class="scroll-inner">
 					<div class="items_list">
 						<span class="list_notification" data-bind="i18n: {'key': '%MODULENAME%/INFO_TO_ATTACH_DRAGNDROP'}, visible: allowDragNDrop() && notInlineAttachments().length === 0"></span>
-						<div class="attachments_info" data-bind="visible: notInlineAttachments().length > 0">
-							<div>
-								<span data-bind="i18n: {'key': '%MODULENAME%/INFO_ATTACHMENTS_SIZE'}"
-									  class="attachments_info_label"
-								></span>
-								<span data-bind="text: notInlineAttachmentsSize"
-									  class="attachments_info_value"
-								></span>
-							</div>
-							<div>
-								<span data-bind="i18n: {'key': '%MODULENAME%/INFO_ATTACHMENTS_NUMBER'}"
-									  class="attachments_info_label"
-								></span>
-								<span data-bind="text: notInlineAttachments().length"
-									  class="attachments_info_value"
-								></span>
-							</div>
-						</div>
 						<div class="attachments_container" data-bind="template: {name: 'CoreWebclient_FileView', foreach: notInlineAttachments}"></div>
 					</div>
 				</div>
