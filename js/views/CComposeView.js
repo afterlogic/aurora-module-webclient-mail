@@ -297,6 +297,16 @@ function CComposeView()
 	this.notInlineAttachments.subscribe(function () {
 		$html.toggleClass('screen-compose-attachments', this.notInlineAttachments().length > 0);
 	}, this);
+	this.notInlineAttachmentsSize = ko.computed(() => {
+		const totalSize = this.notInlineAttachments().reduce(
+			(accumulator, attachment) => accumulator + attachment.size(),
+			0
+		);
+		const base64Coefficient = 4 / 3;
+		const lineEndingsCoefficient = 78 / 76;
+		const estimatedTotalSize = Math.round(totalSize * base64Coefficient * lineEndingsCoefficient);
+		return TextUtils.getFriendlySize(estimatedTotalSize);
+	});
 
 	this.allowStartSending = ko.computed(function() {
 		return !this.saving();
