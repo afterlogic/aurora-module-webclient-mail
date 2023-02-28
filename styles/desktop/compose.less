@@ -451,8 +451,26 @@
 			.list_notification {
 				padding-top: 24px;
 			}
+
+			.attachments_info {
+				display: grid;
+				grid-gap: 10px;
+				background: #ffffff;
+				border-radius: 3px;
+				box-shadow: 0 2px 6px #cccccc;
+				margin: 10px 20px 0;
+				padding: 9px;
+
+				.attachments_info_label:after {
+					content: ':';
+				}
+
+				.attachments_info_value {
+					font-weight: bold;
+				}
+			}
 		}
-		
+
 		.attachments_container {
 			padding: 20px;
 		}
