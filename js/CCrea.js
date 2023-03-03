@@ -1716,6 +1716,7 @@ CCrea.prototype.removeCurrentImage = function ()
         this.oCurrImage = null;
         this.bInImage = false;
         this.oOptions.onImageBlur();
+        this.oOptions.onChange(this.$editableArea.html().length);
     }
 	this.setFocus(true);
 };
