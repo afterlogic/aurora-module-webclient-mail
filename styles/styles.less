@@ -93,10 +93,20 @@
 }
 
 .messages_search_block {
-	.messages_search_block__input_container {
+	padding-right: 0px;
+
+	.messages_search_block__container {
 		display: flex;
 		flex-flow: row wrap;
 		padding-bottom: 3px;
+		border-radius: 13px;
+
+		.messages_search_block__input_container {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: nowrap;
+			width: 100%;
+		}
 
 		.messages_search_block__input {
 			flex-grow: 1;
@@ -104,7 +114,7 @@
 
 		.messages_search_block__button {
 			background: #4f5984;
-			border-radius: 8px;
+			border-radius: 20px;
 			color: #ffffff;
 			cursor: default;
 			display: block;
@@ -112,7 +122,7 @@
 			font-size: 8pt;
 			font-weight: normal;
 			margin: 0 3px 0 0;
-			padding: 3px 11px;
+			padding: 4px 8px 2px;
 		}
 		
 		.extended {
