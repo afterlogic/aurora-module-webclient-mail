@@ -107,4 +107,10 @@ InformatikMailUtils.printMessageFromCompose = function (oDomText, sFrom, sTo, sC
 	}
 };
 
+InformatikMailUtils.getEstimatedEmlSize = function (size) {
+	const base64Coefficient = 4 / 3;
+	const lineEndingsCoefficient = 78 / 76;
+	return Math.round(size * base64Coefficient * lineEndingsCoefficient);
+};
+
 module.exports = InformatikMailUtils;

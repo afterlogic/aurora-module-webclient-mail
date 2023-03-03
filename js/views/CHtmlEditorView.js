@@ -126,6 +126,7 @@ function CHtmlEditorView(bInsertImageAsBase64, oParent)
 	this.disableEdit = ko.observable(false);
 	
 	this.textChanged = ko.observable(false);
+	this.htmlSize = ko.observable(0);
 
 	this.actualTextСhanged = ko.observable(false);
 	
@@ -415,12 +416,12 @@ CHtmlEditorView.prototype.init = function (sText, bPlain, sTabIndex, sPlaceholde
 			'alwaysTryUseImageWhilePasting': Settings.AlwaysTryUseImageWhilePasting,
 			'isRtl': UserSettings.IsRTL,
 			'enableDrop': false,
-			'onChange': _.bind(function () {
-				if (this.oCrea.bEditing)
-				{
+			'onChange': _.bind(function (htmlSize) {
+				if (this.oCrea.bEditing) {
 					this.textChanged(true);
 					this.actualTextСhanged.valueHasMutated();
 				}
+				this.htmlSize(htmlSize);
 			}, this),
 			'onCursorMove': _.bind(this.setFontValuesFromText, this),
 			'onFocus': _.bind(this.onCreaFocus, this),

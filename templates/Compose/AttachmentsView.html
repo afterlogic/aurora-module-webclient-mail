@@ -12,16 +12,24 @@
 					<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ATTACH_FROM_FILES'}"></span>
 				</span>
 				{%INCLUDE-START/Compose-Attach-Buttons/INCLUDE-END%}
-				<div class="attachments_info" data-bind="visible: notInlineAttachments().length > 0">
+				<div class="attachments_info">
 					<div>
-						<span data-bind="i18n: {'key': '%MODULENAME%/INFO_ATTACHMENTS_SIZE'}"
+						<span data-bind="i18n: {'key': '%MODULENAME%/INFO_MESSAGE_SIZE'}"
 							  class="attachments_info_label"
 						></span>
-						<span data-bind="text: notInlineAttachmentsSize"
+						<span data-bind="text: estimatedEmlMessageFriendlySize"
 							  class="attachments_info_value"
 						></span>
 					</div>
-					<div>
+					<div data-bind="visible: notInlineAttachments().length > 0">
+						<span data-bind="i18n: {'key': '%MODULENAME%/INFO_ATTACHMENTS_SIZE'}"
+							  class="attachments_info_label"
+						></span>
+						<span data-bind="text: estimatedEmlAttachmentsFriendlySize"
+							  class="attachments_info_value"
+						></span>
+					</div>
+					<div data-bind="visible: notInlineAttachments().length > 0">
 						<span data-bind="i18n: {'key': '%MODULENAME%/INFO_ATTACHMENTS_NUMBER'}"
 							  class="attachments_info_label"
 						></span>
