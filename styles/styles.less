@@ -92,33 +92,32 @@
 	}
 }
 
-.global_search_marker {
-	display: none;
-}
+.messages_search_block {
+	.messages_search_block__input_container {
+		display: flex;
+		flex-flow: row wrap;
+		padding-bottom: 3px;
 
-.use_global_search:not(.advanced_search) {
-	.search_block > .input .field {
-		width: calc(100% - 80px);
-	}
-	
-	.global_search_marker {
-		background: #f1f1f1;
-		border-radius: 10px;
-		color: #cccccc;
-		cursor: default;
-		display: block;
-		float: right;
-		font-size: 8pt;
-		font-weight: normal;
-		margin: 0 3px;
-		padding: 3px 11px;
-	}
-}
+		.messages_search_block__input {
+			flex-grow: 1;
+		}
 
-.message_list_search_everywhere.use_global_search:not(.advanced_search) {
-	.global_search_marker {
-		background: #4f5984;
-		color: white;
+		.messages_search_block__button {
+			background: #4f5984;
+			border-radius: 8px;
+			color: #ffffff;
+			cursor: default;
+			display: block;
+			float: right;
+			font-size: 8pt;
+			font-weight: normal;
+			margin: 0 3px 0 0;
+			padding: 3px 11px;
+		}
+		
+		.extended {
+			margin-top: 0;
+		}
 	}
 }
 

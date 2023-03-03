@@ -265,7 +265,6 @@ module.exports = function (oAppData) {
 						;
 
 						require('modules/%ModuleName%/js/koBindings.js');
-						require('modules/%ModuleName%/js/koBindingSearchHighlighter.js');
 
 						if (Settings.AllowAppRegisterMailto)
 						{
