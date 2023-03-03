@@ -295,15 +295,31 @@ function CComposeView()
 	this.notInlineAttachments.subscribe(function () {
 		$html.toggleClass('screen-compose-attachments', this.notInlineAttachments().length > 0);
 	}, this);
-	this.notInlineAttachmentsSize = ko.computed(() => {
+	this.estimatedEmlAttachmentsSize = ko.computed(() => {
 		const totalSize = this.notInlineAttachments().reduce(
 			(accumulator, attachment) => accumulator + attachment.size(),
 			0
 		);
-		const base64Coefficient = 4 / 3;
-		const lineEndingsCoefficient = 78 / 76;
-		const estimatedTotalSize = Math.round(totalSize * base64Coefficient * lineEndingsCoefficient);
-		return TextUtils.getFriendlySize(estimatedTotalSize);
+		return InformatikMailUtils.getEstimatedEmlSize(totalSize);
+	});
+
+	this.estimatedEmlAttachmentsFriendlySize = ko.computed(() => {
+		return TextUtils.getFriendlySize(this.estimatedEmlAttachmentsSize());
+	});
+
+	this.estimatedEmlMessageFriendlySize = ko.computed(() => {
+		const inlineAttachments = this.attachments().filter(attach => attach.linked());
+		let totalSize = inlineAttachments.reduce(
+			(accumulator, attachment) => accumulator + attachment.size(),
+			0
+		);
+		totalSize += this.toAddr().length;
+		totalSize += this.ccAddr().length;
+		totalSize += this.bccAddr().length;
+		totalSize += this.subject().length;
+		totalSize += this.oHtmlEditor.htmlSize();
+		const estimatedTotalSize = InformatikMailUtils.getEstimatedEmlSize(totalSize);
+		return TextUtils.getFriendlySize(estimatedTotalSize + this.estimatedEmlAttachmentsSize());
 	});
 
 	this.allowStartSending = ko.computed(function() {

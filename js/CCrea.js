@@ -272,7 +272,7 @@ CCrea.prototype.start = function (bEditable)
             }
             else
             {
-                self.oOptions.onChange();
+                self.oOptions.onChange(self.$editableArea.html().length);
             }
         }
     });
@@ -313,8 +313,9 @@ CCrea.prototype.editableSave = function ()
         this.clearRedo();
         this.aEditableAreaHtml.push([sEditableHtml, this.getCaretPos(this.$editableArea[0])]);
         this.iUndoRedoPosition = this.aEditableAreaHtml.length - 1;
-        this.oOptions.onChange();
-    }
+        this.oOptions.onChange(sEditableHtml.length);
+    } else {
+	}
 };
 
 CCrea.prototype.editableUndo = function ()
