@@ -1,11 +1,21 @@
-<span class="search_block">
-	<span class="input" data-bind="css: {'focus': isFocused, 'expand': bAdvancedSearch}">
+<span class="search_block messages_search_block">
+	<span class="input messages_search_block__input_container"
+		  data-bind="css: {'focus': isFocused, 'expand': isAdvancedSearch}"
+	>
 		<span class="icon search"></span>
-		<input class="field hide" spellcheck="false" type="text" data-bind="value: searchInput" />
-		<div class="field" contenteditable="true" spellcheck="false" 
-			 data-bind="highlighter: {valueObserver: searchInput, highlighterValueObserver: searchSpan, highlightTrigger: highlightTrigger}, 
-						onEnter: onSearchClick, hasfocus: isFocused" ></div>
-		<span class="global_search_marker" data-bind="i18n: {'key': '%MODULENAME%/LABEL_MARKER_SEARCH_EVERYWHERE'}, click: turnOffGlobalSearch"></span>
+		<span class="messages_search_block__input">
+			<input class="field" spellcheck="false" type="text"
+				   data-bind="value: searchInput, onEnter: onSearchClick"
+			/>
+		</span>
+		<span class="messages_search_block__button"
+			  data-bind="text: globalSearchButtonText, visible: allowSearchEverywhere,
+			  click: toggleGlobalSearch"
+		></span>
+		<span class="messages_search_block__button"
+			  data-bind="text: advancedSearchButtonText,
+			  click: toggleAdvancedSearch"
+		></span>
 		<div class="fields extended">
 			<span class="search_fieldset">
 				<span class="section">
@@ -57,26 +67,11 @@
 								   data-bind="initDom: searchDateEndDom, textInput: searchDateEnd, hasfocus: searchDateEndFocus, valueUpdate: 'afterkeydown', onEnter: onSearchClick" />
 						</span>
 					</span>
-					<span class="row attachments" data-bind="visible: allowSearchEverywhere">
-						<label class="custom_checkbox" data-bind="css: {'checked': useEverywhereSearch}">
-							<span class="icon"></span>
-							<input id="attachments" type="checkbox" data-bind="checked: useEverywhereSearch">
-						</label>
-						<span class="attachment_name">
-							<label style="cursor: pointer" class="label placeholder" 
-								   data-bind="i18n: {'key': '%MODULENAME%/LABEL_SEARCH_EVERYWHERE'},
-								   click: function() { useEverywhereSearch(!useEverywhereSearch()); }"></label>
-							<input disabled class="value input" spellcheck="false" type="text" />
-						</span>
-					</span>
 				</span>
 				<div class="section buttons">
 					<span class="button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_SEARCH'}, click: onSearchClick"></span>
 				</div>
 			</span>
 		</div>
-	</span>
-	<span class="control">
-		<span class="icon" data-bind="click: onAdvancedSearchClick, css: {'expand': bAdvancedSearch()}, customTooltip: '%MODULENAME%/ACTION_OPEN_ADVANCED_SEARCH'"></span>
 	</span>
 </span>

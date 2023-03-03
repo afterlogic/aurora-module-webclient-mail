@@ -24,7 +24,8 @@ var
 	ComposeUtils = require('modules/%ModuleName%/js/utils/Compose.js'),
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
 	MailUtils = require('modules/%ModuleName%/js/utils/Mail.js'),
-	
+	SearchUtils = require('modules/%ModuleName%/js/utils/Search.js'),
+
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	MailCache  = require('modules/%ModuleName%/js/Cache.js'),
 	Settings  = require('modules/%ModuleName%/js/Settings.js')
@@ -73,8 +74,6 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 	this.searchInputTo = ko.observable('');
 	this.searchInputSubject = ko.observable('');
 	this.searchInputText = ko.observable('');
-	this.searchSpan = ko.observable('');
-	this.highlightTrigger = ko.observable('');
 
 	this.currentMessage = MailCache.currentMessage;
 	this.currentMessage.subscribe(function () {
@@ -210,12 +209,6 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 	this.isEverywhereSearch = ko.computed(function () {
 		return this.isSearch() && this.folderFullName() === this.folderList().allMailsFolderFullName();
 	}, this);
-	this.isEverywhereSearch.subscribe(function () {
-		if (this.isEverywhereSearch() && !this.useEverywhereSearch())
-		{
-			this.useEverywhereSearch(true);
-		}
-	}, this);
 
 	this.isUnseenFilter = ko.computed(function () {
 		return this.filters() === Enums.FolderFilter.Unseen;
@@ -270,6 +263,12 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 	this.useEverywhereSearch.subscribe(function () {
 		Storage.setData('useEverywhereSearch', this.useEverywhereSearch());
 	}, this);
+	this.globalSearchButtonText = ko.computed(() => {
+		return this.useEverywhereSearch()
+				? TextUtils.i18n('%MODULENAME%/LABEL_IN_ALL_MAIL_FOLDERS')
+				: TextUtils.i18n('%MODULENAME%/LABEL_IN_THIS_FOLDER');
+	});
+
 	this.allowSearchEverywhere = ko.computed(function () {
 		return !!this.folderList().allMailsFolder();
 	}, this);
@@ -279,11 +278,11 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 		if (this.isEverywhereSearch())
 		{
 			return TextUtils.i18n('%MODULENAME%/INFO_SEARCH_EVERYWHERE_RESULT', {
-				'SEARCH': this.calculateSearchStringForDescription()
+				'SEARCH': SearchUtils.getSearchStringForDescription.call(this)
 			});
 		}
 		return TextUtils.i18n('%MODULENAME%/INFO_SEARCH_RESULT', {
-			'SEARCH': this.calculateSearchStringForDescription(),
+			'SEARCH': SearchUtils.getSearchStringForDescription.call(this),
 			'FOLDER': MailCache.getCurrentFolder() ? TextUtils.encodeHtml(MailCache.getCurrentFolder().displayName()) : ''
 		});
 	}, this);
@@ -299,7 +298,7 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 		else
 		{
 			return TextUtils.i18n('%MODULENAME%/INFO_UNREAD_MESSAGES_SEARCH_RESULT', {
-				'SEARCH': this.calculateSearchStringForDescription(),
+				'SEARCH': SearchUtils.getSearchStringForDescription.call(this),
 				'FOLDER': MailCache.getCurrentFolder() ? TextUtils.encodeHtml(MailCache.getCurrentFolder().displayName()) : ''
 			});
 		}
@@ -421,9 +420,14 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 		this.listChangedThrottle(!this.listChangedThrottle());
 	}, this);
 
-	this.bAdvancedSearch = ko.observable(false);
+	this.isAdvancedSearch = ko.observable(false);
 	this.searchAttachmentsCheckbox = ko.observable(false);
-	
+	this.advancedSearchButtonText = ko.computed(() => {
+		return this.isAdvancedSearch()
+				? TextUtils.i18n('%MODULENAME%/LABEL_IN_SELECTED_FIELDS')
+				: TextUtils.i18n('%MODULENAME%/LABEL_IN_ALL_FIELDS');
+	});
+
 	this.searchFromFocus = ko.observable(false);
 	this.searchSubjectFocus = ko.observable(false);
 	this.searchToFocus = ko.observable(false);
@@ -622,8 +626,10 @@ CMessageListView.prototype.onRoute = function (aParams)
 	this.folderFullName(oParams.Folder);
 	this.filters(oParams.Filters);
 	this.search(oParams.Search);
-	this.searchInput(this.search());
-	this.searchSpan.notifySubscribers();
+	if (this.search().length > 0) {
+		this.useEverywhereSearch(this.folderFullName() === this.folderList().allMailsFolderFullName());
+	}
+	SearchUtils.parseAdvancedSearch.call(this);
 	this.sSortBy = oParams.SortBy;
 	this.iSortOrder = oParams.SortOrder;
 	_.each(this.aSortList, function (oSortData) {
@@ -647,8 +653,6 @@ CMessageListView.prototype.onRoute = function (aParams)
 	} else if (bWaitForUnseenMessages) {
 		this.requestMessageList();
 	}
-
-	this.highlightTrigger.notifySubscribers(true);
 };
 
 CMessageListView.prototype.setCurrentFolder = function ()
@@ -680,63 +684,6 @@ CMessageListView.prototype.requestMessageList = function (iPage)
 	}
 };
 
-CMessageListView.prototype.calculateSearchStringFromAdvancedForm  = function ()
-{
-	var
-		sFrom = this.searchInputFrom(),
-		sTo = this.searchInputTo(),
-		sSubject = this.searchInputSubject(),
-		sText = this.searchInputText(),
-		bAttachmentsCheckbox = this.searchAttachmentsCheckbox(),
-		sDateStart = this.searchDateStart(),
-		sDateEnd = this.searchDateEnd(),
-		aOutput = [],
-		fEsc = function (sText) {
-
-			sText = $.trim(sText).replace(/"/g, '\\"');
-			
-			if (-1 < sText.indexOf(' ') || -1 < sText.indexOf('"'))
-			{
-				sText = '"' + sText + '"';
-			}
-			
-			return sText;
-		}
-	;
-
-	if (sFrom !== '')
-	{
-		aOutput.push('from:' + fEsc(sFrom));
-	}
-
-	if (sTo !== '')
-	{
-		aOutput.push('to:' + fEsc(sTo));
-	}
-
-	if (sSubject !== '')
-	{
-		aOutput.push('subject:' + fEsc(sSubject));
-	}
-	
-	if (sText !== '')
-	{
-		aOutput.push('text:' + fEsc(sText));
-	}
-
-	if (bAttachmentsCheckbox)
-	{
-		aOutput.push('has:attachments');
-	}
-
-	if (sDateStart !== '' || sDateEnd !== '')
-	{
-		aOutput.push('date:' + fEsc(sDateStart) + '/' + fEsc(sDateEnd));
-	}
-
-	return aOutput.join(' ');
-};
-
 CMessageListView.prototype.onSearchClick = function ()
 {
 	var
@@ -745,43 +692,32 @@ CMessageListView.prototype.onSearchClick = function ()
 		sSearch = this.searchInput(),
 		sFilters = this.filters()
 	;
-	
-	if (this.bAdvancedSearch())
-	{
-		sSearch = this.calculateSearchStringFromAdvancedForm();
-		this.searchInput(sSearch);
-		this.bAdvancedSearch(false);
+
+	if (this.isAdvancedSearch()) {
+		sSearch = SearchUtils.calculateSearchStringFromAdvancedForm.call(this);
 	}
 
-	if (this.allowSearchEverywhere() && this.useEverywhereSearch() && sFolder !== this.folderList().allMailsFolderFullName())
-	{
-		this.folderBeforeSearchEverywhere(sFolder);
-		this.filtersBeforeSearchEverywhere(sFilters);
-		sFolder = this.folderList().allMailsFolderFullName();
-		sFilters = '';
-	}
-	else if (this.allowSearchEverywhere() && !this.useEverywhereSearch() && sFolder === this.folderList().allMailsFolderFullName())
-	{
-		sFolder = this.folderBeforeSearchEverywhere() || this.folderList().inboxFolderFullName();
-		sFilters = this.filtersBeforeSearchEverywhere() || '';
+	if (this.allowSearchEverywhere()) {
+		const isAllMailsFolder = sFolder === this.folderList().allMailsFolderFullName();
+		if (this.useEverywhereSearch() && !isAllMailsFolder) {
+			this.folderBeforeSearchEverywhere(sFolder);
+			this.filtersBeforeSearchEverywhere(sFilters);
+			sFolder = this.folderList().allMailsFolderFullName();
+			sFilters = '';
+		} else if (!this.useEverywhereSearch() && isAllMailsFolder) {
+			sFolder = this.folderBeforeSearchEverywhere() || this.folderList().inboxFolderFullName();
+			sFilters = this.filtersBeforeSearchEverywhere() || '';
+		}
 	}
 
 	this.changeRoutingForMessageList(sFolder, iPage, '', sSearch, sFilters);
 };
 
-CMessageListView.prototype.turnOffGlobalSearch = function ()
+CMessageListView.prototype.toggleGlobalSearch = function ()
 {
-	this.useEverywhereSearch(false);
-	if (this.isSearch())
-	{
-		var
-			sFolder = this.folderBeforeSearchEverywhere() || this.folderList().inboxFolderFullName(),
-			iPage = 1,
-			sSearch = this.searchInput(),
-			sFilters = this.filters()
-		;
-
-		this.changeRoutingForMessageList(sFolder, iPage, '', sSearch, sFilters);
+	this.useEverywhereSearch(!this.useEverywhereSearch());
+	if (this.search()) {
+		this.onSearchClick();
 	}
 };
 
@@ -1151,20 +1087,15 @@ CMessageListView.prototype.clearAdvancedSearch = function ()
 	this.searchInputTo('');
 	this.searchInputSubject('');
 	this.searchInputText('');
-	this.bAdvancedSearch(false);
+	this.isAdvancedSearch(false);
 	this.searchAttachmentsCheckbox(false);
 	this.searchDateStart('');
 	this.searchDateEnd('');
 };
 
-CMessageListView.prototype.onAdvancedSearchClick = function ()
+CMessageListView.prototype.toggleAdvancedSearch = function ()
 {
-	this.bAdvancedSearch(!this.bAdvancedSearch());
-};
-
-CMessageListView.prototype.calculateSearchStringForDescription = function ()
-{
-	return '<span class="part">' + TextUtils.encodeHtml(this.search()) + '</span>';
+	this.isAdvancedSearch(!this.isAdvancedSearch());
 };
 
 CMessageListView.prototype.initUploader = function ()
