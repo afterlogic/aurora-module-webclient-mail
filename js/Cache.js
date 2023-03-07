@@ -1582,8 +1582,6 @@ CMailCache.prototype.executeGroupOperationForFolder = function (sMethod, oFolder
 		},
 //		iOffset = (this.page() - 1) * Settings.MailsPerPage,
 		iUidsCount = aUids.length,
-		iStarredCount = oFolderList.oStarredFolder ? oFolderList.oStarredFolder.messageCount() : 0,
-		oStarredUidList = oFolder.getUidList('', Enums.FolderFilter.Flagged, Settings.MessagesSortBy.DefaultSortBy, Settings.MessagesSortBy.DefaultSortOrder),
 		fCallback = (sMethod === 'SetMessagesSeen') ? this.onSetMessagesSeenResponse : function () {}
 	;
 
@@ -1595,30 +1593,31 @@ CMailCache.prototype.executeGroupOperationForFolder = function (sMethod, oFolder
 
 	oFolder.executeGroupOperation(sField, aUids, bSetAction);
 
-	if (oFolder.type() === Enums.FolderTypes.Inbox && sField === 'flagged')
-	{
-		if (this.uidList().filters() === Enums.FolderFilter.Flagged)
-		{
-			if (!bSetAction)
-			{
+	if (sField === 'flagged') {
+		if (oFolder.fullName() === oFolderList.oStarredFolder.fullName() &&
+				this.uidList().filters() === Enums.FolderFilter.Flagged
+		) {
+			if (!bSetAction) {
 				this.uidList().deleteUids(aUids);
-				if (oFolderList.oStarredFolder)
-				{
-					oFolderList.oStarredFolder.messageCount(oStarredUidList.resultCount());
+				if (oFolderList.oStarredFolder) {
+					const oStarredUidList = oFolderList.oStarredFolder.getUidList(
+							'',
+							Enums.FolderFilter.Flagged,
+							Settings.MessagesSortBy.DefaultSortBy,
+							Settings.MessagesSortBy.DefaultSortOrder
+					);
+					if (oStarredUidList.resultCount() >= 0) {
+						oFolderList.oStarredFolder.messageCount(oStarredUidList.resultCount());
+					}
 				}
 			}
-		}
-		else
-		{
+		} else {
 			oFolder.removeFlaggedMessageListsFromCache();
-			if (this.uidList().search() === '' && oFolderList.oStarredFolder)
-			{
-				if (bSetAction)
-				{
+			if (this.uidList().search() === '' && oFolderList.oStarredFolder) {
+				const iStarredCount = oFolderList.oStarredFolder.messageCount();
+				if (bSetAction) {
 					oFolderList.oStarredFolder.messageCount(iStarredCount + iUidsCount);
-				}
-				else
-				{
+				} else {
 					oFolderList.oStarredFolder.messageCount((iStarredCount - iUidsCount > 0) ? iStarredCount - iUidsCount : 0);
 				}
 			}
@@ -2078,9 +2077,11 @@ CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 			this.requestCurrentMessageList(this.getCurrentFolderFullname(), this.page(), this.uidList().search(), this.uidList().filters(), this.uidList().sortBy(), this.uidList().sortOrder(), false);
 		}
 		
-		if (oFolder.type() === Enums.FolderTypes.Inbox && oUidList.filters() === Enums.FolderFilter.Flagged &&
-			oUidList.search() === '' && this.folderList().oStarredFolder)
-		{
+		if (this.folderList().oStarredFolder &&
+				oFolder.fullName() === this.folderList().oStarredFolder.fullName() &&
+				oUidList.filters() === Enums.FolderFilter.Flagged &&
+				oUidList.search() === ''
+		) {
 			this.folderList().oStarredFolder.messageCount(oUidList.resultCount());
 			this.folderList().oStarredFolder.hasExtendedInfo(true);
 		}
