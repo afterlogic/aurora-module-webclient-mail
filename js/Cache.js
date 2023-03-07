@@ -778,10 +778,11 @@ CMailCache.prototype.isSearchExecuting = function ()
 CMailCache.prototype.checkMessageFlags = function ()
 {
 	var
-		starredFolder = this.folderList().oStarredFolder,
-		aUids = starredFolder ? starredFolder.getFlaggedMessageUids() : [],
+		allMailsFolderFullName = this.folderList().allMailsFolder() ? this.folderList().allMailsFolder().fullName() : '',
+		allMailsFolder = this.folderList().getFolderByFullName(allMailsFolderFullName),
+		aUids = allMailsFolder ? allMailsFolder.getFlaggedMessageUids() : [],
 		oParameters = {
-			'Folder': starredFolder.fullName(),
+			'Folder': allMailsFolder.fullName(),
 			'Uids': aUids
 		}
 	;
