@@ -266,10 +266,14 @@ CFolderListModel.prototype.parse = function (iAccountId, oData, oNamedFolderList
 	{
 		Storage.setData('folderAccordion', []);
 	}
-	
+
 	this.oNamedCollection = {};
 	this.aLinedCollection = [];
 	this.collection(this.parseRecursively(aCollection, oNamedFolderListOld));
+
+	if (this.allMailsFolder()) {
+		this.oStarredFolder.fullName(this.allMailsFolder().fullName());
+	}
 };
 
 /**

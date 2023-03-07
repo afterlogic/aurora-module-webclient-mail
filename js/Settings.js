@@ -71,6 +71,7 @@ module.exports = {
 	messageListItemSize: ko.observable('big'),
 	previewPanePosition: ko.observable('right'),
 	openMessagesInPopup: ko.observable(false),
+	DisableStarredInFolders: [],
 	AllMailsFolder: '',
 	accountsAboveFolders: ko.observable(true),
 
@@ -162,6 +163,7 @@ module.exports = {
 			this.messageListItemSize(Types.pString(oAppDataMailWebclientSection.MessageListItemSize, this.messageListItemSize()));
 			this.previewPanePosition(Types.pString(oAppDataMailWebclientSection.PreviewPanePosition, this.previewPanePosition()));
 			this.openMessagesInPopup(Types.pBool(oAppDataMailWebclientSection.OpenMessagesInPopup, this.openMessagesInPopup()));
+			this.DisableStarredInFolders = Types.pArray(oAppDataMailWebclientSection.DisableStarredInFolders, this.DisableStarredInFolders);
 			this.AllMailsFolder = Types.pString(oAppDataMailWebclientSection.AllMailsFolder, this.AllMailsFolder);
 			this.accountsAboveFolders(Types.pBool(oAppDataMailWebclientSection.AccountsAboveFolders, this.accountsAboveFolders()));
 		}
