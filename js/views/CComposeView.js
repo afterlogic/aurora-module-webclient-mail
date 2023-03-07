@@ -47,6 +47,7 @@ var
 	CComposeViewAutoEncrypt = require('modules/%ModuleName%/js/views/CComposeViewAutoEncrypt.js'),
 	// CHtmlEditorView = require('modules/%ModuleName%/js/views/CHtmlEditorView.js'),
 	CHtmlEditorView = require('modules/%ModuleName%/js/views/CSunEditorView.js'),
+	CHtmlEditorView = require('modules/%ModuleName%/js/views/CTrumbowygEditorView.js'),
 
 	MainTab = App.isNewTab() && window.opener && window.opener.MainTabMailMethods,
 
