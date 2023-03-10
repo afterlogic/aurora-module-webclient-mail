@@ -8,14 +8,16 @@ var
 	PopupComposeUtils = {}
 ;
 
-function GetComposePopup()
+function GetComposePopup(isPrivate = false)
 {
-	return require('modules/%ModuleName%/js/popups/ComposePopup.js');
+	const ComposePopup = require('modules/%ModuleName%/js/popups/ComposePopup.js');
+	ComposePopup.setPrivate(isPrivate);
+	return ComposePopup;
 }
 
-PopupComposeUtils.composeMessage = function ()
+PopupComposeUtils.composeMessage = function (isPrivate = false)
 {
-	Popups.showPopup(GetComposePopup());
+	Popups.showPopup(GetComposePopup(isPrivate));
 };
 
 /**

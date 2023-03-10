@@ -284,14 +284,15 @@ LinksUtils.getViewMessage = function (iAccountId, sFolder, sUid)
 /**
  * @return {Array}
  */
-LinksUtils.getCompose = function ()
+LinksUtils.getCompose = function (isPrivate = false)
 {
 	var
 		AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 		oCurrAccount = AccountList.getCurrent(),
-		sAccountHash = oCurrAccount ? oCurrAccount.hash() : ''
+		sAccountHash = oCurrAccount ? oCurrAccount.hash() : '',
+		postfix = isPrivate ? '-private-compose' : '-compose'
 	;
-	return [Settings.HashModuleName + '-compose', sAccountHash];
+	return [Settings.HashModuleName + postfix, sAccountHash];
 };
 
 /**

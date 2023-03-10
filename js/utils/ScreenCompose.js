@@ -8,9 +8,9 @@ var
 	ScreenComposeUtils = {}
 ;
 
-ScreenComposeUtils.composeMessage = function ()
+ScreenComposeUtils.composeMessage = function (isPrivate = false)
 {
-	Routing.setHash(LinksUtils.getCompose());
+	Routing.setHash(LinksUtils.getCompose(isPrivate));
 };
 
 /**

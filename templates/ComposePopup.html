@@ -1,4 +1,4 @@
-<div class="compose_popup popup" style="display: none;">
+<div class="compose_popup popup" style="display: none;" data-bind="css: {'compose_private': isPrivate}">
 	<div class="mask" data-bind="click: minimize, visible: !minimized()"></div>
 	<div class="popup_panel" data-bind="visible: !minimized()">
 		<span class="close" data-bind="click: cancelPopup"></span>

@@ -1936,13 +1936,18 @@ CComposeView.prototype.getMessageDataForNewTab = function ()
 	return oParameters;
 };
 
+CComposeView.prototype.setPrivate = function (isPrivate)
+{
+	this.isPrivate = isPrivate;
+};
+
 CComposeView.prototype.openInNewWindow = function ()
 {
 	var
 		sWinName = 'id' + Math.random().toString(),
 		oMessageParametersFromCompose = {},
 		oWin = null,
-		sHash = Routing.buildHashFromArray(LinksUtils.getCompose())
+		sHash = Routing.buildHashFromArray(LinksUtils.getCompose(this.isPrivate))
 	;
 
 	this.ignoreHasUnsavedChanges(true);
