@@ -800,23 +800,28 @@ CMailCache.prototype.onGetMessagesFlagsResponse = function (oResponse, oRequest)
 	var
 		oParameters = oRequest.Parameters,
 		oFolderList = this.oFolderListItems[oParameters.AccountID],
-		oInbox = (oFolderList) ? oFolderList.inboxFolder() : null
+		folder = oFolderList ? oFolderList.getFolderByFullName(oParameters.Folder) : null
 	;
 	
-	if (oInbox)
+	if (folder)
 	{
+		const hasStarredChanges = false;
 		if (oResponse.Result)
 		{
 			_.each(oResponse.Result, function (aFlags, sUid) {
 				if (_.indexOf(aFlags, '\\flagged') === -1)
 				{
-					oInbox.setMessageUnflaggedByUid(sUid);
+					folder.setMessageUnflaggedByUid(sUid);
+					hasStarredChanges = true;
 				}
 			});
 		}
-		oInbox.removeFlaggedMessageListsFromCache();
-		this.requirePrefetcher();
-		Prefetcher.prefetchStarredMessageList();
+		const allMailsFolder = this.folderList().allMailsFolder();
+		if (hasStarredChanges && allMailsFolder) {
+			allMailsFolder.removeFlaggedMessageListsFromCache();
+			this.requirePrefetcher();
+			Prefetcher.prefetchStarredMessageList();
+		}
 	}
 };
 
