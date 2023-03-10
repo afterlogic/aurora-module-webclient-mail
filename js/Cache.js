@@ -777,19 +777,17 @@ CMailCache.prototype.isSearchExecuting = function ()
 
 CMailCache.prototype.checkMessageFlags = function ()
 {
-	var
-		allMailsFolderFullName = this.folderList().allMailsFolder() ? this.folderList().allMailsFolder().fullName() : '',
-		allMailsFolder = this.folderList().getFolderByFullName(allMailsFolderFullName),
-		aUids = allMailsFolder ? allMailsFolder.getFlaggedMessageUids() : [],
-		oParameters = {
-			'Folder': allMailsFolder.fullName(),
-			'Uids': aUids
-		}
+	const
+		currentFolder = this.folderList().currentFolder(),
+		starredUids = currentFolder ? currentFolder.getFlaggedMessageUids() : []
 	;
-	
-	if (aUids.length > 0)
-	{
-		Ajax.send('GetMessagesFlags', oParameters, this.onGetMessagesFlagsResponse, this);
+
+	if (starredUids.length > 0) {
+		const parameters = {
+			'Folder': currentFolder.fullName(),
+			'Uids': starredUids
+		};
+		Ajax.send('GetMessagesFlags', parameters, this.onGetMessagesFlagsResponse, this);
 	}
 };
 
@@ -1594,33 +1592,33 @@ CMailCache.prototype.executeGroupOperationForFolder = function (sMethod, oFolder
 
 	oFolder.executeGroupOperation(sField, aUids, bSetAction);
 
-	if (sField === 'flagged') {
+	const allMailsFolder = this.folderList().allMailsFolder();
+	if (sField === 'flagged' && oFolderList.oStarredFolder && allMailsFolder) {
 		if (oFolder.fullName() === oFolderList.oStarredFolder.fullName() &&
 				this.uidList().filters() === Enums.FolderFilter.Flagged
 		) {
 			if (!bSetAction) {
 				this.uidList().deleteUids(aUids);
-				if (oFolderList.oStarredFolder) {
-					const oStarredUidList = oFolderList.oStarredFolder.getUidList(
-							'',
-							Enums.FolderFilter.Flagged,
-							Settings.MessagesSortBy.DefaultSortBy,
-							Settings.MessagesSortBy.DefaultSortOrder
-					);
-					if (oStarredUidList.resultCount() >= 0) {
-						oFolderList.oStarredFolder.messageCount(oStarredUidList.resultCount());
-					}
+				const allMailsStarredUidList = allMailsFolder.getUidList(
+						'',
+						Enums.FolderFilter.Flagged,
+						Settings.MessagesSortBy.DefaultSortBy,
+						Settings.MessagesSortBy.DefaultSortOrder
+				);
+				if (allMailsStarredUidList) {
+					this.uidList().deleteUids(aUids);
+				}
+				if (allMailsStarredUidList && allMailsStarredUidList.resultCount() >= 0) {
+					oFolderList.oStarredFolder.messageCount(allMailsStarredUidList.resultCount());
 				}
 			}
 		} else {
-			oFolder.removeFlaggedMessageListsFromCache();
-			if (this.uidList().search() === '' && oFolderList.oStarredFolder) {
-				const iStarredCount = oFolderList.oStarredFolder.messageCount();
-				if (bSetAction) {
-					oFolderList.oStarredFolder.messageCount(iStarredCount + iUidsCount);
-				} else {
-					oFolderList.oStarredFolder.messageCount((iStarredCount - iUidsCount > 0) ? iStarredCount - iUidsCount : 0);
-				}
+			allMailsFolder.removeFlaggedMessageListsFromCache();
+			const iStarredCount = oFolderList.oStarredFolder.messageCount();
+			if (bSetAction) {
+				oFolderList.oStarredFolder.messageCount(iStarredCount + iUidsCount);
+			} else {
+				oFolderList.oStarredFolder.messageCount((iStarredCount - iUidsCount > 0) ? iStarredCount - iUidsCount : 0);
 			}
 		}
 	}
@@ -1684,7 +1682,7 @@ CMailCache.prototype.onGetFoldersResponse = function (oResponse, oRequest)
 	else
 	{
 		oFolderList.parse(iAccountId, oResponse.Result, oNamedFolderListOld);
-		if (oFolderListOld)
+		if (oFolderListOld && oFolderListOld.oStarredFolder)
 		{
 			oFolderList.oStarredFolder.messageCount(oFolderListOld.oStarredFolder.messageCount());
 		}
