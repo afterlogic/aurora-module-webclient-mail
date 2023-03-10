@@ -805,7 +805,7 @@ CMailCache.prototype.onGetMessagesFlagsResponse = function (oResponse, oRequest)
 	
 	if (folder)
 	{
-		const hasStarredChanges = false;
+		let hasStarredChanges = false;
 		if (oResponse.Result)
 		{
 			_.each(oResponse.Result, function (aFlags, sUid) {
