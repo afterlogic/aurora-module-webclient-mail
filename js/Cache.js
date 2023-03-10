@@ -123,6 +123,9 @@ function CMailCache()
 		}
 		return this.folderList().currentFolder();
 	}, this);
+	this.getCurrentFolder.subscribe(() => {
+		this.checkMessageFlags();
+	});
 
 	this.getCurrentFolderFullname = ko.computed(function ()
 	{
@@ -779,44 +782,47 @@ CMailCache.prototype.checkMessageFlags = function ()
 {
 	const
 		currentFolder = this.folderList().currentFolder(),
-		starredUids = currentFolder ? currentFolder.getFlaggedMessageUids() : []
+		allMailsFolder = this.folderList().allMailsFolder()
 	;
-
-	if (starredUids.length > 0) {
-		const parameters = {
-			'Folder': currentFolder.fullName(),
-			'Uids': starredUids
-		};
-		Ajax.send('GetMessagesFlags', parameters, this.onGetMessagesFlagsResponse, this);
+	if (!currentFolder || !allMailsFolder || currentFolder.fullName() === allMailsFolder.fullName()) {
+		return;
 	}
+
+	const allUids = currentFolder.aMessagesDictionaryUids;
+	if (!Array.isArray(allUids) || allUids.length === 0) {
+		return;
+	}
+
+	const parameters = {
+		'Folder': currentFolder.fullName(),
+		'Uids': allUids
+	};
+	Ajax.send('GetMessagesFlags', parameters, this.onGetMessagesFlagsResponse, this);
 };
 
 /**
- * @param {Object} oResponse
- * @param {Object} oRequest
+ * @param {Object} response
+ * @param {Object} request
  */
-CMailCache.prototype.onGetMessagesFlagsResponse = function (oResponse, oRequest)
+CMailCache.prototype.onGetMessagesFlagsResponse = function (response, request)
 {
-	var
-		oParameters = oRequest.Parameters,
-		oFolderList = this.oFolderListItems[oParameters.AccountID],
-		folder = oFolderList ? oFolderList.getFolderByFullName(oParameters.Folder) : null
+	const
+		parameters = request.Parameters,
+		folderList = this.oFolderListItems[parameters.AccountID],
+		folder = folderList ? folderList.getFolderByFullName(parameters.Folder) : null,
+		allMailsFolder = folderList ? folderList.allMailsFolder() : null
 	;
-	
-	if (folder)
-	{
+
+	if (folder && allMailsFolder && Array.isArray(response.Result)) {
 		let hasStarredChanges = false;
-		if (oResponse.Result)
-		{
-			_.each(oResponse.Result, function (aFlags, sUid) {
-				if (_.indexOf(aFlags, '\\flagged') === -1)
-				{
-					folder.setMessageUnflaggedByUid(sUid);
-					hasStarredChanges = true;
-				}
-			});
-		}
-		const allMailsFolder = this.folderList().allMailsFolder();
+		response.Result.forEach(({flags, uid}) => {
+			const message = folder.getMessageByUid(uid);
+			const hasFlagged = flags.includes('\\flagged');
+			if (message && message.flagged() !== hasFlagged) {
+				message.setFlagged(hasFlagged);
+				hasStarredChanges = true;
+			}
+		});
 		if (hasStarredChanges && allMailsFolder) {
 			allMailsFolder.removeFlaggedMessageListsFromCache();
 			this.requirePrefetcher();

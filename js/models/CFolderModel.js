@@ -241,18 +241,6 @@ CFolderModel.prototype.getFlaggedMessageUids = function ()
 };
 
 /**
- * @param {string} sUid
- */
-CFolderModel.prototype.setMessageUnflaggedByUid = function (sUid)
-{
-	var oMessage = this.getMessageByUid(sUid);
-	if (oMessage)
-	{
-		oMessage.flagged(false);
-	}
-};
-
-/**
  * @param {Object} oMessage
  */
 CFolderModel.prototype.hideThreadMessages = function (oMessage)
