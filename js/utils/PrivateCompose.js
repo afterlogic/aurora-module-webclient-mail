@@ -11,6 +11,6 @@ module.exports = {
 
 	getPrivateAccount() {
 		const AccountList = require('modules/%ModuleName%/js/AccountList.js');
-		return AccountList.collection().find(account => account.isPrivate());
+		return AccountList.getPrivateAccount();
 	}
 };

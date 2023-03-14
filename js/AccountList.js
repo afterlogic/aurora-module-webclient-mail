@@ -211,6 +211,10 @@ CAccountListModel.prototype.getAliasByHash = function(sHash)
 	return oAlias;
 };
 
+CAccountListModel.prototype.getPrivateAccount = function () {
+	return this.collection().find(account => account.isPrivate());
+};
+
 /**
  * Fills the collection of accounts.
  * @param {Array} aAccounts
@@ -223,6 +227,12 @@ CAccountListModel.prototype.parse = function (aAccounts)
 		{
 			return new CAccountModel(oRawAccount);
 		}));
+		const privateAccount = this.getPrivateAccount();
+		const defaultAccount = this.getDefault();
+		if (privateAccount && defaultAccount) {
+			privateAccount.signature = defaultAccount.signature;
+			privateAccount.useSignature = defaultAccount.useSignature;
+		}
 		this.initObservables(this.collection().length > 0 ? this.collection()[0].id() : 0);
 	}
 };
