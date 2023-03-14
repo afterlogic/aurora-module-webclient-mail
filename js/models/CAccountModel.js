@@ -14,6 +14,8 @@ var
 	App = null,
 	UserSettings = require('%PathToCoreWebclientModule%/js/Settings.js'),
 
+	PrivateComposeUtils = require('modules/%ModuleName%/js/utils/PrivateCompose.js'),
+
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
 	ConfirmPopup = require('%PathToCoreWebclientModule%/js/popups/ConfirmPopup.js'),
 
@@ -102,6 +104,10 @@ function CAccountModel(oData)
 	this.showUnifiedMailboxLabel = ko.observable(Settings.AllowUnifiedInbox && !!oData.ShowUnifiedMailboxLabel);
 	this.unifiedMailboxLabelText = ko.observable(Types.pString(oData.UnifiedMailboxLabelText));
 	this.unifiedMailboxLabelColor = ko.observable(Types.pString(oData.UnifiedMailboxLabelColor));
+
+	this.isPrivate = ko.computed(() => {
+		return PrivateComposeUtils.isPrivateEmailAccount(this.email());
+	});
 }
 
 CAccountModel.prototype.threadingIsAvailable = function ()

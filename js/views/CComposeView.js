@@ -31,6 +31,7 @@ var
 
 	InformatikMailUtils = require('modules/%ModuleName%/js/utils/InformatikMail.js'),
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
+	PrivateComposeUtils = require('modules/%ModuleName%/js/utils/PrivateCompose.js'),
 	SendingUtils = require('modules/%ModuleName%/js/utils/Sending.js'),
 
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
@@ -128,7 +129,11 @@ function CComposeView()
 
 	this.senderAccountId = SenderSelector.senderAccountId;
 	this.senderList = SenderSelector.senderList;
+	this.isPrivate = ko.observable(false);
 	this.visibleFrom = ko.computed(function () {
+		if (this.isPrivate()) {
+			return false;
+		}
 		return App.isNewTab() || this.senderList().length > 1 || this.senderAccountId() !== MailCache.currentAccountId();
 	}, this);
 	this.selectedSender = SenderSelector.selectedSender;
@@ -1033,13 +1038,15 @@ CComposeView.prototype.onMessageResponse = function (oMessage)
  */
 CComposeView.prototype.setDataFromMessage = function (oMessage)
 {
-	var
-		sTextBody = '',
-		oFetcherOrIdentity = SendingUtils.getFirstFetcherOrIdentityByRecipientsOrDefault(oMessage.oFrom.aCollection, oMessage.accountId())
-	;
+	const privateAccount = this.isPrivate() ? PrivateComposeUtils.getPrivateAccount() : null;
+	if (privateAccount) {
+		SenderSelector.changeSenderAccountId(privateAccount.id(), null);
+	} else {
+		const oFetcherOrIdentity = SendingUtils.getFirstFetcherOrIdentityByRecipientsOrDefault(oMessage.oFrom.aCollection, oMessage.accountId());
+		SenderSelector.changeSenderAccountId(oMessage.accountId(), oFetcherOrIdentity);
+	}
 
-	SenderSelector.changeSenderAccountId(oMessage.accountId(), oFetcherOrIdentity);
-
+	let sTextBody = '';
 	if (oMessage.isPlain())
 	{
 		sTextBody = oMessage.textRaw();
@@ -1938,7 +1945,7 @@ CComposeView.prototype.getMessageDataForNewTab = function ()
 
 CComposeView.prototype.setPrivate = function (isPrivate)
 {
-	this.isPrivate = isPrivate;
+	this.isPrivate(isPrivate);
 };
 
 CComposeView.prototype.openInNewWindow = function ()
@@ -1947,7 +1954,7 @@ CComposeView.prototype.openInNewWindow = function ()
 		sWinName = 'id' + Math.random().toString(),
 		oMessageParametersFromCompose = {},
 		oWin = null,
-		sHash = Routing.buildHashFromArray(LinksUtils.getCompose(this.isPrivate))
+		sHash = Routing.buildHashFromArray(LinksUtils.getCompose(this.isPrivate()))
 	;
 
 	this.ignoreHasUnsavedChanges(true);
@@ -2013,7 +2020,7 @@ CComposeView.prototype.registerOwnToolbarControllers = function ()
 		toolbarControllers: ko.computed(function () {
 			return _.filter(this.toolbarControllers(), function (oController) {
 				return oController.bSendButton;
-			})
+			});
 		}, this)
 	});
 	this.registerToolbarController({

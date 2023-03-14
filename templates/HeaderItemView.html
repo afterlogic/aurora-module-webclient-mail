@@ -11,7 +11,9 @@
 		<span class="dropdown_helper">
 			<span class="dropdown_arrow"><span></span></span>
 			<span class="dropdown_content" data-bind="foreach: accounts">
+				<!-- ko if: !isPrivate -->
 				<span class="item" data-bind="text: sText, visible: !bCurrent, click: changeAccount"></span>
+				<!-- /ko -->
 			</span>
 		</span>
 	</span>
