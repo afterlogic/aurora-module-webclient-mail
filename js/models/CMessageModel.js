@@ -239,18 +239,18 @@ CMessageModel.prototype.setCustomLabel = function (sId, sText, sCssClass)
 			this.customLabels.push({
 				id: sId,
 				text: sText,
-				cssClass: sCssClass,
+				cssClass: sCssClass
 			});
 		}
 	}
-}
+};
 
 CMessageModel.prototype.removeCustomLabel = function (sId)
 {
 	this.customLabels(_.filter(this.customLabels(), function (oCustomLabel) {
 		return oCustomLabel.id !== sId;
 	}));
-}
+};
 
 CMessageModel.prototype.requireMailCache = function ()
 {
@@ -323,8 +323,8 @@ CMessageModel.prototype.fillFromOrToText = function ()
 {
 	this.requireMailCache();
 	var oFolder = MailCache.getFolderByFullName(this.accountId(), this.folder());
-
-	if (oFolder && (oFolder.type() === Enums.FolderTypes.Drafts || oFolder.type() === Enums.FolderTypes.Sent))
+	
+	if (oFolder && this.checkFolderInheritedType(oFolder, [Enums.FolderTypes.Drafts, Enums.FolderTypes.Sent] ))
 	{
 		var
 			sMeRecipientReplacement = Settings.UseMeRecipientForMessages ? TextUtils.i18n('%MODULENAME%/LABEL_ME_RECIPIENT') : null,
@@ -349,6 +349,23 @@ CMessageModel.prototype.fillFromOrToText = function ()
 		var sMeSenderReplacement = Settings.UseMeRecipientForMessages ? TextUtils.i18n('%MODULENAME%/LABEL_ME_SENDER') : null;
 		this.fromOrToText(this.oFrom.getDisplay(sMeSenderReplacement, this.accountEmail()));
 	}
+};
+
+CMessageModel.prototype.checkFolderInheritedType = function (oFolder, requiredTypes)
+{
+	this.requireMailCache();
+	var oParentFolder = oFolder;
+		
+	var type = oParentFolder.type();
+
+	while(oParentFolder && oParentFolder.parentFullName() !== '' && !requiredTypes.includes(type) ) {
+		oParentFolder = MailCache.getFolderByFullName(this.accountId(), oParentFolder.parentFullName());
+		if (oParentFolder) {
+			type = oParentFolder.type();
+		}
+	}
+
+	return requiredTypes.includes(type);
 };
 
 /**
@@ -844,6 +861,10 @@ CMessageModel.prototype.getHeaderValue = function (sHeaderName) {
 		aResult = reg.exec(this.sourceHeaders())
 	;
 	return $.trim(Types.pString(aResult && aResult[1]));
-}
+};
+
+CMessageModel.prototype.setFlagged = function (isFlagged) {
+	this.flagged(isFlagged);
+};
 
 module.exports = CMessageModel;

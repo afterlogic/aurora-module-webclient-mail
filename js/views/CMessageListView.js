@@ -127,6 +127,11 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 		return oAccount && oAccount.threadingIsAvailable() && !bFolderWithoutThreads && bNotSearchOrFilters;
 	}, this);
 
+	this.disableStarredControls = ko.computed(function () {
+		const folder = MailCache.getCurrentFolder();
+		return folder && Settings.DisableStarredInFolders.includes(folder.fullName());
+	}, this);
+
 	this.lockTopScroll = ko.observable(false);
 	this.lockBottomScroll = ko.observable(false);
 	this.collection = MailCache.messages;

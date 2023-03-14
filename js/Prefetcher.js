@@ -94,18 +94,13 @@ Prefetcher.prefetchMessageList = function (oFolder, iPage, sSearch, sFilters)
 
 Prefetcher.prefetchStarredMessageList = function ()
 {
-	var
-		oFolderList = MailCache.folderList(),
-		oInbox = oFolderList ? oFolderList.inboxFolder() : null,
-		bRequestStarted = false
-	;
+	const allMailsFolder = MailCache.folderList() ? MailCache.folderList().allMailsFolder() : null;
 
-	if (oInbox)
-	{
-		bRequestStarted = this.prefetchMessageList(oInbox, 1, '', Enums.FolderFilter.Flagged);
+	if (allMailsFolder) {
+		return this.prefetchMessageList(allMailsFolder, 1, '', Enums.FolderFilter.Flagged);
 	}
-	
-	return bRequestStarted;
+
+	return false;
 };
 
 Prefetcher.prefetchUnseenMessageList = function ()

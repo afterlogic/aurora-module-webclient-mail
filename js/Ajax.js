@@ -24,8 +24,10 @@ Ajax.registerAbortRequestHandler(Settings.ServerModuleName, function (oRequest, 
 					oOpenedRequest.Method === 'GetMessages' && oOpenedParameters.Folder === oParameters.Folder;
 		case 'GetMessages':
 		case 'SetMessagesSeen':
-		case 'SetMessageFlagged':
 			return oOpenedRequest.Method === 'GetMessages' && oOpenedParameters.Folder === oParameters.Folder;
+		case 'SetMessageFlagged':
+			return	oOpenedRequest.Method === 'GetMessagesFlags' ||
+					oOpenedRequest.Method === 'GetMessages' && oOpenedParameters.Folder === oParameters.Folder;
 		case 'SetAllMessagesSeen':
 			return (oOpenedRequest.Method === 'GetMessages' || oOpenedRequest.Method === 'GetMessages') &&
 					oOpenedParameters.Folder === oParameters.Folder;
@@ -38,6 +40,7 @@ Ajax.registerAbortRequestHandler(Settings.ServerModuleName, function (oRequest, 
 			return oOpenedRequest.Method === 'GetRelevantFoldersInformation' && oParameters.AccountID === oOpenedParameters.AccountID ||
 					oOpenedRequest.Method === 'GetUnifiedRelevantFoldersInformation';
 		case 'GetMessagesFlags':
+		case 'SetMessageFlagged':
 			return oOpenedRequest.Method === 'GetMessagesFlags';
 	}
 	

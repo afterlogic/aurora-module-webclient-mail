@@ -33,6 +33,7 @@ var
 /**
  * @constructor
  * @param {number} iAccountId
+ * @param {boolean} bIsUnifiedInbox
  */
 function CFolderModel(iAccountId, bIsUnifiedInbox)
 {
@@ -237,18 +238,6 @@ CFolderModel.prototype.getFlaggedMessageUids = function ()
 	});
 	
 	return aUids;
-};
-
-/**
- * @param {string} sUid
- */
-CFolderModel.prototype.setMessageUnflaggedByUid = function (sUid)
-{
-	var oMessage = this.getMessageByUid(sUid);
-	if (oMessage)
-	{
-		oMessage.flagged(false);
-	}
 };
 
 /**
@@ -462,10 +451,14 @@ CFolderModel.prototype.parseAndCacheMessage = function (oRawMessage, bThreadPart
 	}
 	
 	oMessage.parse(oRawMessage, this.iAccountId, bThreadPart, bTrustThreadInfo);
-	if (this.type() === Enums.FolderTypes.Inbox && bNewMessage && oMessage.flagged())
+	if (bNewMessage && oMessage.flagged())
 	{
 		this.requireMailCache();
-		MailCache.increaseStarredCount();
+		if (MailCache.folderList().oStarredFolder &&
+				this.fullName() === MailCache.folderList().oStarredFolder.fullName()
+		) {
+			MailCache.increaseStarredCount();
+		}
 	}
 	
 	MessagesDictionary.set([oMessage.accountId(), oMessage.folder(), sUid], oMessage);
@@ -657,6 +650,7 @@ CFolderModel.prototype.removeFlaggedMessageListsFromCache = function ()
 			oUidList.clearData();
 		}
 	}, this);
+	this.requestedLists = this.requestedLists.filter(params => params.filters !== Enums.FolderFilter.Flagged);
 };
 
 CFolderModel.prototype.removeUnseenMessageListsFromCache = function ()
@@ -894,7 +888,7 @@ CFolderModel.prototype.getUidList = function (sSearch, sFilters, sSortBy, iSortO
 		oUidList.sortOrder(iSortOrder);
 		this.oUids[sIndex] = oUidList;
 	}
-	
+
 	return this.oUids[sIndex];
 };
 
@@ -1229,6 +1223,7 @@ CFolderModel.prototype.onGetMessageResponse = function (oResponse, oRequest)
  * @param {string} sUid
  * @param {Function} fResponseHandler
  * @param {Object} oContext
+ * @param {boolean} bForceAjaxRequest
  */
 CFolderModel.prototype.getCompletelyFilledMessage = function (sUid, fResponseHandler, oContext, bForceAjaxRequest)
 {

@@ -111,6 +111,10 @@
 		true,
 		"bool"
 	],
+	"DisableStarredInFolders": [
+		["Spam", "Trash"],
+		"array"
+	],
 	"AllMailsFolder": [
 		"All Mails",
 		"string"

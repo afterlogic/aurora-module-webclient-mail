@@ -123,6 +123,9 @@ function CMailCache()
 		}
 		return this.folderList().currentFolder();
 	}, this);
+	this.getCurrentFolder.subscribe(() => {
+		this.checkMessageFlags();
+	});
 
 	this.getCurrentFolderFullname = ko.computed(function ()
 	{
@@ -777,47 +780,54 @@ CMailCache.prototype.isSearchExecuting = function ()
 
 CMailCache.prototype.checkMessageFlags = function ()
 {
-	var
-		oInbox = this.folderList().inboxFolder(),
-		aUids = oInbox ? oInbox.getFlaggedMessageUids() : [],
-		oParameters = {
-			'Folder': this.folderList().inboxFolderFullName(),
-			'Uids': aUids
-		}
+	const
+		currentFolder = this.folderList().currentFolder(),
+		allMailsFolder = this.folderList().allMailsFolder()
 	;
-	
-	if (aUids.length > 0)
-	{
-		Ajax.send('GetMessagesFlags', oParameters, this.onGetMessagesFlagsResponse, this);
+	if (!currentFolder || !allMailsFolder || currentFolder.fullName() === allMailsFolder.fullName()) {
+		return;
 	}
+
+	const allUids = currentFolder.aMessagesDictionaryUids;
+	if (!Array.isArray(allUids) || allUids.length === 0) {
+		return;
+	}
+
+	const parameters = {
+		'Folder': currentFolder.fullName(),
+		'Uids': allUids
+	};
+	Ajax.send('GetMessagesFlags', parameters, this.onGetMessagesFlagsResponse, this);
 };
 
 /**
- * @param {Object} oResponse
- * @param {Object} oRequest
+ * @param {Object} response
+ * @param {Object} request
  */
-CMailCache.prototype.onGetMessagesFlagsResponse = function (oResponse, oRequest)
+CMailCache.prototype.onGetMessagesFlagsResponse = function (response, request)
 {
-	var
-		oParameters = oRequest.Parameters,
-		oFolderList = this.oFolderListItems[oParameters.AccountID],
-		oInbox = (oFolderList) ? oFolderList.inboxFolder() : null
+	const
+		parameters = request.Parameters,
+		folderList = this.oFolderListItems[parameters.AccountID],
+		folder = folderList ? folderList.getFolderByFullName(parameters.Folder) : null,
+		allMailsFolder = folderList ? folderList.allMailsFolder() : null
 	;
-	
-	if (oInbox)
-	{
-		if (oResponse.Result)
-		{
-			_.each(oResponse.Result, function (aFlags, sUid) {
-				if (_.indexOf(aFlags, '\\flagged') === -1)
-				{
-					oInbox.setMessageUnflaggedByUid(sUid);
-				}
-			});
+
+	if (folder && allMailsFolder && Array.isArray(response.Result)) {
+		let hasStarredChanges = false;
+		response.Result.forEach(({flags, uid}) => {
+			const message = folder.getMessageByUid(uid);
+			const hasFlagged = flags.includes('\\flagged');
+			if (message && message.flagged() !== hasFlagged) {
+				message.setFlagged(hasFlagged);
+				hasStarredChanges = true;
+			}
+		});
+		if (hasStarredChanges && allMailsFolder) {
+			allMailsFolder.removeFlaggedMessageListsFromCache();
+			this.requirePrefetcher();
+			Prefetcher.prefetchStarredMessageList();
 		}
-		oInbox.removeFlaggedMessageListsFromCache();
-		this.requirePrefetcher();
-		Prefetcher.prefetchStarredMessageList();
 	}
 };
 
@@ -1582,8 +1592,6 @@ CMailCache.prototype.executeGroupOperationForFolder = function (sMethod, oFolder
 		},
 //		iOffset = (this.page() - 1) * Settings.MailsPerPage,
 		iUidsCount = aUids.length,
-		iStarredCount = oFolderList.oStarredFolder ? oFolderList.oStarredFolder.messageCount() : 0,
-		oStarredUidList = oFolder.getUidList('', Enums.FolderFilter.Flagged, Settings.MessagesSortBy.DefaultSortBy, Settings.MessagesSortBy.DefaultSortOrder),
 		fCallback = (sMethod === 'SetMessagesSeen') ? this.onSetMessagesSeenResponse : function () {}
 	;
 
@@ -1595,32 +1603,33 @@ CMailCache.prototype.executeGroupOperationForFolder = function (sMethod, oFolder
 
 	oFolder.executeGroupOperation(sField, aUids, bSetAction);
 
-	if (oFolder.type() === Enums.FolderTypes.Inbox && sField === 'flagged')
-	{
-		if (this.uidList().filters() === Enums.FolderFilter.Flagged)
-		{
-			if (!bSetAction)
-			{
+	const allMailsFolder = this.folderList().allMailsFolder();
+	if (sField === 'flagged' && oFolderList.oStarredFolder && allMailsFolder) {
+		if (oFolder.fullName() === oFolderList.oStarredFolder.fullName() &&
+				this.uidList().filters() === Enums.FolderFilter.Flagged
+		) {
+			if (!bSetAction) {
 				this.uidList().deleteUids(aUids);
-				if (oFolderList.oStarredFolder)
-				{
-					oFolderList.oStarredFolder.messageCount(oStarredUidList.resultCount());
+				const allMailsStarredUidList = allMailsFolder.getUidList(
+						'',
+						Enums.FolderFilter.Flagged,
+						Settings.MessagesSortBy.DefaultSortBy,
+						Settings.MessagesSortBy.DefaultSortOrder
+				);
+				if (allMailsStarredUidList) {
+					this.uidList().deleteUids(aUids);
+				}
+				if (allMailsStarredUidList && allMailsStarredUidList.resultCount() >= 0) {
+					oFolderList.oStarredFolder.messageCount(allMailsStarredUidList.resultCount());
 				}
 			}
-		}
-		else
-		{
-			oFolder.removeFlaggedMessageListsFromCache();
-			if (this.uidList().search() === '' && oFolderList.oStarredFolder)
-			{
-				if (bSetAction)
-				{
-					oFolderList.oStarredFolder.messageCount(iStarredCount + iUidsCount);
-				}
-				else
-				{
-					oFolderList.oStarredFolder.messageCount((iStarredCount - iUidsCount > 0) ? iStarredCount - iUidsCount : 0);
-				}
+		} else {
+			allMailsFolder.removeFlaggedMessageListsFromCache();
+			const iStarredCount = oFolderList.oStarredFolder.messageCount();
+			if (bSetAction) {
+				oFolderList.oStarredFolder.messageCount(iStarredCount + iUidsCount);
+			} else {
+				oFolderList.oStarredFolder.messageCount((iStarredCount - iUidsCount > 0) ? iStarredCount - iUidsCount : 0);
 			}
 		}
 	}
@@ -1684,7 +1693,7 @@ CMailCache.prototype.onGetFoldersResponse = function (oResponse, oRequest)
 	else
 	{
 		oFolderList.parse(iAccountId, oResponse.Result, oNamedFolderListOld);
-		if (oFolderListOld)
+		if (oFolderListOld && oFolderListOld.oStarredFolder)
 		{
 			oFolderList.oStarredFolder.messageCount(oFolderListOld.oStarredFolder.messageCount());
 		}
@@ -2078,9 +2087,11 @@ CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 			this.requestCurrentMessageList(this.getCurrentFolderFullname(), this.page(), this.uidList().search(), this.uidList().filters(), this.uidList().sortBy(), this.uidList().sortOrder(), false);
 		}
 		
-		if (oFolder.type() === Enums.FolderTypes.Inbox && oUidList.filters() === Enums.FolderFilter.Flagged &&
-			oUidList.search() === '' && this.folderList().oStarredFolder)
-		{
+		if (this.folderList().oStarredFolder &&
+				oFolder.fullName() === this.folderList().oStarredFolder.fullName() &&
+				oUidList.filters() === Enums.FolderFilter.Flagged &&
+				oUidList.search() === ''
+		) {
 			this.folderList().oStarredFolder.messageCount(oUidList.resultCount());
 			this.folderList().oStarredFolder.hasExtendedInfo(true);
 		}
