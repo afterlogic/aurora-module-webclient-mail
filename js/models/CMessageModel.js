@@ -323,8 +323,8 @@ CMessageModel.prototype.fillFromOrToText = function ()
 {
 	this.requireMailCache();
 	var oFolder = MailCache.getFolderByFullName(this.accountId(), this.folder());
-
-	if (oFolder && (oFolder.type() === Enums.FolderTypes.Drafts || oFolder.type() === Enums.FolderTypes.Sent))
+	
+	if (oFolder && this.checkFolderInheritedType(oFolder, [Enums.FolderTypes.Drafts, Enums.FolderTypes.Sent] ))
 	{
 		var
 			sMeRecipientReplacement = Settings.UseMeRecipientForMessages ? TextUtils.i18n('%MODULENAME%/LABEL_ME_RECIPIENT') : null,
@@ -349,6 +349,23 @@ CMessageModel.prototype.fillFromOrToText = function ()
 		var sMeSenderReplacement = Settings.UseMeRecipientForMessages ? TextUtils.i18n('%MODULENAME%/LABEL_ME_SENDER') : null;
 		this.fromOrToText(this.oFrom.getDisplay(sMeSenderReplacement, this.accountEmail()));
 	}
+};
+
+CMessageModel.prototype.checkFolderInheritedType = function (oFolder, requiredTypes)
+{
+	this.requireMailCache();
+	var oParentFolder = oFolder;
+		
+	var type = oParentFolder.type();
+
+	while(oParentFolder && oParentFolder.parentFullName() !== '' && !requiredTypes.includes(type) ) {
+		oParentFolder = MailCache.getFolderByFullName(this.accountId(), oParentFolder.parentFullName());
+		if (oParentFolder) {
+			type = oParentFolder.type();
+		}
+	}
+
+	return requiredTypes.includes(type);
 };
 
 /**
