@@ -46,8 +46,9 @@ var
 
 	CComposeViewAutoEncrypt = require('modules/%ModuleName%/js/views/CComposeViewAutoEncrypt.js'),
 	// CHtmlEditorView = require('modules/%ModuleName%/js/views/CHtmlEditorView.js'),
-	CHtmlEditorView = require('modules/%ModuleName%/js/views/CSunEditorView.js'),
-	CHtmlEditorView = require('modules/%ModuleName%/js/views/CTrumbowygEditorView.js'),
+	// CHtmlEditorView = require('modules/%ModuleName%/js/views/CSunEditorView.js'),
+	// CHtmlEditorView = require('modules/%ModuleName%/js/views/CTrumbowygEditorView.js'),
+	CHtmlEditorView = require('modules/%ModuleName%/js/views/CTinyMceEditorView.js'),
 
 	MainTab = App.isNewTab() && window.opener && window.opener.MainTabMailMethods,
 
@@ -863,10 +864,14 @@ CComposeView.prototype.focusAfterFilling = function ()
  */
 CComposeView.prototype.onHide = function ()
 {
+console.log('CComposeView.prototype.onHide');
+
 	if (!_.isFunction(this.closePopup) && this.hasUnsavedChanges())
 	{
 		this.executeSave(true);
 	}
+
+	this.oHtmlEditor.onClose();
 
 	this.headersCompressed(false);
 
