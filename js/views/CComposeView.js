@@ -127,9 +127,17 @@ function CComposeView()
 
 	this.selectedImportance = ko.observable(Enums.Importance.Normal).extend({'reversible': true});
 
-	this.senderAccountId = SenderSelector.senderAccountId;
-	this.senderList = SenderSelector.senderList;
 	this.isPrivate = ko.observable(false);
+	this.senderAccountId = SenderSelector.senderAccountId;
+	this.senderAccountId.subscribe(() => {
+		const privateAccount = PrivateComposeUtils.getPrivateAccount();
+		if (privateAccount) {
+			if (this.senderAccountId() === privateAccount.id()) {
+				this.isPrivate(true);
+			}
+		}
+	});
+	this.senderList = SenderSelector.senderList;
 	this.visibleFrom = ko.computed(function () {
 		if (this.isPrivate()) {
 			return false;

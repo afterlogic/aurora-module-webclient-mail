@@ -215,6 +215,11 @@ CAccountListModel.prototype.getPrivateAccount = function () {
 	return this.collection().find(account => account.isPrivate());
 };
 
+CAccountListModel.prototype.isPrivateAccount = function (accountId) {
+	const privateAccount = this.getPrivateAccount();
+	return !!privateAccount && privateAccount.id() === accountId;
+};
+
 /**
  * Fills the collection of accounts.
  * @param {Array} aAccounts

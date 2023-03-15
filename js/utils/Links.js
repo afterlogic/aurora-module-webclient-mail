@@ -2,14 +2,12 @@
 
 var
 	_ = require('underscore'),
-	
+
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
-	
-	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
-	
+
 	MailCache = null,
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
-	
+
 	LinksUtils = {}
 ;
 
@@ -267,6 +265,7 @@ LinksUtils.parseMailbox = function (aParamsToParse)
 };
 
 /**
+ * @param {number} iAccountId
  * @param {string} sFolder
  * @param {string} sUid
  * @return {Array}
@@ -282,6 +281,7 @@ LinksUtils.getViewMessage = function (iAccountId, sFolder, sUid)
 };
 
 /**
+ * @param {boolean} isPrivate
  * @return {Array}
  */
 LinksUtils.getCompose = function (isPrivate = false)

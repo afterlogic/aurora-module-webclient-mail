@@ -203,7 +203,7 @@ SendingUtils.sendReplyMessage = function (sMethod, sText, sDraftUid, fSendMessag
 	if (oMessage)
 	{
 		aRecipients = oMessage.oTo.aCollection.concat(oMessage.oCc.aCollection);
-		oFetcherOrIdentity = this.getFirstFetcherOrIdentityByRecipientsOrDefault(aRecipients, oMessage.accountId());
+		oFetcherOrIdentity = this.getFirstFetcherOrIdentityByRecipientsOrDefault(aRecipients, oMessage.replyFromAccountId());
 
 		oParameters = this.getReplyDataFromMessage(oMessage, Enums.ReplyType.ReplyAll, oMessage.accountId(), oFetcherOrIdentity, false, sText, sDraftUid);
 
@@ -716,7 +716,7 @@ SendingUtils.hasReplyAllCcAddrs = function (oMessage)
 	var
 		iAccountId = oMessage.accountId(),
 		aRecipients = oMessage.oTo.aCollection.concat(oMessage.oCc.aCollection),
-		oFetcherOrIdentity = this.getFirstFetcherOrIdentityByRecipientsOrDefault(aRecipients, oMessage.accountId()),
+		oFetcherOrIdentity = this.getFirstFetcherOrIdentityByRecipientsOrDefault(aRecipients, oMessage.replyFromAccountId()),
 		sCcAddrs = this.getReplyAllCcAddr(oMessage, iAccountId, oFetcherOrIdentity)
 	;
 	return sCcAddrs !== '';
