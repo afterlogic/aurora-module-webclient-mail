@@ -1,26 +1,62 @@
 'use strict';
 
 const
-	App = require('%PathToCoreWebclientModule%/js/App.js')
+	App = require('%PathToCoreWebclientModule%/js/App.js'),
+
+	Settings = require('modules/%ModuleName%/js/Settings.js')
 ;
 
+let privateAccountEmail = null;
+
 module.exports = {
-	isPrivateEmailAccount(email) {
-//		return /.+\.[\d]+@.+/.test(email);
-		return email === 'test2@afterlogic.com';
-	},
-
-	getMessageReplyFromAccountId(recipients, accountId) {
-		const privateAccount = this.getPrivateAccount();
-		const privateRecipient = privateAccount && recipients.find(addr => addr.sEmail === privateAccount.email());
-		if (privateRecipient) {
-			return privateAccount.id();
+	isPrivateAccountEmail(email) {
+		if (!Settings.AllowPrivateMessages) {
+			return false;
 		}
-		return accountId;
+		if (privateAccountEmail !== null) {
+			return privateAccountEmail === email;
+		}
+		const isPrivateAccountEmail = /.+\.[\d]+@.+/.test(email);
+		if (isPrivateAccountEmail) {
+			privateAccountEmail = email;
+		}
+		return isPrivateAccountEmail;
 	},
 
-	getPrivateAccount() {
-		const AccountList = require('modules/%ModuleName%/js/AccountList.js');
-		return AccountList.getPrivateAccount();
+	getPrivateAccountEmail() {
+		return privateAccountEmail;
+	},
+
+	hasPrivateAccount() {
+		return privateAccountEmail !== null;
+	},
+
+	addPrivateMessageHeaderToParameters(parameters) {
+		if (privateAccountEmail === null) {
+			return;
+		}
+		if (!parameters.CustomHeaders) {
+			parameters.CustomHeaders = {};
+		}
+		parameters.CustomHeaders['X-Private-Message-Sender'] = privateAccountEmail;
+	},
+
+	isPrivateMessageParameters(parameters) {
+		return parameters.CustomHeaders && parameters.CustomHeaders['X-Private-Message-Sender'] === privateAccountEmail;
+	},
+
+	isPrivateMessage(message) {
+		if (!Settings.AllowPrivateMessages) {
+			return false;
+		}
+		return message && message.Custom['X-Private-Message-Sender'] === privateAccountEmail;
+	},
+
+	shouldMessageReplyBePrivate(message) {
+		if (!message) {
+			return false;
+		}
+		const recipients = [...message.oTo.aCollection, ...message.oCc.aCollection].map(addr => addr.sEmail);
+		return recipients.includes(privateAccountEmail);
 	}
 };

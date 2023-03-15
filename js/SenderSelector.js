@@ -182,7 +182,7 @@ CSenderSelector.prototype.setFetcherOrIdentityByReplyMessage = function (oMessag
 {
 	var
 		aRecipients = oMessage.oTo.aCollection.concat(oMessage.oCc.aCollection),
-		oFetcherOrIdentity = SendingUtils.getFirstFetcherOrIdentityByRecipientsOrDefault(aRecipients, oMessage.replyFromAccountId())
+		oFetcherOrIdentity = SendingUtils.getFirstFetcherOrIdentityByRecipientsOrDefault(aRecipients, oMessage.accountId())
 	;
 	
 	if (oFetcherOrIdentity)

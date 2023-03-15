@@ -2,9 +2,10 @@
 
 var
 	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
-	
+
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
-	
+	PrivateComposeUtils = require('modules/%ModuleName%/js/utils/PrivateCompose.js'),
+
 	ScreenComposeUtils = {}
 ;
 
@@ -14,26 +15,24 @@ ScreenComposeUtils.composeMessage = function (isPrivate = false)
 };
 
 /**
- * @param {int} iAccountId
- * @param {string} sFolder
- * @param {string} sUid
+ * @param {object} message
  */
-ScreenComposeUtils.composeMessageFromDrafts = function (iAccountId, sFolder, sUid)
+ScreenComposeUtils.composeMessageFromDrafts = function (message)
 {
-	var aParams = LinksUtils.getComposeFromMessage('drafts', iAccountId, sFolder, sUid);
-	Routing.setHash(aParams);
+	const isPrivate = PrivateComposeUtils.isPrivateMessage(message);
+	const params = LinksUtils.getComposeFromMessage('drafts', isPrivate, message.accountId(), message.folder(), message.uid());
+	Routing.setHash(params);
 };
 
 /**
  * @param {string} sReplyType
- * @param {int} iAccountId
- * @param {string} sFolder
- * @param {string} sUid
+ * @param {object} message
  */
-ScreenComposeUtils.composeMessageAsReplyOrForward = function (sReplyType, iAccountId, sFolder, sUid)
+ScreenComposeUtils.composeMessageAsReplyOrForward = function (sReplyType, message)
 {
-	var aParams = LinksUtils.getComposeFromMessage(sReplyType, iAccountId, sFolder, sUid);
-	Routing.setHash(aParams);
+	const isPrivate = PrivateComposeUtils.shouldMessageReplyBePrivate(message);
+	var params = LinksUtils.getComposeFromMessage(sReplyType, isPrivate, message.accountId(), message.folder(), message.uid());
+	Routing.setHash(params);
 };
 
 /**

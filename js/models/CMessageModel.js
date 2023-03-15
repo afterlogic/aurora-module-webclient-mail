@@ -17,7 +17,6 @@ var
 	CDateModel = require('%PathToCoreWebclientModule%/js/models/CDateModel.js'),
 
 	MessageUtils = require('modules/%ModuleName%/js/utils/Message.js'),
-	PrivateCompose = require('modules/%ModuleName%/js/utils/PrivateCompose.js'),
 
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	MailCache = null,
@@ -80,10 +79,6 @@ function CMessageModel()
 	this.bcc = ko.observable('');
 	this.oReplyTo = new CAddressListModel();
 	this.isNotification = ko.observable(false);
-	this.recipientsAddrs = ko.observable([]);
-	this.replyFromAccountId = ko.computed(() => {
-		return PrivateCompose.getMessageReplyFromAccountId(this.recipientsAddrs(), this.accountId());
-	});
 
 	this.seen = ko.observable(false);
 
@@ -478,7 +473,6 @@ CMessageModel.prototype.parse = function (oData, iAccountId, bThreadPart, bTrust
 		this.oTo.parse(oData.To);
 		this.oCc.parse(oData.Cc);
 		this.oBcc.parse(oData.Bcc);
-		this.recipientsAddrs([...this.oTo.aCollection, ...this.oCc.aCollection]);
 		this.oReplyTo.parse(oData.ReplyTo);
 		this.fillFromOrToText();
 

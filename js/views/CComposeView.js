@@ -31,8 +31,8 @@ var
 
 	InformatikMailUtils = require('modules/%ModuleName%/js/utils/InformatikMail.js'),
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
-	PrivateComposeUtils = require('modules/%ModuleName%/js/utils/PrivateCompose.js'),
 	SendingUtils = require('modules/%ModuleName%/js/utils/Sending.js'),
+	PrivateComposeUtils = require('modules/%ModuleName%/js/utils/PrivateCompose.js'),
 
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	CoreAjax = require('%PathToCoreWebclientModule%/js/Ajax.js'),
@@ -129,14 +129,6 @@ function CComposeView()
 
 	this.isPrivate = ko.observable(false);
 	this.senderAccountId = SenderSelector.senderAccountId;
-	this.senderAccountId.subscribe(() => {
-		const privateAccount = PrivateComposeUtils.getPrivateAccount();
-		if (privateAccount) {
-			if (this.senderAccountId() === privateAccount.id()) {
-				this.isPrivate(true);
-			}
-		}
-	});
 	this.senderList = SenderSelector.senderList;
 	this.visibleFrom = ko.computed(function () {
 		if (this.isPrivate()) {
@@ -1046,15 +1038,13 @@ CComposeView.prototype.onMessageResponse = function (oMessage)
  */
 CComposeView.prototype.setDataFromMessage = function (oMessage)
 {
-	const privateAccount = this.isPrivate() ? PrivateComposeUtils.getPrivateAccount() : null;
-	if (privateAccount) {
-		SenderSelector.changeSenderAccountId(privateAccount.id(), null);
-	} else {
-		const oFetcherOrIdentity = SendingUtils.getFirstFetcherOrIdentityByRecipientsOrDefault(oMessage.oFrom.aCollection, oMessage.accountId());
-		SenderSelector.changeSenderAccountId(oMessage.accountId(), oFetcherOrIdentity);
-	}
+	var
+		sTextBody = '',
+		oFetcherOrIdentity = SendingUtils.getFirstFetcherOrIdentityByRecipientsOrDefault(oMessage.oFrom.aCollection, oMessage.accountId())
+	;
 
-	let sTextBody = '';
+	SenderSelector.changeSenderAccountId(oMessage.accountId(), oFetcherOrIdentity);
+
 	if (oMessage.isPlain())
 	{
 		sTextBody = oMessage.textRaw();
@@ -1671,6 +1661,10 @@ CComposeView.prototype.getSendSaveParameters = function ({removeSignatureAnchor 
 		oParameters.DraftUid = this.templateUid();
 	}
 
+	if (this.isPrivate()) {
+		PrivateComposeUtils.addPrivateMessageHeaderToParameters(oParameters);
+	}
+
 	return oParameters;
 };
 
@@ -1695,7 +1689,7 @@ CComposeView.prototype.onSendOrSaveMessageResponse = function (oResponse, oReque
 				this.templateUid(Types.pString(oResData.NewUid));
                 if (this.composeShown() && this instanceof CComposeView)// it is screen, not popup
                 {
-					Routing.replaceHashDirectly(LinksUtils.getComposeFromMessage('drafts', MailCache.currentAccountId(), oParameters.DraftFolder, this.templateUid()));
+					Routing.replaceHashDirectly(LinksUtils.getComposeFromMessage('drafts', this.isPrivate(), MailCache.currentAccountId(), oParameters.DraftFolder, this.templateUid()));
                 }
             }
 			else if (oResData.Result && oParameters.DraftUid === this.draftUid())
@@ -1703,7 +1697,7 @@ CComposeView.prototype.onSendOrSaveMessageResponse = function (oResponse, oReque
 				this.draftUid(Types.pString(oResData.NewUid));
 				if (this.composeShown() && this instanceof CComposeView)// it is screen, not popup
 				{
-					Routing.replaceHashDirectly(LinksUtils.getComposeFromMessage('drafts', MailCache.currentAccountId(), oParameters.DraftFolder, this.draftUid()));
+					Routing.replaceHashDirectly(LinksUtils.getComposeFromMessage('drafts', this.isPrivate(), MailCache.currentAccountId(), oParameters.DraftFolder, this.draftUid()));
 				}
 			}
 			this.saving(false);
@@ -1970,19 +1964,20 @@ CComposeView.prototype.openInNewWindow = function ()
 
 	if (this.draftUid().length > 0 && !this.isChanged())
 	{
-		sHash = Routing.buildHashFromArray(LinksUtils.getComposeFromMessage('drafts', MailCache.currentAccountId(), MailCache.folderList().draftsFolderFullName(), this.draftUid(), true));
+		sHash = Routing.buildHashFromArray(LinksUtils.getComposeFromMessage('drafts', this.isPrivate(), MailCache.currentAccountId(), MailCache.folderList().draftsFolderFullName(), this.draftUid(), true));
 		oWin = WindowOpener.openTab('?message-newtab' + sHash);
 	}
     else if (this.templateUid().length > 0 && !this.isChanged())
     {
-		sHash = Routing.buildHashFromArray(LinksUtils.getComposeFromMessage('drafts', MailCache.currentAccountId(), this.templateFolderName(), this.templateUid(), true));
+		sHash = Routing.buildHashFromArray(LinksUtils.getComposeFromMessage('drafts', this.isPrivate(), MailCache.currentAccountId(), this.templateFolderName(), this.templateUid(), true));
 		oWin = WindowOpener.openTab('?message-newtab' + sHash);
     }
 	else if (!this.isChanged())
 	{
 		if (this.routeParams().length > 0)
 		{
-			sHash = Routing.buildHashFromArray(_.union([Settings.HashModuleName + '-compose'], this.routeParams()));
+			const postfix = this.isPrivate() ? '-private-compose' : '-compose';
+			sHash = Routing.buildHashFromArray(_.union([Settings.HashModuleName + postfix], this.routeParams()));
 		}
 		oWin = WindowOpener.openTab('?message-newtab' + sHash);
 	}

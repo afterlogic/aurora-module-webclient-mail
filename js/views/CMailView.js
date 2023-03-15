@@ -116,9 +116,9 @@ function CMailView()
 		}
 		return TextUtils.i18n('%MODULENAME%/ACTION_NEW_MESSAGE');
 	}, this);
+	this.allowPrivateMessages = Settings.AllowPrivateMessages;
 	this.privateComposeCommand = Utils.createCommand(this, () => {
-		const privateAccount = PrivateComposeUtils.getPrivateAccount();
-		if (privateAccount) {
+		if (PrivateComposeUtils.hasPrivateAccount()) {
 			ComposeUtils.composeMessage(true);
 		} else {
 			Popups.showPopup(AlertPopup, [TextUtils.i18n('%MODULENAME%/ERROR_NO_PRIVATE_ACCOUNT')]);
@@ -400,7 +400,8 @@ CMailView.prototype.openMessageInNewWindow = function (oMessage)
 
 		if (bDraftFolder)
 		{
-			sHash = Routing.buildHashFromArray(LinksUtils.getComposeFromMessage('drafts', iAccountId, sFolder, sUid));
+			const isPrivate = PrivateComposeUtils.isPrivateMessage(oMessage);
+			sHash = Routing.buildHashFromArray(LinksUtils.getComposeFromMessage('drafts', isPrivate, iAccountId, sFolder, sUid));
 		}
 		else
 		{

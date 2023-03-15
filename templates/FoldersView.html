@@ -3,7 +3,9 @@
 		<span class="icon"></span>
 		<span data-bind="text: $parent.bigButtonText"></span>
 	</span>
-	<span class="button button_new_private" data-bind="command: $parent.privateComposeCommand">
+	<span class="button button_new_private"
+		  data-bind="command: $parent.privateComposeCommand, visible: $parent.allowPrivateMessages"
+	>
 		<span class="icon"></span>
 		<span data-bind="i18n: {'key': 'MAILWEBCLIENT/ACTION_NEW_PRIVATE_MESSAGE'}"></span>
 	</span>
@@ -15,12 +17,10 @@
 
 <!-- ko if: accounts().length > 0 -->
 <div class="account_list" data-bind="foreach: accounts">
-	<!-- ko if: !isPrivate -->
-		<div class="account_item" data-bind="css: {'current_account': bCurrent}, click: changeAccount">
-			<span data-bind="text: sText"></span>
-			<span style="float: right;" data-bind="text: unseenMessagesCount, visible: unseenMessagesCount() > 0"></span>
-		</div>
-	<!-- /ko -->
+	<div class="account_item" data-bind="css: {'current_account': bCurrent}, click: changeAccount">
+		<span data-bind="text: sText"></span>
+		<span style="float: right;" data-bind="text: unseenMessagesCount, visible: unseenMessagesCount() > 0"></span>
+	</div>
 </div>
 <!-- /ko -->
 

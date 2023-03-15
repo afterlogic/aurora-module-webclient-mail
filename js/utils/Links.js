@@ -2,12 +2,12 @@
 
 var
 	_ = require('underscore'),
-
+	
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
-
+	
 	MailCache = null,
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
-
+	
 	LinksUtils = {}
 ;
 
@@ -297,20 +297,22 @@ LinksUtils.getCompose = function (isPrivate = false)
 
 /**
  * @param {string} sType
+ * @param {boolean} isPrivate
  * @param {int} iAccountId
  * @param {string} sFolder
  * @param {string} sUid
  * 
  * @return {Array}
  */
-LinksUtils.getComposeFromMessage = function (sType, iAccountId, sFolder, sUid)
+LinksUtils.getComposeFromMessage = function (sType, isPrivate, iAccountId, sFolder, sUid)
 {
 	var
 		AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 		oAccount = AccountList.getAccount(iAccountId),
-		sAccountHash = oAccount ? oAccount.hash() : ''
+		sAccountHash = oAccount ? oAccount.hash() : '',
+		postfix = isPrivate ? '-private-compose' : '-compose'
 	;
-	return [Settings.HashModuleName + '-compose', sAccountHash, sType, sFolder, sUid];
+	return [Settings.HashModuleName + postfix, sAccountHash, sType, sFolder, sUid];
 };
 
 /**

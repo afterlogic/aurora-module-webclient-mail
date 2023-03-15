@@ -10,7 +10,9 @@ var
 	MainTab = App.isNewTab() && window.opener ? window.opener.MainTabMailMethods : null,
 	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
 	CoreAjax = require('%PathToCoreWebclientModule%/js/Ajax.js'),
-	
+
+	PrivateCompose = require('modules/%ModuleName%/js/utils/PrivateCompose.js'),
+
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
@@ -211,33 +213,21 @@ CAccountListModel.prototype.getAliasByHash = function(sHash)
 	return oAlias;
 };
 
-CAccountListModel.prototype.getPrivateAccount = function () {
-	return this.collection().find(account => account.isPrivate());
-};
-
-CAccountListModel.prototype.isPrivateAccount = function (accountId) {
-	const privateAccount = this.getPrivateAccount();
-	return !!privateAccount && privateAccount.id() === accountId;
-};
-
 /**
  * Fills the collection of accounts.
- * @param {Array} aAccounts
+ * @param {Array} accountsData
  */
-CAccountListModel.prototype.parse = function (aAccounts)
+CAccountListModel.prototype.parse = function (accountsData)
 {
-	if (_.isArray(aAccounts))
-	{
-		this.collection(_.map(aAccounts, function (oRawAccount)
-		{
-			return new CAccountModel(oRawAccount);
-		}));
-		const privateAccount = this.getPrivateAccount();
-		const defaultAccount = this.getDefault();
-		if (privateAccount && defaultAccount) {
-			privateAccount.signature = defaultAccount.signature;
-			privateAccount.useSignature = defaultAccount.useSignature;
-		}
+	if (Array.isArray(accountsData)) {
+		const accounts = [];
+		accountsData.forEach(accountData => {
+			const account = new CAccountModel(accountData);
+			if (!PrivateCompose.isPrivateAccountEmail(account.email())) {
+				accounts.push(account);
+			}
+		});
+		this.collection(accounts);
 		this.initObservables(this.collection().length > 0 ? this.collection()[0].id() : 0);
 	}
 };
