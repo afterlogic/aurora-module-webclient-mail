@@ -24,6 +24,7 @@ var
 	ComposeUtils = require('modules/%ModuleName%/js/utils/Compose.js'),
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
 	MailUtils = require('modules/%ModuleName%/js/utils/Mail.js'),
+	PrivateComposeUtils = require('modules/%ModuleName%/js/utils/PrivateCompose.js'),
 	SearchUtils = require('modules/%ModuleName%/js/utils/Search.js'),
 
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
@@ -544,7 +545,7 @@ CMessageListView.prototype.onMessageDblClick = function (oMessage)
 		{
 			if (oFolder.type() === Enums.FolderTypes.Drafts || MailCache.isTemplateFolder(oMessage.folder()))
 			{
-				ComposeUtils.composeMessageFromDrafts(oMessage.accountId(), oMessage.folder(), oMessage.uid());
+				ComposeUtils.composeMessageFromDrafts(oMessage);
 			}
 			else
 			{
@@ -800,7 +801,8 @@ CMessageListView.prototype.routeForMessage = function (oMessage)
 		{
 			if (App.isMobile() && oFolder.type() === Enums.FolderTypes.Drafts)
 			{
-				Routing.setHash(LinksUtils.getComposeFromMessage('drafts', oMessage.accountId(), oMessage.folder(), oMessage.uid()));
+				const isPrivate = PrivateComposeUtils.isPrivateMessage(oMessage);
+				Routing.setHash(LinksUtils.getComposeFromMessage('drafts', isPrivate, oMessage.accountId(), oMessage.folder(), oMessage.uid()));
 			}
 			else
 			{

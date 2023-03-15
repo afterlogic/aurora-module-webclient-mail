@@ -2,45 +2,46 @@
 
 var
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
-	
+
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
-	
+	PrivateComposeUtils = require('modules/%ModuleName%/js/utils/PrivateCompose.js'),
+
 	PopupComposeUtils = {}
 ;
 
-function GetComposePopup()
+function GetComposePopup(isPrivate = false)
 {
-	return require('modules/%ModuleName%/js/popups/ComposePopup.js');
+	const ComposePopup = require('modules/%ModuleName%/js/popups/ComposePopup.js');
+	ComposePopup.setPrivate(isPrivate);
+	return ComposePopup;
 }
 
-PopupComposeUtils.composeMessage = function ()
+PopupComposeUtils.composeMessage = function (isPrivate = false)
 {
-	Popups.showPopup(GetComposePopup());
+	Popups.showPopup(GetComposePopup(isPrivate));
 };
 
 /**
- * @param {int} iAccountId
- * @param {string} sFolder
- * @param {string} sUid
+ * @param {object} message
  */
-PopupComposeUtils.composeMessageFromDrafts = function (iAccountId, sFolder, sUid)
+PopupComposeUtils.composeMessageFromDrafts = function (message)
 {
-	var aParams = LinksUtils.getComposeFromMessage('drafts', iAccountId, sFolder, sUid);
-	aParams.shift();
-	Popups.showPopup(GetComposePopup(), [aParams]);
+	const isPrivate = PrivateComposeUtils.isPrivateMessage(message);
+	const params = LinksUtils.getComposeFromMessage('drafts', isPrivate, message.accountId(), message.folder(), message.uid());
+	params.shift();
+	Popups.showPopup(GetComposePopup(isPrivate), [params]);
 };
 
 /**
  * @param {string} sReplyType
- * @param {int} iAccountId
- * @param {string} sFolder
- * @param {string} sUid
+ * @param {object} message
  */
-PopupComposeUtils.composeMessageAsReplyOrForward = function (sReplyType, iAccountId, sFolder, sUid)
+PopupComposeUtils.composeMessageAsReplyOrForward = function (sReplyType, message)
 {
-	var aParams = LinksUtils.getComposeFromMessage(sReplyType, iAccountId, sFolder, sUid);
-	aParams.shift();
-	Popups.showPopup(GetComposePopup(), [aParams]);
+	const isPrivate = PrivateComposeUtils.shouldMessageReplyBePrivate(message);
+	const params = LinksUtils.getComposeFromMessage(sReplyType, isPrivate, message.accountId(), message.folder(), message.uid());
+	params.shift();
+	Popups.showPopup(GetComposePopup(isPrivate), [params]);
 };
 
 /**

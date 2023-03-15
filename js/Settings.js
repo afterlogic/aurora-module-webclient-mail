@@ -81,6 +81,8 @@ module.exports = {
 	// from MailWebclient module
 	PdfImagesLoadTimeLimitSeconds: 2,
 
+	AllowPrivateMessages: false,
+
 	/**
 	 * Initializes settings from AppData object sections.
 	 * 
@@ -93,7 +95,8 @@ module.exports = {
 			oAppDataMailSection = oAppData[this.ServerModuleName],
 			oAppDataMailWebclientSection = oAppData['%ModuleName%'],
 			oAppDataFetchersSection = oAppData[this.FetchersServerModuleName],
-			oAppDataAliasesSection = oAppData[this.AliasesServerModuleName]
+			oAppDataAliasesSection = oAppData[this.AliasesServerModuleName],
+			informatikAppDataSection = oAppData['InformatikProjects']
 		;
 
 		if (!_.isEmpty(oCoreDataSection))
@@ -181,6 +184,8 @@ module.exports = {
 		if (!_.isEmpty(appDataInformatikSection)) {
 			this.PdfImagesLoadTimeLimitSeconds = Types.pInt(appDataInformatikSection.PdfImagesLoadTimeLimitSeconds, this.PdfImagesLoadTimeLimitSeconds);
 		}
+
+		this.AllowPrivateMessages = Types.pBool(informatikAppDataSection && informatikAppDataSection.AllowPrivateMessages, this.AllowPrivateMessages);
 
 		App.registerUserAccountsCount(this.userMailAccountsCount);
 		App.registerAccountsWithPass(this.mailAccountsEmails);
