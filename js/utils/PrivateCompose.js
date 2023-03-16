@@ -16,8 +16,7 @@ module.exports = {
 		if (privateAccountEmail !== null) {
 			return privateAccountEmail === email;
 		}
-//		const isPrivateAccountEmail = /.+\.[\d]+@.+/.test(email);
-		const isPrivateAccountEmail = email === 'test2@afterlogic.com';
+		const isPrivateAccountEmail = /.+\.[\d]+@.+/.test(email);
 		if (isPrivateAccountEmail) {
 			privateAccountEmail = email;
 		}
