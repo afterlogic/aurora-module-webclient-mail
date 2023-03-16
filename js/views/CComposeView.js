@@ -48,7 +48,8 @@ var
 	// CHtmlEditorView = require('modules/%ModuleName%/js/views/CHtmlEditorView.js'),
 	// CHtmlEditorView = require('modules/%ModuleName%/js/views/CSunEditorView.js'),
 	// CHtmlEditorView = require('modules/%ModuleName%/js/views/CTrumbowygEditorView.js'),
-	CHtmlEditorView = require('modules/%ModuleName%/js/views/CTinyMceEditorView.js'),
+	// CHtmlEditorView = require('modules/%ModuleName%/js/views/CTinyMceEditorView.js'),
+	CHtmlEditorView = require('modules/%ModuleName%/js/views/CSummernoteEditorView.js'),
 
 	MainTab = App.isNewTab() && window.opener && window.opener.MainTabMailMethods,
 

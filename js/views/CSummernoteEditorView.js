@@ -1,5 +1,4 @@
 'use strict';
-
 var
 	_ = require('underscore'),
 	$ = require('jquery'),
@@ -19,10 +18,6 @@ var
 	
 	CAttachmentModel = require('modules/%ModuleName%/js/models/CAttachmentModel.js'),
 	// CCrea = require('modules/%ModuleName%/js/CCrea.js'),
-	// suneditor = require('suneditor').default,
-	tinymce = require('tinymce/tinymce'),
-	
-	// plugins = require('suneditor/src/plugins'),
 
 	MailCache = require('modules/%ModuleName%/js/Cache.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
@@ -30,26 +25,8 @@ var
 	CColorPickerView = require('modules/%ModuleName%/js/views/CColorPickerView.js')
 ;
 
-/* Default icons are required. After that, import custom icons if applicable */
-require('tinymce/icons/default');
-/* Required TinyMCE components */
-require('tinymce/themes/silver');
-require('tinymce/models/dom');
-require('tinymce/plugins/lists');
-require('tinymce/plugins/link');
-require('tinymce/plugins/image');
-require('tinymce/plugins/autolink');
-require('tinymce/plugins/table');
-
-/* Import a skin (can be a custom skin instead of the default) */
-require('tinymce/skins/ui/tinymce-5/skin.css');
-
-/* content UI CSS is required */
-const contentUiSkinCss = require('tinymce/skins/ui/oxide/content.css');
-
-/* The default content CSS can be changed or replaced with appropriate CSS for the editor content. */
-const contentCss = require('tinymce/skins/content/default/content.css');
-
+require('summernote/dist/summernote-lite.js');
+require('summernote/dist/summernote-lite.css');
 
 /**
  * @constructor
@@ -170,7 +147,7 @@ function CHtmlEditorView(bInsertImageAsBase64, oParent)
 	}
 }
 
-CHtmlEditorView.prototype.ViewTemplate = '%ModuleName%_TinyMceEditorView';
+CHtmlEditorView.prototype.ViewTemplate = '%ModuleName%_SummernoteEditorView';
 
 /**
  * @param {string} sText
@@ -180,7 +157,7 @@ CHtmlEditorView.prototype.ViewTemplate = '%ModuleName%_TinyMceEditorView';
  */
 CHtmlEditorView.prototype.onClose = function (sText, bPlain, sTabIndex, sPlaceholderText)
 {
-	tinymce.activeEditor.destroy();
+	// tinymce.activeEditor.destroy();
 }
 
 CHtmlEditorView.prototype.init = function (sText, bPlain, sTabIndex, sPlaceholderText)
@@ -241,63 +218,46 @@ CHtmlEditorView.prototype.init = function (sText, bPlain, sTabIndex, sPlaceholde
 		// 	'onUrlClicked': true
 		// });
 		// this.oCrea.start(this.isEnable());
-		
-		tinymce.EditorManager.init({
-			selector: '#' + this.editorId,
-			skin: false,			
-			content_css: false,
-			content_style: contentUiSkinCss.toString() + '\n' + contentCss.toString(),
-			menubar: false,
-			statusbar: false,
-			width: 'auto',
-			plugins: 'lists link image autolink table',
-			toolbar: 'undo redo | bold italic underline strikethrough | fontfamily fontsize forecolor backcolor | numlist bullist | link image table removeformat',
-			color_cols: 2, //doesn't work
-			custom_colors: false,
-			color_default_background: 'yellow',
-			color_map: [
-			  '#BFEDD2', 'Light Green',
-			  '#FBEEB8', 'Light Yellow',
-			  '#F8CAC6', 'Light Red',
-			  '#ECCAFA', 'Light Purple',
-			  '#C2E0F4', 'Light Blue',
-			
-			  '#2DC26B', 'Green',
-			  '#F1C40F', 'Yellow',
-			  '#E03E2D', 'Red',
-			  '#B96AD9', 'Purple',
-			  '#3598DB', 'Blue',
-			
-			  '#169179', 'Dark Turquoise',
-			  '#E67E23', 'Orange',
-			  '#BA372A', 'Dark Red',
-			  '#843FA1', 'Dark Purple',
-			  '#236FA1', 'Dark Blue',
-			
-			  '#ECF0F1', 'Light Gray',
-			  '#CED4D9', 'Medium Gray',
-			  '#95A5A6', 'Gray',
-			  '#7E8C8D', 'Dark Gray',
-			  '#34495E', 'Navy Blue',
-			
-			  '#000000', 'Black',
-			  '#ffffff', 'White'
+
+
+		$('#' + this.editorId).summernote({
+			toolbar: [
+				['history', ['undo', 'redo']],
+				['style', ['bold', 'italic', 'underline']],
+				['font', ['fontname', 'fontsize']],
+				['color', ['color']],
+				['para', ['ul', 'ol', 'paragraph']],
+				['misc', ['table', 'link', 'picture', 'clear']],
 			],
-			font_family_formats: 'Arial=arial,sans-serif; Courier New=courier new,courier,monospace; Tahoma=tahoma,sans-serif; Verdana=verdana,sans-serif; Times New Roman=times new roman,serif',
-			font_size_formats: 'Small=10pt Normal=12pt Medium=14pt Large=16pt Big=18pt Huge=24pt'
-			// {text: '%MODULENAME%/ACTION_CHOOSE_SMALL_TEXTSIZE', value: '12px'},
-			// 	{text: '%MODULENAME%/ACTION_CHOOSE_NORMAL_TEXTSIZE', value: '15px', default: true},
-			// 	{text: '%MODULENAME%/ACTION_CHOOSE_LARGE_TEXTSIZE', value: '22px'},
-			// font-family: Tahoma; font-size: 15px;
-		}).then((editors) => {
-			console.log('editors', editors);
+			fontNames: ['Arial', 'Tahoma', 'Verdana', 'Courier New'],
+			// addDefaultFonts: false,
+			dialogsInBody: true,
+			shortcuts: false,
+
+			popover: {
+				air: [
+				  ['color', ['color']],
+				  ['font', ['bold', 'underline', 'clear']]
+				]
+			  }
 		});
+		
+		// 	font_size_formats: 'Small=10pt Normal=12pt Medium=14pt Large=16pt Big=18pt Huge=24pt'
+		// 	// {text: '%MODULENAME%/ACTION_CHOOSE_SMALL_TEXTSIZE', value: '12px'},
+		// 	// 	{text: '%MODULENAME%/ACTION_CHOOSE_NORMAL_TEXTSIZE', value: '15px', default: true},
+		// 	// 	{text: '%MODULENAME%/ACTION_CHOOSE_LARGE_TEXTSIZE', value: '22px'},
+		// 	// font-family: Tahoma; font-size: 15px;
+		// }).then((editors) => {
+		// 	console.log('editors', editors);
+		// });
 			// onFocus: _.bind(this.onFocusHandler, this),
 			// onBlur: _.bind(this.onBlurHandler, this),
 		// });
+		this.oEditor = $('#' + this.editorId);
 		
 	}
 
+	// this.oEditor.summernote('editor.insertText', 'hello world');
 	// this.oCrea.setTabIndex(sTabIndex);
 	this.clearUndoRedo();
 	this.setText(sText, bPlain);
@@ -619,7 +579,7 @@ CHtmlEditorView.prototype.setFocus = function ()
 CHtmlEditorView.prototype.changeSignatureContent = function (sNewSignatureContent, sOldSignatureContent)
 {
 	// TODO
-	if (false && this.oEditor && !this.disableEdit())
+	if (this.oEditor && !this.disableEdit())
 	{
 		const 
 			content = this.oEditor.getContext().element.wysiwyg,
@@ -738,9 +698,12 @@ CHtmlEditorView.prototype.setText = function (sText, bPlain)
 	if (this.oEditor && !this.disableEdit())
 	{
 		if (bPlain) {
-			this.oEditor.setContent('<p>'+sText+'</p>');
+			this.oEditor.summernote('insertText', '<p>'+sText+'</p>');
+			// $('#summernote');
+			// this.oEditor.setContent();
 		} else {
-			this.oEditor.setContent(sText);
+			this.oEditor.summernote('insertText', sText);
+			// this.oEditor.setContent(sText);
 		}
 		if (this.inactive() && sText === '') {
 			this.setPlaceholder();
@@ -753,10 +716,10 @@ CHtmlEditorView.prototype.undoAndClearRedo = function ()
 	//TODO
 	if (this.oEditor)
 	{
-		console.log();
-		tinymce.UndoManager.undo();
+		// console.log();
+		// tinymce.UndoManager.undo();
 		//TODO clear REDO only
-		tinymce.UndoManager.reset();
+		// tinymce.UndoManager.reset();
 		// this.oEditor.undo();
 		// this.oEditor.clearRedo();
 	}
@@ -767,7 +730,7 @@ CHtmlEditorView.prototype.clearUndoRedo = function ()
 	//CHECK
 	if (this.oEditor)
 	{
-		tinymce.UndoManager.reset();
+		// tinymce.UndoManager.reset();
 	}
 };
 
