@@ -25,6 +25,7 @@ var
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
 	MailUtils = require('modules/%ModuleName%/js/utils/Mail.js'),
 	SendingUtils = require('modules/%ModuleName%/js/utils/Sending.js'),
+	PrivateComposeUtils = require('modules/%ModuleName%/js/utils/PrivateCompose.js'),
 
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
@@ -236,6 +237,9 @@ function CMessagePaneView()
 	this.midDate = ko.observable('');
 
 	this.textBody = ko.observable('');
+	this.isAnotherUserPrivateMessage = ko.computed(() => {
+		return PrivateComposeUtils.isAnotherUserPrivateMessage(this.textBody());
+	});
 	this.textBodyForNewWindow = ko.observable('');
 	this.domTextBody = ko.observable(null);
 	this.domTextBodyScrollArea = ko.observable(null);

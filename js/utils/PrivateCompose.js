@@ -16,7 +16,8 @@ module.exports = {
 		if (privateAccountEmail !== null) {
 			return privateAccountEmail === email;
 		}
-		const isPrivateAccountEmail = /.+\.[\d]+@.+/.test(email);
+//		const isPrivateAccountEmail = /.+\.[\d]+@.+/.test(email);
+		const isPrivateAccountEmail = email === 'test2@afterlogic.com';
 		if (isPrivateAccountEmail) {
 			privateAccountEmail = email;
 		}
@@ -50,6 +51,15 @@ module.exports = {
 			return false;
 		}
 		return message && message.Custom['X-Private-Message-Sender'] === privateAccountEmail;
+	},
+
+	isAnotherUserPrivateMessage(textBody) {
+		if (!Settings.AllowPrivateMessages) {
+			return false;
+		}
+		const regex = /([A-Z0-9\"!#\$%\^\{\}`~&'\+\-=_\.]+\.[\d]+@[A-Z0-9\.\-]+)/ig;
+		const matches = textBody.match(regex);
+		return matches && matches.some(email => email !== privateAccountEmail);
 	},
 
 	shouldMessageReplyBePrivate(message) {

@@ -186,6 +186,7 @@ module.exports = {
 		}
 
 		this.AllowPrivateMessages = Types.pBool(informatikAppDataSection && informatikAppDataSection.AllowPrivateMessages, this.AllowPrivateMessages);
+		this.AllowPrivateMessages = true;
 
 		App.registerUserAccountsCount(this.userMailAccountsCount);
 		App.registerAccountsWithPass(this.mailAccountsEmails);
