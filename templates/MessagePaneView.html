@@ -141,7 +141,14 @@
 						<div class="message_body_secondary_info" data-bind="i18n: {'key': '%MODULENAME%/INFO_SINGLE_DOUBLE_CLICK'}"></div>
 					</div>
 					<div class="message_body_info" data-bind="visible: isLoading, i18n: {'key': 'COREWEBCLIENT/INFO_LOADING'}"></div>
-					<div class="message_body html" data-bind="visible: isCurrentMessage() && textBody(), initDom: domTextBody, attr: {'dir': rtlMessage() ? 'rtl' : 'ltr'}"></div>
+					<div class="message_body html"
+						 data-bind="visible: isCurrentMessage() && textBody() && !isAnotherUserPrivateMessage(),
+						 initDom: domTextBody, attr: {'dir': rtlMessage() ? 'rtl' : 'ltr'}"
+					></div>
+					<div class="message_body html"
+						 data-bind="visible: isCurrentMessage() && textBody() && isAnotherUserPrivateMessage(),
+						 i18n: {'key': '%MODULENAME%/INFO_ANOTHER_USER_PRIVATE_MESSAGE'}"
+					></div>
 				</div>
 			</div>
 		</div>

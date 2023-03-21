@@ -98,12 +98,13 @@ module.exports = function (oAppData) {
 
 		if (App.isNewTab())
 		{
-			var GetComposeView = function() {
+			var GetComposeView = function(isPrivate = false) {
 				if (ComposeView === null)
 				{
 					var CComposeView = require('modules/%ModuleName%/js/views/CComposeView.js');
 					ComposeView = new CComposeView();
 				}
+				ComposeView.setPrivate(isPrivate);
 				return ComposeView;
 			};
 
@@ -119,6 +120,9 @@ module.exports = function (oAppData) {
 					};
 					oScreens[Settings.HashModuleName + '-compose'] = function () {
 						return GetComposeView();
+					};
+					oScreens[Settings.HashModuleName + '-private-compose'] = function () {
+						return GetComposeView(true);
 					};
 					return oScreens;
 				},

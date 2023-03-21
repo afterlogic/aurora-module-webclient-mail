@@ -9,6 +9,7 @@ var
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	Utils = require('%PathToCoreWebclientModule%/js/utils/Common.js'),
 
+	AlertPopup = require('%PathToCoreWebclientModule%/js/popups/AlertPopup.js'),
 	App = require('%PathToCoreWebclientModule%/js/App.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
@@ -17,6 +18,7 @@ var
 
 	CAbstractScreenView = require('%PathToCoreWebclientModule%/js/views/CAbstractScreenView.js'),
 
+	PrivateComposeUtils = require('modules/%ModuleName%/js/utils/PrivateCompose.js'),
 	ComposeUtils = require('modules/%ModuleName%/js/utils/Compose.js'),
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
 
@@ -114,6 +116,14 @@ function CMailView()
 		}
 		return TextUtils.i18n('%MODULENAME%/ACTION_NEW_MESSAGE');
 	}, this);
+	this.allowPrivateMessages = Settings.AllowPrivateMessages;
+	this.privateComposeCommand = Utils.createCommand(this, () => {
+		if (PrivateComposeUtils.hasPrivateAccount()) {
+			ComposeUtils.composeMessage(true);
+		} else {
+			Popups.showPopup(AlertPopup, [TextUtils.i18n('%MODULENAME%/ERROR_NO_PRIVATE_ACCOUNT')]);
+		}
+	});
 
 	this.changeLayoutCommand = Utils.createCommand(this, this.changeLayout);
 
@@ -390,7 +400,8 @@ CMailView.prototype.openMessageInNewWindow = function (oMessage)
 
 		if (bDraftFolder)
 		{
-			sHash = Routing.buildHashFromArray(LinksUtils.getComposeFromMessage('drafts', iAccountId, sFolder, sUid));
+			const isPrivate = PrivateComposeUtils.isPrivateMessage(oMessage);
+			sHash = Routing.buildHashFromArray(LinksUtils.getComposeFromMessage('drafts', isPrivate, iAccountId, sFolder, sUid));
 		}
 		else
 		{

@@ -5,8 +5,6 @@ var
 	
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	
-	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
-	
 	MailCache = null,
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	
@@ -267,6 +265,7 @@ LinksUtils.parseMailbox = function (aParamsToParse)
 };
 
 /**
+ * @param {number} iAccountId
  * @param {string} sFolder
  * @param {string} sUid
  * @return {Array}
@@ -282,34 +281,38 @@ LinksUtils.getViewMessage = function (iAccountId, sFolder, sUid)
 };
 
 /**
+ * @param {boolean} isPrivate
  * @return {Array}
  */
-LinksUtils.getCompose = function ()
+LinksUtils.getCompose = function (isPrivate = false)
 {
 	var
 		AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 		oCurrAccount = AccountList.getCurrent(),
-		sAccountHash = oCurrAccount ? oCurrAccount.hash() : ''
+		sAccountHash = oCurrAccount ? oCurrAccount.hash() : '',
+		postfix = isPrivate ? '-private-compose' : '-compose'
 	;
-	return [Settings.HashModuleName + '-compose', sAccountHash];
+	return [Settings.HashModuleName + postfix, sAccountHash];
 };
 
 /**
  * @param {string} sType
+ * @param {boolean} isPrivate
  * @param {int} iAccountId
  * @param {string} sFolder
  * @param {string} sUid
  * 
  * @return {Array}
  */
-LinksUtils.getComposeFromMessage = function (sType, iAccountId, sFolder, sUid)
+LinksUtils.getComposeFromMessage = function (sType, isPrivate, iAccountId, sFolder, sUid)
 {
 	var
 		AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 		oAccount = AccountList.getAccount(iAccountId),
-		sAccountHash = oAccount ? oAccount.hash() : ''
+		sAccountHash = oAccount ? oAccount.hash() : '',
+		postfix = isPrivate ? '-private-compose' : '-compose'
 	;
-	return [Settings.HashModuleName + '-compose', sAccountHash, sType, sFolder, sUid];
+	return [Settings.HashModuleName + postfix, sAccountHash, sType, sFolder, sUid];
 };
 
 /**
