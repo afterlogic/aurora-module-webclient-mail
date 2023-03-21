@@ -205,38 +205,12 @@ CHtmlEditorView.prototype.init = function (
 			}, this)
 		);
 
-		this.initEditorUploader();
+		this.initUploader(); // uploads inline images
+		this.initEditorUploader(); // uploads non-images using parent methods
 
-		// this.oCrea = new CCrea({
-		// 	'creaId': this.creaId,
-		// 	'fontNameArray': this.aFontNames,
-		// 	'defaultFontName': this.sDefaultFont,
-		// 	'defaultFontSize': this.iDefaultSize,
-		// 	'alwaysTryUseImageWhilePasting': Settings.AlwaysTryUseImageWhilePasting,
-		// 	'isRtl': UserSettings.IsRTL,
-		// 	'enableDrop': false,
-		// 	'onChange': _.bind(function () {
-		// 		if (this.oCrea.bEditing)
-		// 		{
-		// 			this.textChanged(true);
-		// 			this.actualTextСhanged.valueHasMutated();
-		// 		}
-		// 	}, this),
-		// 	'onCursorMove': _.bind(this.setFontValuesFromText, this),
-		// 	'onFocus': _.bind(this.onFocusHandler, this),
-		// 	'onBlur': _.bind(this.onBlurHandler, this),
-		// 	'onUrlIn': _.bind(this.showLinkPopup, this),
-		// 	'onUrlOut': _.bind(this.hideLinkPopup, this),
-		// 	'onImageSelect': _.bind(this.showImagePopup, this),
-		// 	'onImageBlur': _.bind(this.hideImagePopup, this),
-		// 	'onItemOver': (Browser.mobileDevice || App.isMobile()) ? null : _.bind(this.onImageOver, this),
-		// 	'onItemOut': (Browser.mobileDevice || App.isMobile()) ? null : _.bind(this.onImageOut, this),
-		// 	'openInsertLinkDialog': _.bind(this.insertLink, this),
-		// 	'onUrlClicked': true
-		// });
-		// this.oCrea.start(this.isEnable());
-
-		$("#" + this.editorId).summernote({
+		let isUploadFromDialog = false;
+		this.oEditor = $(`#${this.editorId}`);
+		this.oEditor.summernote({
 			toolbar: [
 				["history", ["undo", "redo"]],
 				["style", ["bold", "italic", "underline"]],
@@ -266,7 +240,19 @@ CHtmlEditorView.prototype.init = function (
 			},
 			callbacks: {
 				onFocus: _.bind(this.onFocusHandler, this),
-				onBlur: _.bind(this.onBlurHandler, this),
+				onBlur: (event) => {
+					isUploadFromDialog = false;
+					this.onBlurHandler(event);
+				},
+				onDialogShown: function () {
+					isUploadFromDialog = true;
+				},
+				onImageUpload: (files) => {
+					Array.from(files).forEach((file) => {
+						this.uploadFile(file, isUploadFromDialog);
+					});
+					isUploadFromDialog = false;
+				},
 			},
 		});
 
@@ -275,8 +261,6 @@ CHtmlEditorView.prototype.init = function (
 		// 	// 	{text: '%MODULENAME%/ACTION_CHOOSE_NORMAL_TEXTSIZE', value: '15px', default: true},
 		// 	// 	{text: '%MODULENAME%/ACTION_CHOOSE_LARGE_TEXTSIZE', value: '22px'},
 		// 	// font-family: Tahoma; font-size: 15px;
-
-		this.oEditor = $("#" + this.editorId);
 	}
 
 	// this.oCrea.setTabIndex(sTabIndex);
@@ -658,14 +642,12 @@ CHtmlEditorView.prototype.getPlainText = function () {
  * @param {boolean=} bRemoveSignatureAnchor = false
  */
 CHtmlEditorView.prototype.getText = function (bRemoveSignatureAnchor) {
-	//TODO
-	var //http://suneditor.com/sample/html/out/document-user.html#getContents
-		// sText = this.oEditor ? this.oEditor.getContents(bRemoveSignatureAnchor) : ''
-		sText = this.oEditor ? this.oEditor.getContents(true) : "";
+	//TODO: use bRemoveSignatureAnchor
+	const text = this.oEditor ? this.oEditor.summernote('code') : "";
 	return this.sPlaceholderText !== "" &&
-		this.removeAllTags(sText) === this.sPlaceholderText
+		this.removeAllTags(text) === this.sPlaceholderText
 		? ""
-		: sText;
+		: text;
 };
 
 /**
@@ -918,32 +900,26 @@ CHtmlEditorView.prototype.insertWebImageFromPopup = function (
  * @param {string} sUid
  * @param oAttachmentData
  */
-CHtmlEditorView.prototype.insertComputerImageFromPopup = function (
-	sUid,
-	oAttachmentData
-) {
-	var iAccountId = _.isFunction(this.oParent && this.oParent.senderAccountId)
-		? this.oParent.senderAccountId()
-		: MailCache.currentAccountId(),
-		oAttachment = new CAttachmentModel(iAccountId),
-		sViewLink = "",
-		bResult = false;
-	oAttachment.parse(oAttachmentData);
-	sViewLink = oAttachment.getActionUrl("view");
-
-	if (Settings.AllowInsertImage && sViewLink.length > 0) {
-		bResult = this.oCrea.insertImage(sViewLink);
-		if (bResult) {
-			$(this.oCrea.$editableArea)
-				.find('img[src="' + sViewLink + '"]')
-				.attr("data-x-src-cid", sUid);
-
-			oAttachmentData.CID = sUid;
-			this.aUploadedImagesData.push(oAttachmentData);
-		}
+CHtmlEditorView.prototype.insertComputerImageFromPopup = function (sUid, oAttachmentData) {
+	if (!Settings.AllowInsertImage || !this.oEditor) {
+		return;
 	}
 
-	this.closeInsertImagePopup();
+	const accountId = _.isFunction(this.oParent && this.oParent.senderAccountId)
+		? this.oParent.senderAccountId()
+		: MailCache.currentAccountId(),
+		attachment = new CAttachmentModel(accountId)
+	;
+
+	attachment.parse(oAttachmentData);
+	const viewLink = attachment.getActionUrl('view');
+
+	if (viewLink.length > 0) {
+		const $img = $(`<img src="${viewLink}" data-x-src-cid="${sUid}" />`);
+		this.oEditor.summernote('insertNode', $img[0]);
+		oAttachmentData.CID = sUid;
+		this.aUploadedImagesData.push(oAttachmentData);
+	}
 };
 
 CHtmlEditorView.prototype.getUploadedImagesData = function () {
@@ -970,38 +946,30 @@ CHtmlEditorView.prototype.closeInsertImagePopup = function (
  */
 CHtmlEditorView.prototype.initUploader = function () {
 	// this.oJua must be re-initialized because compose popup is destroyed after it is closed
-	if (this.imageUploaderButton()) {
-		this.oJua = new CJua({
-			action: "?/Api/",
-			name: "jua-uploader",
-			queueSize: 2,
-			clickElement: this.imageUploaderButton(),
-			hiddenElementsPosition: UserSettings.IsRTL ? "right" : "left",
-			disableMultiple: true,
-			disableAjaxUpload: false,
-			disableDragAndDrop: true,
-			hidden: _.extendOwn(
-				{
-					Module: Settings.ServerModuleName,
-					Method: "UploadAttachment",
-					Parameters: function () {
-						return JSON.stringify({
-							AccountID: MailCache.currentAccountId(),
-						});
-					},
+	this.oJua = new CJua({
+		action: "?/Api/",
+		name: "jua-uploader",
+		queueSize: 2,
+		hiddenElementsPosition: UserSettings.IsRTL ? "right" : "left",
+		disableMultiple: true,
+		disableAjaxUpload: false,
+		disableDragAndDrop: true,
+		hidden: _.extendOwn(
+			{
+				Module: Settings.ServerModuleName,
+				Method: "UploadAttachment",
+				Parameters: function () {
+					return JSON.stringify({
+						AccountID: MailCache.currentAccountId(),
+					});
 				},
-				App.getCommonRequestParameters()
-			),
-		});
-
-		if (this.bInsertImageAsBase64) {
-			this.oJua.on("onSelect", _.bind(this.onEditorDrop, this));
-		} else {
-			this.oJua
-				.on("onSelect", _.bind(this.onFileUploadSelect, this))
-				.on("onComplete", _.bind(this.onFileUploadComplete, this));
-		}
-	}
+			},
+			App.getCommonRequestParameters()
+		),
+	});
+	this.oJua
+		.on("onSelect", _.bind(this.onFileUploadSelect, this))
+		.on("onComplete", _.bind(this.onFileUploadComplete, this));
 };
 
 /**
@@ -1010,8 +978,6 @@ CHtmlEditorView.prototype.initUploader = function () {
 CHtmlEditorView.prototype.initEditorUploader = function () {
 	// this.editorUploader must be re-initialized because compose popup is destroyed after it is closed
 	if (Settings.AllowInsertImage && this.uploaderAreaDom()) {
-		var fBodyDragEnter = null,
-			fBodyDragOver = null;
 		if (
 			this.oParent &&
 			this.oParent.composeUploaderDragOver &&
@@ -1019,12 +985,12 @@ CHtmlEditorView.prototype.initEditorUploader = function () {
 			this.oParent.onFileUploadStart &&
 			this.oParent.onFileUploadComplete
 		) {
-			fBodyDragEnter = _.bind(function () {
+			const fBodyDragEnter = _.bind(function () {
 				this.editorUploaderBodyDragOver(true);
 				this.oParent.composeUploaderDragOver(true);
 			}, this);
 
-			fBodyDragOver = _.bind(function () {
+			const fBodyDragOver = _.bind(function () {
 				this.editorUploaderBodyDragOver(false);
 				this.oParent.composeUploaderDragOver(false);
 			}, this);
@@ -1068,30 +1034,12 @@ CHtmlEditorView.prototype.initEditorUploader = function () {
 					"onProgress",
 					_.bind(this.oParent.onFileUploadProgress, this.oParent)
 				)
-				.on("onSelect", _.bind(this.onEditorDrop, this))
+				.on("onSelect", _.bind(this.oParent.onFileUploadSelect, this.oParent))
 				.on("onStart", _.bind(this.oParent.onFileUploadStart, this.oParent))
 				.on(
 					"onComplete",
 					_.bind(this.oParent.onFileUploadComplete, this.oParent)
 				);
-		} else {
-			fBodyDragEnter = _.bind(this.editorUploaderBodyDragOver, this, true);
-			fBodyDragOver = _.bind(this.editorUploaderBodyDragOver, this, false);
-
-			this.editorUploader = new CJua({
-				queueSize: 1,
-				dragAndDropElement: this.bAllowImageDragAndDrop
-					? this.uploaderAreaDom()
-					: null,
-				disableMultiple: true,
-				disableAjaxUpload: false,
-				disableDragAndDrop: !this.bAllowImageDragAndDrop,
-			});
-
-			this.editorUploader
-				.on("onBodyDragEnter", fBodyDragEnter)
-				.on("onBodyDragLeave", fBodyDragOver)
-				.on("onSelect", _.bind(this.onEditorDrop, this));
 		}
 	}
 };
@@ -1102,58 +1050,75 @@ CHtmlEditorView.prototype.isDragAndDropSupported = function () {
 		: false;
 };
 
-CHtmlEditorView.prototype.onEditorDrop = function (sUid, oData) {
-	var oReader = null,
-		oFile = null,
-		self = this,
-		bCreaFocused = false,
-		hash = Math.random().toString(),
-		sId = "";
-	if (oData && oData.File && typeof oData.File.type === "string") {
-		if (Settings.AllowInsertImage && 0 === oData.File.type.indexOf("image/")) {
-			oFile = oData.File;
-			if (
-				Settings.ImageUploadSizeLimit > 0 &&
-				oFile.size > Settings.ImageUploadSizeLimit
-			) {
-				Popups.showPopup(AlertPopup, [
-					TextUtils.i18n("COREWEBCLIENT/ERROR_UPLOAD_SIZE"),
-				]);
-			} else {
-				oReader = new window.FileReader();
-				bCreaFocused = this.oCrea.isFocused();
-				if (!bCreaFocused) {
-					this.oCrea.setFocus(true);
-				}
+CHtmlEditorView.prototype.uploadNotImageAsAttachment = function (file) {
+	const fileInfo = {
+		File: file,
+		FileName: file.name,
+		Folder: '',
+		Size: file.size,
+		Type: file.type,
+	};
+	this.editorUploader.addNewFile(fileInfo);
+};
 
-				sId = oFile.name + "_" + hash;
-				this.oCrea.insertHtml(
-					'<img id="' + sId + '" src="./static/styles/images/wait.gif" />',
-					true
-				);
-				if (!bCreaFocused) {
-					this.oCrea.fixFirefoxCursorBug();
-				}
-
-				oReader.onload = function (oEvent) {
-					self.oCrea.changeImageSource(sId, oEvent.target.result);
-				};
-
-				oReader.readAsDataURL(oFile);
-			}
-		} else {
-			if (this.oParent && this.oParent.onFileUploadSelect) {
-				this.oParent.onFileUploadSelect(sUid, oData);
-				return true;
-			} else if (!Browser.ie10AndAbove) {
-				Popups.showPopup(AlertPopup, [
-					TextUtils.i18n("%MODULENAME%/ERROR_NOT_IMAGE_CHOOSEN"),
-				]);
-			}
-		}
+CHtmlEditorView.prototype.uploadImageAsInline = function (file) {
+	if (!Settings.AllowInsertImage || !this.oJua) {
+		return;
 	}
 
-	return false;
+	const fileInfo = {
+		File: file,
+		FileName: file.name,
+		Folder: '',
+		Size: file.size,
+		Type: file.type,
+	};
+	this.oJua.addNewFile(fileInfo);
+};
+
+CHtmlEditorView.prototype.uploadImageAsBase64 = function (file) {
+	if (!Settings.AllowInsertImage || !this.oEditor) {
+		return;
+	}
+
+	const $img = $('<img src="./static/styles/images/wait.gif" />');
+	this.oEditor.summernote('insertNode', $img[0]);
+	const reader = new window.FileReader();
+	reader.onload = function (event) {
+		$img.attr('src', event.target.result);
+	};
+	reader.readAsDataURL(file);
+};
+
+CHtmlEditorView.prototype.uploadFile = function (file, isUploadFromDialog) {
+	if (!file || typeof file.type !== 'string') {
+		return;
+	}
+	if (Settings.AllowInsertImage && 0 === file.type.indexOf("image/")) {
+		if (
+			Settings.ImageUploadSizeLimit > 0 &&
+			file.size > Settings.ImageUploadSizeLimit
+		) {
+			Popups.showPopup(AlertPopup, [
+				TextUtils.i18n('COREWEBCLIENT/ERROR_UPLOAD_SIZE'),
+			]);
+		} else {
+			if (this.bInsertImageAsBase64 || !isUploadFromDialog) {
+				this.uploadImageAsBase64(file);
+			} else {
+				this.uploadImageAsInline(file);
+			}
+		}
+	} else if (!isUploadFromDialog && this.editorUploader && this.oParent && this.oParent.onFileUploadSelect) {
+		// upload is from drag
+		// and uploader is initialized
+		// and parent can upload attachment
+		this.uploadNotImageAsAttachment(file);
+	} else {
+		Popups.showPopup(AlertPopup, [
+			TextUtils.i18n('%MODULENAME%/ERROR_NOT_IMAGE_CHOOSEN'),
+		]);
+	}
 };
 
 /**
@@ -1207,7 +1172,6 @@ CHtmlEditorView.prototype.onFileUploadComplete = function (
 
 			Popups.showPopup(AlertPopup, [sError]);
 		} else {
-			this.oCrea.setFocus(true);
 			this.insertComputerImageFromPopup(sUid, oData.Result.Attachment);
 		}
 	} else {
