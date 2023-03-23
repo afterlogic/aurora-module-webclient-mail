@@ -170,8 +170,8 @@ CHtmlEditorView.prototype.onClose = function (
 	sPlaceholderText
 ) {
 	console.log("onClose");
-	// this.oEditor.summernote('destroy');
-	// this.oEditor = null;
+	this.oEditor.summernote('destroy');
+	this.oEditor = null;
 };
 
 CHtmlEditorView.prototype.init = function (
