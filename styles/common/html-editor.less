@@ -11,6 +11,32 @@
 			height: calc(100% - 43px);
 			overflow: auto !important;
 		}
+
+		.note-dropzone {
+			background: #fffdd6;
+			// padding: 10px;
+			box-sizing: border-box;
+    		opacity: 0.5;
+			width: 100% !important;
+			height: 100% !important;
+			
+			.note-dropzone-message {
+				position: relative;
+
+				&::after {
+					content: "";
+					display: block;
+					position: absolute;
+					top: 10px;
+					left: 10px;
+					width: calc( 100% - 20px );
+					height: calc( 100% - 20px );
+					border: 3px dashed #e2da36 !important;
+					box-sizing: border-box;
+					border-radius: 5px;
+				}
+			}
+		}
 	}
 
 	.workarea {

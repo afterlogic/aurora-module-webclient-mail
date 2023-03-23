@@ -3,8 +3,7 @@
 
 	<div class="workarea" data-bind="customScrollbar: {x: true, y: true}, initDom: workareaDom">
 		<div class="scroll-inner" data-bind="attr: {'id': editorId}, initDom: editorDom"></div>
-		
-		<div data-bind="initDom: uploaderAreaDom, css: {'active': editorUploaderBodyDragOver}" class="uploader_mask">
+		<div style="display: none;" data-bind="initDom: uploaderAreaDom, css: {'active': editorUploaderBodyDragOver}" class="uploader_mask">
 			<div class="inner"></div>
 		</div>
 	</div>
