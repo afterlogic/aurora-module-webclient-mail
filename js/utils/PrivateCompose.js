@@ -53,9 +53,10 @@ module.exports = {
 	},
 
 	isAnotherUserPrivateMessage(textBody) {
-		if (!Settings.AllowPrivateMessages) {
-			return false;
-		}
+		// debugger
+		// if (!Settings.AllowPrivateMessages) {
+		// 	return false;
+		// }
 		const regex = /([A-Z0-9\"!#\$%\^\{\}`~&'\+\-=_\.]+\.[\d]+@[A-Z0-9\.\-]+)/ig;
 		const matches = textBody.match(regex);
 		return matches && matches.some(email => email !== privateAccountEmail);
