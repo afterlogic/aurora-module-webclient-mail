@@ -143,7 +143,6 @@ function CComposeView()
 	this.selectedSender = SenderSelector.selectedSender;
 	this.selectedFetcherOrIdentity = SenderSelector.selectedFetcherOrIdentity;
 	this.selectedFetcherOrIdentity.subscribe(function () {
-		console.log('selectedFetcherOrIdentity');
 		if (!this.oHtmlEditor.isEditing())
 		{
 			this.oHtmlEditor.clearUndoRedo();
@@ -870,8 +869,6 @@ CComposeView.prototype.focusAfterFilling = function ()
  */
 CComposeView.prototype.onHide = function ()
 {
-console.log('CComposeView.prototype.onHide');
-
 	if (!_.isFunction(this.closePopup) && this.hasUnsavedChanges())
 	{
 		this.executeSave(true);

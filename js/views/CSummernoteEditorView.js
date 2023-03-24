@@ -12,13 +12,21 @@ var _ = require("underscore"),
 	Popups = require("%PathToCoreWebclientModule%/js/Popups.js"),
 	AlertPopup = require("%PathToCoreWebclientModule%/js/popups/AlertPopup.js"),
 	CAttachmentModel = require("modules/%ModuleName%/js/models/CAttachmentModel.js"),
-	// CCrea = require('modules/%ModuleName%/js/CCrea.js'),
 
 	MailCache = require("modules/%ModuleName%/js/Cache.js"),
 	Settings = require("modules/%ModuleName%/js/Settings.js"),
-	CColorPickerView = require("modules/%ModuleName%/js/views/CColorPickerView.js");
-	require("summernote/dist/summernote-lite.js");
-	require("summernote/dist/summernote-lite.css");
+	CColorPickerView = require("modules/%ModuleName%/js/views/CColorPickerView.js")
+;
+
+require("modules/%ModuleName%/js/vendors/summernote/summernote-lite.js");
+require("modules/%ModuleName%/js/vendors/summernote/summernote-lite.css");
+
+const summernoteLangMap = {
+	English: 'en-US',
+	German: 'de-DE'
+};
+const summernoteLang = summernoteLangMap[UserSettings.Language] || summernoteLangMap.English;
+require(`modules/%ModuleName%/js/vendors/summernote/lang/summernote-${summernoteLang}.min.js`);
 
 /**
  * @constructor
@@ -157,23 +165,19 @@ function CHtmlEditorView(bInsertImageAsBase64, oParent) {
 
 CHtmlEditorView.prototype.ViewTemplate = "%ModuleName%_SummernoteEditorView";
 
+CHtmlEditorView.prototype.onClose = function () {
+	if (this.oEditor) {
+		this.oEditor.summernote('destroy');
+		this.oEditor = null;
+	}
+};
+
 /**
  * @param {string} sText
  * @param {boolean} bPlain
  * @param {string} sTabIndex
  * @param {string} sPlaceholderText
  */
-CHtmlEditorView.prototype.onClose = function (
-	sText,
-	bPlain,
-	sTabIndex,
-	sPlaceholderText
-) {
-	console.log("onClose");
-	this.oEditor.summernote('destroy');
-	this.oEditor = null;
-};
-
 CHtmlEditorView.prototype.init = function (
 	sText,
 	bPlain,
@@ -211,6 +215,7 @@ CHtmlEditorView.prototype.init = function (
 		let isUploadFromDialog = false;
 		this.oEditor = $(`#${this.editorId}`);
 		this.oEditor.summernote({
+			lang: summernoteLang,
 			toolbar: [
 				["history", ["undo", "redo"]],
 				["style", ["bold", "italic", "underline"]],
