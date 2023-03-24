@@ -17,8 +17,8 @@ var _ = require("underscore"),
 	MailCache = require("modules/%ModuleName%/js/Cache.js"),
 	Settings = require("modules/%ModuleName%/js/Settings.js"),
 	CColorPickerView = require("modules/%ModuleName%/js/views/CColorPickerView.js");
-require("summernote/dist/summernote-lite.js");
-require("summernote/dist/summernote-lite.css");
+	require("summernote/dist/summernote-lite.js");
+	require("summernote/dist/summernote-lite.css");
 
 /**
  * @constructor
@@ -224,6 +224,7 @@ CHtmlEditorView.prototype.init = function (
 			dialogsInBody: true,
 			shortcuts: false,
 			disableResizeEditor: true,
+			followingToolbar: false, //true makes toolbas sticky
 			popover: {
 				image: [
 					[
@@ -265,7 +266,10 @@ CHtmlEditorView.prototype.init = function (
 
 	// this.oCrea.setTabIndex(sTabIndex);
 	this.clearUndoRedo();
+	this.getEditableArea().css('font-family', 'Tahoma');
+	this.getEditableArea().css('font-size', '16px');
 	this.setText(sText, bPlain);
+
 	this.aUploadedImagesData = [];
 	// this.selectedFont(this.sDefaultFont);
 	// this.selectedSize(this.iDefaultSize.toString());
@@ -667,10 +671,11 @@ CHtmlEditorView.prototype.setText = function (sText, bPlain) {
 		if (bPlain) {
 			sText = '<p>' + sText + '</p>';
 		}
-
-		if (sText !== '') {
-			this.oEditor.summernote('code', sText);
-		}
+		
+		if (sText === '') {
+			sText = '<p></p>';
+		} 
+		this.oEditor.summernote('code', sText);
 
 		if (this.inactive() && sText === '') {
 			this.setPlaceholder();
