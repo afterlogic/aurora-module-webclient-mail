@@ -142,14 +142,18 @@ CFolderListModel.prototype.getFoldersWithoutCountInfo = function ()
 CFolderListModel.prototype.getNamesOfFoldersToRefresh = function ()
 {
 	var aFolders = [this.inboxFolderFullName(), this.spamFolderFullName(), this.currentFolderFullName()];
-	
+
+	if (this.allMailsFolderFullName()) {
+		aFolders.push(this.allMailsFolderFullName());
+	}
+
 	_.each(this.oNamedCollection, function (oFolder) {
 		if (oFolder.isAlwaysRefresh())
 		{
 			aFolders.push(oFolder.fullName());
 		}
 	});
-	
+
 	return _.uniq(aFolders);
 };
 
