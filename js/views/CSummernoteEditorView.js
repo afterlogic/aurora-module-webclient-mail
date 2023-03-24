@@ -105,6 +105,7 @@ function CHtmlEditorView(bInsertImageAsBase64, oParent) {
 	this.linkHref = ko.observable("");
 	this.visibleLinkHref = ko.observable(false);
 
+	this.isDialogOpen = ko.observable(false);
 	this.visibleImagePopup = ko.observable(false);
 	this.visibleImagePopup.subscribe(function () {
 		this.onImageOut();
@@ -212,7 +213,6 @@ CHtmlEditorView.prototype.init = function (
 		this.initUploader(); // uploads inline images
 		this.initEditorUploader(); // uploads non-images using parent methods
 
-		let isUploadFromDialog = false;
 		this.oEditor = $(`#${this.editorId}`);
 		this.oEditor.summernote({
 			lang: summernoteLang,
@@ -247,17 +247,16 @@ CHtmlEditorView.prototype.init = function (
 			callbacks: {
 				onFocus: _.bind(this.onFocusHandler, this),
 				onBlur: (event) => {
-					isUploadFromDialog = false;
+					this.isDialogOpen(false);
 					this.onBlurHandler(event);
 				},
-				onDialogShown: function () {
-					isUploadFromDialog = true;
+				onDialogShown: () => {
+					this.isDialogOpen(true);
 				},
 				onImageUpload: (files) => {
 					Array.from(files).forEach((file) => {
-						this.uploadFile(file, isUploadFromDialog);
+						this.uploadFile(file, this.isDialogOpen());
 					});
-					isUploadFromDialog = false;
 				},
 			},
 		});
@@ -269,15 +268,13 @@ CHtmlEditorView.prototype.init = function (
 		// 	// font-family: Tahoma; font-size: 15px;
 	}
 
-	// this.oCrea.setTabIndex(sTabIndex);
+	this.getEditableArea().attr('tabindex', sTabIndex);
 	this.clearUndoRedo();
 	this.getEditableArea().css('font-family', 'Tahoma');
 	this.getEditableArea().css('font-size', '16px');
 	this.setText(sText, bPlain);
 
 	this.aUploadedImagesData = [];
-	// this.selectedFont(this.sDefaultFont);
-	// this.selectedSize(this.iDefaultSize.toString());
 
 	if (Settings.AllowInsertTemplateOnCompose) {
 		this.fillTemplates();
@@ -314,14 +311,7 @@ CHtmlEditorView.prototype.removePlaceholder = function () {
 };
 
 CHtmlEditorView.prototype.hasOpenedPopup = function () {
-	return (
-		this.visibleInsertLinkPopup() ||
-		this.visibleLinkPopup() ||
-		this.visibleImagePopup() ||
-		this.visibleInsertImagePopup() ||
-		this.visibleFontColorPopup() ||
-		this.visibleTemplatePopup()
-	);
+	return this.isDialogOpen();
 };
 
 CHtmlEditorView.prototype.setDisableEdit = function (bDisableEdit) {
