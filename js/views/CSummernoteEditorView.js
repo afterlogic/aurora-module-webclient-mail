@@ -336,7 +336,6 @@ CHtmlEditorView.prototype.isInitialized = function () {
 };
 
 CHtmlEditorView.prototype.setFocus = function () {
-	//TODO
 	if (this.oEditor) {
 		this.oEditor.focus();
 	}
@@ -350,7 +349,6 @@ CHtmlEditorView.prototype.changeSignatureContent = function (
 	sNewSignatureContent,
 	sOldSignatureContent
 ) {
-	// CHECK
 	if (this.oEditor && !this.disableEdit()) {
 		const content = this.getEditableArea(),
 			$SignatureContainer = $(content).find('div[data-anchor="signature"]'),
@@ -427,12 +425,16 @@ CHtmlEditorView.prototype.getPlainText = function () {
  * @param {boolean=} bRemoveSignatureAnchor = false
  */
 CHtmlEditorView.prototype.getText = function (bRemoveSignatureAnchor) {
-	//TODO: use bRemoveSignatureAnchor
 	const text = this.oEditor ? this.oEditor.summernote('code') : "";
-	return this.sPlaceholderText !== "" &&
-		this.removeAllTags(text) === this.sPlaceholderText
-		? ""
-		: text;
+	if (this.sPlaceholderText !== "" &&
+		this.removeAllTags(text) === this.sPlaceholderText) {
+		return '';
+	}
+	if (bRemoveSignatureAnchor) {
+		return text.replace('data-anchor="signature"', '');
+	}
+	// TODO - add font-wrapper like in CCrea.prototype.getText
+	return text;
 };
 
 /**
@@ -505,7 +507,7 @@ CHtmlEditorView.prototype.closeAllPopups = function ()
  * @param {string} sHtml
  */
 CHtmlEditorView.prototype.insertHtml = function (sHtml) {
-	//CHECK
+	// TODO: check - used for templates
 	if (this.oEditor) {
 		if (!this.oEditor.summernote('hasFocus')) {
 			this.oEditor.summernote('focus');
