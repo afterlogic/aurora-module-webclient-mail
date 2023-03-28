@@ -463,7 +463,7 @@ function CComposeView()
 
 	this.headersCompressed = ko.observable(false);
 	this.allowCcBccSwitchers = ko.computed(function () {
-		return !this.disableHeadersEdit() && !this.headersCompressed();
+		return !this.disableHeadersEdit() && !this.headersCompressed() && !this.isPrivate();
 	}, this);
 
 	this.registerOwnToolbarControllers();
