@@ -198,14 +198,6 @@ function CMessagePaneView()
 	this.isVisibleResendTool = ko.computed(function () {
 		return !this.disableAllSendTools() && this.isCurrentSentFolder() && !this.isCurrentTemplateFolder();
 	}, this);
-	this.isVisibleForwardTool = ko.computed(function () {
-		var
-			bCentral = InformatikSettings.isAssignProjectsAllowedForEmail(App.currentAccountEmail()),
-			bAssignedFolder = InformatikSettings.isAssignedFolder(MailCache.getCurrentFolderFullname()),
-			bDisable = InformatikSettings.DisableForward && bCentral && !bAssignedFolder
-		;
-		return !bDisable && !this.disableAllSendTools() && this.isCurrentNotDraftFolder() && !this.isCurrentTemplateFolder();
-	}, this);
 
 	this.accountId = ko.observable(0);
 	this.folder = ko.observable('');
@@ -240,6 +232,23 @@ function CMessagePaneView()
 	this.isAnotherUserPrivateMessage = ko.computed(() => {
 		return PrivateComposeUtils.isAnotherUserPrivateMessage(this.textBody());
 	});
+	this.isVisibleReplyAllTool = ko.computed(function () {
+		if (this.isAnotherUserPrivateMessage()) {
+			return false;
+		}
+		return this.isVisibleReplyTool();
+	}, this);
+	this.isVisibleForwardTool = ko.computed(function () {
+		if (this.isAnotherUserPrivateMessage()) {
+			return false;
+		}
+		var
+			bCentral = InformatikSettings.isAssignProjectsAllowedForEmail(App.currentAccountEmail()),
+			bAssignedFolder = InformatikSettings.isAssignedFolder(MailCache.getCurrentFolderFullname()),
+			bDisable = InformatikSettings.DisableForward && bCentral && !bAssignedFolder
+		;
+		return !bDisable && !this.disableAllSendTools() && this.isCurrentNotDraftFolder() && !this.isCurrentTemplateFolder();
+	}, this);
 	this.textBodyForNewWindow = ko.observable('');
 	this.domTextBody = ko.observable(null);
 	this.domTextBodyScrollArea = ko.observable(null);
