@@ -413,28 +413,35 @@ CHtmlEditorView.prototype.changeSignatureContent = function (
 };
 
 CHtmlEditorView.prototype.getPlainText = function () {
-	//TODO
-	if (this.oEditor) {
-		return this.oEditor.getText();
-	}
-
-	return "";
+	const html = this.oEditor ? this.oEditor.summernote('code') : '';
+	return html.replace(/([^>]{1})<div>/gi, '$1\n')
+			.replace(/<style[^>]*>[^<]*<\/style>/gi, '\n')
+			.replace(/<br *\/{0,1}>/gi, '\n')
+			.replace(/<\/p>/gi, '\n')
+			.replace(/<\/div>/gi, '\n')
+			.replace(/<a [^>]*href="([^"]*?)"[^>]*>(.*?)<\/a>/gi, '$2 ($1)')
+			.replace(/<[^>]*>/g, '')
+			.replace(/&nbsp;/g, ' ')
+			.replace(/&lt;/g, '<')
+			.replace(/&gt;/g, '>')
+			.replace(/&amp;/g, '&')
+			.replace(/&quot;/g, '"');
 };
 
 /**
  * @param {boolean=} bRemoveSignatureAnchor = false
  */
 CHtmlEditorView.prototype.getText = function (bRemoveSignatureAnchor) {
-	const text = this.oEditor ? this.oEditor.summernote('code') : "";
-	if (this.sPlaceholderText !== "" &&
-		this.removeAllTags(text) === this.sPlaceholderText) {
+	const html = this.oEditor ? this.oEditor.summernote('code') : '';
+	if (this.sPlaceholderText !== '' &&
+		this.removeAllTags(html) === this.sPlaceholderText) {
 		return '';
 	}
 	if (bRemoveSignatureAnchor) {
-		return text.replace('data-anchor="signature"', '');
+		return html.replace('data-anchor="signature"', '');
 	}
 	// TODO - add font-wrapper like in CCrea.prototype.getText
-	return text;
+	return html;
 };
 
 /**
@@ -449,19 +456,17 @@ CHtmlEditorView.prototype.getEditableArea = function () {
  * @param {boolean} bPlain
  */
 CHtmlEditorView.prototype.setText = function (sText, bPlain) {
-	//TODO
 	if (this.oEditor && !this.disableEdit()) {
-		if (bPlain) {
-			sText = '<p>' + sText + '</p>';
-		}
-		
-		if (sText === '') {
-			sText = '<p></p>';
-		} 
-		this.oEditor.summernote('code', sText);
-
 		if (this.inactive() && sText === '') {
 			this.setPlaceholder();
+		} else if (bPlain) {
+			sText = '<p style="white-space: pre;">' + sText + '</p>';
+			this.oEditor.summernote('code', sText);
+		} else {
+			if (sText === '') {
+				sText = '<p></p>';
+			} 
+			this.oEditor.summernote('code', sText);
 		}
 	}
 };
