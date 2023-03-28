@@ -1648,13 +1648,6 @@ CComposeView.prototype.getSendSaveParameters = function ({removeSignatureAnchor 
 		'References': this.references()
 	};
 
-	_.each(this.allControllers(), function (oController) {
-		if (_.isFunction(oController.doAfterPreparingSendMessageParameters))
-		{
-			oController.doAfterPreparingSendMessageParameters(oParameters, method);
-		}
-	});
-
 	if (this.templateFolderName() !== '' && saveTemplate)
 	{
 		oParameters.DraftFolder = this.templateFolderName();
@@ -1664,6 +1657,13 @@ CComposeView.prototype.getSendSaveParameters = function ({removeSignatureAnchor 
 	if (this.isPrivate()) {
 		PrivateComposeUtils.addPrivateMessageHeaderToParameters(oParameters);
 	}
+
+	_.each(this.allControllers(), function (oController) {
+		if (_.isFunction(oController.doAfterPreparingSendMessageParameters))
+		{
+			oController.doAfterPreparingSendMessageParameters(oParameters, method);
+		}
+	});
 
 	return oParameters;
 };
