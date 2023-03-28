@@ -484,15 +484,17 @@ CHtmlEditorView.prototype.undoAndClearRedo = function () {
 };
 
 CHtmlEditorView.prototype.clearUndoRedo = function () {
-	//TODO
 	if (this.oEditor) {
-		// tinymce.UndoManager.reset();
+		this.oEditor.summernote('commit');
 	}
 };
 
 CHtmlEditorView.prototype.isEditing = function () {
-	// TODO
-	// return this.oCrea ? this.oCrea.bEditing : false;
+	// bEditing in oCrea means that the history is clear
+	// There might be an error in CComposeView because clearUndoRedo method is called when isEditing=false
+	// Should be the other way around
+	
+	// TODO: Also summernote cannot return if the history is clear
 	return this.oEditor ? true : false;
 };
 
