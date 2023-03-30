@@ -128,7 +128,7 @@
 					css: {'has_bodytext': hasBodyText, 'has_attachments': hasNotInlineAttachments}">
 				<div class="message_content scroll-inner" style="outline: none;" tabindex="0"
 					 data-bind="initDom: domTextBodyScrollArea, hasfocus: contentHasFocus,
-					 css: {'message_content_not_empty_text': isCurrentMessage() && textBody()}">
+					 css: {'message_content_not_empty_text': isCurrentMessage() && currentMessage().text()}">
 
 					<!-- ko foreach: bodyControllers -->
 						<!-- ko if: $data.ViewTemplate -->
@@ -142,11 +142,11 @@
 					</div>
 					<div class="message_body_info" data-bind="visible: isLoading, i18n: {'key': 'COREWEBCLIENT/INFO_LOADING'}"></div>
 					<div class="message_body html"
-						 data-bind="visible: isCurrentMessage() && textBody() && !isAnotherUserPrivateMessage(),
+						 data-bind="visible: isCurrentMessage() && currentMessage().text() && !isAnotherUserPrivateMessage(),
 						 initDom: domTextBody, attr: {'dir': rtlMessage() ? 'rtl' : 'ltr'}"
 					></div>
 					<div class="message_body html"
-						 data-bind="visible: isCurrentMessage() && textBody() && isAnotherUserPrivateMessage(),
+						 data-bind="visible: isCurrentMessage() && currentMessage().text() && isAnotherUserPrivateMessage(),
 						 i18n: {'key': '%MODULENAME%/INFO_ANOTHER_USER_PRIVATE_MESSAGE'}"
 					></div>
 				</div>

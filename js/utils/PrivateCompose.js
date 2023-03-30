@@ -46,22 +46,41 @@ module.exports = {
 	},
 
 	isPrivateMessage(message) {
-		if (!Settings.AllowPrivateMessages) {
+		// if (!Settings.AllowPrivateMessages || !message) {
+		// 	return false;
+		// }
+		if (!message) {
 			return false;
 		}
-		return message && message.Custom['X-Private-Message-Sender'] === privateAccountEmail;
+		const text = message.text() || '';
+		const regex = /([A-Z0-9\"!#\$%\^\{\}`~&'\+\-=_\.]+\.[\d]+@[A-Z0-9\.\-]+)/ig;
+		const recipients = [...message.oTo.aCollection, ...message.oCc.aCollection].map(addr => addr.sEmail).filter(email => /.+\.[\d]+@.+/.test(email));
+		return message.Custom['X-Private-Message-Sender'] || recipients.length > 0 || regex.test(text);
 	},
 
-	isAnotherUserPrivateMessage(textBody) {
-		// debugger
+	isMinePrivateMessage(message) {
+		if (!Settings.AllowPrivateMessages || !message) {
+			return false;
+		}
+		const recipients = [...message.oTo.aCollection, ...message.oCc.aCollection].map(addr => addr.sEmail);
+		return ( message.Custom['X-Private-Message-Sender'] === privateAccountEmail || recipients.includes(privateAccountEmail));
+	},
+	
+	isAnotherUserPrivateMessage(message) {
 		// if (!Settings.AllowPrivateMessages) {
 		// 	return false;
 		// }
+		if (!message) {
+			return false;
+		}
+		const text = message.text();
+		// const regex = /([^\s.]+\.[\d]+@[A-Z0-9\.\-]+)/ig;
 		const regex = /([A-Z0-9\"!#\$%\^\{\}`~&'\+\-=_\.]+\.[\d]+@[A-Z0-9\.\-]+)/ig;
-		const matches = textBody.match(regex);
+		const matches = text.match(regex);
 		return matches && matches.some(email => email !== privateAccountEmail);
 	},
 
+	// depricated
 	shouldMessageReplyBePrivate(message) {
 		if (!message) {
 			return false;

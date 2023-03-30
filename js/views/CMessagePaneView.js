@@ -228,18 +228,26 @@ function CMessagePaneView()
 	this.fullDate = ko.observable('');
 	this.midDate = ko.observable('');
 
-	this.textBody = ko.observable('');
+	// this.textBody = ko.observable('');
 	this.isAnotherUserPrivateMessage = ko.computed(() => {
-		return PrivateComposeUtils.isAnotherUserPrivateMessage(this.textBody());
+		return PrivateComposeUtils.isAnotherUserPrivateMessage(this.currentMessage());
 	});
+	this.isPrivateMessage = ko.computed(() => {
+		return PrivateComposeUtils.isPrivateMessage(this.currentMessage());
+	});
+	this.isMinePrivateMessage = ko.computed(() => {
+		return PrivateComposeUtils.isMinePrivateMessage(this.currentMessage());
+	});
+
 	this.isVisibleReplyAllTool = ko.computed(function () {
-		if (this.isAnotherUserPrivateMessage()) {
+		if (this.isPrivateMessage()) {
 			return false;
 		}
 		return this.isVisibleReplyTool();
 	}, this);
+	
 	this.isVisibleForwardTool = ko.computed(function () {
-		if (this.isAnotherUserPrivateMessage()) {
+		if (this.isPrivateMessage()) {
 			return false;
 		}
 		var
@@ -249,6 +257,10 @@ function CMessagePaneView()
 		;
 		return !bDisable && !this.disableAllSendTools() && this.isCurrentNotDraftFolder() && !this.isCurrentTemplateFolder();
 	}, this);
+	this.isVisibleForwardPrivateMessage = ko.computed(function () {
+		return !this.isVisibleForwardTool() && this.isAnotherUserPrivateMessage()
+	}, this);
+
 	this.textBodyForNewWindow = ko.observable('');
 	this.domTextBody = ko.observable(null);
 	this.domTextBodyScrollArea = ko.observable(null);
@@ -303,7 +315,7 @@ function CMessagePaneView()
 	}, this);
 
 	this.hasBodyText = ko.computed(function () {
-		return this.textBody().length > 0;
+		return this.currentMessage() && this.currentMessage().text().length > 0;
 	}, this);
 
 	this.visibleAddMenu = ko.observable(false);
@@ -662,7 +674,7 @@ CMessagePaneView.prototype.setMessageBody = function ()
 //			aCollapsedStatuses = []
 		;
 
-		this.textBody(sText);
+		// this.textBody(sText);
 
 //		if ($body.data('displayed-message-uid') === oMessage.uid())
 //		{

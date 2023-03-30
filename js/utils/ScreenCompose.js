@@ -30,7 +30,7 @@ ScreenComposeUtils.composeMessageFromDrafts = function (message)
  */
 ScreenComposeUtils.composeMessageAsReplyOrForward = function (sReplyType, message)
 {
-	const isPrivate = PrivateComposeUtils.shouldMessageReplyBePrivate(message);
+	const isPrivate = PrivateComposeUtils.isPrivateMessage(message);
 	var params = LinksUtils.getComposeFromMessage(sReplyType, isPrivate, message.accountId(), message.folder(), message.uid());
 	Routing.setHash(params);
 };

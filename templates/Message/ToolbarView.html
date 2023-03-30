@@ -23,11 +23,13 @@
 
 		<!-- ko template: {name: '%ModuleName%_Message_ForwardButtonView'} --><!-- /ko -->
 
-		<!-- ko foreach: otherToolbarCommands -->
+		<!-- ko if: isMinePrivateMessage -->
+			<!-- ko foreach: otherToolbarCommands -->
 			<span class="item" data-bind="command: Command, css: CssClass, visible: Visible">
 				<span class="icon" data-bind="customTooltip: Text"></span>
 				<span class="text" data-bind="text: Text"></span>
 			</span>
+			<!-- /ko -->
 		<!-- /ko -->
 
 		<span class="item new_window" data-bind="command: openInPopupOrTabCommand, visible: openInPopupOrTabVisible">
@@ -49,7 +51,7 @@
 							<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_PRINT'}"></span>
 						</span>
 
-						<span class="item save" data-bind="command: saveCommand, visible: !isAnotherUserPrivateMessage()">
+						<span class="item save" data-bind="command: saveCommand, visible: !isPrivateMessage()">
 							<span class="icon"></span>
 							<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_DOWNLOAD_EML'}"></span>
 						</span>

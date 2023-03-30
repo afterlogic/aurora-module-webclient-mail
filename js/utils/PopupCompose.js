@@ -38,7 +38,7 @@ PopupComposeUtils.composeMessageFromDrafts = function (message)
  */
 PopupComposeUtils.composeMessageAsReplyOrForward = function (sReplyType, message)
 {
-	const isPrivate = PrivateComposeUtils.shouldMessageReplyBePrivate(message);
+	const isPrivate = PrivateComposeUtils.isPrivateMessage(message);
 	const params = LinksUtils.getComposeFromMessage(sReplyType, isPrivate, message.accountId(), message.folder(), message.uid());
 	params.shift();
 	Popups.showPopup(GetComposePopup(isPrivate), [params]);
