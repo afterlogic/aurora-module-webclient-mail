@@ -90,7 +90,6 @@ CSignatureSettingsFormView.prototype.revert = function ()
 
 CSignatureSettingsFormView.prototype.getParametersForSave = function ()
 {
-	console.log('getParametersForSave');
 	this.signature(this.oHtmlEditor.getText());
 	
 	var
@@ -141,7 +140,6 @@ CSignatureSettingsFormView.prototype.applySavedValues = function (oParameters)
 		if (oAccount)
 		{
 			oAccount.useSignature(!!oParameters.UseSignature);
-			console.log('applySavedValues');
 			oAccount.signature(oParameters.Signature);
 		}
 	}
@@ -158,7 +156,6 @@ CSignatureSettingsFormView.prototype.populate = function ()
 	if (oSignature)
 	{
 		this.useSignatureRadio(oSignature.useSignature() ? Enums.UseSignature.On : Enums.UseSignature.Off);
-		console.log('populate', oSignature.signature());
 		this.signature(oSignature.signature());
 		this.oHtmlEditor.setText(this.signature());
 	}
