@@ -24,7 +24,7 @@ var
 	ComposeUtils = require('modules/%ModuleName%/js/utils/Compose.js'),
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
 	MailUtils = require('modules/%ModuleName%/js/utils/Mail.js'),
-	PrivateComposeUtils = require('modules/%ModuleName%/js/utils/PrivateCompose.js'),
+	PrivateMessagingUtils = require('modules/%ModuleName%/js/utils/PrivateMessaging.js'),
 	SearchUtils = require('modules/%ModuleName%/js/utils/Search.js'),
 
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
@@ -801,7 +801,7 @@ CMessageListView.prototype.routeForMessage = function (oMessage)
 		{
 			if (App.isMobile() && oFolder.type() === Enums.FolderTypes.Drafts)
 			{
-				const isPrivate = PrivateComposeUtils.isPrivateMessage(oMessage);
+				const isPrivate = PrivateMessagingUtils.isPrivateMessage(oMessage);
 				Routing.setHash(LinksUtils.getComposeFromMessage('drafts', isPrivate, oMessage.accountId(), oMessage.folder(), oMessage.uid()));
 			}
 			else

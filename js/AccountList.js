@@ -11,7 +11,7 @@ var
 	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
 	CoreAjax = require('%PathToCoreWebclientModule%/js/Ajax.js'),
 
-	PrivateCompose = require('modules/%ModuleName%/js/utils/PrivateCompose.js'),
+	PrivateMessagingUtils = require('modules/%ModuleName%/js/utils/PrivateMessaging.js'),
 
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
@@ -223,7 +223,7 @@ CAccountListModel.prototype.parse = function (accountsData)
 		const accounts = [];
 		accountsData.forEach(accountData => {
 			const account = new CAccountModel(accountData);
-			if (!PrivateCompose.isPrivateAccountEmail(account.email())) {
+			if (!PrivateMessagingUtils.isPrivateAccountEmail(account.email())) {
 				accounts.push(account);
 			}
 		});

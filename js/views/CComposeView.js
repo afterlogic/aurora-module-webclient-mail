@@ -32,7 +32,7 @@ var
 	InformatikMailUtils = require('modules/%ModuleName%/js/utils/InformatikMail.js'),
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
 	SendingUtils = require('modules/%ModuleName%/js/utils/Sending.js'),
-	PrivateComposeUtils = require('modules/%ModuleName%/js/utils/PrivateCompose.js'),
+	PrivateMessagingUtils = require('modules/%ModuleName%/js/utils/PrivateMessaging.js'),
 
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	CoreAjax = require('%PathToCoreWebclientModule%/js/Ajax.js'),
@@ -1655,7 +1655,7 @@ CComposeView.prototype.getSendSaveParameters = function ({removeSignatureAnchor 
 	}
 
 	if (this.isPrivate()) {
-		PrivateComposeUtils.addPrivateMessageHeaderToParameters(oParameters);
+		PrivateMessagingUtils.addPrivateMessageHeaderToParameters(oParameters);
 	}
 
 	_.each(this.allControllers(), function (oController) {

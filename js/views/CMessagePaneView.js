@@ -25,7 +25,7 @@ var
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
 	MailUtils = require('modules/%ModuleName%/js/utils/Mail.js'),
 	SendingUtils = require('modules/%ModuleName%/js/utils/Sending.js'),
-	PrivateComposeUtils = require('modules/%ModuleName%/js/utils/PrivateCompose.js'),
+	PrivateMessagingUtils = require('modules/%ModuleName%/js/utils/PrivateMessaging.js'),
 
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
@@ -230,13 +230,13 @@ function CMessagePaneView()
 
 	// this.textBody = ko.observable('');
 	this.isAnotherUserPrivateMessage = ko.computed(() => {
-		return PrivateComposeUtils.isAnotherUserPrivateMessage(this.currentMessage());
+		return PrivateMessagingUtils.isAnotherUserPrivateMessage(this.currentMessage());
 	});
 	this.isPrivateMessage = ko.computed(() => {
-		return PrivateComposeUtils.isPrivateMessage(this.currentMessage());
+		return PrivateMessagingUtils.isPrivateMessage(this.currentMessage());
 	});
 	this.isMinePrivateMessage = ko.computed(() => {
-		return PrivateComposeUtils.isMinePrivateMessage(this.currentMessage());
+		return PrivateMessagingUtils.isMinePrivateMessage(this.currentMessage());
 	});
 
 	this.isVisibleReplyAllTool = ko.computed(function () {

@@ -18,7 +18,7 @@ var
 
 	CAbstractScreenView = require('%PathToCoreWebclientModule%/js/views/CAbstractScreenView.js'),
 
-	PrivateComposeUtils = require('modules/%ModuleName%/js/utils/PrivateCompose.js'),
+	PrivateMessagingUtils = require('modules/%ModuleName%/js/utils/PrivateMessaging.js'),
 	ComposeUtils = require('modules/%ModuleName%/js/utils/Compose.js'),
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
 
@@ -117,8 +117,8 @@ function CMailView()
 		return TextUtils.i18n('%MODULENAME%/ACTION_NEW_MESSAGE');
 	}, this);
 	this.allowPrivateMessages = Settings.AllowPrivateMessages;
-	this.privateComposeCommand = Utils.createCommand(this, () => {
-		if (PrivateComposeUtils.hasPrivateAccount()) {
+	this.PrivateComposeCommand = Utils.createCommand(this, () => {
+		if (PrivateMessagingUtils.hasPrivateAccount()) {
 			ComposeUtils.composeMessage(true);
 		} else {
 			Popups.showPopup(AlertPopup, [TextUtils.i18n('%MODULENAME%/ERROR_NO_PRIVATE_ACCOUNT')]);
@@ -400,7 +400,7 @@ CMailView.prototype.openMessageInNewWindow = function (oMessage)
 
 		if (bDraftFolder)
 		{
-			const isPrivate = PrivateComposeUtils.isPrivateMessage(oMessage);
+			const isPrivate = PrivateMessagingUtils.isPrivateMessage(oMessage);
 			sHash = Routing.buildHashFromArray(LinksUtils.getComposeFromMessage('drafts', isPrivate, iAccountId, sFolder, sUid));
 		}
 		else

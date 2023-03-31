@@ -4,7 +4,7 @@ var
 	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
 
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
-	PrivateComposeUtils = require('modules/%ModuleName%/js/utils/PrivateCompose.js'),
+	PrivateMessagingUtils = require('modules/%ModuleName%/js/utils/PrivateMessaging.js'),
 
 	ScreenComposeUtils = {}
 ;
@@ -19,7 +19,7 @@ ScreenComposeUtils.composeMessage = function (isPrivate = false)
  */
 ScreenComposeUtils.composeMessageFromDrafts = function (message)
 {
-	const isPrivate = PrivateComposeUtils.isPrivateMessage(message);
+	const isPrivate = PrivateMessagingUtils.isPrivateMessage(message);
 	const params = LinksUtils.getComposeFromMessage('drafts', isPrivate, message.accountId(), message.folder(), message.uid());
 	Routing.setHash(params);
 };
@@ -30,7 +30,7 @@ ScreenComposeUtils.composeMessageFromDrafts = function (message)
  */
 ScreenComposeUtils.composeMessageAsReplyOrForward = function (sReplyType, message)
 {
-	const isPrivate = PrivateComposeUtils.isPrivateMessage(message);
+	const isPrivate = PrivateMessagingUtils.isPrivateMessage(message);
 	var params = LinksUtils.getComposeFromMessage(sReplyType, isPrivate, message.accountId(), message.folder(), message.uid());
 	Routing.setHash(params);
 };

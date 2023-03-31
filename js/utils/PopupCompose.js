@@ -4,7 +4,7 @@ var
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
 
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
-	PrivateComposeUtils = require('modules/%ModuleName%/js/utils/PrivateCompose.js'),
+	PrivateMessagingUtils = require('modules/%ModuleName%/js/utils/PrivateMessaging.js'),
 
 	PopupComposeUtils = {}
 ;
@@ -26,7 +26,7 @@ PopupComposeUtils.composeMessage = function (isPrivate = false)
  */
 PopupComposeUtils.composeMessageFromDrafts = function (message)
 {
-	const isPrivate = PrivateComposeUtils.isPrivateMessage(message);
+	const isPrivate = PrivateMessagingUtils.isPrivateMessage(message);
 	const params = LinksUtils.getComposeFromMessage('drafts', isPrivate, message.accountId(), message.folder(), message.uid());
 	params.shift();
 	Popups.showPopup(GetComposePopup(isPrivate), [params]);
@@ -38,7 +38,7 @@ PopupComposeUtils.composeMessageFromDrafts = function (message)
  */
 PopupComposeUtils.composeMessageAsReplyOrForward = function (sReplyType, message)
 {
-	const isPrivate = PrivateComposeUtils.isPrivateMessage(message);
+	const isPrivate = PrivateMessagingUtils.isPrivateMessage(message);
 	const params = LinksUtils.getComposeFromMessage(sReplyType, isPrivate, message.accountId(), message.folder(), message.uid());
 	params.shift();
 	Popups.showPopup(GetComposePopup(isPrivate), [params]);
