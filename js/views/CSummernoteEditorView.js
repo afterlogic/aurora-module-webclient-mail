@@ -191,6 +191,18 @@ CHtmlEditorView.prototype.init = function (
 				],
 			},
 			callbacks: {
+				onChange: () => {
+					this.textChanged(true);
+					this.actualTextСhanged.valueHasMutated();
+					const html = this.oEditor ? this.oEditor.summernote('code') : '';
+					this.htmlSize(html.length);
+				},
+				onChangeCodeview: () => {
+					this.textChanged(true);
+					this.actualTextСhanged.valueHasMutated();
+					const html = this.oEditor ? this.oEditor.summernote('code') : '';
+					this.htmlSize(html.length);
+				},
 				onFocus: (event) => {
 					// the timeout is necessary to prevent the compose popup from closing on Escape
 					// if the editor dialog was open
