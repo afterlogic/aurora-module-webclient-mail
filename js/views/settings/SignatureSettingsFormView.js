@@ -19,7 +19,7 @@ var
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	
-	CHtmlEditorView = require('modules/%ModuleName%/js/views/CHtmlEditorView.js')
+	CHtmlEditorView = require('modules/%ModuleName%/js/views/CSummernoteEditorView.js')
 ;
 
 /**
@@ -66,8 +66,8 @@ CSignatureSettingsFormView.prototype.onShow = function (oFetcherOrIdentity)
 
 CSignatureSettingsFormView.prototype.init = function ()
 {
-	this.oHtmlEditor.setInactive(this.useSignatureRadio() === Enums.UseSignature.Off);
 	this.oHtmlEditor.init(this.signature(), false, '', TextUtils.i18n('%MODULENAME%/LABEL_ENTER_SIGNATURE_HERE'));
+	this.oHtmlEditor.setInactive(this.useSignatureRadio() === Enums.UseSignature.Off);
 	this.enableImageDragNDrop(this.oHtmlEditor.isDragAndDropSupported() && !Browser.ie10AndAbove);
 };
 
@@ -75,7 +75,7 @@ CSignatureSettingsFormView.prototype.getCurrentValues = function ()
 {
 	if (this.oHtmlEditor.isInitialized())
 	{
-		this.signature(this.oHtmlEditor.getText());
+		this.signature(this.oHtmlEditor.getText() || '<div></div>');
 	}
 	return [
 		this.useSignatureRadio(),
@@ -90,6 +90,7 @@ CSignatureSettingsFormView.prototype.revert = function ()
 
 CSignatureSettingsFormView.prototype.getParametersForSave = function ()
 {
+	console.log('getParametersForSave');
 	this.signature(this.oHtmlEditor.getText());
 	
 	var
@@ -140,6 +141,7 @@ CSignatureSettingsFormView.prototype.applySavedValues = function (oParameters)
 		if (oAccount)
 		{
 			oAccount.useSignature(!!oParameters.UseSignature);
+			console.log('applySavedValues');
 			oAccount.signature(oParameters.Signature);
 		}
 	}
@@ -156,6 +158,7 @@ CSignatureSettingsFormView.prototype.populate = function ()
 	if (oSignature)
 	{
 		this.useSignatureRadio(oSignature.useSignature() ? Enums.UseSignature.On : Enums.UseSignature.Off);
+		console.log('populate', oSignature.signature());
 		this.signature(oSignature.signature());
 		this.oHtmlEditor.setText(this.signature());
 	}

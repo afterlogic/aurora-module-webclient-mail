@@ -46,7 +46,7 @@ var
 	CAttachmentModel = require('modules/%ModuleName%/js/models/CAttachmentModel.js'),
 
 	CComposeViewAutoEncrypt = require('modules/%ModuleName%/js/views/CComposeViewAutoEncrypt.js'),
-	CHtmlEditorView = require('modules/%ModuleName%/js/views/CHtmlEditorView.js'),
+	CHtmlEditorView = require('modules/%ModuleName%/js/views/CSummernoteEditorView.js'),
 
 	MainTab = App.isNewTab() && window.opener && window.opener.MainTabMailMethods,
 
@@ -216,13 +216,13 @@ function CComposeView()
 	this.plainText = ko.observable(false);
 	this.textBody = ko.observable('');
 	this.textBody.subscribe(function (value) {
-		this.oHtmlEditor.setText(this.textBody(), this.plainText());
+		this.oHtmlEditor.setText(value, this.plainText());
 		this.oHtmlEditor.commit();
 	}, this);
 
 	this.focusedField = ko.observable();
-	this.oHtmlEditor.textFocused.subscribe(function (val) {
-		if (this.oHtmlEditor.textFocused())
+	this.oHtmlEditor.textFocused.subscribe(function (value) {
+		if (value)
 		{
 			this.focusedField('text');
 		}
@@ -616,12 +616,9 @@ CComposeView.prototype.onShow = function ()
 	$(this.splitterDom()).trigger('resize');
 	$(this.bottomPanel()).trigger('resize');
 
-//	if (!this.oHtmlEditor.isInitialized())
-//	{
-		// Crea $container must be recreated because compose popup is destroyed after it is closed
-		this.oHtmlEditor.init(this.textBody(), this.plainText(), '7');
-		this.oHtmlEditor.commit();
-//	}
+	// Crea $container must be recreated because compose popup is destroyed after it is closed
+	this.oHtmlEditor.init(this.textBody(), this.plainText(), '7');
+	this.oHtmlEditor.commit();
 
 	this.initUploader();
 
@@ -872,6 +869,8 @@ CComposeView.prototype.onHide = function ()
 	{
 		this.executeSave(true);
 	}
+
+	this.oHtmlEditor.onClose();
 
 	this.headersCompressed(false);
 

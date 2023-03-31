@@ -1,0 +1,10 @@
+<div class="html_editor" data-bind="css: {'inactive': inactive()}, onEsc: onEscHandler, initDom: htmlEditorDom">
+	<div class="disable_mask" data-bind="visible: disableEdit"></div>
+
+	<div class="workarea" style="box-sizing: border-box; overflow: hidden;" data-bind="initDom: workareaDom">
+		<div class="scroll-inner" data-bind="attr: {'id': editorId}, initDom: editorDom"></div>
+		<div style="display: none;" data-bind="initDom: uploaderAreaDom, css: {'active': editorUploaderBodyDragOver}" class="uploader_mask">
+			<div class="inner"></div>
+		</div>
+	</div>
+</div>
