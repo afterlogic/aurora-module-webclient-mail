@@ -39,6 +39,10 @@
 		false,
 		"bool"
 	],
+	"AllowSourceCodeButton": [
+		false,
+		"bool"
+	],
     "Disabled": [
 		false,
 		"bool"

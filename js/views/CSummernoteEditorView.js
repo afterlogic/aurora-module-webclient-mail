@@ -17,6 +17,10 @@ var _ = require("underscore"),
 
 require("modules/%ModuleName%/js/vendors/summernote/summernote-lite.js");
 require("modules/%ModuleName%/js/vendors/summernote/summernote-lite.css");
+require("modules/%ModuleName%/js/vendors/summernote/codemirror.js");
+require("modules/%ModuleName%/js/vendors/summernote/codemirror.css");
+require("modules/%ModuleName%/js/vendors/summernote/xml.js");
+require("modules/%ModuleName%/js/vendors/summernote/formatting.js");
 
 const summernoteLangMap = {
 	English: 'en-US',
@@ -28,10 +32,11 @@ require('modules/%ModuleName%/js/vendors/summernote/lang/summernote-de-DE.min.js
 
 /**
  * @constructor
- * @param {boolean} bInsertImageAsBase64
+ * @param {boolean} isBuiltInSignature
  * @param {Object=} oParent
  */
-function CHtmlEditorView(bInsertImageAsBase64, oParent) {
+function CHtmlEditorView(isBuiltInSignature, oParent) {
+	this.isBuiltInSignature = isBuiltInSignature;
 	this.oParent = oParent;
 
 	this.oEditor = null;
@@ -56,8 +61,8 @@ function CHtmlEditorView(bInsertImageAsBase64, oParent) {
 	this.isBullets = ko.observable(false);
 	this.htmlSize = ko.observable(0);
 
-	this.bInsertImageAsBase64 = bInsertImageAsBase64;
-	this.bAllowFileUpload = !(bInsertImageAsBase64 && window.File === undefined);
+	this.bInsertImageAsBase64 = this.isBuiltInSignature;
+	this.bAllowFileUpload = !(this.bInsertImageAsBase64 && window.File === undefined);
 	// TODO: use
 	this.bAllowInsertImage = Settings.AllowInsertImage;
 	this.bAllowHorizontalLineButton = Settings.AllowHorizontalLineButton;
@@ -146,16 +151,25 @@ CHtmlEditorView.prototype.init = function (
 		this.initEditorUploader(); // uploads non-images using parent methods
 
 		this.oEditor = $(`#${this.editorId}`);
+		const toolbar = [
+			["history", ["undo", "redo"]],
+			["style", ["bold", "italic", "underline"]],
+			["font", ["fontname", "fontsize"]],
+			["color", ["color"]],
+			["para", ["ul", "ol", "paragraph"]],
+			["misc", ["table", "link", "picture", "clear"]],
+		];
+		if (Settings.AllowSourceCodeButton || this.isBuiltInSignature) {
+			toolbar.push(['codeview', ['codeview']]);
+		}
 		this.oEditor.summernote({
 			lang: summernoteLang,
-			toolbar: [
-				["history", ["undo", "redo"]],
-				["style", ["bold", "italic", "underline"]],
-				["font", ["fontname", "fontsize"]],
-				["color", ["color"]],
-				["para", ["ul", "ol", "paragraph"]],
-				["misc", ["table", "link", "picture", "clear"]],
-			],
+			toolbar,
+			codemirror: {
+				mode: 'text/html',
+				htmlMode: true,
+				lineNumbers: true,
+			},
 			fontNames: ["Arial", "Tahoma", "Verdana", "Courier New"],
 			// addDefaultFonts: false,
 			dialogsInBody: true,

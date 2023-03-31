@@ -5,25 +5,40 @@
 	position: relative;
 	
 	.note-editor {
+		background: white;
 		height: 100%;
 		display: flex;
-    	flex-direction: column;
+		flex-direction: column;
 		
 		.note-editing-area {
-			// height: calc(100% - 43px);
+			height: 100%;
 			overflow: auto !important;
 			margin-right: 5px;
 
-			&::-webkit-scrollbar {
-				height: 20px;
-			  width: 8px;
+			&, .CodeMirror-hscrollbar, .CodeMirror-vscrollbar {
+				&::-webkit-scrollbar-thumb {
+					background: #c9c9c9;
+					-webkit-border-radius: 1ex;
+				}
+				&::-webkit-scrollbar-corner {
+					background: #c9c9c9;
+				}
 			}
-			&::-webkit-scrollbar-thumb {
-			  background: #c9c9c9;
-			  -webkit-border-radius: 1ex;
+			&, .CodeMirror-vscrollbar {
+				&::-webkit-scrollbar {
+					height: 20px;
+					width: 8px;
+				}
 			}
-			&::-webkit-scrollbar-corner {
-			  background: #c9c9c9;
+			.CodeMirror-hscrollbar {
+				&::-webkit-scrollbar {
+					height: 8px;
+				}
+				margin-bottom: 5px;
+			}
+			
+			.CodeMirror, .CodeMirror-gutters {
+				height: 100% !important;
 			}
 		}
 

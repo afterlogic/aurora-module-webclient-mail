@@ -19,7 +19,7 @@ var
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	
-	CHtmlEditorView = require('modules/%ModuleName%/js/views/CHtmlEditorView.js')
+	CHtmlEditorView = require('modules/%ModuleName%/js/views/CSummernoteEditorView.js')
 ;
 
 /**
