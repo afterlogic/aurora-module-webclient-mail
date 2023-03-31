@@ -256,25 +256,28 @@ CHtmlEditorView.prototype.setInactive = function (bInactive) {
 };
 
 CHtmlEditorView.prototype.setPlaceholder = function () {
-	// TODO: in signature
-//	var sText = this.removeAllTags(this.getText());
-//	if (sText === "" || sText === "&nbsp;") {
-//		this.setText("<span>" + this.sPlaceholderText + "</span>");
-//		if (this.oCrea) {
-//			this.oCrea.setBlur();
-//		}
-//	}
+	if (this.oEditor) {
+		const html = this.removeAllTags(this.oEditor.summernote('code'));
+		if (html === '' || html === '&nbsp;') {
+			this.setText(`<span>${this.sPlaceholderText}</span>`);
+		}
+	}
 };
 
 CHtmlEditorView.prototype.removePlaceholder = function () {
-	// TODO: in signature
-//	var sText = this.oCrea ? this.removeAllTags(this.oCrea.getText(false)) : "";
-//	if (sText === this.sPlaceholderText) {
-//		this.setText("");
-//		if (this.oCrea) {
-//			this.oCrea.setFocus(true);
-//		}
-//	}
+	if (this.oEditor) {
+		const html = this.removeAllTags(this.oEditor.summernote('code'));
+		if (html === this.sPlaceholderText) {
+			this.setText('');
+
+			// *** Without this trick, the focus does not appear in the signature
+			this.getEditableArea().blur();
+			setTimeout(() => {
+				this.getEditableArea().focus();
+			}, 10);
+			// ***
+		}
+	}
 };
 
 CHtmlEditorView.prototype.hasOpenedPopup = function () {
@@ -363,7 +366,7 @@ CHtmlEditorView.prototype.isInitialized = function () {
 
 CHtmlEditorView.prototype.setFocus = function () {
 	if (this.oEditor) {
-		this.oEditor.focus();
+		this.getEditableArea().focus();
 	}
 };
 

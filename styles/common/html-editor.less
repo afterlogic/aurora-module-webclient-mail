@@ -4,11 +4,18 @@
 	height: 100%;
 	position: relative;
 	
-	.note-editor {
+	.workarea {
 		background: white;
+		border-radius: 4px;
+	}
+	
+	.note-editor {
 		height: 100%;
 		display: flex;
 		flex-direction: column;
+		.inactive& {
+				opacity: 0.2;
+			}
 		
 		.note-editing-area {
 			height: 100%;
