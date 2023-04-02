@@ -103,7 +103,7 @@ export default {
   },
 
   beforeRouteLeave (to, from, next) {
-    this.doBeforeRouteLeave(to, from, next)
+    this.$root.doBeforeRouteLeave(to, from, next)
   },
 
   mounted () {

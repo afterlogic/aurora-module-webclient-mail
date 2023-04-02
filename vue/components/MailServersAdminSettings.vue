@@ -175,7 +175,7 @@
             <div class="row">
               <div class="col-2"></div>
               <div class="col-5">
-                <q-item-label caption v-t="'MAILWEBCLIENT.LABEL_HINT_USE_FULL_EMAIL_ADDRESS_AS_LOGIN'" />
+                <q-item-label caption v-t="$t('MAILWEBCLIENT.LABEL_HINT_USE_FULL_EMAIL_ADDRESS_AS_LOGIN')" />
               </div>
             </div>
           </q-card-section>
@@ -311,6 +311,7 @@
 <script>
 import _ from 'lodash'
 
+import eventBus from 'src/event-bus'
 import errors from 'src/utils/errors'
 import notification from 'src/utils/notification'
 import typesUtils from 'src/utils/types'
@@ -496,11 +497,11 @@ export default {
   },
 
   beforeRouteLeave (to, from, next) {
-    this.doBeforeRouteLeave(to, from, next)
+    this.$root.doBeforeRouteLeave(to, from, next)
   },
 
   beforeRouteUpdate (to, from, next) {
-    this.doBeforeRouteLeave(to, from, next)
+    this.$root.doBeforeRouteLeave(to, from, next)
   },
 
   mounted () {
@@ -566,7 +567,7 @@ export default {
       const params = {
         oauthConnectorsData: []
       }
-      this.$eventBus.$emit('MailWebclient::GetOauthConnectorsData', params)
+      eventBus.$emit('MailWebclient::GetOauthConnectorsData', params)
       this.oauthConnectorsData = _.isArray(params.oauthConnectorsData)
         ? params.oauthConnectorsData.filter(data => {
           return typesUtils.isNonEmptyString(data.name) && typesUtils.isNonEmptyString(data.type)
