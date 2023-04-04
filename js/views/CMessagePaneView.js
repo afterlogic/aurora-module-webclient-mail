@@ -422,6 +422,14 @@ CMessagePaneView.prototype.ViewTemplate = App.isNewTab() ? '%ModuleName%_Message
 CMessagePaneView.prototype.ViewConstructorName = 'CMessagePaneView';
 
 /**
+ * @param {string} sEmailAddress
+ */
+CMessagePaneView.prototype.isPrivateEmailAddress = function (sEmailAddress)
+{
+	return PrivateMessagingUtils.isPrivateEmailAddress(sEmailAddress);
+};
+
+/**
  * @param {object} oData
  * @param {object} oEvent
  */

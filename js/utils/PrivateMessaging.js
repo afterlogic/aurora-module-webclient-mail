@@ -15,7 +15,7 @@ module.exports = {
 		if (privateAccountEmail !== null) {
 			return privateAccountEmail === email;
 		}
-		const isPrivateAccountEmail = /.+\.[\d]+@.+/.test(email);
+		const isPrivateAccountEmail = this.isPrivateEmailAddress(email);
 		if (isPrivateAccountEmail) {
 			privateAccountEmail = email;
 		}
@@ -40,6 +40,10 @@ module.exports = {
 		parameters.CustomHeaders['X-Private-Message-Sender'] = privateAccountEmail;
 	},
 
+	isPrivateEmailAddress(sEmailAddress) {
+		return /.+\.[\d]+@.+/.test(sEmailAddress);
+	},
+
 	isPrivateMessageParameters(parameters) {
 		return parameters.CustomHeaders && parameters.CustomHeaders['X-Private-Message-Sender'] === privateAccountEmail;
 	},
@@ -53,7 +57,7 @@ module.exports = {
 		}
 		const text = message.text() || '';
 		const regex = /([A-Z0-9\"!#\$%\^\{\}`~&'\+\-=_\.]+\.[\d]+@[A-Z0-9\.\-]+)/ig;
-		const recipients = [...message.oTo.aCollection, ...message.oCc.aCollection].map(addr => addr.sEmail).filter(email => /.+\.[\d]+@.+/.test(email));
+		const recipients = [...message.oTo.aCollection, ...message.oCc.aCollection].map(addr => addr.sEmail).filter(email => this.isPrivateEmailAddress(email));
 		return message.Custom['X-Private-Message-Sender'] || recipients.length > 0 || regex.test(text);
 	},
 

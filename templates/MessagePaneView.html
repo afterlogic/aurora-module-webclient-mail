@@ -46,10 +46,13 @@
 					</span>
 					<span class="to_arrow" data-bind="visible: allRecipients().length > 0">&#8594;</span>
 					<!-- ko foreach: allRecipients -->
-						<span class="contact address_capsule">
+						<span class="contact address_capsule" data-bind="visible: !$parent.isPrivateEmailAddress(sEmail)">
 							<span class="address" data-bind="text: $parent.sMeRecipient && $parent.currentAccountEmail() === sEmail ? $parent.sMeRecipient : sDisplay,
 									attr: {'data-email': sEmail, 'data-name': sName}">
 							</span>
+						</span>
+						<span class="contact address_capsule private_address_capsule" data-bind="visible: $parent.isPrivateEmailAddress(sEmail)">
+							<span class="address_is_not_processed_by_contacts" data-bind="i18n: {'key': '%MODULENAME%/LABEL_PRIVATE_EMAIL_ADDRESS'}"></span>
 						</span>
 					<!-- /ko -->
 				</div>
@@ -76,8 +79,11 @@
 				<div class="message_info_line" data-bind="visible: aToAddr().length > 0">
 					<span class="title" data-bind="i18n: {'key': '%MODULENAME%/LABEL_TO'}"></span>:
 					<!-- ko foreach: aToAddr -->
-					<span class="contact address_capsule">
+					<span class="contact address_capsule" data-bind="visible: !$parent.isPrivateEmailAddress(sEmail)">
 						<span class="address" data-bind="text: sFull, attr: {'data-email': sEmail, 'data-name': sName}"></span>
+					</span>
+					<span class="contact address_capsule private_address_capsule" data-bind="visible: $parent.isPrivateEmailAddress(sEmail)">
+						<span class="address_is_not_processed_by_contacts" data-bind="i18n: {'key': '%MODULENAME%/LABEL_PRIVATE_EMAIL_ADDRESS'}"></span>
 					</span>
 					<!-- /ko -->
 				</div>
