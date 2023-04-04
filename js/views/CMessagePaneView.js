@@ -70,6 +70,16 @@ function CMessagePaneView()
 		return sPrefix + AccountList.getEmail() + ' - ' + TextUtils.i18n('%MODULENAME%/HEADING_MESSAGE_BROWSER_TAB');
 	}, this);
 
+	this.isAnotherUserPrivateMessage = ko.computed(() => {
+		return PrivateMessagingUtils.isAnotherUserPrivateMessage(this.currentMessage());
+	});
+	this.isPrivateMessage = ko.computed(() => {
+		return PrivateMessagingUtils.isPrivateMessage(this.currentMessage());
+	});
+	this.isMinePrivateMessage = ko.computed(() => {
+		return PrivateMessagingUtils.isMinePrivateMessage(this.currentMessage());
+	});
+
 	this.isCurrentMessage = ko.computed(function () {
 		return !!this.currentMessage();
 	}, this);
@@ -193,7 +203,8 @@ function CMessagePaneView()
 		return bDisable;
 	}, this);
 	this.isVisibleReplyTool = ko.computed(function () {
-		return !this.disableAllSendTools() && this.isCurrentNotDraftOrSent() && !this.isCurrentTemplateFolder();
+		return !this.disableAllSendTools() && this.isCurrentNotDraftOrSent() && !this.isCurrentTemplateFolder() 
+			&& !this.isAnotherUserPrivateMessage();
 	}, this);
 	this.isVisibleResendTool = ko.computed(function () {
 		return !this.disableAllSendTools() && this.isCurrentSentFolder() && !this.isCurrentTemplateFolder();
@@ -227,17 +238,6 @@ function CMessagePaneView()
 
 	this.fullDate = ko.observable('');
 	this.midDate = ko.observable('');
-
-	// this.textBody = ko.observable('');
-	this.isAnotherUserPrivateMessage = ko.computed(() => {
-		return PrivateMessagingUtils.isAnotherUserPrivateMessage(this.currentMessage());
-	});
-	this.isPrivateMessage = ko.computed(() => {
-		return PrivateMessagingUtils.isPrivateMessage(this.currentMessage());
-	});
-	this.isMinePrivateMessage = ko.computed(() => {
-		return PrivateMessagingUtils.isMinePrivateMessage(this.currentMessage());
-	});
 
 	this.isVisibleReplyAllTool = ko.computed(function () {
 		if (this.isPrivateMessage()) {

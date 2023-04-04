@@ -37,7 +37,7 @@
 			<span class="text" data-bind="text: openInPopupOrTabText"></span>
 		</span>
 
-		<span class="item more" data-bind="dropdown: {control: false, alignTo: bNotPopup ? null : 'message_viewer'}, command: moreCommand, customTooltip: '%MODULENAME%/ACTION_SHOW_MORE_ACTIONS'">
+		<span class="item more" data-bind="visible: !isAnotherUserPrivateMessage(), dropdown: {control: false, alignTo: bNotPopup ? null : 'message_viewer'}, command: moreCommand, customTooltip: '%MODULENAME%/ACTION_SHOW_MORE_ACTIONS'">
 			<span class="icon"></span>
 			<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_SHOW_MORE_ACTIONS'}"></span>
 			<span class="dropdown">
