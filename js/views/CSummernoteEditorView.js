@@ -87,7 +87,6 @@ function CHtmlEditorView(isBuiltInSignature, oParent) {
 	this.isDialogOpen = ko.observable(false);
 
 	this.aUploadedImagesData = [];
-	this.visibleTemplatePopup = ko.observable(false);
 
 	this.inactive = ko.observable(false);
 	this.sPlaceholderText = "";
@@ -101,6 +100,9 @@ function CHtmlEditorView(isBuiltInSignature, oParent) {
 	this.actualTextСhanged = ko.observable(false);
 
 	this.templates = ko.observableArray([]);
+	this.templates.subscribe(() => {
+		this.addTemplatesButton();
+	});
 
 	if (Settings.AllowInsertTemplateOnCompose) {
 		App.subscribeEvent(
@@ -126,6 +128,43 @@ CHtmlEditorView.prototype.onClose = function () {
 	}
 };
 
+CHtmlEditorView.prototype.addTemplatesButton = function () {
+	if (this.templatesButton || this.templates().length === 0 || !this.oEditor) {
+		return;
+	}
+	const templatesIconUrl = 'modules/%ModuleName%/js/vendors/summernote/templates-on.svg';
+	const ui = $.summernote.ui;
+	const allTemplates = this.templates();
+	const insertTemplate = this.insertTemplate.bind(this);
+	const buttonGroup = ui.buttonGroup([
+		ui.button({
+			className: 'dropdown-toggle',
+			contents: `<svg width="20" height="24" style="margin: -7px -2px;">
+						  <image xlink:href="${templatesIconUrl}" width="20" height="24"/>
+					   </svg><span class="note-icon-caret"></span>`,
+			data: {
+				toggle: 'dropdown'
+			}
+		}),
+		ui.dropdown({
+			className: 'dropdown-template',
+			items: allTemplates.map(template => template.subject),
+			callback: (items) => {
+				$(items).find('a.note-dropdown-item').on('click', function (event) {
+					const templateSubject = $(this).text();
+					const template = allTemplates.find(template => template.subject === templateSubject);
+					if (template) {
+						insertTemplate(template.text, event);
+					}
+				});
+			}
+		})
+	]);
+
+	this.templatesButton = buttonGroup.render();
+	this.oEditor.data('summernote').layoutInfo.toolbar.append(this.templatesButton);
+};
+
 /**
  * @param {string} sText
  * @param {boolean} bPlain
@@ -144,6 +183,7 @@ CHtmlEditorView.prototype.init = function (
 		// in case if knockoutjs destroyed dom element with html editor
 		this.oEditor.summernote("destroy");
 		this.oEditor = null;
+		this.templatesButton = null;
 	}
 
 	if (!this.oEditor) {
@@ -346,15 +386,6 @@ CHtmlEditorView.prototype.fillTemplates = function () {
 	this.templates(aTemplates);
 };
 
-CHtmlEditorView.prototype.toggleTemplatePopup = function (oViewModel, oEvent) {
-	if (this.visibleTemplatePopup()) {
-		this.visibleTemplatePopup(false);
-	} else {
-		oEvent.stopPropagation();
-		this.visibleTemplatePopup(true);
-	}
-};
-
 CHtmlEditorView.prototype.insertTemplate = function (sHtml, oEvent) {
 	oEvent.stopPropagation();
 	this.insertHtml(sHtml);
@@ -543,7 +574,6 @@ CHtmlEditorView.prototype.closeAllPopups = function ()
  * @param {string} sHtml
  */
 CHtmlEditorView.prototype.insertHtml = function (sHtml) {
-	// TODO: check - used for templates
 	if (this.oEditor) {
 		if (!this.oEditor.summernote('hasFocus')) {
 			this.oEditor.summernote('focus');
