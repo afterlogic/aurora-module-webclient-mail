@@ -71,11 +71,13 @@
 							<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_OPEN_MESSAGE_HEADERS'}"></span>
 						</span>
 
-						<!-- ko foreach: moreSectionCommands -->
-						<span class="item" data-bind="command: Command, css: CssClass, visible: Visible">
-							<span class="icon"></span>
-							<span class="text" data-bind="text: Text"></span>
-						</span>
+						<!-- ko if: !isPrivateMessage() -->
+							<!-- ko foreach: moreSectionCommands -->
+							<span class="item" data-bind="command: Command, css: CssClass, visible: Visible">
+								<span class="icon"></span>
+								<span class="text" data-bind="text: Text"></span>
+							</span>
+							<!-- /ko -->
 						<!-- /ko -->
 
 					</span>

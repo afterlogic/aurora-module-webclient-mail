@@ -1,8 +1,7 @@
 'use strict';
 
 const
-	App = require('%PathToCoreWebclientModule%/js/App.js'),
-
+	// App = require('%PathToCoreWebclientModule%/js/App.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js')
 ;
 
