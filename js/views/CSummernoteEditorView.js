@@ -187,6 +187,53 @@ CHtmlEditorView.prototype.init = function (
 	}
 
 	if (!this.oEditor) {
+		var CustomFontSizeButton = function (context) {
+			const ui = $.summernote.ui;
+			const sizes = {
+				'10': 'Smallest',
+				'12': 'Smaller',
+				'16': 'Standard',
+				'20': 'Bigger',
+				'24': 'Large',
+				// '9': 'Smallest',
+				// '10': 'Smaller',
+				// '12': 'Standard',
+				// '14': 'Bigger',
+				// '18': 'Large',
+			};
+			const getSizeName = (item) => {
+				return sizes[item] !== undefined ? sizes[item] + ' ('+item+'px)' : item + 'px'; 
+			};
+		
+			const buttonGroup = ui.buttonGroup([
+				ui.button({
+					className: 'dropdown-toggle',
+					contents: ui.dropdownButtonContents('<span class="note-current-fontsize"></span>', ui.options),
+					// tooltip: lang.font.size,
+					data: {
+						toggle: 'dropdown'
+					}
+				}),
+				ui.dropdownCheck({
+					className: 'dropdown-fontsize',
+					checkClassName: ui.options.icons.menuCheck,
+					items: Object.keys(sizes),
+					template: (item) => {
+						return '<span style="font-size: '+item+'px;">'+getSizeName(item)+'</span>';
+					},
+					itemClick: (e, item, value) => {
+						e.stopPropagation();
+						// context.invoke('editor.fontSizeUnit', 'pt');
+						context.invoke('editor.fontStyling', 'font-size', value);
+						context.invoke('buttons.updateCurrentStyle');
+					},
+				})
+			]);
+			
+			return buttonGroup.render();   // return button as jquery object
+		}
+
+
 		this.initUploader(); // uploads inline images
 		this.initEditorUploader(); // uploads non-images using parent methods
 
@@ -194,7 +241,7 @@ CHtmlEditorView.prototype.init = function (
 		const toolbar = [
 			["history", ["undo", "redo"]],
 			["style", ["bold", "italic", "underline"]],
-			["font", ["fontname", "fontsize"]],
+			["font", ["fontname", "customfontsize"]],
 			["color", ["color"]],
 			["para", ["ul", "ol", "paragraph"]],
 			["misc", ["table", "link", "picture", "clear"]],
@@ -216,6 +263,9 @@ CHtmlEditorView.prototype.init = function (
 			shortcuts: false,
 			disableResizeEditor: true,
 			followingToolbar: false, //true makes toolbas sticky
+			buttons: {
+				customfontsize: CustomFontSizeButton
+			},
 			colors: [
 				['#4f6573', '#83949b', '#aab2bd', '#afb0a4', '#8b8680', '#69655a', '#c9b037', '#ced85e'],
 				['#2b6a6c', '#00858a', '#00b4b1', '#77ce87', '#4a8753', '#8aa177', '#96b352', '#beca02'],
@@ -282,8 +332,10 @@ CHtmlEditorView.prototype.init = function (
 
 	this.getEditableArea().attr('tabindex', sTabIndex);
 	this.clearUndoRedo();
-	this.getEditableArea().css('font-family', 'Tahoma');
-	this.getEditableArea().css('font-size', '16px');
+	this.getEditableArea().css('font-family', 'Tahoma').css('font-size', '16px');
+	this.oEditor.summernote('fontName', 'Tahoma');
+	this.oEditor.summernote('fontSize', '16px');
+
 	this.setText(sText, bPlain);
 
 	this.aUploadedImagesData = [];
