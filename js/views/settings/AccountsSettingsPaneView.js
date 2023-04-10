@@ -55,8 +55,8 @@ function CAccountsSettingsPaneView()
 		return this.editedFetcher() ? this.editedFetcher().id() : null;
 	}, this);
 	this.editedIdentity = ko.observable(null);
-	this.editedIdentityId = ko.computed(function () {
-		return this.editedIdentity() ? this.editedIdentity().id() : null;
+	this.editedIdentityHash = ko.computed(function () {
+		return this.editedIdentity() ? this.editedIdentity().hash() : null;
 	}, this);
 	this.editedAlias = ko.observable(null);
 	this.editedAliasId = ko.computed(function () {

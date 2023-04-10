@@ -14,7 +14,7 @@
 	<div data-bind="visible: accounts().length > 0">
 		<div class="items_list simple_list">
 			<div data-bind="foreach: accounts">
-				<div class="item account" data-bind="css: {'selected': id() === $parent.editedAccountId() && !$parent.editedFetcherId() && !$parent.editedIdentityId()},  click: function () {$parent.editAccount(hash());}">
+				<div class="item account" data-bind="css: {'selected': id() === $parent.editedAccountId() && !$parent.editedFetcherId() && !$parent.editedIdentityHash()}, click: function () {$parent.editAccount(hash());}">
 					<span class="link fetcher" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ADD_IDENTITY'},
 						  visible: $parent.bAllowIdentities && bAllowUseIdentities,
 						  click: function (oModel, oEv) {$parent.addIdentity(id(), oEv);}"
@@ -26,7 +26,7 @@
 				</div>
 
 				<!-- ko foreach: identities -->
-				<div class="item fetcher" data-bind="css: {'selected': id() === $parents[1].editedIdentityId()}, click: function () {$parents[1].editIdentity($data.hash());}">
+				<div class="item fetcher" data-bind="css: {'selected': hash() === $parents[1].editedIdentityHash()}, click: function () {$parents[1].editIdentity($data.hash());}">
 					<span class="icon fetcher"></span>
 					<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_IDENTITY'}"></span>
 					<span class="title" data-bind="text: fullEmail"></span>
