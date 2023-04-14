@@ -28,6 +28,7 @@ var
 
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
 	SendingUtils = require('modules/%ModuleName%/js/utils/Sending.js'),
+	EditorUtils = require('modules/%ModuleName%/js/utils/Editor.js'),
 
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	CoreAjax = require('%PathToCoreWebclientModule%/js/Ajax.js'),
@@ -41,7 +42,7 @@ var
 	CAttachmentModel = require('modules/%ModuleName%/js/models/CAttachmentModel.js'),
 
 	CComposeViewAutoEncrypt = require('modules/%ModuleName%/js/views/CComposeViewAutoEncrypt.js'),
-	CHtmlEditorView = require('modules/%ModuleName%/js/views/CHtmlEditorView.js'),
+	CHtmlEditorView = EditorUtils.getCHtmlEditorView(),
 
 	MainTab = App.isNewTab() && window.opener && window.opener.MainTabMailMethods,
 

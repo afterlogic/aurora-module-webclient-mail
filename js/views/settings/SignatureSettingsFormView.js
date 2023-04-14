@@ -15,11 +15,13 @@ var
 	
 	CAbstractSettingsFormView = ModulesManager.run('SettingsWebclient', 'getAbstractSettingsFormViewClass'),
 	
+	EditorUtils = require('modules/%ModuleName%/js/utils/Editor.js'),
+
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	
-	CHtmlEditorView = require('modules/%ModuleName%/js/views/CHtmlEditorView.js')
+	CHtmlEditorView = EditorUtils.getCHtmlEditorView()
 ;
 
 /**
