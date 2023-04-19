@@ -39,7 +39,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
      *
      * @return Settings
      */
-    protected function GetModuleSettings()
+    public function getModuleSettings()
     {
         return $this->oModuleSettings;
     }
