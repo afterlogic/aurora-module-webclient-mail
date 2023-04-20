@@ -5,39 +5,44 @@ const
 	Settings = require('modules/%ModuleName%/js/Settings.js')
 ;
 
-let privateAccountEmail = null;
+// let privateAccountEmail = null;
 
 module.exports = {
 	isPrivateAccountEmail(email) {
-		if (!Settings.AllowPrivateMessages) {
-			return false;
+		// if (!Settings.AllowPrivateMessages) {
+		// 	return false;
+		// }
+		let isPrivateAccountEmail = false;
+
+		if (Settings.PrivateMessagesEmail) {
+			isPrivateAccountEmail = Settings.PrivateMessagesEmail === email;
 		}
-		if (privateAccountEmail !== null) {
-			return privateAccountEmail === email;
-		}
-		const isPrivateAccountEmail = this.isPrivateEmailAddress(email);
-		if (isPrivateAccountEmail) {
-			privateAccountEmail = email;
-		}
+		// const isPrivateAccountEmail = this.isPrivateEmailAddress(email);
+		// if (isPrivateAccountEmail) {
+		// 	privateAccountEmail = email;
+		// }
 		return isPrivateAccountEmail;
 	},
 
 	getPrivateAccountEmail() {
-		return privateAccountEmail;
+		// return privateAccountEmail;
+		return Settings.PrivateMessagesEmail;
 	},
 
 	hasPrivateAccount() {
-		return privateAccountEmail !== null;
+		// return privateAccountEmail !== null;
+		return !!Settings.PrivateMessagesEmail;
 	},
 
 	addPrivateMessageHeaderToParameters(parameters) {
-		if (privateAccountEmail === null) {
+		// if (privateAccountEmail === null) {
+		if (!this.hasPrivateAccount()) {
 			return;
 		}
 		if (!parameters.CustomHeaders) {
 			parameters.CustomHeaders = {};
 		}
-		parameters.CustomHeaders['X-Private-Message-Sender'] = privateAccountEmail;
+		parameters.CustomHeaders['X-Private-Message-Sender'] = this.getPrivateAccountEmail();
 	},
 
 	isPrivateEmailAddress(sEmailAddress) {
@@ -45,7 +50,7 @@ module.exports = {
 	},
 
 	isPrivateMessageParameters(parameters) {
-		return parameters.CustomHeaders && parameters.CustomHeaders['X-Private-Message-Sender'] === privateAccountEmail;
+		return parameters.CustomHeaders && parameters.CustomHeaders['X-Private-Message-Sender'] === this.getPrivateAccountEmail();
 	},
 
 	isPrivateMessage(message) {
@@ -66,7 +71,7 @@ module.exports = {
 			return false;
 		}
 		const recipients = [...message.oTo.aCollection, ...message.oCc.aCollection].map(addr => addr.sEmail);
-		return ( message.Custom['X-Private-Message-Sender'] === privateAccountEmail || recipients.includes(privateAccountEmail));
+		return ( message.Custom['X-Private-Message-Sender'] === this.getPrivateAccountEmail() || recipients.includes(this.getPrivateAccountEmail()));
 	},
 	
 	isAnotherUserPrivateMessage(message) {
@@ -80,7 +85,7 @@ module.exports = {
 		// const regex = /([^\s.]+\.[\d]+@[A-Z0-9\.\-]+)/ig;
 		const regex = /([A-Z0-9\"!#\$%\^\{\}`~&'\+\-=_\.]+\.[\d]+@[A-Z0-9\.\-]+)/ig;
 		const matches = text.match(regex);
-		return matches && matches.some(email => email !== privateAccountEmail);
+		return matches && matches.some(email => email !== this.getPrivateAccountEmail());
 	},
 
 	// depricated
@@ -89,6 +94,6 @@ module.exports = {
 			return false;
 		}
 		const recipients = [...message.oTo.aCollection, ...message.oCc.aCollection].map(addr => addr.sEmail);
-		return recipients.includes(privateAccountEmail);
+		return recipients.includes(this.getPrivateAccountEmail());
 	}
 };

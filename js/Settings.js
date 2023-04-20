@@ -83,6 +83,7 @@ module.exports = {
 	PdfImagesLoadTimeLimitSeconds: 2,
 
 	AllowPrivateMessages: false,
+	PrivateMessagesEmail: '',
 
 	/**
 	 * Initializes settings from AppData object sections.
@@ -188,6 +189,7 @@ module.exports = {
 		}
 
 		this.AllowPrivateMessages = Types.pBool(informatikAppDataSection && informatikAppDataSection.AllowPrivateMessages, this.AllowPrivateMessages);
+		this.PrivateMessagesEmail = Types.pString(informatikAppDataSection && informatikAppDataSection.PrivateMessagesEmail, this.PrivateMessagesEmail);
 
 		App.registerUserAccountsCount(this.userMailAccountsCount);
 		App.registerAccountsWithPass(this.mailAccountsEmails);
