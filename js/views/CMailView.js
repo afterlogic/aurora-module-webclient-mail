@@ -116,7 +116,7 @@ function CMailView()
 		}
 		return TextUtils.i18n('%MODULENAME%/ACTION_NEW_MESSAGE');
 	}, this);
-	this.allowPrivateMessages = Settings.AllowPrivateMessages;
+	this.allowPrivateMessages = Settings.AllowPrivateMessages && PrivateMessagingUtils.hasPrivateAccount();
 	this.privateComposeCommand = Utils.createCommand(this, () => {
 		if (PrivateMessagingUtils.hasPrivateAccount()) {
 			ComposeUtils.composeMessage(true);
