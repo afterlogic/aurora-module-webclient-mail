@@ -14,6 +14,8 @@ var
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
 	CreateFolderPopup = require('modules/%ModuleName%/js/popups/CreateFolderPopup.js'),
 
+	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
+
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	MailCache = require('modules/%ModuleName%/js/Cache.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js')
@@ -28,6 +30,7 @@ function CFolderListView()
 		if (Settings.accountsAboveFolders()) {
 			return _.map(AccountList.collection(), function (oAccount) {
 				return {
+					hash: oAccount.hash(),
 					bCurrent: oAccount.isCurrent(),
 					sText: oAccount.mailboxName() || oAccount.email().split('@')[0],
 					changeAccount: oAccount.changeAccount.bind(oAccount),
@@ -106,6 +109,12 @@ function CFolderListView()
 }
 
 CFolderListView.prototype.ViewTemplate = '%ModuleName%_FoldersView';
+
+CFolderListView.prototype.executeAccountUnseenFilter = function (event, accountHash)
+{
+	event.stopPropagation();
+	Routing.setHash(['mail', accountHash, 'INBOX', 'filter:unseen']);
+};
 
 CFolderListView.prototype.addNewFolder = function ()
 {

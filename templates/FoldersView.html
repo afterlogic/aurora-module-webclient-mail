@@ -19,7 +19,9 @@
 <div class="account_list" data-bind="foreach: accounts">
 	<div class="account_item" data-bind="css: {'current_account': bCurrent}, click: changeAccount">
 		<span data-bind="text: sText"></span>
-		<span style="float: right;" data-bind="text: unseenMessagesCount, visible: unseenMessagesCount() > 0"></span>
+		<span class="account_item__unseen" data-bind="text: unseenMessagesCount, visible: unseenMessagesCount() > 0,
+			 click: function (data, event) { $parent.executeAccountUnseenFilter(event, hash); }, customTooltip: '%MODULENAME%/ACTION_SHOW_UNREAD_MESSAGES'"
+		></span>
 	</div>
 </div>
 <!-- /ko -->
