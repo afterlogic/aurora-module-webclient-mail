@@ -128,6 +128,13 @@ function CComposeView()
 	this.selectedImportance = ko.observable(Enums.Importance.Normal).extend({'reversible': true});
 
 	this.isPrivate = ko.observable(false);
+	this.isPrivate.subscribe(() => {
+		this.allControllers().forEach(controller => {
+			if (typeof controller.setIsPrivateMessage === 'function') {
+				controller.setIsPrivateMessage(this.isPrivate());
+			}
+		});
+	});
 	this.senderAccountId = SenderSelector.senderAccountId;
 	this.senderList = SenderSelector.senderList;
 	this.visibleFrom = ko.computed(function () {
