@@ -8,6 +8,18 @@ const
 
 // let privateAccountEmail = null;
 
+function getPrivateMessageMatches(message) {
+	if (!message) {
+		return [];
+	}
+	const regex = /([A-Z]{3}-[0-9]{6})/ig;
+	const header = message.Custom['X-Private-Message-Sender'] || '';
+	const subject = message.subject() || '';
+	const text = message.text() || '';
+	const matches = [].concat(header.match(regex) || [], subject.match(regex) || [], text.match(regex) || []);
+	return matches;
+}
+
 module.exports = {
 	isPrivateAccountEmail(email) {
 		// if (!Settings.AllowPrivateMessages) {
@@ -78,38 +90,21 @@ module.exports = {
 	},
 
 	isPrivateMessage(message) {
-		// if (!Settings.AllowPrivateMessages || !message) {
-		// 	return false;
-		// }
-		if (!message) {
-			return false;
-		}
-		const text = message.text() || '';
-		const regex = /([A-Z0-9\"!#\$%\^\{\}`~&'\+\-=_\.]+\.[\d]+@[A-Z0-9\.\-]+)/ig;
-		const recipients = [...message.oTo.aCollection, ...message.oCc.aCollection].map(addr => addr.sEmail).filter(email => this.isPrivateEmailAddress(email));
-		return message.Custom['X-Private-Message-Sender'] || recipients.length > 0 || regex.test(text);
+		const matches = getPrivateMessageMatches(message);
+		return matches.length > 0;
 	},
 
 	isMinePrivateMessage(message) {
-		if (!Settings.AllowPrivateMessages || !message) {
+		if (!Settings.AllowPrivateMessages) {
 			return false;
 		}
-		const recipients = [...message.oTo.aCollection, ...message.oCc.aCollection].map(addr => addr.sEmail);
-		return ( message.Custom['X-Private-Message-Sender'] === this.getPrivateAccountEmail() || recipients.includes(this.getPrivateAccountEmail()));
+		const matches = getPrivateMessageMatches(message);
+		return matches.includes(Settings.PrivateMessagesEmail);
 	},
 	
 	isAnotherUserPrivateMessage(message) {
-		// if (!Settings.AllowPrivateMessages) {
-		// 	return false;
-		// }
-		if (!message) {
-			return false;
-		}
-		const text = message.text();
-		// const regex = /([^\s.]+\.[\d]+@[A-Z0-9\.\-]+)/ig;
-		const regex = /([A-Z0-9\"!#\$%\^\{\}`~&'\+\-=_\.]+\.[\d]+@[A-Z0-9\.\-]+)/ig;
-		const matches = text.match(regex);
-		return matches && matches.some(email => email !== this.getPrivateAccountEmail());
+		const matches = getPrivateMessageMatches(message);
+		return matches.length > 0 && !matches.includes(Settings.PrivateMessagesEmail);
 	},
 
 	// depricated
