@@ -806,21 +806,20 @@ CCrea.prototype.getPlainText = function ()
  * Gets text from rich editor.
  *
  * @param {boolean=} bRemoveSignatureAnchor = false
+ * @param {boolean=} isPrivate = false
  * @return {string}
  */
-CCrea.prototype.getText = function (bRemoveSignatureAnchor)
+CCrea.prototype.getText = function (bRemoveSignatureAnchor, isPrivate)
 {
-    var
-        $Anchor = null,
-        sVal = ''
-    ;
+    let sVal = '';
 
-    if (this.$editableArea && this.$editableArea.length > 0)
-    {
-        if (bRemoveSignatureAnchor)
-        {
-            $Anchor = this.$editableArea.find('div[data-anchor="signature"]');
-            $Anchor.removeAttr('data-anchor');
+    if (this.$editableArea && this.$editableArea.length > 0) {
+        const signatureAnchor = this.$editableArea.find('div[data-anchor="signature"]');
+        if (bRemoveSignatureAnchor) {
+            signatureAnchor.removeAttr('data-anchor');
+        }
+        if (isPrivate) {
+            PrivateMessagingUtils.addPrivateMarkerToMessageBody(signatureAnchor);
         }
 
         sVal = this.$editableArea.html();

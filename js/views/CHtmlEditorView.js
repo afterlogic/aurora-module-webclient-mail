@@ -21,7 +21,6 @@ var
 	CCrea = require('modules/%ModuleName%/js/CCrea.js'),
 	MailCache = require('modules/%ModuleName%/js/Cache.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
-	
 	CColorPickerView = require('modules/%ModuleName%/js/views/CColorPickerView.js')
 ;
 
@@ -566,13 +565,12 @@ CHtmlEditorView.prototype.getPlainText = function ()
 
 /**
  * @param {boolean=} bRemoveSignatureAnchor = false
+ * @param {boolean=} isPrivate = false
  */
-CHtmlEditorView.prototype.getText = function (bRemoveSignatureAnchor)
+CHtmlEditorView.prototype.getText = function (bRemoveSignatureAnchor, isPrivate)
 {
-	var
-		sText = this.oCrea ? this.oCrea.getText(bRemoveSignatureAnchor) : ''
-	;
-	return (this.sPlaceholderText !== '' && this.removeAllTags(sText) === this.sPlaceholderText) ? '' : sText;
+	const html = this.oCrea ? this.oCrea.getText(bRemoveSignatureAnchor, isPrivate) : '';
+	return (this.sPlaceholderText !== '' && this.removeAllTags(html) === this.sPlaceholderText) ? '' : html;
 };
 
 

@@ -1,7 +1,8 @@
 'use strict';
 
 const
-	// App = require('%PathToCoreWebclientModule%/js/App.js'),
+	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
+
 	Settings = require('modules/%ModuleName%/js/Settings.js')
 ;
 
@@ -34,8 +35,35 @@ module.exports = {
 		return !!Settings.PrivateMessagesEmail;
 	},
 
+
+	/**
+	 * Called only when the message is being sent.
+	 * @param {jQuery object} signatureAnchor 
+	 */
+	addPrivateMarkerToMessageBody(signatureAnchor) {
+		if (Settings.PrivateMessagesEmail) {
+			const markerText = TextUtils.i18n('%MODULENAME%/LABEL_PRIVATE_MESSAGE_MARKER', {PRIVATE_MARKER: Settings.PrivateMessagesEmail});
+			$(`<br/><div style="font-size: smaller">${markerText}</div>`).insertAfter(signatureAnchor);
+			signatureAnchor.attr('data-private', Settings.PrivateMessagesEmail)
+		}
+	},
+
+	/**
+	 * Called only when the message is being sent.
+	 * @param {object} parameters 
+	 */
+	correctPrivateMessageParameters(parameters) {
+		if (Settings.PrivateMessagesEmail) {
+			parameters.Subject = `${parameters.Subject} [${Settings.PrivateMessagesEmail}]`;
+		}
+	},
+
+	/**
+	 * Called during saving and sending a message.
+	 * @param {object} parameters 
+	 * @returns 
+	 */
 	addPrivateMessageHeaderToParameters(parameters) {
-		// if (privateAccountEmail === null) {
 		if (!this.hasPrivateAccount()) {
 			return;
 		}
@@ -47,10 +75,6 @@ module.exports = {
 
 	isPrivateEmailAddress(sEmailAddress) {
 		return /.+\.[\d]+@.+/.test(sEmailAddress);
-	},
-
-	isPrivateMessageParameters(parameters) {
-		return parameters.CustomHeaders && parameters.CustomHeaders['X-Private-Message-Sender'] === this.getPrivateAccountEmail();
 	},
 
 	isPrivateMessage(message) {

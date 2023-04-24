@@ -9,8 +9,9 @@ var _ = require("underscore"),
 	UserSettings = require("%PathToCoreWebclientModule%/js/Settings.js"),
 	Popups = require("%PathToCoreWebclientModule%/js/Popups.js"),
 	AlertPopup = require("%PathToCoreWebclientModule%/js/popups/AlertPopup.js"),
-	CAttachmentModel = require("modules/%ModuleName%/js/models/CAttachmentModel.js"),
 
+	PrivateMessagingUtils = require('modules/%ModuleName%/js/utils/PrivateMessaging.js'),
+	CAttachmentModel = require("modules/%ModuleName%/js/models/CAttachmentModel.js"),
 	MailCache = require("modules/%ModuleName%/js/Cache.js"),
 	Settings = require("modules/%ModuleName%/js/Settings.js")
 ;
@@ -549,16 +550,30 @@ CHtmlEditorView.prototype.getPlainText = function () {
 
 /**
  * @param {boolean=} bRemoveSignatureAnchor = false
+ * @param {boolean=} isPrivate = false
  */
-CHtmlEditorView.prototype.getText = function (bRemoveSignatureAnchor) {
-	const html = this.oEditor ? this.oEditor.summernote('code') : '';
+CHtmlEditorView.prototype.getText = function (bRemoveSignatureAnchor, isPrivate) {
+	let htmlElem = this.getEditableArea().clone();
+	if (!htmlElem) {
+		htmlElem = $(this.oEditor ? this.oEditor.summernote('code') : '');
+	}
+
+	const signatureAnchor = htmlElem.find('div[data-anchor="signature"]');
+	if (bRemoveSignatureAnchor) {
+			signatureAnchor.removeAttr('data-anchor');
+	}
+
+	if (isPrivate) {
+		PrivateMessagingUtils.addPrivateMarkerToMessageBody(signatureAnchor);
+	}
+
+	const html = htmlElem.html();
+
 	if (this.sPlaceholderText !== '' &&
 		this.removeAllTags(html) === this.sPlaceholderText) {
 		return '';
 	}
-	if (bRemoveSignatureAnchor) {
-		return html.replace('data-anchor="signature"', '');
-	}
+
 	// TODO - add font-wrapper like in CCrea.prototype.getText
 	return html;
 };
