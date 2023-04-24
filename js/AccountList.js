@@ -222,10 +222,7 @@ CAccountListModel.prototype.parse = function (accountsData)
 	if (Array.isArray(accountsData)) {
 		const accounts = [];
 		accountsData.forEach(accountData => {
-			const account = new CAccountModel(accountData);
-			if (!PrivateMessagingUtils.isPrivateAccountEmail(account.email())) {
-				accounts.push(account);
-			}
+			accounts.push(new CAccountModel(accountData));
 		});
 		this.collection(accounts);
 		this.initObservables(this.collection().length > 0 ? this.collection()[0].id() : 0);
