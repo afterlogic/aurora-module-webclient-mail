@@ -50,13 +50,13 @@ module.exports = {
 
 	/**
 	 * Called only when the message is being sent.
-	 * @param {jQuery object} signatureAnchor 
+	 * @param {jQuery object} htmlElem
+	 * @param {jQuery object} signatureAnchor
 	 */
-	addPrivateMarkerToMessageBody(signatureAnchor) {
+	addPrivateMarkerToMessageBody(htmlElem, signatureAnchor) {
 		if (Settings.PrivateMessagesEmail) {
 			const markerText = TextUtils.i18n('%MODULENAME%/LABEL_PRIVATE_MESSAGE_MARKER', {PRIVATE_MARKER: Settings.PrivateMessagesEmail});
 			$(`<br/><div style="font-size: smaller">${markerText}</div>`).insertAfter(signatureAnchor);
-			signatureAnchor.attr('data-private', Settings.PrivateMessagesEmail)
 		}
 	},
 

@@ -564,14 +564,18 @@ CHtmlEditorView.prototype.getText = function (bRemoveSignatureAnchor, isPrivate)
 	}
 
 	if (isPrivate) {
-		PrivateMessagingUtils.addPrivateMarkerToMessageBody(signatureAnchor);
+		PrivateMessagingUtils.addPrivateMarkerToMessageBody(htmlElem, signatureAnchor);
 	}
 
-	const html = htmlElem.html();
+	let html = htmlElem.html();
 
 	if (this.sPlaceholderText !== '' &&
 		this.removeAllTags(html) === this.sPlaceholderText) {
 		return '';
+	}
+
+	if (isPrivate) {
+		html = `<div data-private="${Settings.PrivateMessagesEmail}">${html}</div>`;
 	}
 
 	// TODO - add font-wrapper like in CCrea.prototype.getText

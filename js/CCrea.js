@@ -818,12 +818,14 @@ CCrea.prototype.getText = function (bRemoveSignatureAnchor, isPrivate)
         if (bRemoveSignatureAnchor) {
             signatureAnchor.removeAttr('data-anchor');
         }
+        let dataPrivatePart = '';
         if (isPrivate) {
-            PrivateMessagingUtils.addPrivateMarkerToMessageBody(signatureAnchor);
+            PrivateMessagingUtils.addPrivateMarkerToMessageBody(this.$editableArea, signatureAnchor);
+            dataPrivatePart = ` data-private="${Settings.PrivateMessagesEmail}"`
         }
 
         sVal = this.$editableArea.html();
-        sVal = '<div data-crea="font-wrapper" style="font-family: ' + this.getFontNameWithFamily(this.sBasicFontName) + '; font-size: ' + this.sBasicFontSize + '; direction: ' + this.sBasicDirection + '">' + sVal + '</div>';
+        sVal = '<div data-crea="font-wrapper" style="font-family: ' + this.getFontNameWithFamily(this.sBasicFontName) + '; font-size: ' + this.sBasicFontSize + '; direction: ' + this.sBasicDirection + '"' + dataPrivatePart + '>' + sVal + '</div>';
     }
 
     return sVal;
