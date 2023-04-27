@@ -108,7 +108,6 @@ module.exports = {
 		if (message) {
 			const matches = getPrivateMessageMatches(message);
 			const from = [...message.oFrom.aCollection].map(addr => addr.sEmail);
-			console.log(from);
 
 			result = !InformatikSettings.isEmailInternal(from[0] ? from[0] : '')
 				&& matches.length > 0
