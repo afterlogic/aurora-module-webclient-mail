@@ -3,7 +3,8 @@
 const
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 
-	Settings = require('modules/%ModuleName%/js/Settings.js')
+	Settings = require('modules/%ModuleName%/js/Settings.js'),
+	InformatikSettings =  require('modules/InformatikProjects/js/Settings.js')
 ;
 
 // let privateAccountEmail = null;
@@ -103,16 +104,25 @@ module.exports = {
 	},
 	
 	isAnotherUserPrivateMessage(message) {
-		const matches = getPrivateMessageMatches(message);
-		return matches.length > 0 && !matches.includes(Settings.PrivateMessagesEmail);
+		let result = true;
+		if (message) {
+			const matches = getPrivateMessageMatches(message);
+			const from = [...message.oFrom.aCollection].map(addr => addr.sEmail);
+			console.log(from);
+
+			result = !InformatikSettings.isEmailInternal(from[0] ? from[0] : '')
+				&& matches.length > 0
+				&& !matches.includes(Settings.PrivateMessagesEmail);
+		}
+		return result;
 	},
 
 	// depricated
-	shouldMessageReplyBePrivate(message) {
-		if (!message) {
-			return false;
-		}
-		const recipients = [...message.oTo.aCollection, ...message.oCc.aCollection].map(addr => addr.sEmail);
-		return recipients.includes(this.getPrivateAccountEmail());
-	}
+	// shouldMessageReplyBePrivate(message) {
+	// 	if (!message) {
+	// 		return false;
+	// 	}
+	// 	const recipients = [...message.oTo.aCollection, ...message.oCc.aCollection].map(addr => addr.sEmail);
+	// 	return recipients.includes(this.getPrivateAccountEmail());
+	// }
 };
