@@ -66,7 +66,7 @@ module.exports = {
 	 * @param {object} parameters 
 	 */
 	correctPrivateMessageParameters(parameters) {
-		if (Settings.PrivateMessagesEmail) {
+		if (Settings.PrivateMessagesEmail && !parameters.Subject.includes(`[${Settings.PrivateMessagesEmail}]`)) {
 			parameters.Subject = `${parameters.Subject} [${Settings.PrivateMessagesEmail}]`;
 		}
 	},
