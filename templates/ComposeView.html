@@ -59,7 +59,7 @@
 													<tr>
 														<td class="value" style="width: 100%;" id="selenium_compose_toaddr">
 															<div class="input inputosaurus">
-																<div class="disable_mask" data-bind="visible: disableHeadersEdit"></div>
+																<div class="disable_mask" data-bind="visible: disableHeadersEdit() || isReplyToPrivate()"></div>
 																<div data-bind="customScrollbar: {x: false}">
 																	<div class="scroll-inner">
 																		<input type="text" spellcheck="false" tabindex="2" data-bind="initDom: toAddrDom" />
@@ -80,7 +80,7 @@
 											</td>
 											<td class="value">
 												<div class="input inputosaurus">
-													<div class="disable_mask" data-bind="visible: disableHeadersEdit"></div>
+													<div class="disable_mask" data-bind="visible: disableHeadersEdit() || isReplyToPrivate()"></div>
 													<div data-bind="customScrollbar: {x: false}">
 														<div class="scroll-inner">
 															<input type="text" spellcheck="false" tabindex="3" data-bind="initDom: ccAddrDom" />
@@ -95,7 +95,7 @@
 											</td>
 											<td class="value">
 												<div class="input inputosaurus">
-													<div class="disable_mask" data-bind="visible: disableHeadersEdit"></div>
+													<div class="disable_mask" data-bind="visible: disableHeadersEdit() || isReplyToPrivate()"></div>
 													<div data-bind="customScrollbar: {x: false}">
 														<div class="scroll-inner">
 															<input type="text" spellcheck="false" tabindex="4" data-bind="initDom: bccAddrDom" />

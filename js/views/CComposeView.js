@@ -128,6 +128,7 @@ function CComposeView()
 	this.selectedImportance = ko.observable(Enums.Importance.Normal).extend({'reversible': true});
 
 	this.isPrivate = ko.observable(false);
+	this.isReplyToPrivate = ko.observable(false);
 	this.isPrivate.subscribe(() => {
 		this.allControllers().forEach(controller => {
 			if (typeof controller.setIsPrivateMessage === 'function') {
@@ -729,6 +730,7 @@ CComposeView.prototype.onRoute = function (aParams)
 				{
 					var oReplyData = SendingUtils.getReplyDataFromMessage(oData.replyToMessage, Enums.ReplyType.Reply, App.currentAccountId(), null, true);
 
+					this.isReplyToPrivate(PrivateMessagingUtils.isPrivateMessage(oData.replyToMessage));
 					this.plainText(false);
 					this.draftInfo(oReplyData.DraftInfo);
 					this.draftUid(oReplyData.DraftUid);
@@ -936,6 +938,7 @@ CComposeView.prototype.onMessageResponse = function (oMessage)
 
 				oReplyData = SendingUtils.getReplyDataFromMessage(oMessage, this.routeType(), this.senderAccountId(), this.selectedFetcherOrIdentity(), true);
 
+				this.isReplyToPrivate(PrivateMessagingUtils.isPrivateMessage(oMessage));
 				this.draftInfo(oReplyData.DraftInfo);
 				this.draftUid(oReplyData.DraftUid);
 				this.setRecipient(this.toAddr, oReplyData.To);
@@ -950,6 +953,8 @@ CComposeView.prototype.onMessageResponse = function (oMessage)
 
 			case Enums.ReplyType.ForwardAsAttach:
 				oReplyData = SendingUtils.getReplyDataFromMessage(oMessage, this.routeType(), this.senderAccountId(), this.selectedFetcherOrIdentity(), true);
+
+				this.isReplyToPrivate(PrivateMessagingUtils.isPrivateMessage(oMessage));
 				this.draftInfo(oReplyData.DraftInfo);
 				this.draftUid(oReplyData.DraftUid);
 				this.inReplyTo(oReplyData.InReplyTo);
@@ -962,6 +967,7 @@ CComposeView.prototype.onMessageResponse = function (oMessage)
 
 				oReplyData = SendingUtils.getReplyDataFromMessage(oMessage, this.routeType(), this.senderAccountId(), this.selectedFetcherOrIdentity(), true);
 
+				this.isReplyToPrivate(PrivateMessagingUtils.isPrivateMessage(oMessage));
 				this.draftInfo(oReplyData.DraftInfo);
 				this.draftUid(oReplyData.DraftUid);
 				this.setRecipient(this.toAddr, oReplyData.To);
@@ -1954,6 +1960,7 @@ CComposeView.prototype.getMessageDataForNewTab = function ()
 CComposeView.prototype.setPrivate = function (isPrivate)
 {
 	this.isPrivate(isPrivate);
+	this.isReplyToPrivate(false);
 };
 
 CComposeView.prototype.openInNewWindow = function ()
