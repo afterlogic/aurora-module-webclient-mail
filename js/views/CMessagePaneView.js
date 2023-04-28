@@ -71,7 +71,11 @@ function CMessagePaneView()
 	}, this);
 
 	this.isAnotherUserPrivateMessage = ko.computed(() => {
-		return PrivateMessagingUtils.isAnotherUserPrivateMessage(this.currentMessage());
+		if (this.currentMessage()) {
+			// When this.currentMessage() is null, PrivateMessagingUtils.isAnotherUserPrivateMessage fails (somewhere in knockout) no matter if the message was checked there
+			return PrivateMessagingUtils.isAnotherUserPrivateMessage(this.currentMessage());
+		}
+		return true;
 	});
 	this.isPrivateMessage = ko.computed(() => {
 		return PrivateMessagingUtils.isPrivateMessage(this.currentMessage());
