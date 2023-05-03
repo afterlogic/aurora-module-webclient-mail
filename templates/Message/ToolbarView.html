@@ -23,6 +23,11 @@
 
 		<!-- ko template: {name: '%ModuleName%_Message_ForwardButtonView'} --><!-- /ko -->
 
+		<span class="item forward disabled fake-forward" data-bind="visible: !isVisibleForwardTool() && isVisibleForwardToolOriginal()">
+			<span class="icon" data-bind="customTooltip: '%MODULENAME%/FORWARD_FORBIDDEN_COMMENT'"></span>
+			<span class="text" data-bind="i18n: {'key': '%MODULENAME%/FORWARD_FORBIDDEN_COMMENT'}"></span>
+		</span>
+
 		<!-- ko if: isMinePrivateMessage -->
 			<!-- ko foreach: otherToolbarCommands -->
 			<span class="item" data-bind="command: Command, css: CssClass, visible: Visible">

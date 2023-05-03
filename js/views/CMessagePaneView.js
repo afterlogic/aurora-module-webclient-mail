@@ -261,8 +261,14 @@ function CMessagePaneView()
 		;
 		return !bDisable && !this.disableAllSendTools() && this.isCurrentNotDraftFolder() && !this.isCurrentTemplateFolder();
 	}, this);
-	this.isVisibleForwardPrivateMessage = ko.computed(function () {
-		return !this.isVisibleForwardTool() && this.isAnotherUserPrivateMessage()
+
+	this.isVisibleForwardToolOriginal = ko.computed(function () {
+		var
+			bCentral = InformatikSettings.isAssignProjectsAllowedForEmail(App.currentAccountEmail()),
+			bAssignedFolder = InformatikSettings.isAssignedFolder(MailCache.getCurrentFolderFullname()),
+			bDisable = InformatikSettings.DisableForward && bCentral && !bAssignedFolder
+		;
+		return !bDisable && !this.disableAllSendTools() && this.isCurrentNotDraftFolder() && !this.isCurrentTemplateFolder();
 	}, this);
 
 	this.textBodyForNewWindow = ko.observable('');

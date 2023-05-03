@@ -7,11 +7,11 @@
 		  data-bind="command: $parent.privateComposeCommand, visible: $parent.allowPrivateMessages"
 	>
 		<span class="icon"></span>
-		<span data-bind="i18n: {'key': 'MAILWEBCLIENT/ACTION_NEW_PRIVATE_MESSAGE'}"></span>
+		<span data-bind="i18n: {'key': '%MODULENAME%/ACTION_NEW_PRIVATE_MESSAGE'}"></span>
 	</span>
 	<span class="button" data-bind="click: addNewFolder, visible: visibleNewFolderButton">
 		<span class="icon"></span>
-		<span data-bind="i18n: {'key': 'MAILWEBCLIENT/HEADING_NEW_FOLDER'}"></span>
+		<span data-bind="i18n: {'key': '%MODULENAME%/HEADING_NEW_FOLDER'}"></span>
 	</span>
 </div>
 
@@ -41,7 +41,8 @@
 	</div>
 	<div class="panel_bottom">
 		<div class="manage_folders" data-bind="visible: manageFoldersHash() !== '#'">
-			<a href="javascript: void(0)" data-bind="i18n: {'key': '%MODULENAME%/ACTION_MANAGE_FOLDERS'}, attr: {href: manageFoldersHash}"></a>
+			<a href="javascript: void(0)" data-bind="i18n: {'key': '%MODULENAME%/FORWARD_FORBIDDEN_COMMENT = "Forwarding of private messages is not possible"
+ACTION_MANAGE_FOLDERS'}, attr: {href: manageFoldersHash}"></a>
 		</div>
 		<span class="volumer" data-bind="visible: -1 < quotaProc()">
 			<span class="volumer_conteiner" data-bind="customTooltip: bShowQuotaBarTextAsTooltip ? quotaDesc() : false">
