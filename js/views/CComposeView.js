@@ -378,13 +378,7 @@ function CComposeView() {
 
   this.aHotkeys = [
     { value: 'Ctrl+S', action: TextUtils.i18n('%MODULENAME%/LABEL_SAVE_HOTKEY'), visible: this.draftFolderIsAvailable },
-    { value: 'Ctrl+Z', action: TextUtils.i18n('%MODULENAME%/LABEL_UNDO_HOTKEY'), visible: ko.observable(true) },
-    { value: 'Ctrl+Y', action: TextUtils.i18n('%MODULENAME%/LABEL_REDO_HOTKEY'), visible: ko.observable(true) },
-    { value: 'Ctrl+K', action: TextUtils.i18n('%MODULENAME%/LABEL_LINK_HOTKEY'), visible: ko.observable(true) },
-    { value: 'Ctrl+B', action: TextUtils.i18n('%MODULENAME%/LABEL_BOLD_HOTKEY'), visible: ko.observable(true) },
-    { value: 'Ctrl+I', action: TextUtils.i18n('%MODULENAME%/LABEL_ITALIC_HOTKEY'), visible: ko.observable(true) },
-    { value: 'Ctrl+U', action: TextUtils.i18n('%MODULENAME%/LABEL_UNDERLINE_HOTKEY'), visible: ko.observable(true) },
-  ]
+  ].concat(this.oHtmlEditor.getHotKeysDescriptions())
 
   if (Settings.AllowQuickSendOnCompose) {
     this.aHotkeys.unshift({
