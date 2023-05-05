@@ -18,12 +18,13 @@ const Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
   ConfirmPopup = require('%PathToCoreWebclientModule%/js/popups/ConfirmPopup.js')
 
 const CAttachmentModel = require('modules/%ModuleName%/js/models/CAttachmentModel.js'),
+  CColorPickerView = require('modules/%ModuleName%/js/views/CColorPickerView.js'),
   CCrea = require('modules/%ModuleName%/js/CCrea.js'),
   MailCache = require('modules/%ModuleName%/js/Cache.js'),
-  Settings = require('modules/%ModuleName%/js/Settings.js')
-
-const CColorPickerView = require('modules/%ModuleName%/js/views/CColorPickerView.js'),
+  Settings = require('modules/%ModuleName%/js/Settings.js'),
+  TemplatesUtils = require('modules/%ModuleName%/js/utils/Templates.js'),
   sourceEditor = require('modules/%ModuleName%/js/views/html-editor/SourceEditor.js')
+
 /**
  * @constructor
  * @param {boolean} bInsertImageAsBase64
@@ -156,20 +157,7 @@ function CHtmlEditorView(bInsertImageAsBase64, bAllowComposePlainText, oParent) 
   this.actualTextChanged = ko.observable(false)
 
   this.templates = ko.observableArray([])
-
-  if (Settings.AllowInsertTemplateOnCompose) {
-    App.subscribeEvent(
-      '%ModuleName%::ParseMessagesBodies::after',
-      _.bind(function (oParameters) {
-        if (
-          oParameters.AccountID === MailCache.currentAccountId() &&
-          oParameters.Folder === MailCache.getTemplateFolder()
-        ) {
-          this.fillTemplates()
-        }
-      }, this)
-    )
-  }
+  TemplatesUtils.initTemplatesSubscription(this.templates)
 
   this.imageResizeOptions = []
 
@@ -445,44 +433,7 @@ CHtmlEditorView.prototype.init = function (sText, bPlain, sTabIndex, sPlaceholde
   this.selectedFont(this.sDefaultFont)
   this.selectedSize(this.iDefaultSize)
 
-  if (Settings.AllowInsertTemplateOnCompose) {
-    this.fillTemplates()
-  }
-}
-
-/**
- * Fills template list if there is template folder in account.
- * Messages of template folder are requested in Prefetcher.
- */
-CHtmlEditorView.prototype.fillTemplates = function () {
-  var oFolderList = MailCache.folderList(),
-    sTemplateFolder = MailCache.getTemplateFolder(),
-    oTemplateFolder = sTemplateFolder ? oFolderList.getFolderByFullName(sTemplateFolder) : null,
-    oUidList = oTemplateFolder
-      ? oTemplateFolder.getUidList(
-          '',
-          '',
-          Settings.MessagesSortBy.DefaultSortBy,
-          Settings.MessagesSortBy.DefaultSortOrder
-        )
-      : null,
-    aTemplates = []
-  if (oUidList) {
-    var aUids = oUidList.collection()
-    if (aUids.length > Settings.MaxTemplatesCountOnCompose) {
-      aUids = aUids.splice(Settings.MaxTemplatesCountOnCompose)
-    }
-    _.each(aUids, function (sUid) {
-      var oMessage = oTemplateFolder.getMessageByUid(sUid)
-      if (oMessage.text() !== '') {
-        aTemplates.push({
-          subject: oMessage.subject(),
-          text: oMessage.text(),
-        })
-      }
-    })
-  }
-  this.templates(aTemplates)
+  TemplatesUtils.fillTemplatesOptions(this.templates)
 }
 
 CHtmlEditorView.prototype.toggleTemplatePopup = function (oViewModel, oEvent) {
