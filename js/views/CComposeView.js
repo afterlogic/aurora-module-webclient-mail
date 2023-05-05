@@ -125,10 +125,8 @@ function CComposeView() {
   this.selectedSender = SenderSelector.selectedSender
   this.selectedFetcherOrIdentity = SenderSelector.selectedFetcherOrIdentity
   this.selectedFetcherOrIdentity.subscribe(function () {
-    if (!this.oHtmlEditor.isEditing()) {
-      this.oHtmlEditor.clearUndoRedo()
-      this.oHtmlEditor.commit()
-    }
+    this.oHtmlEditor.clearUndoRedo()
+    this.oHtmlEditor.commit()
   }, this)
 
   this.signature = ko.observable('')

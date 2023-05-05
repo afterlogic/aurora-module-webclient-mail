@@ -63,8 +63,6 @@ CCrea.prototype.bEditable = false
 
 CCrea.prototype.bFocused = false
 
-CCrea.prototype.bEditing = false
-
 /**
  * @type {Array}
  */
@@ -148,7 +146,6 @@ CCrea.prototype.start = function (bEditable) {
   }
 
   this.$editableArea.on('cut paste', function () {
-    self.bEditing = true
     self.editableSave()
     _.defer(function () {
       self.editableSave()
@@ -195,7 +192,6 @@ CCrea.prototype.start = function (bEditable) {
       bAltKey = oEvent.altKey,
       bShiftKey = oEvent.shiftKey,
       sLink = ''
-    self.bEditing = true
 
     if ((bShiftKey && bCtrlKey && iKey === Enums.Key.z) || (bCtrlKey && iKey === Enums.Key.y)) {
       oEvent.preventDefault()
@@ -268,7 +264,6 @@ CCrea.prototype.start = function (bEditable) {
 CCrea.prototype.clearUndoRedo = function () {
   this.aEditableAreaHtml = []
   this.iUndoRedoPosition = 0
-  this.bEditing = false
 }
 
 CCrea.prototype.isUndoAvailable = function () {
@@ -759,10 +754,10 @@ CCrea.prototype.changeSignatureContent = function (sNewSignatureContent, sOldSig
     if (sOldSignatureContent === '') {
       $Anchor.html(sAnchorHtml + sNewSignatureContent)
     } else if (sAnchorHtml.indexOf(sOldSignatureContent) !== -1) {
-    /*** previous signature was found in the container -> replace it with a new ***/
+      /*** previous signature was found in the container -> replace it with a new ***/
       $Anchor.html(sAnchorHtml.replace(sOldSignatureContent, sNewSignatureContent))
     } else if (sAnchorHtml.indexOf(sNewSignatureContent) !== -1) {
-    /*** new signature is found in the container -> do nothing ***/
+      /*** new signature is found in the container -> do nothing ***/
     } else {
       sClearOldSignature =
         $NewSignature.length === 0 || $OldSignature.length === 0 ? sOldSignatureContent : $OldSignature.html()
@@ -772,14 +767,14 @@ CCrea.prototype.changeSignatureContent = function (sNewSignatureContent, sOldSig
       if (sAnchorHtml.indexOf(sClearOldSignature) !== -1) {
         $Anchor.html(sAnchorHtml.replace(sClearOldSignature, sNewSignatureContent))
       } else if (sAnchorHtml.indexOf(sClearNewSignature) !== -1) {
-      /*** found a new signature without wrapper -> do nothing ***/
+        /*** found a new signature without wrapper -> do nothing ***/
       } else {
         /*** append the new signature to the end of the container ***/
         $Anchor.html(sAnchorHtml + sNewSignatureContent)
       }
     }
   } else {
-  /*** there is NO signature container in the message ***/
+    /*** there is NO signature container in the message ***/
     sFoundOldSignature = sOldSignatureContent
     try {
       $SignatureContainer = this.$editableArea.find('*:contains("' + sFoundOldSignature + '")')

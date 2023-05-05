@@ -391,10 +391,8 @@ CHtmlEditorView.prototype.init = function (sText, bPlain, sTabIndex, sPlaceholde
       isRtl: UserSettings.IsRTL,
       enableDrop: false,
       onChange: _.bind(function () {
-        if (this.oCrea.bEditing) {
-          this.textChanged(true)
-          this.actualTextChanged.valueHasMutated()
-        }
+        this.textChanged(true)
+        this.actualTextChanged.valueHasMutated()
       }, this),
       onCursorMove: _.bind(this.setFontValuesFromText, this),
       onFocus: _.bind(this.onCreaFocus, this),
@@ -557,10 +555,6 @@ CHtmlEditorView.prototype.clearUndoRedo = function () {
   if (this.oCrea) {
     this.oCrea.clearUndoRedo()
   }
-}
-
-CHtmlEditorView.prototype.isEditing = function () {
-  return this.oCrea ? this.oCrea.bEditing : false
 }
 
 /**
