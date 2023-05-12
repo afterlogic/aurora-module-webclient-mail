@@ -625,33 +625,40 @@ CCrea.prototype.setText = function (sText) {
       sText = '<br />'
     }
 
-    var oText = $(sText),
-      oOuter = $(sText),
-      oChildren = oOuter.children(),
-      oInner = oChildren.first(),
-      bOuterWrapper = oOuter.length === 1 && oOuter.data('crea') === 'font-wrapper',
-      bInnerWrapper =
-        oOuter.length === 1 &&
-        oChildren.length === 1 &&
-        oOuter.data('xDivType') === 'body' &&
-        oInner.data('crea') === 'font-wrapper'
-    if (bOuterWrapper) {
-      this.setBasicStyles(oOuter.css('font-family'), oOuter.css('font-size'), oOuter.css('direction'))
-      oText = oOuter.contents()
-    } else if (bInnerWrapper) {
-      this.setBasicStyles(oInner.css('font-family'), oInner.css('font-size'), oInner.css('direction'))
-      oText = oInner.contents()
-    } else {
-      this.setBasicStyles(
-        this.oOptions.defaultFontName,
-        this.convertFontSizeToPixels(this.oOptions.defaultFontSize),
-        this.oOptions.isRtl ? 'rtl' : 'ltr'
-      )
-    }
-
-    this.$editableArea.empty().append(oText).css('white-space', 'normal')
+    const preparedHtml = this.prepareHtmlWithoutWrappers(sText)
+    this.$editableArea.empty().append(preparedHtml).css('white-space', 'normal')
     this.clearUndoRedo()
     this.editableSave()
+  }
+}
+
+CCrea.prototype.prepareHtmlWithoutWrappers = function (html) {
+  let outerNode = $(html)
+  let isOuterElemChanged = false
+  while (
+    outerNode.length === 1 &&
+    (outerNode.data('x-div-type') === 'html' || outerNode.data('x-div-type') === 'body')
+  ) {
+    outerNode = outerNode.children()
+    isOuterElemChanged = true
+  }
+  if (outerNode.length === 1 && outerNode.data('crea') === 'font-wrapper') {
+    this.setBasicStyles(outerNode.css('font-family'), outerNode.css('font-size'), outerNode.css('direction'))
+    return outerNode.html()
+  }
+  this.setBasicStyles(
+    this.oOptions.defaultFontName,
+    this.convertFontSizeToPixels(this.oOptions.defaultFontSize),
+    this.oOptions.isRtl ? 'rtl' : 'ltr'
+  )
+  if (!isOuterElemChanged) {
+    return html
+  } else {
+    let res = ''
+    outerNode.each((index, elem) => {
+      res += elem.outerHTML
+    })
+    return res
   }
 }
 
