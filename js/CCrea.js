@@ -8,6 +8,8 @@ const App = require('%PathToCoreWebclientModule%/js/App.js'),
   ContenteditableUtils = require('%PathToCoreWebclientModule%/js/utils/Contenteditable.js'),
   Types = require('%PathToCoreWebclientModule%/js/utils/Types.js')
 
+const CreaUtils = require('modules/%ModuleName%/js/utils/Crea.js')
+
 /**
  * @constructor
  *
@@ -156,9 +158,7 @@ CCrea.prototype.start = function (bEditable) {
 
     if (oEvent.clipboardData) {
       var sText = oEvent.clipboardData.getData('text/plain'),
-        sHtml = oEvent.clipboardData.getData('text/html'),
-        aHtml
-
+        sHtml = oEvent.clipboardData.getData('text/html')
       if (self.oOptions.alwaysTryUseImageWhilePasting && self.pasteImage(oEvent)) {
         oEvent.preventDefault()
       } else {
@@ -168,21 +168,13 @@ CCrea.prototype.start = function (bEditable) {
         } else if (isCorrectEmail(sText)) {
           oEvent.preventDefault()
           self.execCom('insertHTML', '<a href="mailto:' + sText + '">' + sText.replaceAll('&', '&amp') + '</a>')
+        } else if (sHtml !== '') {
+          const preparedHtml = CreaUtils.preparePastedHtml(sHtml)
+          if (preparedHtml) {
+            oEvent.preventDefault()
+            self.execCom('insertHTML', preparedHtml)
+          }
         }
-        /* Removed to fix the bug - tables from Excel are pasted with incorrect formatting
-                else if (sHtml !== '')
-                {
-                    oEvent.preventDefault();
-
-                    aHtml = sHtml.split(/<!--StartFragment-->|<!--EndFragment-->/gi);
-                    if (aHtml.length === 3)
-                    {
-                        sHtml = aHtml[1];
-                    }
-
-                    self.execCom('insertHTML', sHtml);
-                }
-*/
       }
     }
   })
