@@ -729,7 +729,11 @@ CMessagePaneView.prototype.setMessageBody = function ()
 			const url = $(e.target).attr('href');
 			if (url) {
 				e.preventDefault();
-				WindowOpener.open('?file-content='+url, '');
+				if ( (/http(?:s?):\/\//gm).test(url) ) {
+					WindowOpener.open('?viewer='+url, '');
+				} else {
+					WindowOpener.open('?file-content='+url, '');
+				}
 			}
 		});
 
