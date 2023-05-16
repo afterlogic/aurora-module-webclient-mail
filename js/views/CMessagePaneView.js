@@ -724,6 +724,15 @@ CMessagePaneView.prototype.setMessageBody = function ()
 //			}
 		}
 
+		// added custom link handler for links to pdf document. 
+		$body.find('table tr > td:nth-child(2) a.external[href$=".pdf"]').on('click', function (e) {
+			const url = $(e.target).attr('href');
+			if (url) {
+				e.preventDefault();
+				WindowOpener.open('?file-content='+url, '');
+			}
+		});
+
 		$body.data('displayed-message-uid', oMessage.uid());
 		this.displayedMessageUid(oMessage.uid());
 	}
