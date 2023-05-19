@@ -23,6 +23,7 @@ function getPrivateMessageMatches(message) {
 
 module.exports = {
 	isPrivateAccountEmail(email) {
+		return false;
 		// if (!Settings.AllowPrivateMessages) {
 		// 	return false;
 		// }
@@ -39,11 +40,13 @@ module.exports = {
 	},
 
 	getPrivateAccountEmail() {
+		return;
 		// return privateAccountEmail;
 		return Settings.PrivateMessagesEmail;
 	},
-
+	
 	hasPrivateAccount() {
+		return;
 		// return privateAccountEmail !== null;
 		return !!Settings.PrivateMessagesEmail;
 	},
@@ -55,6 +58,7 @@ module.exports = {
 	 * @param {jQuery object} signatureAnchor
 	 */
 	addPrivateMarkerToMessageBody(htmlElem, signatureAnchor) {
+		return;
 		if (Settings.PrivateMessagesEmail) {
 			const markerText = TextUtils.i18n('%MODULENAME%/LABEL_PRIVATE_MESSAGE_MARKER', {PRIVATE_MARKER: Settings.PrivateMessagesEmail});
 			$(`<br/><div style="font-size: smaller">${markerText}</div>`).insertAfter(signatureAnchor);
@@ -66,6 +70,7 @@ module.exports = {
 	 * @param {object} parameters 
 	 */
 	correctPrivateMessageParameters(parameters) {
+		return;
 		if (Settings.PrivateMessagesEmail && !parameters.Subject.includes(`[${Settings.PrivateMessagesEmail}]`)) {
 			parameters.Subject = `${parameters.Subject} [${Settings.PrivateMessagesEmail}]`;
 		}
@@ -77,6 +82,7 @@ module.exports = {
 	 * @returns 
 	 */
 	addPrivateMessageHeaderToParameters(parameters) {
+		return;
 		if (!this.hasPrivateAccount()) {
 			return;
 		}
@@ -87,15 +93,18 @@ module.exports = {
 	},
 
 	isPrivateEmailAddress(sEmailAddress) {
+		return false;
 		return /.+\.[\d]+@.+/.test(sEmailAddress);
 	},
 
 	isPrivateMessage(message) {
+		return false;
 		const matches = getPrivateMessageMatches(message);
 		return matches.length > 0;
 	},
 
 	isMinePrivateMessage(message) {
+		return true;
 		if (!Settings.AllowPrivateMessages) {
 			return false;
 		}
@@ -104,6 +113,7 @@ module.exports = {
 	},
 	
 	isAnotherUserPrivateMessage(message) {
+		return false;
 		let result = true;
 		if (message) {
 			const matches = getPrivateMessageMatches(message);
@@ -115,13 +125,4 @@ module.exports = {
 		}
 		return result;
 	},
-
-	// depricated
-	// shouldMessageReplyBePrivate(message) {
-	// 	if (!message) {
-	// 		return false;
-	// 	}
-	// 	const recipients = [...message.oTo.aCollection, ...message.oCc.aCollection].map(addr => addr.sEmail);
-	// 	return recipients.includes(this.getPrivateAccountEmail());
-	// }
 };
