@@ -209,14 +209,8 @@ function CMessagePaneView()
 		return bDisable;
 	}, this);
 	this.isVisibleReplyTool = ko.computed(function () {
-		console.log('this.currentMessage()', this.currentMessage());
-		if (!this.currentMessage()) {
-			return false;
-		}
-		const isVisibleReplyTool = !this.disableAllSendTools() && this.isCurrentNotDraftOrSent() && !this.isCurrentTemplateFolder() 
+		return !this.disableAllSendTools() && this.isCurrentNotDraftOrSent() && !this.isCurrentTemplateFolder() 
 			&& !this.isAnotherUserPrivateMessage();
-		console.log('end');
-		return isVisibleReplyTool
 	}, this);
 	this.isVisibleResendTool = ko.computed(function () {
 		return !this.disableAllSendTools() && this.isCurrentSentFolder() && !this.isCurrentTemplateFolder();
