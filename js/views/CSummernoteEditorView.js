@@ -11,6 +11,7 @@ var _ = require("underscore"),
 	AlertPopup = require("%PathToCoreWebclientModule%/js/popups/AlertPopup.js"),
 
 	PrivateMessagingUtils = require('modules/%ModuleName%/js/utils/PrivateMessaging.js'),
+	SummernoteUtils = require('modules/%ModuleName%/js/utils/Summernote.js'),
 	CAttachmentModel = require("modules/%ModuleName%/js/models/CAttachmentModel.js"),
 	MailCache = require("modules/%ModuleName%/js/Cache.js"),
 	Settings = require("modules/%ModuleName%/js/Settings.js")
@@ -54,36 +55,13 @@ function CHtmlEditorView(isBuiltInSignature, oParent) {
 	this.insertLinkDropdownDom = ko.observable();
 	this.insertImageDropdownDom = ko.observable();
 
-	this.isFWBold = ko.observable(false);
-	this.isFSItalic = ko.observable(false);
-	this.isTDUnderline = ko.observable(false);
-	this.isTDStrikeThrough = ko.observable(false);
-	this.isEnumeration = ko.observable(false);
-	this.isBullets = ko.observable(false);
 	this.htmlSize = ko.observable(0);
 
 	this.bInsertImageAsBase64 = this.isBuiltInSignature;
 	this.bAllowFileUpload = !(this.bInsertImageAsBase64 && window.File === undefined);
 	// TODO: use
 	this.bAllowInsertImage = Settings.AllowInsertImage;
-	this.bAllowHorizontalLineButton = Settings.AllowHorizontalLineButton;
-	this.lockFontSubscribing = ko.observable(false);
 	this.bAllowImageDragAndDrop = !Browser.ie10AndAbove;
-
-	// TODO: use
-	this.aFontNames = [
-		"Arial",
-		"Arial Black",
-		"Courier New",
-		"Tahoma",
-		"Verdana",
-	];
-	// TODO: use
-	this.sDefaultFont = Settings.DefaultFontName;
-	this.correctFontFromSettings();
-
-	// TODO: use
-	this.iDefaultSize = Settings.DefaultFontSize;
 
 	this.isDialogOpen = ko.observable(false);
 
@@ -172,178 +150,125 @@ CHtmlEditorView.prototype.addTemplatesButton = function () {
  * @param {string} sTabIndex
  * @param {string} sPlaceholderText
  */
-CHtmlEditorView.prototype.init = function (
-	sText,
-	bPlain,
-	sTabIndex,
-	sPlaceholderText
-) {
-	this.sPlaceholderText = sPlaceholderText || "";
+CHtmlEditorView.prototype.init = function (sText, bPlain, sTabIndex, sPlaceholderText) {
+  this.sPlaceholderText = sPlaceholderText || ''
 
-	if (this.oEditor) {
-		// in case if knockoutjs destroyed dom element with html editor
-		this.oEditor.summernote("destroy");
-		this.oEditor = null;
-		this.templatesButton = null;
-	}
+  if (this.oEditor) {
+    // in case if knockoutjs destroyed dom element with html editor
+    this.oEditor.summernote('destroy')
+    this.oEditor = null
+    this.templatesButton = null
+  }
 
-	if (!this.oEditor) {
-		var CustomFontSizeButton = function (context) {
-			const ui = $.summernote.ui;
-			const sizes = {
-				'10': 'Smallest',
-				'12': 'Smaller',
-				'16': 'Standard',
-				'20': 'Bigger',
-				'24': 'Large',
-				// '9': 'Smallest',
-				// '10': 'Smaller',
-				// '12': 'Standard',
-				// '14': 'Bigger',
-				// '18': 'Large',
-			};
-			const getSizeName = (item) => {
-				return sizes[item] !== undefined ? sizes[item] + ' ('+item+'px)' : item + 'px'; 
-			};
-		
-			const buttonGroup = ui.buttonGroup([
-				ui.button({
-					className: 'dropdown-toggle',
-					contents: ui.dropdownButtonContents('<span class="note-current-fontsize"></span>', ui.options),
-					// tooltip: lang.font.size,
-					data: {
-						toggle: 'dropdown'
-					}
-				}),
-				ui.dropdownCheck({
-					className: 'dropdown-fontsize',
-					checkClassName: ui.options.icons.menuCheck,
-					items: Object.keys(sizes),
-					template: (item) => {
-						return '<span style="font-size: '+item+'px;">'+getSizeName(item)+'</span>';
-					},
-					itemClick: (e, item, value) => {
-						e.stopPropagation();
-						// context.invoke('editor.fontSizeUnit', 'pt');
-						context.invoke('editor.fontStyling', 'font-size', value);
-						context.invoke('buttons.updateCurrentStyle');
-					},
-				})
-			]);
-			
-			return buttonGroup.render();   // return button as jquery object
-		}
+  if (!this.oEditor) {
+    this.initUploader(); // uploads inline images
+    this.initEditorUploader(); // uploads non-images using parent methods
 
+    this.oEditor = $(`#${this.editorId}`)
+    const toolbar = [
+      ['history', ['undo', 'redo']],
+      ['style', ['bold', 'italic', 'underline']],
+      ['font', ['fontname', Settings.FontSizes.length > 0 ? 'customfontsize' : 'fontsize']],
+      ['color', ['color']],
+      ['para', ['ul', 'ol', 'paragraph']],
+      ['misc', ['table', 'link', 'picture', 'clear']],
+    ]
+    if (Settings.AllowSourceCodeButton || this.isBuiltInSignature) {
+      toolbar.push(['codeview', ['codeview']])
+    }
+    const options = {
+      lang: summernoteLang,
+      toolbar,
+      codemirror: {
+        mode: 'text/html',
+        htmlMode: true,
+        lineNumbers: true,
+      },
+      dialogsInBody: true,
+      addDefaultFonts: false,
+      shortcuts: false,
+      disableResizeEditor: true,
+      followingToolbar: false, //true makes toolbar sticky
+      buttons: {
+        customfontsize: SummernoteUtils.getFontSizeButtonCreateHandler(),
+      },
+      colors: [
+        ['#4f6573', '#83949b', '#aab2bd', '#afb0a4', '#8b8680', '#69655a', '#c9b037', '#ced85e'],
+        ['#2b6a6c', '#00858a', '#00b4b1', '#77ce87', '#4a8753', '#8aa177', '#96b352', '#beca02'],
+        ['#004c70', '#1d7299', '#109dc0', '#52b9d5', '#6c99bb', '#0a63a0', '#406cbd', '#5d9cec'],
+        ['#fc736c', '#e83855', '#e34f7c', '#f97394', '#ad5f7d', '#975298', '#b287bd', '#7e86c7'],
+        ['#fdae5f', '#f9c423', '#fad371', '#ed9223', '#de692f', '#a85540', '#87564a', '#c7a57a'],
+      ],
+      popover: {
+        image: [
+          ['image', ['resizeFull', 'resizeHalf', 'resizeQuarter', 'resizeNone']],
+          ['remove', ['removeMedia']],
+        ],
+        link: [['link', ['linkDialogShow', 'unlink']]],
+        table: [
+          ['add', ['addRowDown', 'addRowUp', 'addColLeft', 'addColRight']],
+          ['delete', ['deleteRow', 'deleteCol', 'deleteTable']],
+        ],
+      },
+      callbacks: {
+        onChange: () => {
+          this.textChanged(true)
+          this.actualTextСhanged.valueHasMutated()
+          const html = this.oEditor ? this.oEditor.summernote('code') : ''
+          this.htmlSize(html.length)
+        },
+        onChangeCodeview: () => {
+          this.textChanged(true)
+          this.actualTextСhanged.valueHasMutated()
+          const html = this.oEditor ? this.oEditor.summernote('code') : ''
+          this.htmlSize(html.length)
+        },
+        onFocus: (event) => {
+          // the timeout is necessary to prevent the compose popup from closing on Escape
+          // if the editor dialog was open
+          setTimeout(() => {
+            this.isDialogOpen(false)
+          }, 100)
+          this.textFocused(true)
+        },
+        onBlur: (event) => {
+          this.isDialogOpen(false)
+          this.textFocused(false)
+        },
+        onDialogShown: () => {
+          this.isDialogOpen(true)
+        },
+        onImageUpload: (files) => {
+          Array.from(files).forEach((file) => {
+            this.uploadFile(file, this.isDialogOpen())
+          })
+        },
+      },
+    }
+    if (Settings.FontNames.length > 0) {
+      options.fontNames = Settings.FontNames
+    }
+    this.oEditor.summernote(options)
+  }
 
-		this.initUploader(); // uploads inline images
-		this.initEditorUploader(); // uploads non-images using parent methods
+  this.getEditableArea().attr('tabindex', sTabIndex)
+  this.getEditableArea().css(SummernoteUtils.getBasicStyles())
 
-		this.oEditor = $(`#${this.editorId}`);
-		const toolbar = [
-			["history", ["undo", "redo"]],
-			["style", ["bold", "italic", "underline"]],
-			["font", ["fontname", "customfontsize"]],
-			["color", ["color"]],
-			["para", ["ul", "ol", "paragraph"]],
-			["misc", ["table", "link", "picture", "clear"]],
-		];
-		if (Settings.AllowSourceCodeButton || this.isBuiltInSignature) {
-			toolbar.push(['codeview', ['codeview']]);
-		}
-		this.oEditor.summernote({
-			lang: summernoteLang,
-			toolbar,
-			codemirror: {
-				mode: 'text/html',
-				htmlMode: true,
-				lineNumbers: true,
-			},
-			fontNames: ["Arial", "Tahoma", "Verdana", "Courier New"],
-			// addDefaultFonts: false,
-			dialogsInBody: true,
-			shortcuts: false,
-			disableResizeEditor: true,
-			followingToolbar: false, //true makes toolbas sticky
-			buttons: {
-				customfontsize: CustomFontSizeButton
-			},
-			colors: [
-				['#4f6573', '#83949b', '#aab2bd', '#afb0a4', '#8b8680', '#69655a', '#c9b037', '#ced85e'],
-				['#2b6a6c', '#00858a', '#00b4b1', '#77ce87', '#4a8753', '#8aa177', '#96b352', '#beca02'],
-				['#004c70', '#1d7299', '#109dc0', '#52b9d5', '#6c99bb', '#0a63a0', '#406cbd', '#5d9cec'],
-				['#fc736c', '#e83855', '#e34f7c', '#f97394', '#ad5f7d', '#975298', '#b287bd', '#7e86c7'],
-				['#fdae5f', '#f9c423', '#fad371', '#ed9223', '#de692f', '#a85540', '#87564a', '#c7a57a'],
-			],
-			popover: {
-				image: [
-					[
-						"image",
-						["resizeFull", "resizeHalf", "resizeQuarter", "resizeNone"],
-					],
-					["remove", ["removeMedia"]],
-				],
-				link: [["link", ["linkDialogShow", "unlink"]]],
-				table: [
-					["add", ["addRowDown", "addRowUp", "addColLeft", "addColRight"]],
-					["delete", ["deleteRow", "deleteCol", "deleteTable"]],
-				],
-			},
-			callbacks: {
-				onChange: () => {
-					this.textChanged(true);
-					this.actualTextСhanged.valueHasMutated();
-					const html = this.oEditor ? this.oEditor.summernote('code') : '';
-					this.htmlSize(html.length);
-				},
-				onChangeCodeview: () => {
-					this.textChanged(true);
-					this.actualTextСhanged.valueHasMutated();
-					const html = this.oEditor ? this.oEditor.summernote('code') : '';
-					this.htmlSize(html.length);
-				},
-				onFocus: (event) => {
-					// the timeout is necessary to prevent the compose popup from closing on Escape
-					// if the editor dialog was open
-					setTimeout(() => {
-						this.isDialogOpen(false);
-					}, 100);
-					this.textFocused(true);
-				},
-				onBlur: (event) => {
-					this.isDialogOpen(false);
-					this.textFocused(false);
-				},
-				onDialogShown: () => {
-					this.isDialogOpen(true);
-				},
-				onImageUpload: (files) => {
-					Array.from(files).forEach((file) => {
-						this.uploadFile(file, this.isDialogOpen());
-					});
-				},
-			},
-		});
+  if (Settings.DefaultFontName !== '') {
+    this.oEditor.summernote('fontName', Settings.DefaultFontName)
+  }
+  if (Settings.DefaultFontSize > 0) {
+    this.oEditor.summernote('fontSize', Settings.DefaultFontSize.toString())
+  }
 
-		// 	font_size_formats: 'Small=10pt Normal=12pt Medium=14pt Large=16pt Big=18pt Huge=24pt'
-		// 	// {text: '%MODULENAME%/ACTION_CHOOSE_SMALL_TEXTSIZE', value: '12px'},
-		// 	// 	{text: '%MODULENAME%/ACTION_CHOOSE_NORMAL_TEXTSIZE', value: '15px', default: true},
-		// 	// 	{text: '%MODULENAME%/ACTION_CHOOSE_LARGE_TEXTSIZE', value: '22px'},
-		// 	// font-family: Tahoma; font-size: 15px;
-	}
+  this.clearUndoRedo()
+  this.setText(sText, bPlain)
 
-	this.getEditableArea().attr('tabindex', sTabIndex);
-	this.clearUndoRedo();
-	this.getEditableArea().css('font-family', 'Tahoma').css('font-size', '16px');
-	this.oEditor.summernote('fontName', 'Tahoma');
-	this.oEditor.summernote('fontSize', '16px');
+  this.aUploadedImagesData = []
 
-	this.setText(sText, bPlain);
-
-	this.aUploadedImagesData = [];
-
-	if (Settings.AllowInsertTemplateOnCompose) {
-		this.fillTemplates();
-	}
+  if (Settings.AllowInsertTemplateOnCompose) {
+    this.fillTemplates();
+  }
 };
 
 CHtmlEditorView.prototype.setInactive = function (bInactive) {
@@ -386,23 +311,6 @@ CHtmlEditorView.prototype.hasOpenedPopup = function () {
 
 CHtmlEditorView.prototype.setDisableEdit = function (bDisableEdit) {
 	this.disableEdit(!!bDisableEdit);
-};
-
-CHtmlEditorView.prototype.correctFontFromSettings = function () {
-	var sDefaultFont = this.sDefaultFont,
-		bFound = false;
-	_.each(this.aFontNames, function (sFont) {
-		if (sFont.toLowerCase() === sDefaultFont.toLowerCase()) {
-			sDefaultFont = sFont;
-			bFound = true;
-		}
-	});
-
-	if (bFound) {
-		this.sDefaultFont = sDefaultFont;
-	} else {
-		this.aFontNames.push(sDefaultFont);
-	}
 };
 
 CHtmlEditorView.prototype.commit = function () {
@@ -578,8 +486,7 @@ CHtmlEditorView.prototype.getText = function (bRemoveSignatureAnchor, isPrivate)
 		html = `<div data-private="${Settings.PrivateMessagesEmail}">${html}</div>`;
 	}
 
-	// TODO - add font-wrapper like in CCrea.prototype.getText
-	return html;
+  return `<div data-crea="font-wrapper" style="${SummernoteUtils.getBasicStylesString(this.getEditableArea())}">${html}</div>`
 };
 
 /**
@@ -604,22 +511,44 @@ CHtmlEditorView.prototype.setText = function (sText, bPlain) {
 			if (sText === '') {
 				sText = '<p></p>';
 			} 
-			this.oEditor.summernote('code', sText);
+			this.oEditor.summernote('code', this.prepareSummernoteCode(sText));
 		}
 	}
 };
 
+CHtmlEditorView.prototype.prepareSummernoteCode = function (html) {
+	// return html
+  let outerNode = $(html)
+  let isOuterElemChanged = false
+  while (
+    outerNode.length === 1 &&
+    (outerNode.data('x-div-type') === 'html' || outerNode.data('x-div-type') === 'body')
+  ) {
+    outerNode = outerNode.children()
+    isOuterElemChanged = true
+  }
+  if (outerNode.length === 1 && outerNode.data('crea') === 'font-wrapper') {
+    if (this.getEditableArea()) {
+			this.getEditableArea().css(SummernoteUtils.getBasicStylesFromNode(outerNode))
+		}
+    return outerNode.html()
+  }
+  if (!isOuterElemChanged) {
+    return html
+  } else {
+    let res = ''
+    outerNode.each((index, elem) => {
+      res += elem.outerHTML
+    })
+    return res
+  }
+}
+
 CHtmlEditorView.prototype.undoAndClearRedo = function () {
-	//TODO
-	if (this.oEditor) {
-		// console.log();
-		// tinymce.UndoManager.undo();
-		//TODO clear REDO only
-		// tinymce.UndoManager.reset();
-		// this.oEditor.undo();
-		// this.oEditor.clearRedo();
-	}
-};
+  if (this.oEditor) {
+    this.oEditor.summernote('undo')
+  }
+}
 
 CHtmlEditorView.prototype.clearUndoRedo = function () {
 	if (this.oEditor) {
@@ -642,6 +571,10 @@ CHtmlEditorView.prototype.isEditing = function () {
 CHtmlEditorView.prototype.removeAllTags = function (sText) {
 	return sText.replace(/<style>.*<\/style>/g, "").replace(/<[^>]*>/g, "");
 };
+
+CHtmlEditorView.prototype.onEscHandler = function () {
+  // do nothing - summernote will close its dialogs
+}
 
 CHtmlEditorView.prototype.closeAllPopups = function ()
 {

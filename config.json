@@ -23,12 +23,46 @@
 		["back", "send", "save", "importance", "MailSensitivity", "confirmation", "OpenPgp"],
 		"array"
 	],
+	"FontNames": [
+		[
+				"Arial",
+				"Tahoma",
+				"Verdana",
+				"Courier New"
+		],
+		"array"
+	],
 	"DefaultFontName": [
 		"Tahoma",
 		"string"
 	],
+	"FontSizes": [
+		[
+				{
+						"value": 10,
+						"label": "MAILWEBCLIENT/LABEL_FONTSIZE_SMALLEST"
+				},
+				{
+						"value": 12,
+						"label": "MAILWEBCLIENT/LABEL_FONTSIZE_SMALLER"
+				},
+				{
+						"value": 16,
+						"label": "MAILWEBCLIENT/LABEL_FONTSIZE_STANDARD"
+				},
+				{
+						"value": 20,
+						"label": "MAILWEBCLIENT/LABEL_FONTSIZE_BIGGER"
+				},
+				{
+						"value": 24,
+						"label": "MAILWEBCLIENT/LABEL_FONTSIZE_LARGE"
+				}
+		],
+		"array"
+	],
 	"DefaultFontSize": [
-		3,
+		16,
 		"int"
 	],
 	"AlwaysTryUseImageWhilePasting": [
