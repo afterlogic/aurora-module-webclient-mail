@@ -731,8 +731,6 @@ CMessagePaneView.prototype.setMessageBody = function ()
 				e.preventDefault();
 				if ( (/http(?:s?):\/\//gm).test(url) ) {
 					WindowOpener.open('?viewer='+url, '');
-				} else {
-					WindowOpener.open('?file-content='+url, '');
 				}
 			}
 		});
