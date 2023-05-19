@@ -70,13 +70,15 @@ function CMessagePaneView()
 		return sPrefix + AccountList.getEmail() + ' - ' + TextUtils.i18n('%MODULENAME%/HEADING_MESSAGE_BROWSER_TAB');
 	}, this);
 
-	this.isAnotherUserPrivateMessage = ko.computed(() => {
+	// isAnotherUserPrivateMessage cannot be computed because when this.currentMessage() is null, PrivateMessagingUtils.isAnotherUserPrivateMessage fails (somewhere in knockout) no matter if the message was checked before
+	this.isAnotherUserPrivateMessage = ko.observable(false);
+	this.currentMessage.subscribe(() => {
 		if (this.currentMessage()) {
-			// When this.currentMessage() is null, PrivateMessagingUtils.isAnotherUserPrivateMessage fails (somewhere in knockout) no matter if the message was checked there
-			return PrivateMessagingUtils.isAnotherUserPrivateMessage(this.currentMessage());
+			this.isAnotherUserPrivateMessage(PrivateMessagingUtils.isAnotherUserPrivateMessage(this.currentMessage()));
+		} else {
+			this.isAnotherUserPrivateMessage(false);
 		}
-		return true;
-	});
+	})
 	this.isPrivateMessage = ko.computed(() => {
 		return PrivateMessagingUtils.isPrivateMessage(this.currentMessage());
 	});
@@ -207,8 +209,14 @@ function CMessagePaneView()
 		return bDisable;
 	}, this);
 	this.isVisibleReplyTool = ko.computed(function () {
-		return !this.disableAllSendTools() && this.isCurrentNotDraftOrSent() && !this.isCurrentTemplateFolder() 
+		console.log('this.currentMessage()', this.currentMessage());
+		if (!this.currentMessage()) {
+			return false;
+		}
+		const isVisibleReplyTool = !this.disableAllSendTools() && this.isCurrentNotDraftOrSent() && !this.isCurrentTemplateFolder() 
 			&& !this.isAnotherUserPrivateMessage();
+		console.log('end');
+		return isVisibleReplyTool
 	}, this);
 	this.isVisibleResendTool = ko.computed(function () {
 		return !this.disableAllSendTools() && this.isCurrentSentFolder() && !this.isCurrentTemplateFolder();
