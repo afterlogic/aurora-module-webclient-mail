@@ -47,8 +47,10 @@ module.exports = {
 	AllowSpamFolder: true,
 	AllowAddNewFolderOnMainScreen: false,
 	ComposeToolbarOrder: ['back', 'send', 'save', 'importance', 'MailSensitivity', 'confirmation', 'OpenPgp'],
-	DefaultFontName: 'Tahoma',
-	DefaultFontSize: 3,
+	FontNames: [],
+	DefaultFontName: '',
+	FontSizes: [],
+	DefaultFontSize: 0,
 	AlwaysTryUseImageWhilePasting: true,
 	AllowHorizontalLineButton: false,
 	AllowSourceCodeButton: false,
@@ -144,7 +146,9 @@ module.exports = {
 			this.AllowSpamFolder = Types.pBool(oAppDataMailWebclientSection.AllowSpamFolder, this.AllowSpamFolder);
 			this.AllowAddNewFolderOnMainScreen = Types.pBool(oAppDataMailWebclientSection.AllowAddNewFolderOnMainScreen, this.AllowAddNewFolderOnMainScreen);
 			this.ComposeToolbarOrder = Types.pArray(oAppDataMailWebclientSection.ComposeToolbarOrder, this.ComposeToolbarOrder);
+			this.FontNames = Types.pArray(oAppDataMailWebclientSection.FontNames, this.FontNames);
 			this.DefaultFontName = Types.pString(oAppDataMailWebclientSection.DefaultFontName, this.DefaultFontName);
+			this.FontSizes = Types.pArray(oAppDataMailWebclientSection.FontSizes, this.FontSizes);
 			this.DefaultFontSize = Types.pPositiveInt(oAppDataMailWebclientSection.DefaultFontSize, this.DefaultFontSize);
 			this.AlwaysTryUseImageWhilePasting = Types.pBool(oAppDataMailWebclientSection.AlwaysTryUseImageWhilePasting, this.AlwaysTryUseImageWhilePasting);
 			this.AllowHorizontalLineButton = Types.pBool(oAppDataMailWebclientSection.AllowHorizontalLineButton, this.AllowHorizontalLineButton);
