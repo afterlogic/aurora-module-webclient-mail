@@ -727,11 +727,13 @@ CMessagePaneView.prototype.setMessageBody = function ()
 		}
 
 		// added custom link handler for links to pdf document. 
-		$body.find('table tr > td:nth-child(2) a.external[href$=".pdf"]').on('click', function (e) {
+		$body.find('table tr > td:nth-child(2) a.external').on('click dblclick', function (e) {
 			const url = $(e.target).attr('href');
-			if (url) {
-				e.preventDefault();
-				if ( (/http(?:s?):\/\//gm).test(url) ) {
+			const allowedExtensions = Settings.OfficeEditorExtensionsToView;
+			if (url && (/http(?:s?):\/\//gm).test(url)) {
+				const extension = url.match(/\.(\w+?)$/)[1];
+				if (extension && allowedExtensions.indexOf(extension) !== -1) {
+					e.preventDefault();
 					WindowOpener.open('?viewer='+url, '');
 				}
 			}

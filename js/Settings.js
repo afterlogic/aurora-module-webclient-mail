@@ -87,6 +87,8 @@ module.exports = {
 	AllowPrivateMessages: false,
 	PrivateMessagesEmail: '',
 
+	OfficeEditorExtensionsToView: [],
+
 	/**
 	 * Initializes settings from AppData object sections.
 	 * 
@@ -100,7 +102,8 @@ module.exports = {
 			oAppDataMailWebclientSection = oAppData['%ModuleName%'],
 			oAppDataFetchersSection = oAppData[this.FetchersServerModuleName],
 			oAppDataAliasesSection = oAppData[this.AliasesServerModuleName],
-			informatikAppDataSection = oAppData['InformatikProjects']
+			informatikAppDataSection = oAppData['InformatikProjects'],
+			officeEditorAppDataSection = oAppData['OfficeDocumentEditor']
 		;
 
 		if (!_.isEmpty(oCoreDataSection))
@@ -194,6 +197,10 @@ module.exports = {
 
 		this.AllowPrivateMessages = Types.pBool(informatikAppDataSection && informatikAppDataSection.AllowPrivateMessages, this.AllowPrivateMessages);
 		this.PrivateMessagesEmail = Types.pString(informatikAppDataSection && informatikAppDataSection.PrivateMessagesEmail, this.PrivateMessagesEmail);
+
+		if (officeEditorAppDataSection && Array.isArray(officeEditorAppDataSection['ExtensionsToView'])) {
+			this.OfficeEditorExtensionsToView = officeEditorAppDataSection['ExtensionsToView'];
+		}
 
 		App.registerUserAccountsCount(this.userMailAccountsCount);
 		App.registerAccountsWithPass(this.mailAccountsEmails);
