@@ -732,9 +732,11 @@ CMessagePaneView.prototype.setMessageBody = function ()
 			const allowedExtensions = Settings.OfficeEditorExtensionsToView;
 			if (url && (/http(?:s?):\/\//gm).test(url)) {
 				const extension = url.match(/\.(\w+?)$/)[1];
-				if (extension && allowedExtensions.indexOf(extension) !== -1) {
-					e.preventDefault();
-					WindowOpener.open('?viewer='+url, '');
+				if (extension) {
+					if (allowedExtensions.indexOf(extension.toLowerCase()) !== -1) {
+						e.preventDefault();
+						WindowOpener.open('?viewer='+url, '');
+					}
 				}
 			}
 		});
