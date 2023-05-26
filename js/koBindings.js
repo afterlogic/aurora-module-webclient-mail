@@ -112,15 +112,3 @@ ko.bindingHandlers.moveToFolderFilter = {
 		}
 	}
 };
-
-ko.subscribable.fn.subscribeExtended = function (callback) {
-    var oldValue;
-    this.subscribe(function (_oldValue) {
-        oldValue = _oldValue;
-    }, this, 'beforeChange');
-
-    this.subscribe(function (newValue) {
-        callback(newValue, oldValue);
-    });
-};
-

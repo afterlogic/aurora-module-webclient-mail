@@ -49,6 +49,8 @@ module.exports = function (oAppData) {
 		return null;
 	}
 
+	require('modules/%ModuleName%/js/koBindingsCommon.js');
+
 	AccountList = require('modules/MailWebclient/js/AccountList.js');
 
 	if (bAdminUser)

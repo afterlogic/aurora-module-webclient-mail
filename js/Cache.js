@@ -203,9 +203,39 @@ function CMailCache()
 	
 	this.messagesLoading = ko.observable(false);
 	this.messagesLoadingError = ko.observable(false);
-	
+
 	this.currentMessage = ko.observable(null);
-	
+	this.currentMessageNotInList = ko.pureComputed(() => {
+		const currentMessage = this.currentMessage();
+		if (!this.checkMailStarted() && !this.checkMailStarted() && currentMessage) {
+			const currentFolder = this.getCurrentFolder();
+			const isSameFolder = currentFolder ? currentFolder.fullName() === currentMessage.folder() : false;
+			const isSameAcount = this.currentAccountId() === currentMessage.accountId();
+			if (isSameAcount && isSameFolder) {
+				const currentMessageInList = this.messages().find(message => message.sUniq === currentMessage.sUniq);
+				if (!currentMessageInList) {
+					return this.currentMessage()
+				}
+			}
+		}
+		return null;
+	})
+	this.currentMessageNotInList.subscribeExtended((newVal, oldVal) => {
+		if (!oldVal && newVal) {
+			const parameters = {
+				'AccountID': newVal.accountId(),
+				'Folder': newVal.folder(),
+				'Uid': newVal.uid(),
+				'MessageBodyTruncationThreshold': Settings.MessageBodyTruncationThreshold
+			}
+			Ajax.send('GetMessage', parameters, (response) => {
+				if (!response.Result && this.currentMessage() && this.currentMessage().sUniq === newVal.sUniq) {
+					Routing.replaceHashWithoutMessageUid(newVal.uid());
+				}
+			});
+		}
+	})
+
 	this.nextMessageUid = ko.observable('');
 	this.prevMessageUid = ko.observable('');
 
