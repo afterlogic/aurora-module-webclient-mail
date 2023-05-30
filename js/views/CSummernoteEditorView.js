@@ -475,6 +475,7 @@ CHtmlEditorView.prototype.getText = function (bRemoveSignatureAnchor, isPrivate)
 		PrivateMessagingUtils.addPrivateMarkerToMessageBody(htmlElem, signatureAnchor);
 	}
 
+	htmlElem.find('p').css('margin', 0);
 	let html = htmlElem.html();
 
 	if (this.sPlaceholderText !== '' &&
