@@ -736,6 +736,9 @@ CMessagePaneView.prototype.setMessageBody = function ()
 					if (allowedExtensions.indexOf(extension.toLowerCase()) !== -1) {
 						e.preventDefault();
 						WindowOpener.open('?viewer='+url, '');
+					} else {
+						e.preventDefault();
+						WindowOpener.open(url, '');
 					}
 				}
 			}
