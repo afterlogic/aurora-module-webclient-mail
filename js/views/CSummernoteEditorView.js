@@ -184,6 +184,10 @@ CHtmlEditorView.prototype.init = function (sText, bPlain, sTabIndex, sPlaceholde
         htmlMode: true,
         lineNumbers: true,
       },
+      colorButton: {
+        backColor: '',
+        foreColor: '',
+      },
       dialogsInBody: true,
       addDefaultFonts: false,
       shortcuts: false,
