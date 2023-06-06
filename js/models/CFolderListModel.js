@@ -369,12 +369,6 @@ CFolderListModel.prototype.parseRecursively = function (aRawCollection, oNamedFo
 					break;
 			}
 			
-			if (Settings.AllMailsFolder === oFolder.fullName())
-			{
-				this.allMailsFolder(oFolder);
-				oFolder.hideEverywhere(true);
-			}
-
 			this.oNamedCollection[oFolder.fullName()] = oFolder;
 			this.aLinedCollection.push(oFolder);
 			aParsedCollection.push(oFolder);
@@ -382,7 +376,7 @@ CFolderListModel.prototype.parseRecursively = function (aRawCollection, oNamedFo
 			if (oSubFolders === null && oFolder.type() === Enums.FolderTypes.Inbox)
 			{
 				oFolder.subfolders([]);
-				this.createStarredFolder(oFolder.fullName(), iLevel);
+				this.createVirtualFolders(oFolder.fullName(), iLevel);
 				if (this.oStarredFolder)
 				{
 					aParsedCollection.push(this.oStarredFolder);
@@ -400,7 +394,7 @@ CFolderListModel.prototype.parseRecursively = function (aRawCollection, oNamedFo
 				}
 				if(oFolder.type() === Enums.FolderTypes.Inbox)
 				{
-					this.createStarredFolder(oFolder.fullName(), iLevel);
+					this.createVirtualFolders(oFolder.fullName(), iLevel);
 					if (oFolder.bNamespace)
 					{
 						if (this.oStarredFolder)
@@ -434,13 +428,26 @@ CFolderListModel.prototype.parseRecursively = function (aRawCollection, oNamedFo
 };
 
 /**
- * @param {string} sFullName
- * @param {number} iLevel
+ * @param {string} inboxFullName
+ * @param {number} inboxLevel
  */
-CFolderListModel.prototype.createStarredFolder = function (sFullName, iLevel)
+CFolderListModel.prototype.createVirtualFolders = function (inboxFullName, inboxLevel)
 {
 	this.oStarredFolder = new CFolderModel(this.iAccountId);
-	this.oStarredFolder.initStarredFolder(iLevel, sFullName);
+	this.oStarredFolder.initStarredFolder(inboxLevel, inboxFullName);
+
+	if (Settings.AllMailsFolder !== '') {
+		const allMailsFolder = new CFolderModel(this.iAccountId);
+		allMailsFolder.bVirtual = true;
+		allMailsFolder.setDisplayedLevel(inboxLevel);
+		allMailsFolder.fullName(Settings.AllMailsFolder);
+		allMailsFolder.name(Settings.AllMailsFolder);
+		allMailsFolder.initSubscriptions('');
+		allMailsFolder.initComputedFields(true);
+		allMailsFolder.hideEverywhere(true);
+		this.allMailsFolder(allMailsFolder);
+	}
+
 };
 
 CFolderListModel.prototype.repopulateLinedCollection = function ()
