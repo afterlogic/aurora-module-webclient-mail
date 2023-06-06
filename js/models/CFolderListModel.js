@@ -168,7 +168,7 @@ CFolderListModel.prototype.setCurrentFolder = function (sFolderFullName, sFilter
 	var
 		oFolder = this.getFolderByFullName(sFolderFullName)
 	;
-	
+
 	if (oFolder === null || !oFolder.canBeSelected() && sFolderFullName !== MailCache.folderList().allMailsFolderFullName())
 	{
 		oFolder = this.inboxFolder();
@@ -274,6 +274,7 @@ CFolderListModel.prototype.parse = function (iAccountId, oData, oNamedFolderList
 	this.oNamedCollection = {};
 	this.aLinedCollection = [];
 	this.collection(this.parseRecursively(aCollection, oNamedFolderListOld));
+	this.createAllMailsFolder()
 
 	if (this.allMailsFolder()) {
 		this.oStarredFolder.fullName(this.allMailsFolder().fullName());
@@ -376,7 +377,7 @@ CFolderListModel.prototype.parseRecursively = function (aRawCollection, oNamedFo
 			if (oSubFolders === null && oFolder.type() === Enums.FolderTypes.Inbox)
 			{
 				oFolder.subfolders([]);
-				this.createVirtualFolders(oFolder.fullName(), iLevel);
+				this.createStarredFolder(oFolder.fullName(), iLevel);
 				if (this.oStarredFolder)
 				{
 					aParsedCollection.push(this.oStarredFolder);
@@ -394,7 +395,7 @@ CFolderListModel.prototype.parseRecursively = function (aRawCollection, oNamedFo
 				}
 				if(oFolder.type() === Enums.FolderTypes.Inbox)
 				{
-					this.createVirtualFolders(oFolder.fullName(), iLevel);
+					this.createStarredFolder(oFolder.fullName(), iLevel);
 					if (oFolder.bNamespace)
 					{
 						if (this.oStarredFolder)
@@ -431,23 +432,26 @@ CFolderListModel.prototype.parseRecursively = function (aRawCollection, oNamedFo
  * @param {string} inboxFullName
  * @param {number} inboxLevel
  */
-CFolderListModel.prototype.createVirtualFolders = function (inboxFullName, inboxLevel)
+CFolderListModel.prototype.createStarredFolder = function (inboxFullName, inboxLevel)
 {
 	this.oStarredFolder = new CFolderModel(this.iAccountId);
 	this.oStarredFolder.initStarredFolder(inboxLevel, inboxFullName);
+};
 
+CFolderListModel.prototype.createAllMailsFolder = function ()
+{
 	if (Settings.AllMailsFolder !== '') {
 		const allMailsFolder = new CFolderModel(this.iAccountId);
 		allMailsFolder.bVirtual = true;
-		allMailsFolder.setDisplayedLevel(inboxLevel);
 		allMailsFolder.fullName(Settings.AllMailsFolder);
 		allMailsFolder.name(Settings.AllMailsFolder);
 		allMailsFolder.initSubscriptions('');
 		allMailsFolder.initComputedFields(true);
 		allMailsFolder.hideEverywhere(true);
 		this.allMailsFolder(allMailsFolder);
+		this.oNamedCollection[Settings.AllMailsFolder] = allMailsFolder
+		this.aLinedCollection.push(allMailsFolder)
 	}
-
 };
 
 CFolderListModel.prototype.repopulateLinedCollection = function ()
