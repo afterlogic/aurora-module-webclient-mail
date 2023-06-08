@@ -96,20 +96,20 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 
         $oUser = \Aurora\System\Api::getAuthenticatedUser();
         if ($oUser && $oUser->isNormalOrTenant()) {
-            if (isset($oUser->{self::GetName().'::AllowChangeInputDirection'})) {
-                $aSettings['AllowChangeInputDirection'] = $oUser->{self::GetName().'::AllowChangeInputDirection'};
+            if (null !== $oUser->getExtendedProp(self::GetName().'::AllowChangeInputDirection')) {
+                $aSettings['AllowChangeInputDirection'] = $oUser->getExtendedProp(self::GetName().'::AllowChangeInputDirection');
             }
-            if (isset($oUser->{self::GetName().'::MailsPerPage'})) {
-                $aSettings['MailsPerPage'] = $oUser->{self::GetName().'::MailsPerPage'};
+            if (null !== $oUser->getExtendedProp(self::GetName().'::MailsPerPage')) {
+                $aSettings['MailsPerPage'] = $oUser->getExtendedProp(self::GetName().'::MailsPerPage');
             }
-            if (isset($oUser->{self::GetName().'::StarredMessagesSource'})) {
-                $aSettings['StarredMessagesSource'] = $oUser->{self::GetName().'::StarredMessagesSource'};
+            if (null !== $oUser->getExtendedProp(self::GetName().'::StarredMessagesSource')) {
+                $aSettings['StarredMessagesSource'] = $oUser->getExtendedProp(self::GetName().'::StarredMessagesSource');
             }
-            if (isset($oUser->{self::GetName().'::ShowMessagesCountInFolderList'})) {
-                $aSettings['ShowMessagesCountInFolderList'] = $oUser->{self::GetName().'::ShowMessagesCountInFolderList'};
+            if (null !== $oUser->getExtendedProp(self::GetName().'::ShowMessagesCountInFolderList')) {
+                $aSettings['ShowMessagesCountInFolderList'] = $oUser->getExtendedProp(self::GetName().'::ShowMessagesCountInFolderList');
             }
-            if ($this->oModuleSettings->AllowHorizontalLayout && isset($oUser->{self::GetName().'::HorizontalLayout'})) {
-                $aSettings['HorizontalLayout'] = $oUser->{self::GetName().'::HorizontalLayout'};
+            if ($this->oModuleSettings->AllowHorizontalLayout && null !== $oUser->getExtendedProp(self::GetName().'::HorizontalLayout')) {
+                $aSettings['HorizontalLayout'] = $oUser->getExtendedProp(self::GetName().'::HorizontalLayout');
             }
         }
 
