@@ -28,7 +28,7 @@ function IsPageParam(sTemp)
  */
 function IsMsgParam(sTemp)
 {
-	return ('msg' === sTemp.substr(0, 3) && (/^[1-9][\d:]*$/).test(sTemp.substr(3)));
+	return ('msg' === sTemp.substr(0, 3) && (/^[1-9][\d\w:]*$/).test(sTemp.substr(3)));
 };
 
 /**

@@ -21,6 +21,7 @@ var
 
 	CAbstractScreenView = require('%PathToCoreWebclientModule%/js/views/CAbstractScreenView.js'),
 
+	ComplexUidUtils = require('modules/%ModuleName%/js/utils/ComplexUid.js'),
 	ComposeUtils = require('modules/%ModuleName%/js/utils/Compose.js'),
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
 	MailUtils = require('modules/%ModuleName%/js/utils/Mail.js'),
@@ -824,23 +825,11 @@ CMessagePaneView.prototype.doHidingBlockquotes = function (aCollapsedStatuses)
  */
 CMessagePaneView.prototype.onRoute = function (aParams)
 {
-	var
-		oParams = LinksUtils.parseMailbox(aParams),
-		iMessageAccountId = 0,
-		sFolder = oParams.Folder,
-		sUid = oParams.Uid
-	;
+	var oParams = LinksUtils.parseMailbox(aParams);
 
 	AccountList.changeCurrentAccountByHash(oParams.AccountHash);
-	iMessageAccountId = MailCache.currentAccountId();
 
-	if (sFolder === MailCache.oUnifiedInbox.fullName() && Types.isNonEmptyString(sUid))
-	{
-		var aParts = sUid.split(':');
-		iMessageAccountId = Types.pInt(aParts[0]);
-		sFolder = 'INBOX';
-		sUid = Types.pString(aParts[1]);
-	}
+	const [iMessageAccountId, sFolder, sUid] = ComplexUidUtils.parse(MailCache.currentAccountId(), oParams.Folder, oParams.Uid);
 
 	if (this.replyText() !== '' && this.uid() !== sUid)
 	{

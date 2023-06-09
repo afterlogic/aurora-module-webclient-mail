@@ -18,9 +18,10 @@ var
 	
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
 	ConfirmPopup = require('%PathToCoreWebclientModule%/js/popups/ConfirmPopup.js'),
-	
+
+	ComplexUidUtils = require('modules/%ModuleName%/js/utils/ComplexUid.js'),
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
-	
+
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	MailCache = null,
 	MessagesDictionary = require('modules/%ModuleName%/js/MessagesDictionary.js'),
@@ -152,20 +153,8 @@ CFolderModel.prototype.getUnifiedInbox = function (iAccountId)
  */
 CFolderModel.prototype.getMessageByUid = function (sUid)
 {
-	if (this.bIsUnifiedInbox)
-	{
-		var
-			aParts = sUid.split(':'),
-			iAccountId = aParts.length === 2 ? Types.pInt(aParts[0]) : this.iAccountId,
-			sActualUid = aParts.length === 2 ? Types.pString(aParts[1]) : sUid,
-			oInbox = this.getUnifiedInbox(iAccountId)
-		;
-		return oInbox ? MessagesDictionary.get([iAccountId, oInbox.fullName(), sActualUid]) : null;
-	}
-	else
-	{
-		return MessagesDictionary.get([this.iAccountId, this.fullName(), sUid]);
-	}
+	const keysForDict = ComplexUidUtils.parse(this.iAccountId, this.fullName(), sUid);
+	return MessagesDictionary.get(keysForDict);
 };
 
 /**

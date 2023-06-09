@@ -22,7 +22,8 @@ var
 	AlertPopup = require('%PathToCoreWebclientModule%/js/popups/AlertPopup.js'),
 
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
-	
+	ComplexUidUtils = require('modules/%ModuleName%/js/utils/ComplexUid.js'),
+
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
 	MessagesDictionary = require('modules/%ModuleName%/js/MessagesDictionary.js'),
@@ -638,19 +639,9 @@ CMailCache.prototype.setMessagesFromUidList = function (oUidList, iOffset, bFill
 	var
 		iLimit = bFillMessages ? this.limit() : Settings.MailsPerPage,
 		aUids = oUidList.getUidsForOffset(iOffset, iLimit),
-		aMessages = _.compact(_.map(aUids, function (sUid) {
-			var
-				iAccountId = oUidList.iAccountId,
-				sFullName = oUidList.sFullName;
-			;
-			if (sFullName === this.oUnifiedInbox.fullName())
-			{
-				var aParts = sUid.split(':');
-				iAccountId = Types.pInt(aParts[0]);
-				sFullName = 'INBOX';
-				sUid = aParts[1];
-			}
-			return MessagesDictionary.get([iAccountId, sFullName, sUid]);
+		aMessages = _.compact(_.map(aUids, function (uid) {
+			const keysForDict = ComplexUidUtils.parse(oUidList.iAccountId, oUidList.sFullName, uid)
+			return MessagesDictionary.get(keysForDict);
 		}, this)),
 		iMessagesCount = aMessages.length
 	;
@@ -682,7 +673,9 @@ CMailCache.prototype.setMessagesFromUidList = function (oUidList, iOffset, bFill
 		}
 
 		if (this.currentMessage() && (this.currentMessage().deleted() ||
-			this.currentMessage().folder() !== this.getCurrentFolderFullname() && !this.oUnifiedInbox.selected()))
+			this.currentMessage().folder() !== this.getCurrentFolderFullname() &&
+			!this.oUnifiedInbox.selected() &&
+			this.getCurrentFolderFullname() !== Settings.AllMailsFolder))
 		{
 			this.currentMessage().selected(false);
 			this.currentMessage(null);
@@ -1430,13 +1423,15 @@ CMailCache.prototype.setCurrentFolder = function (sFolder, sFilters)
 
 CMailCache.prototype.getMessageUid = function (oMessage)
 {
-	if (this.oUnifiedInbox.selected())
-	{
+	if (this.oUnifiedInbox.selected()) {
 		return oMessage.unifiedUid();
-	}
-	else
-	{
-		return oMessage.uid();
+	} else {
+		const currFolder = this.getCurrentFolder();
+		if (currFolder && currFolder.fullName() === Settings.AllMailsFolder) {
+			return oMessage.unifiedUid();
+		} else {
+			return oMessage.uid();
+		}
 	}
 };
 
@@ -1591,9 +1586,11 @@ CMailCache.prototype.executeGroupOperation = function (sMethod, aUids, sField, b
 				this.executeGroupOperationForFolder(sMethod, oInbox, aUids, sField, bSetAction);
 			}
 		}, this);
-	}
-	else
-	{
+	} else if (this.getCurrentFolderFullname() === Settings.AllMailsFolder) {
+		// Should be required exactly here
+		const MailUtils = require('modules/%ModuleName%/js/utils/Mail.js');
+		MailUtils.executeGroupOperationForAllmails(aUids, sMethod, sField, bSetAction);
+	} else {
 		var oCurrFolder = this.getCurrentFolder();
 		if (oCurrFolder)
 		{
@@ -2023,10 +2020,7 @@ CMailCache.prototype.parseAndCacheMessages = function (aMessagesCollection, oFol
 			oInbox = null
 		;
 		_.each(aMessagesCollection, function (oRawMessage) {
-			var
-				aParts = oRawMessage.UnifiedUid.split(':'),
-				iAccountId = Types.pInt(aParts[0])
-			;
+			const [iAccountId] = ComplexUidUtils.parse(this.currentAccountId(), oRawMessage.Folder, oRawMessage.UnifiedUid);
 			oInbox = oFolders[iAccountId];
 			if (!oInbox)
 			{
@@ -2039,9 +2033,16 @@ CMailCache.prototype.parseAndCacheMessages = function (aMessagesCollection, oFol
 				aNewFolderMessages.push(oFolderMessage);
 			}
 		}, this);
-	}
-	else
-	{
+	} else if (oFolder.fullName() === Settings.AllMailsFolder) {
+		aMessagesCollection.forEach((rawMessage)=> {
+			const [accountId, folderFullName] = ComplexUidUtils.parse(this.currentAccountId(), rawMessage.Folder, rawMessage.UnifiedUid)
+			const folder = this.folderList().getFolderByFullName(folderFullName);
+			if (folder) {
+				const message = folder.parseAndCacheMessage(rawMessage, false, bTrustThreadInfo);
+				aNewFolderMessages.push(message);
+			}
+		})
+	} else {
 		_.each(aMessagesCollection, function (oRawMessage) {
 			var oFolderMessage = oFolder.parseAndCacheMessage(oRawMessage, false, bTrustThreadInfo);
 			aNewFolderMessages.push(oFolderMessage);
@@ -2229,7 +2230,8 @@ CMailCache.prototype.onMoveMessagesResponse = function (oResponse, oRequest)
 	}
 
 	if (oFolder && sCurrFolderFullName === oFolder.fullName() || oToFolder && sCurrFolderFullName === oToFolder.fullName() ||
-		oCurrFolder.bIsUnifiedInbox && (oFolder && oFolder.type() === Enums.FolderTypes.Inbox || oToFolder && oToFolder.type() === Enums.FolderTypes.Inbox))
+		oCurrFolder.bIsUnifiedInbox && (oFolder && oFolder.type() === Enums.FolderTypes.Inbox || oToFolder && oToFolder.type() === Enums.FolderTypes.Inbox) ||
+		MailCache.getCurrentFolderFullname() === Settings.AllMailsFolder)
 	{
 		oCurrFolder.markHasChanges();
 		switch (this.uidList().filters())

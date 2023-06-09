@@ -3,11 +3,10 @@
 var
 	_ = require('underscore'),
 	$ = require('jquery'),
-			
+
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	UrlUtils = require('%PathToCoreWebclientModule%/js/utils/Url.js'),
-	
-	App = require('%PathToCoreWebclientModule%/js/App.js'),
+
 	Storage = require('%PathToCoreWebclientModule%/js/Storage.js'),
 	UserSettings = require('%PathToCoreWebclientModule%/js/Settings.js'),
 	
@@ -15,8 +14,10 @@ var
 	ConfirmPopup = require('%PathToCoreWebclientModule%/js/popups/ConfirmPopup.js'),
 
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
+	ComplexUidUtils = require('modules/%ModuleName%/js/utils/ComplexUid.js'),
 	MailCache = require('modules/%ModuleName%/js/Cache.js'),
-	
+	Settings = require('modules/%ModuleName%/js/Settings.js'),
+
 	MailUtils = {}
 ;
 
@@ -59,16 +60,17 @@ MailUtils.deleteMessages = function (aUids, fAfterDelete)
 	}
 	else
 	{
-		if (MailCache.oUnifiedInbox.selected())
-		{
-			MailUtils.deleteMessagesFromUnifiedInbox(aUids, fAfterDelete);
-		}
-		else
-		{
+		if (MailCache.oUnifiedInbox.selected()) {
+			MailUtils.moveMessagesFromUnifiedInbox(aUids, fAfterDelete);
+		} else {
 			if (oTrash)
 			{
-				MailCache.moveMessagesToFolder(oFolderList.currentFolder(), oTrash, aUids);
-				fAfterDelete();
+				if (sCurrFolder === Settings.AllMailsFolder) {
+					MailUtils.moveMessagesFromAllmails(aUids, oTrash, fAfterDelete);
+				} else {
+					MailCache.moveMessagesToFolder(oFolderList.currentFolder(), oTrash, aUids);
+					fAfterDelete();
+				}
 			}
 			else
 			{
@@ -78,7 +80,7 @@ MailUtils.deleteMessages = function (aUids, fAfterDelete)
 	}
 };
 
-MailUtils.deleteMessagesFromUnifiedInbox = function (aUids, fAfterDelete)
+MailUtils.moveMessagesFromUnifiedInbox = function (aUids, fAfterDelete)
 {
 	var
 		bMoved = false,
@@ -125,6 +127,51 @@ MailUtils.deleteMessagesFromUnifiedInbox = function (aUids, fAfterDelete)
 	{
 		fAfterDelete();
 	}
+};
+
+MailUtils.getUidsSeparatedByFolders = function (uids)
+{
+	const uidsByFolders = {};
+	uids.forEach((unifiedUid) => {
+		const [accountId, folderFullName, uid] = ComplexUidUtils.parse(MailCache.currentAccountId(), MailCache.folderList().currentFolderFullName(), unifiedUid);
+		if (uid !== '') {
+			if (!uidsByFolders[folderFullName]) {
+				uidsByFolders[folderFullName] = { folderFullName, uids: [] };
+			}
+			uidsByFolders[folderFullName].uids.push(uid);
+		}
+	});
+
+	return uidsByFolders;
+};
+
+MailUtils.moveMessagesFromAllmails = function (uids, trashFolder, afterDeleteCallback)
+{
+	const uidsByFolders = this.getUidsSeparatedByFolders(uids);
+	let isMoved = false;
+
+	_.each(uidsByFolders, (data) => {
+		const folder = MailCache.folderList().getFolderByFullName(data.folderFullName);
+		if (folder) {
+			MailCache.moveMessagesToFolder(folder, trashFolder, data.uids);
+			isMoved = true;
+		}
+	});
+
+	if (isMoved && typeof afterDeleteCallback === 'function') {
+		afterDeleteCallback();
+	}
+};
+
+MailUtils.executeGroupOperationForAllmails = function (uids, method, field, isSetAction)
+{
+	const uidsByFolders = this.getUidsSeparatedByFolders(uids);
+	_.each(uidsByFolders, (data) => {
+		const folder = MailCache.folderList().getFolderByFullName(data.folderFullName);
+		if (folder) {
+			MailCache.executeGroupOperationForFolder(method, folder, data.uids, field, isSetAction);
+		}
+	});
 };
 
 MailUtils.isAvailableRegisterMailto = function ()

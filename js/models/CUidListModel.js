@@ -3,10 +3,9 @@
 var
 	_ = require('underscore'),
 	ko = require('knockout'),
-	
-	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
-	
+
 	MailCache = null,
+	ComplexUidUtils = require('modules/%ModuleName%/js/utils/ComplexUid.js'),
 	MessagesDictionary = require('modules/%ModuleName%/js/MessagesDictionary.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js')
 ;
@@ -88,28 +87,17 @@ CUidListModel.prototype.getUidsForOffset = function (iOffset, iLimit)
 	var
 		iIndex = 0,
 		iLen = this.collection().length,
-		sUid = '',
-		iAccountId = this.iAccountId,
-		sFullName = this.sFullName,
 		iExistsCount = 0,
-		aUids = [],
-		oMsg = null
+		aUids = []
 	;
 	
 	for(; iIndex < iLen; iIndex++)
 	{
 		if (iIndex >= iOffset && iExistsCount < iLimit)
 		{
-			sUid = this.collection()[iIndex];
-			var sUidForDict = sUid;
-			if (sUid !== undefined && this.sFullName === MailCache.oUnifiedInbox.fullName())
-			{
-				var aParts = sUid.split(':');
-				iAccountId = Types.pInt(aParts[0]);
-				sFullName = 'INBOX';
-				sUidForDict = aParts[1];
-			}
-			oMsg = (sUid === undefined) ? null : MessagesDictionary.get([iAccountId, sFullName, sUidForDict]);
+			const sUid = this.collection()[iIndex];
+			const keysForDict = ComplexUidUtils.parse(this.iAccountId, this.sFullName, sUid);
+			const oMsg = (sUid === undefined) ? null : MessagesDictionary.get(keysForDict);
 
 			if (oMsg && !oMsg.deleted() || sUid === undefined)
 			{

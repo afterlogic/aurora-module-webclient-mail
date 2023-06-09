@@ -213,7 +213,7 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 	}, this);
 
 	this.isEverywhereSearch = ko.computed(function () {
-		return this.isSearch() && this.folderFullName() === this.folderList().allMailsFolderFullName();
+		return this.isSearch() && this.folderFullName() === Settings.AllMailsFolder;
 	}, this);
 
 	this.isUnseenFilter = ko.computed(function () {
@@ -633,7 +633,7 @@ CMessageListView.prototype.onRoute = function (aParams)
 	this.filters(oParams.Filters);
 	this.search(oParams.Search);
 	if (this.search().length > 0) {
-		this.useEverywhereSearch(this.folderFullName() === this.folderList().allMailsFolderFullName());
+		this.useEverywhereSearch(this.folderFullName() === Settings.AllMailsFolder);
 	}
 	SearchUtils.parseAdvancedSearch.call(this);
 	this.sSortBy = oParams.SortBy;
@@ -704,11 +704,11 @@ CMessageListView.prototype.onSearchClick = function ()
 	}
 
 	if (this.allowSearchEverywhere()) {
-		const isAllMailsFolder = sFolder === this.folderList().allMailsFolderFullName();
+		const isAllMailsFolder = sFolder === Settings.AllMailsFolder;
 		if (this.useEverywhereSearch() && !isAllMailsFolder) {
 			this.folderBeforeSearchEverywhere(sFolder);
 			this.filtersBeforeSearchEverywhere(sFilters);
-			sFolder = this.folderList().allMailsFolderFullName();
+			sFolder = Settings.AllMailsFolder;
 			sFilters = '';
 		} else if (!this.useEverywhereSearch() && isAllMailsFolder) {
 			sFolder = this.folderBeforeSearchEverywhere() || this.folderList().inboxFolderFullName();
@@ -932,7 +932,12 @@ CMessageListView.prototype.executeMarkAllRead = function ()
  */
 CMessageListView.prototype.executeMoveToFolder = function (sToFolder)
 {
-	MailCache.moveMessagesToFolder(MailCache.getCurrentFolder(), MailCache.getFolderByFullName(MailCache.currentAccountId(), sToFolder), this.checkedOrSelectedUids());
+	const toFolder = MailCache.getFolderByFullName(MailCache.currentAccountId(), sToFolder);
+	if (MailCache.getCurrentFolderFullname() === Settings.AllMailsFolder) {
+		MailUtils.moveMessagesFromAllmails(this.checkedOrSelectedUids(), toFolder);
+	} else {
+		MailCache.moveMessagesToFolder(MailCache.getCurrentFolder(), toFolder, this.checkedOrSelectedUids());
+	}
 };
 
 CMessageListView.prototype.executeCopyToFolder = function (sToFolder)
