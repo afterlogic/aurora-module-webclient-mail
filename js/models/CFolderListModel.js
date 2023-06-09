@@ -169,7 +169,7 @@ CFolderListModel.prototype.setCurrentFolder = function (sFolderFullName, sFilter
 		oFolder = this.getFolderByFullName(sFolderFullName)
 	;
 
-	if (oFolder === null || !oFolder.canBeSelected() && sFolderFullName !== MailCache.folderList().allMailsFolderFullName())
+	if (oFolder === null || !oFolder.canBeSelected() && sFolderFullName !== Settings.AllMailsFolder)
 	{
 		oFolder = this.inboxFolder();
 	}

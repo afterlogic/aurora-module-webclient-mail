@@ -500,6 +500,12 @@ CMailCache.prototype.getFolderByFullName = function (iAccountId, sFolderFullName
 	return null;
 };
 
+CMailCache.prototype.getFolderDisplayName = function (accountId, folderFullName)
+{
+	const folder = this.getFolderByFullName(accountId, folderFullName);
+	return folder ? folder.displayName() : '';
+};
+
 CMailCache.prototype.checkCurrentFolderList = function ()
 {
 	var

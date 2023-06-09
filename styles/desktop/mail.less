@@ -46,20 +46,25 @@
 			display: block;
 		}
 		
-		.unified_marker {
+		.unified_marker,
+		.folder_marker {
 			display: none;
 		}
 		.custom_marker,
+		.folder_marker,
 		.unified_messages_panel& .unified_marker {
 			background: #959595;
 			border-radius: 10px;
 			color: white;
-			display: block;
 			float: right;
 			font-size: 8pt;
 			font-weight: normal;
 			margin-top: 1px;
 			padding: 0px 6px 1px;
+		}
+		.custom_marker,
+		.unified_messages_panel& .unified_marker {
+			display: block;
 		}
 
 		.size {

@@ -49,6 +49,7 @@ function CMessageModel()
 		}
 	}, this);
 	this.folder = ko.observable('');
+	this.folderDisplayName = '';
 	this.uid = ko.observable('');
 	this.unifiedUid = ko.observable('');
 	this.sUniq = '';
@@ -469,6 +470,7 @@ CMessageModel.prototype.parse = function (oData, iAccountId, bThreadPart, bTrust
 
 		this.accountId(iAccountId);
 		this.folder(oData.Folder);
+		this.folderDisplayName = MailCache.getFolderDisplayName(iAccountId, oData.Folder);
 		this.uid(Types.pString(oData.Uid));
 		if (Types.isNonEmptyString(oData.UnifiedUid))
 		{
