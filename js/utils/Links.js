@@ -28,7 +28,8 @@ function IsPageParam(sTemp)
  */
 function IsMsgParam(sTemp)
 {
-	return ('msg' === sTemp.substr(0, 3) && (/^[1-9][\d\w:/]*$/).test(sTemp.substr(3)));
+	// Complex message uid can contain folder full name in UTF-7
+	return ('msg' === sTemp.substr(0, 3) && (/^[1-9].*$/).test(sTemp.substr(3)));
 };
 
 /**
