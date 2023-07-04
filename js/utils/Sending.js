@@ -531,7 +531,7 @@ function GetReplyMessageBody(oMessage, iAccountId, oFetcherOrIdentity, bPasteSig
 			'TIME': oMessage.oDateModel.getTime(),
 			'SENDER': TextUtils.encodeHtml(oMessage.oFrom.getFull())
 		}),
-		sReplyBody = '<br /><br />' + this.getSignatureText(iAccountId, oFetcherOrIdentity, bPasteSignatureAnchor) + '<br /><br />' +
+		sReplyBody = '<div><br /></div><div><br /></div>' + this.getSignatureText(iAccountId, oFetcherOrIdentity, bPasteSignatureAnchor) + '<div><br /></div><div><br /></div>' +
 			'<div data-anchor="reply-title">' + sReplyTitle + '</div><blockquote>' + oMessage.getConvertedHtml() + '</blockquote>'
 	;
 
@@ -704,8 +704,8 @@ SendingUtils.getForwardMessageBody = function (oMessage, iAccountId, oFetcherOrI
 			'FULLDATE': oMessage.oDateModel.getFullDate(),
 			'SUBJECT': TextUtils.encodeHtml(oMessage.subject())
 		}),
-		sForwardBody = '<br /><br />' + this.getSignatureText(iAccountId, oFetcherOrIdentity, true) + '<br /><br />' + 
-			'<div data-anchor="reply-title">' + sForwardTitle + '</div><br /><br />' + oMessage.getConvertedHtml()
+		sForwardBody = '<div><br /></div><div><br /></div>' + this.getSignatureText(iAccountId, oFetcherOrIdentity, true) + '<div><br /></div><div><br /></div>' + 
+			'<div data-anchor="reply-title">' + sForwardTitle + '</div><div><br /></div><div><br /></div>' + oMessage.getConvertedHtml()
 	;
 
 	return sForwardBody;

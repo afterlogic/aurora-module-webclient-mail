@@ -779,7 +779,7 @@ CComposeView.prototype.fillDefault = function (oParams)
 	}
 	else if (sSignature !== '')
 	{
-		this.textBody('<br /><br />' + sSignature + '<br />');
+		this.textBody('<div><br /></div><div><br /></div>' + sSignature + '<div><br /></div>');
 	}
 
 	if (oToAddr)
