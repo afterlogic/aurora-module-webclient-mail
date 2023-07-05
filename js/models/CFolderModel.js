@@ -1052,7 +1052,9 @@ CFolderModel.prototype.initComputedFields = function ()
 		return (!this.isSystem() && this.hasExtendedInfo() && this.messageCount() === 0 && this.subfolders().length === 0);
 	}, this);
 
-	this.canRename = this.canSubscribe;
+	this.canRename = ko.computed(function () {
+		return !this.isSystem() && this.bExists;
+	}, this);
 
 	this.visibleTemplateTrigger = ko.computed(function () {
 		return Settings.AllowTemplateFolders && (this.bSelectable && !this.isSystem() || this.isTemplateStorage());
