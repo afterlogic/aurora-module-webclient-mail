@@ -25,10 +25,10 @@
 	],
 	"FontNames": [
 		[
-				"Arial",
-				"Tahoma",
-				"Verdana",
-				"Courier New"
+			"Arial",
+			"Tahoma",
+			"Verdana",
+			"Courier New"
 		],
 		"array"
 	],
@@ -38,26 +38,26 @@
 	],
 	"FontSizes": [
 		[
-				{
-						"value": 10,
-						"label": "MAILWEBCLIENT/LABEL_FONTSIZE_SMALLEST"
-				},
-				{
-						"value": 12,
-						"label": "MAILWEBCLIENT/LABEL_FONTSIZE_SMALLER"
-				},
-				{
-						"value": 16,
-						"label": "MAILWEBCLIENT/LABEL_FONTSIZE_STANDARD"
-				},
-				{
-						"value": 20,
-						"label": "MAILWEBCLIENT/LABEL_FONTSIZE_BIGGER"
-				},
-				{
-						"value": 24,
-						"label": "MAILWEBCLIENT/LABEL_FONTSIZE_LARGE"
-				}
+			{
+				"value": 10,
+				"label": "MAILWEBCLIENT/LABEL_FONTSIZE_SMALLEST"
+			},
+			{
+				"value": 12,
+				"label": "MAILWEBCLIENT/LABEL_FONTSIZE_SMALLER"
+			},
+			{
+				"value": 16,
+				"label": "MAILWEBCLIENT/LABEL_FONTSIZE_STANDARD"
+			},
+			{
+				"value": 20,
+				"label": "MAILWEBCLIENT/LABEL_FONTSIZE_BIGGER"
+			},
+			{
+				"value": 24,
+				"label": "MAILWEBCLIENT/LABEL_FONTSIZE_LARGE"
+			}
 		],
 		"array"
 	],
