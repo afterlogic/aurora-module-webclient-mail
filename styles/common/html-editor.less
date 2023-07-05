@@ -14,8 +14,31 @@
 		display: flex;
 		flex-direction: column;
 		.inactive& {
-				opacity: 0.2;
+			opacity: 0.2;
+		}
+
+		.note-toolbar {
+			.note-color-palette div .note-color-btn {
+				width: 18px;
+				height: 18px;
+				margin: 0px 0px 0 2px;
+				border-radius: 2px;
+	
+				&[data-value="#ffffff"], &[data-value="#fff"] {
+					border: 1px solid #ccc;
+				}
 			}
+	
+			.note-palette .btn.note-color-select,
+			.note-palette .note-holder-custom {
+				display: none;
+			}
+
+			.note-icon-font.note-recent-color {
+				padding: 1px 4px 4px 4px;
+				border-radius: 3px;
+			}
+		}
 		
 		.note-editing-area {
 			height: 100%;

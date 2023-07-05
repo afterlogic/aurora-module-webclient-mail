@@ -197,12 +197,19 @@ CHtmlEditorView.prototype.init = function (sText, bPlain, sTabIndex, sPlaceholde
         customfontsize: SummernoteUtils.getFontSizeButtonCreateHandler(),
       },
       colors: [
-        ['#4f6573', '#83949b', '#aab2bd', '#afb0a4', '#8b8680', '#69655a', '#c9b037', '#ced85e'],
+        ['#000000', '#ffffff', '#4f6573', '#83949b', '#8b8680', '#69655a', '#c9b037', '#ced85e'],
         ['#2b6a6c', '#00858a', '#00b4b1', '#77ce87', '#4a8753', '#8aa177', '#96b352', '#beca02'],
         ['#004c70', '#1d7299', '#109dc0', '#52b9d5', '#6c99bb', '#0a63a0', '#406cbd', '#5d9cec'],
-        ['#fc736c', '#e83855', '#e34f7c', '#f97394', '#ad5f7d', '#975298', '#b287bd', '#7e86c7'],
+        ['#e83855', '#e83855', '#e34f7c', '#f97394', '#ad5f7d', '#975298', '#b287bd', '#7e86c7'],
         ['#fdae5f', '#f9c423', '#fad371', '#ed9223', '#de692f', '#a85540', '#87564a', '#c7a57a'],
       ],
+	  colorsName: [
+		["Black", "White", "Slate Gray", "Light Gray", "Beige", "Taupe", "Gold", "Lime Green"],
+		["Teal", "Turquoise", "Aqua", "Mint Green", "Forest Green", "Olive Green", "Chartreuse", "Lemon Yellow"],
+		["Navy Blue", "Royal Blue", "Sky Blue", "Baby Blue", "Periwinkle", "Cobalt Blue", "Cornflower Blue", "Azure"],
+		["Red", "Crimson", "Fuchsia", "Pink", "Mauve", "Plum", "Lavender", "Lilac"],
+		["Peach", "Orange", "Apricot", "Tangerine", "Pumpkin", "Copper", "Chocolate", "Tan"],
+	  ],
       popover: {
         image: [
           ['image', ['resizeFull', 'resizeHalf', 'resizeQuarter', 'resizeNone']],
