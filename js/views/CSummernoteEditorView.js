@@ -190,7 +190,6 @@ CHtmlEditorView.prototype.init = function (sText, bPlain, sTabIndex, sPlaceholde
       },
       dialogsInBody: true,
       addDefaultFonts: false,
-      shortcuts: false,
       disableResizeEditor: true,
       followingToolbar: false, //true makes toolbar sticky
       buttons: {
