@@ -934,6 +934,9 @@ CMessagePaneView.prototype.onShow = function () {
 
 CMessagePaneView.prototype.onHide = function () {
   this.bShown = false
+  this.accountId(0)
+  this.folder('')
+  this.uid('')
   _.each(
     this.controllers(),
     _.bind(function (oController) {
