@@ -17,6 +17,8 @@ Ajax.registerAbortRequestHandler(Settings.ServerModuleName, function (oRequest, 
     case 'MoveMessages':
     case 'DeleteMessages':
       return (
+        oOpenedRequest.Method === 'GetRelevantFoldersInformation' ||
+        oOpenedRequest.Method === 'GetUnifiedRelevantFoldersInformation' ||
         oOpenedRequest.Method === 'GetMessage' ||
         oOpenedRequest.Method === 'GetUnifiedMailboxMessages' ||
         oOpenedRequest.Method === 'GetMessagesByFolders' ||
@@ -24,17 +26,25 @@ Ajax.registerAbortRequestHandler(Settings.ServerModuleName, function (oRequest, 
       )
     case 'GetMessages':
     case 'GetUnifiedMailboxMessages':
+      return (
+        oOpenedRequest.Method === 'GetUnifiedMailboxMessages' ||
+        oOpenedRequest.Method === 'GetMessagesByFolders' ||
+        (oOpenedRequest.Method === 'GetMessages' && oOpenedParameters.Folder === oParameters.Folder)
+      )
     case 'SetMessagesSeen':
     case 'SetMessageFlagged':
       return (
+        oOpenedRequest.Method === 'GetRelevantFoldersInformation' ||
+        oOpenedRequest.Method === 'GetUnifiedRelevantFoldersInformation' ||
         oOpenedRequest.Method === 'GetUnifiedMailboxMessages' ||
         oOpenedRequest.Method === 'GetMessagesByFolders' ||
         (oOpenedRequest.Method === 'GetMessages' && oOpenedParameters.Folder === oParameters.Folder)
       )
     case 'SetAllMessagesSeen':
       return (
-        (oOpenedRequest.Method === 'GetMessages' || oOpenedRequest.Method === 'GetMessages') &&
-        oOpenedParameters.Folder === oParameters.Folder
+        oOpenedRequest.Method === 'GetRelevantFoldersInformation' ||
+        oOpenedRequest.Method === 'GetUnifiedRelevantFoldersInformation' ||
+        (oOpenedRequest.Method === 'GetMessages' && oOpenedParameters.Folder === oParameters.Folder)
       )
     case 'ClearFolder':
       // GetRelevantFoldersInformation-request aborted during folder cleaning, not to get the wrong information.
