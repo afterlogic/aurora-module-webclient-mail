@@ -823,26 +823,26 @@ CCrea.prototype.isFocused = function () {
 
 /**
  * Sets focus.
- * @param {boolean} bKeepCurrent
+ * @param {boolean} keepCurrent
+ * @param {string} restoreText
  */
-CCrea.prototype.setFocus = function (bKeepCurrent) {
-  var aContents = this.$editableArea.contents(),
-    iTextNodeType = 3,
-    oTextNode = null,
-    sText = ''
+CCrea.prototype.setFocus = function (keepCurrent = false, restoreText) {
+  const contents = this.$editableArea.contents()
   this.$editableArea.focus()
-  if (bKeepCurrent && _.isArray(this.aRanges) && this.aRanges.length > 0) {
-    this.restoreSelectionPosition()
-  } else if (aContents.length > 0) {
-    if (aContents[0].nodeType === iTextNodeType) {
-      oTextNode = $(aContents[0])
+  if (keepCurrent && _.isArray(this.aRanges) && this.aRanges.length > 0) {
+    this.restoreSelectionPosition(restoreText)
+  } else if (contents.length > 0) {
+    const TEXT_NODE_TYPE = 3
+    let textNode = null
+    if (contents[0].nodeType === TEXT_NODE_TYPE) {
+      textNode = $(contents[0])
     } else {
-      oTextNode = $(document.createTextNode(''))
-      $(aContents[0]).before(oTextNode)
+      textNode = $(document.createTextNode(''))
+      $(contents[0]).before(textNode)
     }
 
-    sText = oTextNode.text()
-    this.setCursorPosition(oTextNode[0], sText.length)
+    const nodeText = textNode.text()
+    this.setCursorPosition(textNode[0], nodeText.length)
   }
 }
 
@@ -1020,20 +1020,17 @@ CCrea.prototype.insertEmailLink = function (sLink) {
 /**
  * Inserts link.
  *
- * @param {string} sLink
+ * @param {string} link
  */
-CCrea.prototype.insertLink = function (sLink) {
-  sLink = this.normaliseURL(sLink)
-  this.restoreSelectionPosition(sLink)
-
-  if (this.getSelectedText() === '' && Browser.ie) {
-    this.execCom('insertHTML', '<a href="' + sLink + '">' + sLink + '</a>')
+CCrea.prototype.insertLink = function (link) {
+  const normalisedLink = this.normaliseURL(link)
+  if (!this.isFocused()) {
+    this.setFocus(true, normalisedLink)
   } else {
-    var sCmd = Browser.ie8AndBelow ? 'CreateLink' : 'createlink'
-    this.execCom(sCmd, sLink)
+    this.restoreSelectionPosition(normalisedLink)
   }
 
-  this.changeFocusLink(sLink)
+  this.execCom('createlink', normalisedLink)
 }
 
 /**
@@ -1437,23 +1434,6 @@ CCrea.prototype.removeCurrentLink = function () {
   }
 }
 
-/**
- * Fix for FF - execCommand inserts broken link, if it is present not Latin.
- *
- * @param {string} sLink
- */
-CCrea.prototype.changeFocusLink = function (sLink) {
-  var oSel = null,
-    oFocusNode = null
-  if (Browser.firefox && window.getSelection) {
-    oSel = window.getSelection()
-    oFocusNode = oSel.focusNode ? oSel.focusNode.parentElement : null
-    if (oFocusNode && oFocusNode.tagName === 'A') {
-      $(oFocusNode).attr('href', sLink)
-    }
-  }
-}
-
 CCrea.prototype.removeCurrentImage = function () {
   if (this.oCurrImage) {
     this.oCurrImage.remove()
@@ -1562,26 +1542,21 @@ CCrea.prototype.checkAnchorNode = function () {
 /**
  * Restores selection position.
  *
- * @param {string} sText
+ * @param {string} restoreText
  */
-CCrea.prototype.restoreSelectionPosition = function (sText) {
-  var sRangeText = '',
-    oSel = null,
-    oRange = null,
-    oNode = null
-  sRangeText = ContenteditableUtils.setSelectionRanges(this.aRanges)
+CCrea.prototype.restoreSelectionPosition = function (restoreText = '') {
+  const rangeText = ContenteditableUtils.setSelectionRanges(this.aRanges)
   if (window.getSelection && _.isArray(this.aRanges)) {
-    sText = sText !== undefined ? sText : ''
-    if (Browser.firefox && sRangeText === '' && sText !== '') {
+    if (Browser.firefox && rangeText === '' && restoreText !== '') {
       if (window.getSelection && window.getSelection().getRangeAt) {
-        oSel = window.getSelection()
-        if (oSel.getRangeAt && oSel.rangeCount > 0) {
-          oRange = oSel.getRangeAt(0)
-          oNode = oRange.createContextualFragment(sText)
-          oRange.insertNode(oNode)
+        const selection = window.getSelection()
+        if (selection.getRangeAt && selection.rangeCount > 0) {
+          const range = selection.getRangeAt(0)
+          const node = range.createContextualFragment(restoreText)
+          range.insertNode(node)
         }
       } else if (document.selection && document.selection.createRange) {
-        document.selection.createRange().pasteHTML(sText)
+        document.selection.createRange().pasteHTML(restoreText)
       }
     }
   }
