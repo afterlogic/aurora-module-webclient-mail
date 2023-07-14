@@ -189,6 +189,7 @@ CHtmlEditorView.prototype.init = function (sText, bPlain, sTabIndex, sPlaceholde
         foreColor: '',
       },
       dialogsInBody: true,
+      tabDisable: true,
       addDefaultFonts: false,
       disableResizeEditor: true,
       followingToolbar: false, //true makes toolbar sticky

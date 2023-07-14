@@ -4231,6 +4231,21 @@ var Typing = /*#__PURE__*/function () {
       rng = range.create(tab, tabsize);
       rng.select();
     }
+  },{
+    key: "removeTab",
+    value: function removeTab(rng, tabsize) {
+      const textContent = rng.ec.textContent;
+      const cursorPos = rng.eo;
+      // Check all symbols before cursor of first [tabsize] symbols (they will be removed). All of them should be spaces
+      const startSymbols = textContent.substr(0, Math.max(cursorPos, tabsize))
+      // Chrome converts '&nbsp;&nbsp;&nbsp;&nbsp;' to '&nbsp; &nbsp; '
+      // 32 - normal space, 160 - &nbsp;
+      const isStartSymbolsAllSpaces = startSymbols.split('').every(char => char.charCodeAt(0) === 32 || char.charCodeAt(0) === 160)
+      if (isStartSymbolsAllSpaces) {
+        rng.ec.textContent = textContent.substr(tabsize)
+      }
+    }
+  }, {
     /**
      * insert paragraph
      *
@@ -4242,8 +4257,6 @@ var Typing = /*#__PURE__*/function () {
      *   1 - Break the first blockquote in the ancestors list
      *   2 - Break all blockquotes, so that the new paragraph is not quoted (this is the default)
      */
-
-  }, {
     key: "insertParagraph",
     value: function insertParagraph(editable, rng) {
       rng = rng || range.create(editable); // deleteContents on range.
@@ -5797,6 +5810,12 @@ var Editor = /*#__PURE__*/function () {
       } else {
         if (this.options.tabSize === 0) {
           return false;
+        }
+
+        if (!this.isLimited(this.options.tabSize)) {
+          this.beforeCommand();
+          this.typing.removeTab(rng, this.options.tabSize);
+          this.afterCommand();
         }
       }
     }
