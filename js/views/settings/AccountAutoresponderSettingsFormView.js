@@ -7,6 +7,7 @@ var
 	DateUtils = require('%PathToCoreWebclientModule%/js/utils/Date.js'),
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
+	CalendarUtils = require('%PathToCoreWebclientModule%/js/utils/Calendar.js'),
 	
 	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
@@ -17,9 +18,12 @@ var
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	Ajax = require('modules/%ModuleName%/js/Ajax.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
+	UserSettings = require('%PathToCoreWebclientModule%/js/Settings.js'),
 	
 	CAutoresponderModel = require('modules/%ModuleName%/js/models/CAutoresponderModel.js')
 ;
+
+require("jquery-ui/ui/widgets/datepicker");
 
 /**
  * @constructor
@@ -36,19 +40,34 @@ function CAccountAutoresponderSettingsFormView()
 	this.start = ko.observable(null);
 	this.end = ko.observable(null);
 
-	this.dateFormatDatePicker = 'yy.mm.dd';
+	this.dateFormatDatePicker = 'dd/mm/yy';
 
 	this.startDateDom = ko.observable(null);
 	this.startDate = ko.observable('');
+	this.startTime = ko.observable('');
 
 	this.endDateDom = ko.observable(null);
 	this.endDate = ko.observable('');
+	this.endTime = ko.observable('');
+
+	this.timeOptions = ko.observableArray(CalendarUtils.getTimeListStepHour((UserSettings.timeFormat() !== Enums.TimeFormat.F24) ? 'hh:mm A' : 'HH:mm', 'HH:mm'));
+	UserSettings.timeFormat.subscribe(function () {
+		this.timeOptions(CalendarUtils.getTimeListStepHour((UserSettings.timeFormat() !== Enums.TimeFormat.F24) ? 'hh:mm A' : 'HH:mm', 'HH:mm'));
+	}, this);
 	
 	AccountList.editedId.subscribe(function () {
 		if (this.bShown)
 		{
 			this.populate();
 		}
+	}, this);
+
+	this.startDateDom.subscribe(function (v) {
+		this.createDatePickerObject(v, this.startDate);
+	}, this);
+
+	this.endDateDom.subscribe(function (v) {
+		this.createDatePickerObject(v, this.endDate);
 	}, this);
 }
 
@@ -70,14 +89,8 @@ CAccountAutoresponderSettingsFormView.prototype.getCurrentValues = function ()
 
 CAccountAutoresponderSettingsFormView.prototype.onShow = function ()
 {
+	console.log('onShow');
 	this.populate();
-};
-
-CAccountAutoresponderSettingsFormView.prototype.onBind = function ()
-{
-	_.delay(_.bind(function(){
-		this.createDatePickerObject(this.startDateDom(), this.startDate);
-	}, this), 1000);
 };
 
 CAccountAutoresponderSettingsFormView.prototype.revert = function ()
@@ -216,6 +229,11 @@ CAccountAutoresponderSettingsFormView.prototype.createDatePickerObject = functio
 	$(oElement).mousedown(function() {
 		$('#ui-datepicker-div').toggle();
 	});
+};
+
+CAccountAutoresponderSettingsFormView.prototype.getCorrectedTimeList = function (oElement, value)
+{
+
 };
 
 module.exports = new CAccountAutoresponderSettingsFormView();
