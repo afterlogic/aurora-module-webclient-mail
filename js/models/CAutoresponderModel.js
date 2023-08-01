@@ -1,7 +1,8 @@
 'use strict';
 
 var
-	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js')
+	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
+	moment = require('moment');
 ;
 
 /**
@@ -14,6 +15,9 @@ function CAutoresponderModel()
 	this.enable = false;
 	this.subject = '';
 	this.message = '';
+	this.scheduled = false;
+	this.start = null;
+	this.end = null;
 }
 
 /**
@@ -27,6 +31,12 @@ CAutoresponderModel.prototype.parse = function (iAccountId, oData)
 	this.enable = !!oData.Enable;
 	this.subject = Types.pString(oData.Subject);
 	this.message = Types.pString(oData.Message);
+	
+	this.scheduled = !!oData.Scheduled;
+	this.start = moment.unix(oData.Start);
+	if (oData.End != null) {
+		this.end = moment.unix(oData.End);
+	}
 };
 
 module.exports = CAutoresponderModel;

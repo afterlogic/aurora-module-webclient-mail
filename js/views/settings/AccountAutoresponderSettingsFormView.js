@@ -4,6 +4,7 @@ var
 	_ = require('underscore'),
 	ko = require('knockout'),
 	
+	DateUtils = require('%PathToCoreWebclientModule%/js/utils/Date.js'),
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	
@@ -31,6 +32,18 @@ function CAccountAutoresponderSettingsFormView()
 	this.subject = ko.observable('');
 	this.message = ko.observable('');
 
+	this.scheduled = ko.observable(false);
+	this.start = ko.observable(null);
+	this.end = ko.observable(null);
+
+	this.dateFormatDatePicker = 'yy.mm.dd';
+
+	this.startDateDom = ko.observable(null);
+	this.startDate = ko.observable('');
+
+	this.endDateDom = ko.observable(null);
+	this.endDate = ko.observable('');
+	
 	AccountList.editedId.subscribe(function () {
 		if (this.bShown)
 		{
@@ -48,13 +61,23 @@ CAccountAutoresponderSettingsFormView.prototype.getCurrentValues = function ()
 	return [
 		this.enable(),
 		this.subject(),
-		this.message()	
+		this.message(),
+		this.scheduled(false),
+		this.start(null),
+		this.end(null),
 	];
 };
 
 CAccountAutoresponderSettingsFormView.prototype.onShow = function ()
 {
 	this.populate();
+};
+
+CAccountAutoresponderSettingsFormView.prototype.onBind = function ()
+{
+	_.delay(_.bind(function(){
+		this.createDatePickerObject(this.startDateDom(), this.startDate);
+	}, this), 1000);
 };
 
 CAccountAutoresponderSettingsFormView.prototype.revert = function ()
@@ -129,6 +152,10 @@ CAccountAutoresponderSettingsFormView.prototype.populate = function()
 			this.enable(oAccount.autoresponder().enable);
 			this.subject(oAccount.autoresponder().subject);
 			this.message(oAccount.autoresponder().message);
+			
+			this.scheduled(oAccount.autoresponder().scheduled);
+			this.start(oAccount.autoresponder().start);
+			this.end(oAccount.autoresponder().end);
 		}
 		else
 		{
@@ -165,6 +192,30 @@ CAccountAutoresponderSettingsFormView.prototype.onGetAutoresponderResponse = fun
 			}
 		}
 	}
+};
+
+CAccountAutoresponderSettingsFormView.prototype.createDatePickerObject = function (oElement, value)
+{
+	$(oElement).datepicker({
+		showOtherMonths: true,
+		selectOtherMonths: true,
+		monthNames: DateUtils.getMonthNamesArray(),
+		dayNamesMin: TextUtils.i18n('COREWEBCLIENT/LIST_DAY_NAMES_MIN').split(' '),
+		nextText: '',
+		prevText: '',
+		firstDay: Types.pInt(ModulesManager.run('CalendarWebclient', 'getWeekStartsOn')),
+		showOn: 'focus',
+		dateFormat: this.dateFormatDatePicker,
+		onClose: function (sValue) {
+			if (ko.isObservable(value)) {
+				value(sValue);
+			}
+		}
+	});
+
+	$(oElement).mousedown(function() {
+		$('#ui-datepicker-div').toggle();
+	});
 };
 
 module.exports = new CAccountAutoresponderSettingsFormView();
