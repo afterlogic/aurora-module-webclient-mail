@@ -3,11 +3,13 @@
 var
 	_ = require('underscore'),
 	ko = require('knockout'),
+	moment = require('moment'),
 	
 	DateUtils = require('%PathToCoreWebclientModule%/js/utils/Date.js'),
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	CalendarUtils = require('%PathToCoreWebclientModule%/js/utils/Calendar.js'),
+	CommonUtils = require('%PathToCoreWebclientModule%/js/utils/Common.js'),
 	
 	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
@@ -37,22 +39,30 @@ function CAccountAutoresponderSettingsFormView()
 	this.message = ko.observable('');
 
 	this.scheduled = ko.observable(false);
-	this.start = ko.observable(null);
-	this.end = ko.observable(null);
 
-	this.dateFormatDatePicker = 'dd/mm/yy';
+	this.timeFormat = (UserSettings.timeFormat() !== Enums.TimeFormat.F24) ? 'hh:mm A' : 'HH:mm';
+	this.timeFormatMoment = this.timeFormat;
+	this.dateFormatMoment = CommonUtils.getDateFormatForMoment(UserSettings.dateFormat())
+	this.dateFormatDatePicker = CalendarUtils.getDateFormatForDatePicker(UserSettings.dateFormat())
+
+	this.timeOptions = ko.observableArray(CalendarUtils.getTimeListStepHour((UserSettings.timeFormat() !== Enums.TimeFormat.F24) ? 'hh:mm A' : 'HH:mm', 'HH:mm'));
 
 	this.startDateDom = ko.observable(null);
 	this.startDate = ko.observable('');
 	this.startTime = ko.observable('');
+	this.start = ko.computed(function () {
+		return moment(this.startDate() + ' ' + this.startTime(), this.dateFormatMoment + ' ' + this.timeFormat).unix();
+	}, this);
 
 	this.endDateDom = ko.observable(null);
 	this.endDate = ko.observable('');
 	this.endTime = ko.observable('');
+	this.end = ko.computed(function () {
+		return moment(this.endDate() + ' ' + this.endTime(), this.dateFormatMoment + ' ' + this.timeFormat).unix();
+	}, this);
 
-	this.timeOptions = ko.observableArray(CalendarUtils.getTimeListStepHour((UserSettings.timeFormat() !== Enums.TimeFormat.F24) ? 'hh:mm A' : 'HH:mm', 'HH:mm'));
 	UserSettings.timeFormat.subscribe(function () {
-		this.timeOptions(CalendarUtils.getTimeListStepHour((UserSettings.timeFormat() !== Enums.TimeFormat.F24) ? 'hh:mm A' : 'HH:mm', 'HH:mm'));
+		this.timeOptions(CalendarUtils.getTimeListStepHour(this.timeFormat, 'HH:mm'));
 	}, this);
 	
 	AccountList.editedId.subscribe(function () {
@@ -69,6 +79,8 @@ function CAccountAutoresponderSettingsFormView()
 	this.endDateDom.subscribe(function (v) {
 		this.createDatePickerObject(v, this.endDate);
 	}, this);
+
+	this.allowScheduledAutoresponder = Settings.AllowScheduledAutoresponder;
 }
 
 _.extendOwn(CAccountAutoresponderSettingsFormView.prototype, CAbstractSettingsFormView.prototype);
@@ -81,15 +93,14 @@ CAccountAutoresponderSettingsFormView.prototype.getCurrentValues = function ()
 		this.enable(),
 		this.subject(),
 		this.message(),
-		this.scheduled(false),
-		this.start(null),
-		this.end(null),
+		this.scheduled(),
+		this.start(),
+		this.end(),
 	];
 };
 
 CAccountAutoresponderSettingsFormView.prototype.onShow = function ()
 {
-	console.log('onShow');
 	this.populate();
 };
 
@@ -104,7 +115,11 @@ CAccountAutoresponderSettingsFormView.prototype.getParametersForSave = function 
 		'AccountID': AccountList.editedId(),
 		'Enable': this.enable(),
 		'Subject': this.subject(),
-		'Message': this.message()
+		'Message': this.message(),
+		
+		'Scheduled': this.scheduled(),
+		'Start': this.start(),
+		'End': this.end()
 	};
 };
 
@@ -167,8 +182,29 @@ CAccountAutoresponderSettingsFormView.prototype.populate = function()
 			this.message(oAccount.autoresponder().message);
 			
 			this.scheduled(oAccount.autoresponder().scheduled);
-			this.start(oAccount.autoresponder().start);
-			this.end(oAccount.autoresponder().end);
+			var 
+				momentStart = moment(oAccount.autoresponder().start),
+				momentEnd = moment(oAccount.autoresponder().end)
+			;
+
+			if (this.startDateDom()) {
+				this.startDateDom().datepicker('option', 'dateFormat', this.dateFormatDatePicker);
+
+				if (momentStart) {
+					console.log(momentStart, momentStart.toDate());
+					this.startDateDom().datepicker('setDate', momentStart.toDate())
+					this.startTime(momentStart.format(this.timeFormat));
+				}
+			}
+
+			if (this.endDateDom()) {
+				this.endDateDom().datepicker('option', 'dateFormat', this.dateFormatDatePicker);
+
+				if (momentEnd) {
+					this.endDateDom().datepicker('setDate', momentEnd.toDate())
+					this.endTime(momentEnd.format(this.timeFormat));
+				}
+			}
 		}
 		else
 		{

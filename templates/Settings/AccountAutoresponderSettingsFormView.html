@@ -10,19 +10,19 @@
 					<label for="enable_ar" data-bind="i18n: {'key': '%MODULENAME%/LABEL_ENABLE_AUTORESPONDER'}"></label>
 				</div>
 			</div>
-			<div class="row scheduled">
+			<div class="row scheduled" data-bind="visible: allowScheduledAutoresponder">
 				<div class="label">
 					<label class="custom_checkbox" data-bind="css: {'checked': scheduled}">
 						<span class="icon"></span>
-						<input type="checkbox" id="scheduled_ar" data-bind="checked: scheduled" />
+						<input type="checkbox" id="scheduled_ar" data-bind="checked: scheduled, disable: !enable()" />
 					</label>
 					<label for="scheduled_ar" data-bind="i18n: {'key': '%MODULENAME%/LABEL_SCHEDULED_AUTORESPONDER'}"></label>
 				</div>
 				<div class="value" style="display: inline-flex;">
 					<div class="start_date">
-						<input class="date input" type="text" style="width: 100px;" spellcheck="false" readonly="readonly" data-bind="initDom: startDateDom" />
-						<span class="custom_selector" data-bind="customSelect: {'control': false, 'selected': 'selected', 'input': true, 'options': timeOptions(), 'timeOptions': timeOptions, value: startTime, optionsText: 'text', optionsValue: 'value'}">
-							<input class="value time input" style="width: 60px;" spellcheck="false" type="text" data-bind="value: startTime" />
+						<input class="date input" type="text" style="width: 100px;" spellcheck="false" readonly="readonly" data-bind="initDom: startDateDom, disable: !enable()" />
+						<span class="custom_selector" data-bind="customSelect: {'control': false, 'selected': 'selected', 'input': true, 'options': timeOptions(), 'timeOptions': timeOptions, value: startTime, optionsText: 'text', optionsValue: 'value'}, disable: !enable()">
+							<input class="value time input" style="width: 60px;" spellcheck="false" type="text" data-bind="value: startTime, disable: !enable()" />
 							<span class="dropdown">
 								<span class="dropdown_helper">
 									<span class="dropdown_arrow"><span></span></span>
@@ -32,9 +32,9 @@
 						</span>
 					</div>
 					<div class="end_date">
-						<input class="date input" type="text" style="width: 100px;" spellcheck="false" readonly="readonly" data-bind="initDom: endDateDom" />
-						<span class="custom_selector" data-bind="customSelect: {'control': false, 'selected': 'selected', 'input': true, 'options': timeOptions(), 'timeOptions': timeOptions, value: endTime, optionsText: 'text', optionsValue: 'value'}">
-							<input class="value time input" style="width: 60px;" spellcheck="false" type="text" data-bind="value: endTime" />
+						<input class="date input" type="text" style="width: 100px;" spellcheck="false" readonly="readonly" data-bind="initDom: endDateDom, disable: !enable()" />
+						<span class="custom_selector" data-bind="customSelect: {'control': false, 'selected': 'selected', 'input': true, 'options': timeOptions(), 'timeOptions': timeOptions, value: endTime, optionsText: 'text', optionsValue: 'value'}, disable: !enable()">
+							<input class="value time input" style="width: 60px;" spellcheck="false" type="text" data-bind="value: endTime, disable: !enable()" />
 							<span class="dropdown">
 								<span class="dropdown_helper">
 									<span class="dropdown_arrow"><span></span></span>
