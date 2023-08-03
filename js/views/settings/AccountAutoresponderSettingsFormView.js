@@ -39,35 +39,61 @@ function CAccountAutoresponderSettingsFormView()
 	this.message = ko.observable('');
 
 	this.scheduled = ko.observable(false);
-
-	this.timeFormat = (UserSettings.timeFormat() !== Enums.TimeFormat.F24) ? 'hh:mm A' : 'HH:mm';
-	this.timeFormatMoment = this.timeFormat;
+	
 	this.dateFormatMoment = CommonUtils.getDateFormatForMoment(UserSettings.dateFormat())
 	this.dateFormatDatePicker = CalendarUtils.getDateFormatForDatePicker(UserSettings.dateFormat())
 
-	this.timeOptions = ko.observableArray(CalendarUtils.getTimeListStepHour((UserSettings.timeFormat() !== Enums.TimeFormat.F24) ? 'hh:mm A' : 'HH:mm', 'HH:mm'));
+	// this.timeOptions = ko.observableArray(CalendarUtils.getTimeListStepHour(this.getCurrentTimeFormat(), 'HH:mm'));
+	// UserSettings.timeFormat.subscribe(function () {
+	// 	this.timeOptions(CalendarUtils.getTimeListStepHour(this.getCurrentTimeFormat(), 'HH:mm'));
+	// }, this);
 
 	this.startDateDom = ko.observable(null);
 	this.startDate = ko.observable('');
-	this.startTime = ko.observable('');
-	this.start = ko.computed(function () {
-		return moment(this.startDate() + ' ' + this.startTime(), this.dateFormatMoment + ' ' + this.timeFormat).unix();
+	// this.startTime = ko.observable('');
+	this.startTimestamp = ko.computed(function () {
+		// return moment(this.startDate() + ' ' + this.startTime(), this.dateFormatMoment + ' HH:mm').unix();
+		return moment(this.startDate(), this.dateFormatMoment).unix();
 	}, this);
 
 	this.endDateDom = ko.observable(null);
 	this.endDate = ko.observable('');
-	this.endTime = ko.observable('');
-	this.end = ko.computed(function () {
-		return moment(this.endDate() + ' ' + this.endTime(), this.dateFormatMoment + ' ' + this.timeFormat).unix();
+	// this.endTime = ko.observable('');
+	this.endTimestamp = ko.computed(function () {
+		// return moment(this.endDate() + ' ' + this.endTime(), this.dateFormatMoment + ' HH:mm').unix();
+		return moment(this.endDate(), this.dateFormatMoment).endOf('day').unix();
 	}, this);
 
-	UserSettings.timeFormat.subscribe(function () {
-		this.timeOptions(CalendarUtils.getTimeListStepHour(this.timeFormat, 'HH:mm'));
+	this.startDate.subscribe(function(v) {
+		const momentStart = moment(v, this.dateFormatMoment);
+
+		if (momentStart.isValid()) {
+			this.startDateDom().datepicker('setDate', momentStart.format(this.dateFormatMoment));
+
+			//correct end date if the internal is negative
+			const momentEnd = this.endDate() ? moment(this.endDate(), this.dateFormatMoment) : moment();
+			if (momentStart.diff(momentEnd, 'days') >= 0) {
+				this.endDate(momentStart.add(6, 'days').format(this.dateFormatMoment))
+			}
+		}
 	}, this);
 	
+	this.endDate.subscribe(function(v) {
+		const momentEnd = moment(v, this.dateFormatMoment);
+		
+		if (momentEnd.isValid()) {
+			this.endDateDom().datepicker('setDate', momentEnd.format(this.dateFormatMoment));
+			
+			//correct start date if the internal is negative
+			const momentStart = this.startDate() ? moment(this.startDate(), this.dateFormatMoment) : moment();
+			if (momentStart.diff(momentEnd, 'days') >= 0) {
+				this.startDate(momentEnd.subtract(6, 'days').format(this.dateFormatMoment))
+			}
+		}
+	}, this);
+
 	AccountList.editedId.subscribe(function () {
-		if (this.bShown)
-		{
+		if (this.bShown) {
 			this.populate();
 		}
 	}, this);
@@ -80,12 +106,27 @@ function CAccountAutoresponderSettingsFormView()
 		this.createDatePickerObject(v, this.endDate);
 	}, this);
 
+	this.scheduled.subscribe(function(bEnabled) {
+		if (bEnabled) {
+			const momentStart = moment(this.startDate(), this.dateFormatMoment);
+			if (!momentStart.isValid()) {
+				this.startDate(moment().format(this.dateFormatMoment));
+				// this.startTime(momentStart.format('HH:mm'));
+			}
+		}
+	}, this);
+
 	this.allowScheduledAutoresponder = Settings.AllowScheduledAutoresponder;
 }
 
 _.extendOwn(CAccountAutoresponderSettingsFormView.prototype, CAbstractSettingsFormView.prototype);
 
 CAccountAutoresponderSettingsFormView.prototype.ViewTemplate = '%ModuleName%_Settings_AccountAutoresponderSettingsFormView';
+
+CAccountAutoresponderSettingsFormView.prototype.getCurrentTimeFormat = function ()
+{
+	return UserSettings.timeFormat() !== Enums.TimeFormat.F24 ? 'hh:mm A' : 'HH:mm';
+}
 
 CAccountAutoresponderSettingsFormView.prototype.getCurrentValues = function ()
 {
@@ -94,8 +135,8 @@ CAccountAutoresponderSettingsFormView.prototype.getCurrentValues = function ()
 		this.subject(),
 		this.message(),
 		this.scheduled(),
-		this.start(),
-		this.end(),
+		this.startTimestamp(),
+		this.endTimestamp(),
 	];
 };
 
@@ -111,16 +152,22 @@ CAccountAutoresponderSettingsFormView.prototype.revert = function ()
 
 CAccountAutoresponderSettingsFormView.prototype.getParametersForSave = function ()
 {
-	return {
+	const oParams = {
 		'AccountID': AccountList.editedId(),
 		'Enable': this.enable(),
 		'Subject': this.subject(),
 		'Message': this.message(),
-		
 		'Scheduled': this.scheduled(),
-		'Start': this.start(),
-		'End': this.end()
-	};
+		// 'Start': null,
+		// 'End': null
+	};	
+	
+	if (this.scheduled()) {
+		oParams['Start'] = this.startTimestamp();
+		oParams['End'] = this.endTimestamp();
+	}
+
+	return oParams;
 };
 
 CAccountAutoresponderSettingsFormView.prototype.applySavedValues = function (oParameters)
@@ -135,6 +182,10 @@ CAccountAutoresponderSettingsFormView.prototype.applySavedValues = function (oPa
 		oAutoresponder.enable = oParameters.Enable;
 		oAutoresponder.subject = oParameters.Subject;
 		oAutoresponder.message = oParameters.Message;
+
+		oAutoresponder.scheduled = oParameters.Scheduled
+		oAutoresponder.start = oParameters.Start;
+		oAutoresponder.end = oParameters.End;
 	}
 };
 
@@ -171,39 +222,31 @@ CAccountAutoresponderSettingsFormView.prototype.onResponse = function (oResponse
 
 CAccountAutoresponderSettingsFormView.prototype.populate = function()
 {
-	var oAccount = AccountList.getEdited();
+	const oAccount = AccountList.getEdited();
 	
 	if (oAccount)
 	{
-		if (oAccount.autoresponder() !== null)
+		const oAutoresponder = oAccount.autoresponder();
+		if (oAutoresponder !== null)
 		{
-			this.enable(oAccount.autoresponder().enable);
-			this.subject(oAccount.autoresponder().subject);
-			this.message(oAccount.autoresponder().message);
+			this.enable(oAutoresponder.enable);
+			this.subject(oAutoresponder.subject);
+			this.message(oAutoresponder.message);
 			
-			this.scheduled(oAccount.autoresponder().scheduled);
-			var 
-				momentStart = moment(oAccount.autoresponder().start),
-				momentEnd = moment(oAccount.autoresponder().end)
-			;
-
-			if (this.startDateDom()) {
-				this.startDateDom().datepicker('option', 'dateFormat', this.dateFormatDatePicker);
-
-				if (momentStart) {
-					console.log(momentStart, momentStart.toDate());
-					this.startDateDom().datepicker('setDate', momentStart.toDate())
-					this.startTime(momentStart.format(this.timeFormat));
-				}
+			this.scheduled(oAutoresponder.scheduled);
+			
+			const momentStart = moment.unix(oAutoresponder.start);
+			if (oAutoresponder.start !== null && momentStart.isValid()) {
+				// this.startDateDom().datepicker('setDate', momentStart.toDate())
+				this.startDate(momentStart.format(this.dateFormatMoment));
+				// this.startTime(momentStart.format(this.getCurrentTimeFormat()));
 			}
-
-			if (this.endDateDom()) {
-				this.endDateDom().datepicker('option', 'dateFormat', this.dateFormatDatePicker);
-
-				if (momentEnd) {
-					this.endDateDom().datepicker('setDate', momentEnd.toDate())
-					this.endTime(momentEnd.format(this.timeFormat));
-				}
+				
+			const momentEnd = moment.unix(oAutoresponder.end);
+			if (oAutoresponder.end !== null &&  momentEnd.isValid()) {
+				// this.endDateDom().datepicker('setDate', momentEnd.toDate())
+				this.endDate(momentEnd.format(this.dateFormatMoment));
+				// this.endTime(momentEnd.format(this.getCurrentTimeFormat()));
 			}
 		}
 		else
@@ -254,7 +297,7 @@ CAccountAutoresponderSettingsFormView.prototype.createDatePickerObject = functio
 		prevText: '',
 		firstDay: Types.pInt(ModulesManager.run('CalendarWebclient', 'getWeekStartsOn')),
 		showOn: 'focus',
-		dateFormat: this.dateFormatDatePicker,
+		dateFormat: 'dd/mm/yy',
 		onClose: function (sValue) {
 			if (ko.isObservable(value)) {
 				value(sValue);
@@ -262,14 +305,9 @@ CAccountAutoresponderSettingsFormView.prototype.createDatePickerObject = functio
 		}
 	});
 
-	$(oElement).mousedown(function() {
+	$(oElement).on('mousedown', function() {
 		$('#ui-datepicker-div').toggle();
 	});
-};
-
-CAccountAutoresponderSettingsFormView.prototype.getCorrectedTimeList = function (oElement, value)
-{
-
 };
 
 module.exports = new CAccountAutoresponderSettingsFormView();

@@ -33,9 +33,15 @@ CAutoresponderModel.prototype.parse = function (iAccountId, oData)
 	this.message = Types.pString(oData.Message);
 	
 	this.scheduled = !!oData.Scheduled;
-	this.start = moment.unix(oData.Start);
-	if (oData.End != null) {
-		this.end = moment.unix(oData.End);
+	// this.start = moment.unix(oData.Start);
+	// if (oData.End != null) {
+	// 	this.end = moment.unix(oData.End);
+	// }
+	if (oData.Start) {
+		this.start = Types.pInt(oData.Start);
+	}
+	if (oData.End) {
+		this.end = Types.pInt(oData.End);
 	}
 };
 
