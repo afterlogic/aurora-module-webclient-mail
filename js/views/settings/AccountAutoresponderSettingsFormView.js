@@ -305,6 +305,8 @@ CAccountAutoresponderSettingsFormView.prototype.createDatePickerObject = functio
 		}
 	});
 
+	$(oElement).datepicker('setDate', value());
+
 	$(oElement).on('mousedown', function() {
 		$('#ui-datepicker-div').toggle();
 	});
