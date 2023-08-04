@@ -940,7 +940,7 @@ CMessagePaneView.prototype.onHide = function () {
   _.each(
     this.controllers(),
     _.bind(function (oController) {
-      if ($.isFunction(oController.onHide)) {
+      if (_.isFunction(oController.onHide)) {
         oController.onHide()
       }
     }, this)
@@ -1034,7 +1034,7 @@ CMessagePaneView.prototype.registerController = function (oController, sPlace) {
       break
   }
 
-  if ($.isFunction(oController.assignMessagePaneExtInterface)) {
+  if (_.isFunction(oController.assignMessagePaneExtInterface)) {
     oController.assignMessagePaneExtInterface(this.getExtInterface())
   }
 }
@@ -1075,7 +1075,7 @@ CMessagePaneView.prototype.doAfterPopulatingMessage = function () {
   _.each(
     this.controllers(),
     _.bind(function (oController) {
-      if ($.isFunction(oController.doAfterPopulatingMessage)) {
+      if (_.isFunction(oController.doAfterPopulatingMessage)) {
         oController.doAfterPopulatingMessage(oMessageProps)
       }
     }, this)

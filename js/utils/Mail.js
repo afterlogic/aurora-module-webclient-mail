@@ -2,10 +2,8 @@
 
 var
 	_ = require('underscore'),
-	$ = require('jquery'),
 			
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
-	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	UrlUtils = require('%PathToCoreWebclientModule%/js/utils/Url.js'),
 	
 	Storage = require('%PathToCoreWebclientModule%/js/Storage.js'),
@@ -129,7 +127,7 @@ MailUtils.actualDeleteMessages = function (aLongUids, bPermanentDelete, fAfterDe
 
 MailUtils.isAvailableRegisterMailto = function ()
 {
-	return window.navigator && $.isFunction(window.navigator.registerProtocolHandler);
+	return window.navigator && _.isFunction(window.navigator.registerProtocolHandler);
 };
 
 MailUtils.registerMailto = function (bRegisterOnce)

@@ -2,7 +2,6 @@
 
 var
 	_ = require('underscore'),
-	$ = require('jquery'),
 	ko = require('knockout'),
 	
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
@@ -29,7 +28,7 @@ function CCreateFolderPopup()
 		var bListLoading = MailCache.folderListLoading.indexOf(MailCache.editedFolderList().iAccountId) !== -1;
 		if (!bListLoading && this.isCreating())
 		{
-			if ($.isFunction(this.fCallback))
+			if (_.isFunction(this.fCallback))
 			{
 				this.fCallback(this.folderName(), this.parentFolder());
 			}
@@ -104,7 +103,7 @@ CCreateFolderPopup.prototype.cancelPopup = function ()
 {
 	if (!this.isCreating())
 	{
-		if ($.isFunction(this.fCallback))
+		if (_.isFunction(this.fCallback))
 		{
 			this.fCallback('', '');
 		}

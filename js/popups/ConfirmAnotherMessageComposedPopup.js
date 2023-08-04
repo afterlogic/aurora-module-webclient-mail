@@ -2,7 +2,6 @@
 
 var
 	_ = require('underscore'),
-	$ = require('jquery'),
 	
 	CAbstractPopup = require('%PathToCoreWebclientModule%/js/popups/CAbstractPopup.js')
 ;
@@ -27,7 +26,7 @@ CConfirmAnotherMessageComposedPopup.prototype.PopupTemplate = '%ModuleName%_Conf
  */
 CConfirmAnotherMessageComposedPopup.prototype.onOpen = function (fConfirmCallback)
 {
-	this.fConfirmCallback = $.isFunction(fConfirmCallback) ? fConfirmCallback : null;
+	this.fConfirmCallback = _.isFunction(fConfirmCallback) ? fConfirmCallback : null;
 	this.shown = true;
 };
 

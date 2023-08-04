@@ -2,7 +2,6 @@
 
 var
 	_ = require('underscore'),
-	$ = require('jquery'),
 	ko = require('knockout'),
 	
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
@@ -111,7 +110,7 @@ CAccountFoldersPaneView.prototype.hide = function (fAfterHideHandler)
 		MailCache.getFolderList(iAccountId);
 	}, 3000);
 	
-	if ($.isFunction(fAfterHideHandler))
+	if (_.isFunction(fAfterHideHandler))
 	{
 		fAfterHideHandler();
 	}

@@ -9,7 +9,7 @@ var
 	ComposeMessageToAddressesFunc = ModulesManager.run('MailWebclient', 'getComposeMessageToAddresses')
 ;
 
-if ($.isFunction(ComposeMessageToAddressesFunc))
+if (_.isFunction(ComposeMessageToAddressesFunc))
 {
 	ko.bindingHandlers.makeLinkComposeMailTo = {
 		'update': function (oElement, fValueAccessor, fAllBindingsAccessor, oViewModel, bindingContext) {

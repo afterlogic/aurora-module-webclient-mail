@@ -1,9 +1,8 @@
 'use strict';
 
 var
-	$ = require('jquery'),
-	ko = require('knockout'),
 	_ = require('underscore'),
+	ko = require('knockout'),
 	
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js')
 ;
@@ -30,7 +29,7 @@ function CServerPropertiesView(iDefaultPort, iDefaultSslPort, sId, sLabel, koDef
 	this.isEnabled = ko.observable(true);
 	this.id = sId;
 
-	if ($.isFunction(koDefaultServerValue))
+	if (_.isFunction(koDefaultServerValue))
 	{
 		koDefaultServerValue.focused.subscribe(function () {
 			if (!koDefaultServerValue.focused() && this.server() === '')
