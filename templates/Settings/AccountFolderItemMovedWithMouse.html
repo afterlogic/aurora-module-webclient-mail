@@ -6,6 +6,9 @@
 					click: function () { handler($parent); }"></span>
 			<!-- /ko -->
 		<!-- /ko -->
+		<span class="button" data-bind="customTooltip: editButtonHint(),
+			css: {'edit-folder': !isSystem() && bSelectable},
+			click: openEditFolderPopup"></span>
 		<span class="button always-refresh" data-bind="customTooltip: alwaysRefreshButtonHint, 
 			css: {'turned-on': isAlwaysRefresh()}, 
 			click: triggerAlwaysRefreshState, visible: bAllowAlwaysRefreshFolders"></span>
@@ -20,8 +23,7 @@
 	<span class="count" data-bind="text: messageCount"></span>
 	<span class="name">
 		<span class="icon" data-bind="css: 'type' + type()"></span>
-		<span class="text" data-bind="css: {'link': canRename}, text: name, visible: !edited(), 
-			click: function(){if (canRename()) edited(true);}"></span>
+		<span class="text" data-bind="text: name, visible: !edited()"></span>
 		<input type="text" spellcheck="false" class="input" maxlength="30" data-bind="value: nameForEdit, 
 			visible: edited, hasfocus: edited, onEnter: applyNameEdit, valueUpdate: 'afterkeydown', 
 			onEsc: cancelNameEdit">
