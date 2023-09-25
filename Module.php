@@ -96,20 +96,20 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 
         $oUser = \Aurora\System\Api::getAuthenticatedUser();
         if ($oUser && $oUser->isNormalOrTenant()) {
-            if (null !== $oUser->getExtendedProp(self::GetName().'::AllowChangeInputDirection')) {
-                $aSettings['AllowChangeInputDirection'] = $oUser->getExtendedProp(self::GetName().'::AllowChangeInputDirection');
+            if (null !== $oUser->getExtendedProp(self::GetName() . '::AllowChangeInputDirection')) {
+                $aSettings['AllowChangeInputDirection'] = $oUser->getExtendedProp(self::GetName() . '::AllowChangeInputDirection');
             }
-            if (null !== $oUser->getExtendedProp(self::GetName().'::MailsPerPage')) {
-                $aSettings['MailsPerPage'] = $oUser->getExtendedProp(self::GetName().'::MailsPerPage');
+            if (null !== $oUser->getExtendedProp(self::GetName() . '::MailsPerPage')) {
+                $aSettings['MailsPerPage'] = $oUser->getExtendedProp(self::GetName() . '::MailsPerPage');
             }
-            if (null !== $oUser->getExtendedProp(self::GetName().'::StarredMessagesSource')) {
-                $aSettings['StarredMessagesSource'] = $oUser->getExtendedProp(self::GetName().'::StarredMessagesSource');
+            if (null !== $oUser->getExtendedProp(self::GetName() . '::StarredMessagesSource')) {
+                $aSettings['StarredMessagesSource'] = $oUser->getExtendedProp(self::GetName() . '::StarredMessagesSource');
             }
-            if (null !== $oUser->getExtendedProp(self::GetName().'::ShowMessagesCountInFolderList')) {
-                $aSettings['ShowMessagesCountInFolderList'] = $oUser->getExtendedProp(self::GetName().'::ShowMessagesCountInFolderList');
+            if (null !== $oUser->getExtendedProp(self::GetName() . '::ShowMessagesCountInFolderList')) {
+                $aSettings['ShowMessagesCountInFolderList'] = $oUser->getExtendedProp(self::GetName() . '::ShowMessagesCountInFolderList');
             }
-            if ($this->oModuleSettings->AllowHorizontalLayout && null !== $oUser->getExtendedProp(self::GetName().'::HorizontalLayout')) {
-                $aSettings['HorizontalLayout'] = $oUser->getExtendedProp(self::GetName().'::HorizontalLayout');
+            if ($this->oModuleSettings->AllowHorizontalLayout && null !== $oUser->getExtendedProp(self::GetName() . '::HorizontalLayout')) {
+                $aSettings['HorizontalLayout'] = $oUser->getExtendedProp(self::GetName() . '::HorizontalLayout');
             }
         }
 
@@ -125,19 +125,19 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
             if ($oUser->isNormalOrTenant()) {
                 $oCoreDecorator = \Aurora\Modules\Core\Module::Decorator();
                 if (isset($Args['MailsPerPage'])) {
-                    $oUser->setExtendedProp(self::GetName().'::MailsPerPage', $Args['MailsPerPage']);
+                    $oUser->setExtendedProp(self::GetName() . '::MailsPerPage', $Args['MailsPerPage']);
                 }
                 if (isset($Args['StarredMessagesSource'])) {
-                    $oUser->setExtendedProp(self::GetName().'::StarredMessagesSource', $Args['StarredMessagesSource']);
+                    $oUser->setExtendedProp(self::GetName() . '::StarredMessagesSource', $Args['StarredMessagesSource']);
                 }
                 if (isset($Args['AllowChangeInputDirection'])) {
-                    $oUser->setExtendedProp(self::GetName().'::AllowChangeInputDirection', $Args['AllowChangeInputDirection']);
+                    $oUser->setExtendedProp(self::GetName() . '::AllowChangeInputDirection', $Args['AllowChangeInputDirection']);
                 }
                 if (isset($Args['ShowMessagesCountInFolderList'])) {
-                    $oUser->setExtendedProp(self::GetName().'::ShowMessagesCountInFolderList', $Args['ShowMessagesCountInFolderList']);
+                    $oUser->setExtendedProp(self::GetName() . '::ShowMessagesCountInFolderList', $Args['ShowMessagesCountInFolderList']);
                 }
                 if ($this->oModuleSettings->AllowHorizontalLayout && isset($Args['HorizontalLayout'])) {
-                    $oUser->setExtendedProp(self::GetName().'::HorizontalLayout', $Args['HorizontalLayout']);
+                    $oUser->setExtendedProp(self::GetName() . '::HorizontalLayout', $Args['HorizontalLayout']);
                 }
                 return $oCoreDecorator->UpdateUserObject($oUser);
             }
