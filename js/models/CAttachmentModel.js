@@ -270,7 +270,10 @@ CAttachmentModel.prototype.parseActions = function (oData)
 	}
 	else
 	{
-		this.commonExcludeActions();
+		// have to check source data since this.inline is not populated yet
+		if (!oData.IsInline) {
+			this.commonExcludeActions();
+		}
 	}
 };
 
