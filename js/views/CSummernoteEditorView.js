@@ -498,7 +498,7 @@ CHtmlEditorView.prototype.getText = function (bRemoveSignatureAnchor, isPrivate)
 		html = `<div data-private="${Settings.PrivateMessagesEmail}">${html}</div>`;
 	}
 
-  return `<div data-crea="font-wrapper" style="${SummernoteUtils.getBasicStylesString(this.getEditableArea())}">${html}</div>`
+	return `<div data-crea="font-wrapper" style="${SummernoteUtils.getBasicStylesString(this.getEditableArea())}">${html}</div>`
 };
 
 /**

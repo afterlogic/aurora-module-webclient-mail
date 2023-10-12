@@ -64,7 +64,7 @@ module.exports = {
       basicStyles.push(`font-family: ${this.getFontNameWithFamily(fontName)}`)
     }
     const fontSize = node && node.css('font-size') ? node.css('font-size') : `${Settings.DefaultFontSize}px`
-    if (fontSize) {
+    if (!!fontSize) {
       basicStyles.push(`font-size: ${fontSize}`)
     }
     return basicStyles.join('; ')

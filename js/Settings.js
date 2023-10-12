@@ -50,7 +50,7 @@ module.exports = {
 	FontNames: [],
 	DefaultFontName: '',
 	FontSizes: [],
-	DefaultFontSize: 0,
+	DefaultFontSize: 12,
 	AlwaysTryUseImageWhilePasting: true,
 	AllowHorizontalLineButton: false,
 	AllowSourceCodeButton: false,
