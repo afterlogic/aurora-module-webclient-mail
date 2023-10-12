@@ -76,7 +76,7 @@ function CHtmlEditorView(isBuiltInSignature, oParent) {
 
 	this.textChanged = ko.observable(false);
 
-	this.actualTextСhanged = ko.observable(false);
+	this.actualTextChanged = ko.observable(false);
 
 	this.templates = ko.observableArray([]);
 	this.templates.subscribe(() => {
@@ -224,13 +224,13 @@ CHtmlEditorView.prototype.init = function (sText, bPlain, sTabIndex, sPlaceholde
       callbacks: {
         onChange: () => {
           this.textChanged(true)
-          this.actualTextСhanged.valueHasMutated()
+          this.actualTextChanged.valueHasMutated()
           const html = this.oEditor ? this.oEditor.summernote('code') : ''
           this.htmlSize(html.length)
         },
         onChangeCodeview: () => {
           this.textChanged(true)
-          this.actualTextСhanged.valueHasMutated()
+          this.actualTextChanged.valueHasMutated()
           const html = this.oEditor ? this.oEditor.summernote('code') : ''
           this.htmlSize(html.length)
         },
@@ -479,7 +479,7 @@ CHtmlEditorView.prototype.getText = function (bRemoveSignatureAnchor, isPrivate)
 
 	const signatureAnchor = htmlElem.find('div[data-anchor="signature"]');
 	if (bRemoveSignatureAnchor) {
-			signatureAnchor.removeAttr('data-anchor');
+		signatureAnchor.removeAttr('data-anchor');
 	}
 
 	if (isPrivate) {
