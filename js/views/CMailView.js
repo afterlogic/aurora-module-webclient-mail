@@ -553,7 +553,7 @@ CMailView.prototype.messagesDrop = function (oToFolder, oEvent, oUi)
 			aUids = oHelper ? oHelper.data('p7-message-list-uids') : null
 		;
 
-		if ('' !== sFolder && null !== aUids)
+		if (sFolder && aUids)
 		{
 			Utils.uiDropHelperAnim(oEvent, oUi);
 			if(this.needToCopyDraggedItems())
