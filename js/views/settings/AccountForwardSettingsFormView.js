@@ -2,7 +2,6 @@
 
 var
 	_ = require('underscore'),
-	$ = require('jquery'),
 	ko = require('knockout'),
 	
 	AddressUtils = require('%PathToCoreWebclientModule%/js/utils/Address.js'),
@@ -33,6 +32,7 @@ function CAccountForwardSettingsFormView()
 	CAbstractSettingsFormView.call(this, Settings.ServerModuleName);
 	
 	this.enable = ko.observable(false);
+	this.keepcopy = ko.observable(true);
 	this.email = ko.observable('');
 	this.email.focused = ko.observable(false);
 
@@ -52,7 +52,8 @@ CAccountForwardSettingsFormView.prototype.getCurrentValues = function ()
 {
 	return [
 		this.enable(),
-		this.email()
+		this.keepcopy(),
+		this.email(),
 	];
 };
 
@@ -67,7 +68,8 @@ CAccountForwardSettingsFormView.prototype.getParametersForSave = function ()
 	return {
 		'AccountID': oAccount.id(),
 		'Enable': this.enable(),
-		'Email': $.trim(this.email())
+		'Email': TextUtils.trim(this.email()),
+		'KeepMessageCopy': this.keepcopy(),
 	};
 };
 
@@ -82,6 +84,7 @@ CAccountForwardSettingsFormView.prototype.applySavedValues = function (oParamete
 	{
 		oForward.enable = oParameters.Enable;
 		oForward.email = oParameters.Email;
+		oForward.keepcopy = oParameters.KeepMessageCopy;
 	}
 };
 
@@ -90,12 +93,10 @@ CAccountForwardSettingsFormView.prototype.save = function ()
 	var
 		fSaveData = function() {
 			this.isSaving(true);
-
 			this.updateSavedState();
-
 			Ajax.send('UpdateForward', this.getParametersForSave(), this.onResponse, this);
 		}.bind(this),
-		sEmail = $.trim(this.email())
+		sEmail = TextUtils.trim(this.email())
 	;
 
 	if (this.enable() && sEmail === '')
@@ -151,6 +152,7 @@ CAccountForwardSettingsFormView.prototype.populate = function ()
 	if (oForward !== null)
 	{
 		this.enable(oForward.enable);
+		this.keepcopy(oForward.keepcopy);
 		this.email(oForward.email);
 	}
 	else

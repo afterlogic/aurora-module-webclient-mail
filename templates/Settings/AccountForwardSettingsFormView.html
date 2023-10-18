@@ -10,6 +10,15 @@
 					<label for="enable_fwd" data-bind="i18n: {'key': '%MODULENAME%/LABEL_ENABLE_FORWARD'}"></label>
 				</div>
 			</div>
+			<div class="row keepcopy">
+				<div class="value">
+					<label class="custom_checkbox" data-bind="css: {'checked': keepcopy, 'disabled': !enable()}">
+						<span class="icon"></span>
+						<input type="checkbox" id="forward_keepcopy" data-bind="checked: keepcopy, disable: !enable()" />
+					</label>
+					<label for="forward_keepcopy" data-bind="css: {'disabled': !enable()}, i18n: {'key': '%MODULENAME%/LABEL_FORWARD_KEEPCOPY'}"></label>
+				</div>
+			</div>
 			<div class="row">
 				<span class="label" data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_EMAIL'}"></span>
 				<input class="value input" spellcheck="false" type="text" data-bind="value: email, disable: !enable(), hasfocus: email.focused" />

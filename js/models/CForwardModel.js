@@ -12,6 +12,7 @@ function CForwardModel()
 	this.iAccountId = 0;
 
 	this.enable = false;
+	this.keepcopy = false;
 	this.email = '';
 }
 
@@ -24,6 +25,7 @@ CForwardModel.prototype.parse = function (iAccountId, oData)
 	this.iAccountId = iAccountId;
 
 	this.enable = !!oData.Enable;
+	this.keepcopy = !!oData.KeepMessageCopy;
 	this.email = Types.pString(oData.Email);
 };
 
