@@ -4,8 +4,10 @@ var
 	_ = require('underscore'),
 	$ = require('jquery'),
 	ko = require('knockout'),
+	moment = require('moment'),
 	
-	DateUtils = require('%PathToCoreWebclientModule%/js/utils/Date.js'),
+	Utils = require('%PathToCoreWebclientModule%/js/utils/Common.js'),
+	CoreDateUtils = require('%PathToCoreWebclientModule%/js/utils/Date.js'),
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	
@@ -17,16 +19,21 @@ var
 	ModulesManager = require('%PathToCoreWebclientModule%/js/ModulesManager.js'),
 	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
 	Screens = require('%PathToCoreWebclientModule%/js/Screens.js'),
+	UserSettings = require('%PathToCoreWebclientModule%/js/Settings.js'),
+	CDateModel = require('%PathToCoreWebclientModule%/js/models/CDateModel.js'),
 	
 	CPageSwitcherView = require('%PathToCoreWebclientModule%/js/views/CPageSwitcherView.js'),
 	
 	ComposeUtils = require('modules/%ModuleName%/js/utils/Compose.js'),
 	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
 	MailUtils = require('modules/%ModuleName%/js/utils/Mail.js'),
+	DateUtils = require('modules/%ModuleName%/js/utils/Date.js'),
 	
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	MailCache  = require('modules/%ModuleName%/js/Cache.js'),
-	Settings  = require('modules/%ModuleName%/js/Settings.js')
+	Settings  = require('modules/%ModuleName%/js/Settings.js'),
+
+	CalendarUtils = require('%PathToCoreWebclientModule%/js/utils/Calendar.js')
 ;
 
 require("jquery-ui/ui/widgets/datepicker");
@@ -97,13 +104,17 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 	this.allowAdvancedSearch = ko.computed(function () {
 		return !ModulesManager.isModuleIncluded('MailNotesPlugin') || this.folderFullName() !== 'Notes';
 	}, this);
+	this.searchHighlightedInputFormatted = ko.observable('');
 	this.searchHighlightedInput = ko.observable('');
+	this.searchHighlightedInput.subscribe(() => {
+		this.searchHighlightedInputFormatted(DateUtils.formattedDateSearchHighlightedInput(this.searchHighlightedInput()))
+	})
 	this.searchInput = ko.computed({
 		read: () => {
 			if (this.isStarredInAllFolders()) {
-			return `${this.searchHighlightedInput()} folders:all`;
+				return `${this.searchHighlightedInputFormatted()} folders:all`;
 			}
-			return this.searchHighlightedInput();
+			return this.searchHighlightedInputFormatted();
 		},
 		write: (value) => {
 			if (this.isStarredInAllFolders()) {
@@ -406,10 +417,41 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 	this.searchDateStartFocus = ko.observable(false);
 	this.searchDateEndFocus = ko.observable(false);
 	this.searchDateStartDom = ko.observable(null);
+	this.searchDateStartTimestamp = ko.observable('');
 	this.searchDateStart = ko.observable('');
+	this.searchDateStart.subscribe((v) => {
+		if (v) {
+			this.searchDateStartTimestamp(moment(v, Utils.getDateFormatForMoment(UserSettings.dateFormat())).toDate().getTime() / 1000)
+		}
+	})
 	this.searchDateEndDom = ko.observable(null);
+	this.searchDateEndTimestamp = ko.observable('');
 	this.searchDateEnd = ko.observable('');
-	this.dateFormatDatePicker = 'yy.mm.dd';
+	this.searchDateEnd.subscribe((v) => {
+		if (v) {
+			this.searchDateEndTimestamp(moment(v, Utils.getDateFormatForMoment(UserSettings.dateFormat())).toDate().getTime() / 1000)
+		}
+	})
+	this.dateFormatDatePicker = ko.computed(() => CalendarUtils.getDateFormatForDatePicker(UserSettings.dateFormat()));
+	UserSettings.dateFormat.subscribe(() => {
+		const dateModelStart = new CDateModel()
+		const dateModelEnd = new CDateModel()
+
+		if (this.searchDateStartTimestamp()) {
+			dateModelStart.parse(this.searchDateStartTimestamp())
+			this.searchDateStart(dateModelStart.getShortDate())
+		}
+		if (this.searchDateEndTimestamp()) {
+			dateModelEnd.parse(this.searchDateEndTimestamp())
+			this.searchDateEnd(dateModelEnd.getShortDate())
+		}
+
+		this.createDatePickerObject(this.searchDateStartDom(), this.searchDateStart);
+		this.createDatePickerObject(this.searchDateEndDom(), this.searchDateEnd);
+
+		this.searchHighlightedInputFormatted(DateUtils.formattedDateSearchHighlightedInput(this.searchHighlightedInput()))
+	});
+
 	this.attachmentsPlaceholder = ko.computed(function () {
 		return TextUtils.i18n('%MODULENAME%/LABEL_HAS_ATTACHMENTS');
 	}, this);
@@ -429,16 +471,17 @@ CMessageListView.prototype.addNewAccount = function ()
 
 CMessageListView.prototype.createDatePickerObject = function (oElement, value)
 {
+	$(oElement).datepicker("destroy");
 	$(oElement).datepicker({
 		showOtherMonths: true,
 		selectOtherMonths: true,
-		monthNames: DateUtils.getMonthNamesArray(),
+		monthNames: CoreDateUtils.getMonthNamesArray(),
 		dayNamesMin: TextUtils.i18n('COREWEBCLIENT/LIST_DAY_NAMES_MIN').split(' '),
 		nextText: '',
 		prevText: '',
 		firstDay: Types.pInt(ModulesManager.run('CalendarWebclient', 'getWeekStartsOn')),
 		showOn: 'focus',
-		dateFormat: this.dateFormatDatePicker,
+		dateFormat: this.dateFormatDatePicker(),
 		onClose: function (sValue) {
 			if (ko.isObservable(value)) {
 				value(sValue);
@@ -675,8 +718,7 @@ CMessageListView.prototype.calculateSearchStringFromAdvancedForm  = function ()
 		sSubject = this.searchInputSubject(),
 		sText = this.searchInputText(),
 		bAttachmentsCheckbox = this.searchAttachmentsCheckbox(),
-		sDateStart = this.searchDateStart(),
-		sDateEnd = this.searchDateEnd(),
+		[dateStartServerFormat, dateEndServerFormat] = DateUtils.changeDateStartAndDateEndformatForSend(this.searchDateStart(), this.searchDateEnd()),
 		aOutput = [],
 		fEsc = function (sText) {
 
@@ -716,9 +758,9 @@ CMessageListView.prototype.calculateSearchStringFromAdvancedForm  = function ()
 		aOutput.push('has:attachments');
 	}
 
-	if (sDateStart !== '' || sDateEnd !== '')
-	{
-		aOutput.push('date:' + fEsc(sDateStart) + '/' + fEsc(sDateEnd));
+	if (dateStartServerFormat !== '' || dateEndServerFormat !== '')
+	{	
+		aOutput.push('date:' + fEsc(dateStartServerFormat) + '/' + fEsc(dateEndServerFormat));
 	}
 
 	if (this.selectedSearchFoldersMode() === Enums.SearchFoldersMode.Sub || this.selectedSearchFoldersMode() === Enums.SearchFoldersMode.All)
@@ -729,18 +771,46 @@ CMessageListView.prototype.calculateSearchStringFromAdvancedForm  = function ()
 	return aOutput.join(' ');
 };
 
+CMessageListView.prototype.manualChangeSearchString = function (searchInput) {
+	const searchKeywords = ['date:', 'subject:', 'text:', 'from:', 'to:', 'has:', 'folders:'];
+	const regex = new RegExp('\\s(' + searchKeywords.join('|') + ')', 'g');
+	const searchInputArr = (' ' + searchInput).split(regex);
+	let newSearchInput = '';
+
+	for (let i = 1; i < searchInputArr.length; i = i + 2) {
+		const keyword = searchInputArr[i];
+		const value = searchInputArr[i + 1];
+		if (keyword === searchKeywords[0]) {
+			const [dateStartClientFormat, dateEndClientFormat] = value.split(' - ');
+			const [dateStartServerFormat, dateEndServerFormat] = DateUtils.changeDateStartAndDateEndformatForSend(dateStartClientFormat, dateEndClientFormat);
+
+			if (dateStartServerFormat || dateEndServerFormat) {
+				newSearchInput += keyword + dateStartServerFormat + '/' + dateEndServerFormat + ' ';
+			}
+		} else {
+			newSearchInput += keyword + value + ' ';
+		}
+	}
+
+	return newSearchInput;
+};
+
 CMessageListView.prototype.onSearchClick = function ()
 {
 	var
 		sFolder = MailCache.getCurrentFolderFullname(),
-		iPage = 1
+		iPage = 1,
+		searchInput = this.searchInput()
 	;
 	
 	if (this.allowAdvancedSearch() && this.bAdvancedSearch()) {
-		this.searchInput(this.calculateSearchStringFromAdvancedForm());
+		searchInput = this.calculateSearchStringFromAdvancedForm();
 		this.bAdvancedSearch(false);
+	} else {
+		searchInput = this.manualChangeSearchString(searchInput)
 	}
-	this.changeRoutingForMessageList(sFolder, iPage, '', this.searchInput(), this.filters());
+
+	this.changeRoutingForMessageList(sFolder, iPage, '', searchInput, this.filters());
 };
 
 CMessageListView.prototype.onRetryClick = function ()
@@ -1111,7 +1181,7 @@ CMessageListView.prototype.onAdvancedSearchClick = function ()
 
 CMessageListView.prototype.calculateSearchStringForDescription = function ()
 {
-	return TextUtils.encodeHtml(this.search().replace(/(^|\s)folders:(all|sub)(\s|$)/, ''));
+	return TextUtils.encodeHtml(this.searchHighlightedInputFormatted().replace(/(^|\s)folders:(all|sub)(\s|$)/, ''));
 };
 
 CMessageListView.prototype.initUploader = function ()

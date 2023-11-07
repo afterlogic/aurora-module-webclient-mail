@@ -41,8 +41,7 @@ function CAccountAutoresponderSettingsFormView()
 	this.scheduled = ko.observable(false);
 	
 	this.dateFormatMoment = CommonUtils.getDateFormatForMoment(UserSettings.dateFormat())
-	this.dateFormatDatePicker = CalendarUtils.getDateFormatForDatePicker(UserSettings.dateFormat())
-
+	this.dateFormatDatePicker = 'dd/mm/yy'
 	// this.timeOptions = ko.observableArray(CalendarUtils.getTimeListStepHour(this.getCurrentTimeFormat(), 'HH:mm'));
 	// UserSettings.timeFormat.subscribe(function () {
 	// 	this.timeOptions(CalendarUtils.getTimeListStepHour(this.getCurrentTimeFormat(), 'HH:mm'));
@@ -288,6 +287,7 @@ CAccountAutoresponderSettingsFormView.prototype.onGetAutoresponderResponse = fun
 
 CAccountAutoresponderSettingsFormView.prototype.createDatePickerObject = function (oElement, value)
 {
+	this.dateFormatDatePicker = CalendarUtils.getDateFormatForDatePicker(UserSettings.dateFormat())
 	$(oElement).datepicker({
 		showOtherMonths: true,
 		selectOtherMonths: true,
@@ -297,7 +297,7 @@ CAccountAutoresponderSettingsFormView.prototype.createDatePickerObject = functio
 		prevText: '',
 		firstDay: Types.pInt(ModulesManager.run('CalendarWebclient', 'getWeekStartsOn')),
 		showOn: 'focus',
-		dateFormat: 'dd/mm/yy',
+		dateFormat: this.dateFormatDatePicker,
 		onClose: function (sValue) {
 			if (ko.isObservable(value)) {
 				value(sValue);

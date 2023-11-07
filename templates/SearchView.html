@@ -3,7 +3,7 @@
 		<span class="icon search"></span>
 		<input class="field hide" spellcheck="false" type="text" data-bind="value: searchHighlightedInput" />
 		<div class="field" contenteditable="true" spellcheck="false" 
-			 data-bind="highlighter: {valueObserver: searchHighlightedInput, highlighterValueObserver: searchSpan, highlightTrigger: highlightTrigger}, 
+			 data-bind="highlighter: {valueObserver: searchHighlightedInputFormatted, highlighterValueObserver: searchSpan, highlightTrigger: highlightTrigger}, 
 						onEnter: onSearchClick, hasfocus: isFocused" ></div>
 		<div class="fields extended">
 			<span class="search_fieldset">
