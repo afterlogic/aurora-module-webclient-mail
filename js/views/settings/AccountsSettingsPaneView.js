@@ -192,9 +192,12 @@ function CAccountsSettingsPaneView()
 	AccountList.editedId.subscribe(function () {
 		this.populate();
 	}, this);
+
+	App.broadcastEvent('%ModuleName%::ConstructView::after', { Name: this.ViewConstructorName, View: this })
 }
 
 CAccountsSettingsPaneView.prototype.ViewTemplate = '%ModuleName%_Settings_AccountsSettingsPaneView';
+CAccountsSettingsPaneView.prototype.ViewConstructorName = 'CAccountsSettingsPaneView'
 
 /**
  * Checks if there are changes in accounts settings pane.
