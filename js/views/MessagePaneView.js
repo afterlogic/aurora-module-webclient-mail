@@ -807,6 +807,7 @@ CMessagePaneView.prototype.executePrint = function () {
     this.textBodyForNewWindow(oMessage.getConvertedHtml(UrlUtils.getAppPath(), true))
     sHtml = $(this.domMessageForPrint()).html()
 
+    oWin.document.title = this.subject()
     $(oWin.document.body).html(sHtml)
     oWin.print()
   }
