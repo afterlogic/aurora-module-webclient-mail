@@ -10,6 +10,7 @@ var
 	moment = require('moment'),
 	
 	Utils = require('%PathToCoreWebclientModule%/js/utils/Common.js'),
+	Logger = require('%PathToCoreWebclientModule%/js/utils/Logger.js'),
 	
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	
@@ -90,7 +91,7 @@ CMessagesDictionary.prototype.checkAndClear = function ()
 	
 	if (iCount > iMessagesLimitToStore)
 	{
-		Utils.log('checkAndClear', iCount, Settings.MailsPerPage, iMessagesLimitToStore);
+		Logger.log('checkAndClear', iCount, Settings.MailsPerPage, iMessagesLimitToStore);
 		
 		// Update last access time for messages on the current page.
 		_.each(MailCache.messages(), function (oMessage) {
@@ -111,7 +112,7 @@ CMessagesDictionary.prototype.checkAndClear = function ()
 			}
 		}.bind(this));
 		
-		Utils.log('checkAndClear', _.size(this.oMessages));
+		Logger.log('checkAndClear', _.size(this.oMessages));
 	}
 };
 
