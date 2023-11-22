@@ -72,12 +72,13 @@ function CAccountFoldersPaneView()
 		}, buttonData));
 	}.bind(this));
 
-	App.broadcastEvent('%ModuleName%::ConstructView::after', {'Name': 'CAccountFoldersPaneView', 'View': this});
+	App.broadcastEvent('%ModuleName%::ConstructView::after', {'Name': this.ViewConstructorName, 'View': this});
 	
 	this.afterMove = _.debounce(_.bind(this.folderListOrderUpdate, this), 3000);
 }
 
 CAccountFoldersPaneView.prototype.ViewTemplate = '%ModuleName%_Settings_AccountFoldersPaneView';
+CAccountFoldersPaneView.prototype.ViewConstructorName = 'CAccountFoldersPaneView'
 
 CAccountFoldersPaneView.prototype.folderListOrderUpdate = function ()
 {
