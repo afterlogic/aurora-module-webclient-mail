@@ -6,7 +6,7 @@ var
 	ko = require('knockout'),
 	moment = require('moment'),
 	
-	Utils = require('%PathToCoreWebclientModule%/js/utils/Common.js'),
+	Logger = require('%PathToCoreWebclientModule%/js/utils/Logger.js'),
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	
@@ -583,7 +583,7 @@ CFolderModel.prototype.removeAllMessages = function ()
 	if (MailCache.currentMessage() && MailCache.currentMessage().accountId() === this.iAccountId 
 			&& MailCache.currentMessage().folder() === this.fullName())
 	{
-		Utils.log('removeAllMessages, the current message is in the list to remove', MailCache.currentMessage() ? {'accountId': MailCache.currentMessage().accountId(),'folder': MailCache.currentMessage().folder(),'uid': MailCache.currentMessage().uid()} : null);
+		Logger.log('removeAllMessages, the current message is in the list to remove', MailCache.currentMessage() ? {'accountId': MailCache.currentMessage().accountId(),'folder': MailCache.currentMessage().folder(),'uid': MailCache.currentMessage().uid()} : null);
 		aMessagesUidsToRemove = _.without(aMessagesUidsToRemove, MailCache.currentMessage().longUid());
 	}
 	_.each(aMessagesUidsToRemove, function (sUid) {
@@ -814,7 +814,7 @@ CFolderModel.prototype.commitDeleted = function (aUids)
 				&& MailCache.currentMessage().uid() === sUid;
 		if (bCurrentMessageIsBeingDeleted)
 		{
-			Utils.log('commitDeleted, the current message is to remove', MailCache.currentMessage() ? {'accountId': MailCache.currentMessage().accountId(),'folder': MailCache.currentMessage().folder(),'uid': MailCache.currentMessage().uid()} : null);
+			Logger.log('commitDeleted, the current message is to remove', MailCache.currentMessage() ? {'accountId': MailCache.currentMessage().accountId(),'folder': MailCache.currentMessage().folder(),'uid': MailCache.currentMessage().uid()} : null);
 		}
 		else
 		{

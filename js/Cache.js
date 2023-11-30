@@ -9,6 +9,7 @@ var
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	Utils = require('%PathToCoreWebclientModule%/js/utils/Common.js'),
+	Logger = require('%PathToCoreWebclientModule%/js/utils/Logger.js'),
 	
 	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
 	App = require('%PathToCoreWebclientModule%/js/App.js'),
@@ -852,7 +853,7 @@ CMailCache.prototype.requestMessageList = function (sFolder, iPage, sSearch, sFi
 	var oFolder = this.getFolderByFullName(this.currentAccountId(), sFolder);
 	if (!oFolder)
 	{
-		Utils.log('requestMessageList, error: folder not found ', JSON.stringify({
+		Logger.log('requestMessageList, error: folder not found ', JSON.stringify({
 			'currentAccountId': this.currentAccountId(),
 			'sFolder': sFolder,
 			'iPage': iPage,
@@ -1794,7 +1795,7 @@ CMailCache.prototype.onCurrentGetMessagesResponse = function (oResponse, oReques
 
 	if (!oResponse.Result)
 	{
-		Utils.log('onCurrentGetMessagesResponse, error ', JSON.stringify(oRequest).substr(0, 300), JSON.stringify(oResponse).substr(0, 300));
+		Logger.log('onCurrentGetMessagesResponse, error ', JSON.stringify(oRequest).substr(0, 300), JSON.stringify(oResponse).substr(0, 300));
 		Api.showErrorByCode(oResponse);
 		if (this.messagesLoading() === true && (this.messages().length === 0 || oResponse.ErrorCode !== Enums.Errors.NotDisplayedError))
 		{
@@ -1822,7 +1823,7 @@ CMailCache.prototype.onGetMessagesResponse = function (oResponse, oRequest)
 	}
 	else
 	{
-		Utils.log('onGetMessagesResponse, error ', JSON.stringify(oRequest).substr(0, 300), JSON.stringify(oResponse).substr(0, 300));
+		Logger.log('onGetMessagesResponse, error ', JSON.stringify(oRequest).substr(0, 300), JSON.stringify(oResponse).substr(0, 300));
 	}
 };
 
