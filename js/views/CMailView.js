@@ -338,10 +338,14 @@ CMailView.prototype.openMessageInNewWindow = function (oMessage)
 			sFolder = oMessage.folder(),
 			sUid = oMessage.longUid(),
 			oFolder = this.folderList().getFolderByFullName(sFolder),
-			bDraftFolder = (oFolder.type() === Enums.FolderTypes.Drafts),
+			bDraftFolder = (oFolder?.type() === Enums.FolderTypes.Drafts),
 			sHash = ''
 		;
 
+		if (this.isUnifiedFolderCurrent()) {
+			sFolder = MailCache.oUnifiedInbox.fullName()
+			bDraftFolder = false
+		}
 		if (bDraftFolder)
 		{
 			sHash = Routing.buildHashFromArray(LinksUtils.getComposeFromMessage('drafts', iAccountId, sFolder, sUid));
