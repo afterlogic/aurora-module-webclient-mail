@@ -777,19 +777,24 @@ CMessageListView.prototype.manualChangeSearchString = function (searchInput) {
 	const searchInputArr = (' ' + searchInput).split(regex);
 	let newSearchInput = '';
 
-	for (let i = 1; i < searchInputArr.length; i = i + 2) {
-		const keyword = searchInputArr[i];
-		const value = searchInputArr[i + 1];
-		if (keyword === searchKeywords[0]) {
-			const [dateStartClientFormat, dateEndClientFormat] = value.split(' - ');
-			const [dateStartServerFormat, dateEndServerFormat] = DateUtils.changeDateStartAndDateEndformatForSend(dateStartClientFormat, dateEndClientFormat);
+	if (searchInputArr.length > 1) { //there are keywords in the search string
+		for (let i = 1; i < searchInputArr.length; i = i + 2) {
+			const keyword = searchInputArr[i];
+			const value = searchInputArr[i + 1];
 
-			if (dateStartServerFormat || dateEndServerFormat) {
-				newSearchInput += keyword + dateStartServerFormat + '/' + dateEndServerFormat + ' ';
+			if (keyword === searchKeywords[0]) {
+				const [dateStartClientFormat, dateEndClientFormat] = value.split(' - ');
+				const [dateStartServerFormat, dateEndServerFormat] = DateUtils.changeDateStartAndDateEndformatForSend(dateStartClientFormat, dateEndClientFormat);
+	
+				if (dateStartServerFormat || dateEndServerFormat) {
+					newSearchInput += keyword + dateStartServerFormat + '/' + dateEndServerFormat + ' ';
+				}
+			} else {
+				newSearchInput += keyword + value + ' ';
 			}
-		} else {
-			newSearchInput += keyword + value + ' ';
 		}
+	} else {
+		newSearchInput = searchInput; //search string is just a text an has no any keywords
 	}
 
 	return newSearchInput;
