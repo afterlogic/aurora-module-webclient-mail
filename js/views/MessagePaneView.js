@@ -693,6 +693,9 @@ CMessagePaneView.prototype.onRoute = function (aParams) {
   this.folder(oIdentifiers.sFolder)
   MailCache.setCurrentMessage(oIdentifiers.iAccountId, oIdentifiers.sFolder, oIdentifiers.sUid)
 
+  if (App.isNewTab) {
+    MailCache.setCurrentFolder(oParams.Folder, oParams.Filters)
+  }
   this.contentHasFocus(true)
 }
 
