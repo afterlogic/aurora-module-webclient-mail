@@ -274,6 +274,7 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 				? TextUtils.i18n('%MODULENAME%/LABEL_IN_ALL_MAIL_FOLDERS')
 				: TextUtils.i18n('%MODULENAME%/LABEL_IN_THIS_FOLDER');
 	});
+	this.useSubfoldersSearch = ko.observable(false);
 
 	this.allowSearchEverywhere = ko.computed(function () {
 		return !!this.folderList().allMailsFolder();
@@ -281,16 +282,27 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 	this.folderBeforeSearchEverywhere = ko.observable('');
 	this.filtersBeforeSearchEverywhere = ko.observable('');
 	this.searchText = ko.computed(function () {
-		if (this.isEverywhereSearch())
-		{
-			return TextUtils.i18n('%MODULENAME%/INFO_SEARCH_EVERYWHERE_RESULT', {
-				'SEARCH': SearchUtils.getSearchStringForDescription.call(this)
-			});
+		let sText = ''
+		const sSearchText = SearchUtils.getSearchStringForDescription.call(this)
+		const sFolderName = MailCache.getCurrentFolder() ? TextUtils.encodeHtml(MailCache.getCurrentFolder().displayName()) : ''
+
+		if (this.isEverywhereSearch()) {
+			sText = TextUtils.i18n('%MODULENAME%/INFO_SEARCH_EVERYWHERE_RESULT', {
+				'SEARCH': sSearchText
+			})
+		} else if (this.useSubfoldersSearch()) {
+			sText = TextUtils.i18n('%MODULENAME%/INFO_SEARCH_SUBFOLDERS_RESULT', {
+				'SEARCH': sSearchText,
+				'FOLDER': sFolderName
+			})
+	 	} else {
+			sText = TextUtils.i18n('%MODULENAME%/INFO_SEARCH_RESULT', {
+				'SEARCH': sSearchText,
+				'FOLDER': sFolderName
+			})
 		}
-		return TextUtils.i18n('%MODULENAME%/INFO_SEARCH_RESULT', {
-			'SEARCH': SearchUtils.getSearchStringForDescription.call(this),
-			'FOLDER': MailCache.getCurrentFolder() ? TextUtils.encodeHtml(MailCache.getCurrentFolder().displayName()) : ''
-		});
+
+		return sText
 	}, this);
 
 	this.unseenFilterText = ko.computed(function () {
@@ -670,6 +682,7 @@ CMessageListView.prototype.setCurrentFolder = function ()
 CMessageListView.prototype.requestMessageList = function (iPage)
 {
 	var sFullName = MailCache.getCurrentFolderFullname();
+	var sFilters = this.filters();
 	
 	if (iPage === undefined)
 	{
@@ -678,11 +691,15 @@ CMessageListView.prototype.requestMessageList = function (iPage)
 	
 	if (sFullName.length > 0)
 	{
-		if (this.filters() === Enums.FolderFilter.Unseen)
+		if (sFilters === Enums.FolderFilter.Unseen)
 		{
 			MailCache.waitForUnseenMessages(true);
 		}
-		MailCache.changeCurrentMessageList(sFullName, iPage, this.search(), this.filters(), this.sSortBy, this.iSortOrder);
+		if (this.useSubfoldersSearch()) {
+			sFilters = sFilters ? sFilters + ',' : '' 
+			sFilters += 'subfolders'
+		}
+		MailCache.changeCurrentMessageList(sFullName, iPage, this.search(), sFilters, this.sSortBy, this.iSortOrder);
 	}
 	else
 	{
@@ -727,6 +744,16 @@ CMessageListView.prototype.toggleGlobalSearch = function ()
 	}
 };
 
+CMessageListView.prototype.onExtendSearchClick = function ()
+{
+	if (this.search()) {
+		this.useSubfoldersSearch(true);
+		
+		// this.onSearchClick();
+		this.requestMessageList();
+	}
+};
+
 CMessageListView.prototype.onRetryClick = function ()
 {
 	this.requestMessageList();
@@ -749,6 +776,7 @@ CMessageListView.prototype.onClearSearchClick = function ()
 		sUid = '';
 	}
 	this.clearAdvancedSearch();
+	this.useSubfoldersSearch(false);
 	this.changeRoutingForMessageList(sFolder, iPage, sUid, sSearch, sFilters, this.sSortBy, this.iSortOrder);
 };
 

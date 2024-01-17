@@ -18,11 +18,13 @@
 					<span class="list_notification search_results" data-bind="visible: visibleInfoSearchList">
 						<span class="link" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_CLEAR_SEARCH'}, click: onClearSearchClick"></span>
 						<span class="description" data-bind="html: searchText"></span>
+						<span class="button" data-bind="visible: !useSubfoldersSearch(), i18n: {'key': '%MODULENAME%/LABEL_IN_CURRENT_AND_SUB_FOLDERS'}, click: onExtendSearchClick"></span>
 					</span>
 
 					<span class="list_notification" data-bind="visible: visibleInfoSearchEmpty">
 						<span class="link" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_CLEAR_SEARCH'}, click: onClearSearchClick"></span>
 						<span class="description" data-bind="html: searchText" style="margin-bottom: 30px;"></span>
+						<span class="button" data-bind="visible: !useSubfoldersSearch(), i18n: {'key': '%MODULENAME%/LABEL_IN_CURRENT_AND_SUB_FOLDERS'}, click: onExtendSearchClick"></span>
 						<span class="description" data-bind="i18n: {'key': '%MODULENAME%/INFO_SEARCH_EMPTY'}"></span>
 					</span>
 

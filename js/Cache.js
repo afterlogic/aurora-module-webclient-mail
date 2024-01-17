@@ -2062,6 +2062,7 @@ CMailCache.prototype.parseAndCacheMessages = function (aMessagesCollection, oFol
  */
 CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 {
+	// debugger
 	if (oRequest.Parameters && !Types.isNonEmptyString(oRequest.Parameters.Folder))
 	{
 		oRequest.Parameters.Folder = this.oUnifiedInbox.fullName();
@@ -2094,9 +2095,20 @@ CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 	{
 		oFolder = this.getFolderByFullName(iAccountId, oParameters.Folder);
 		
+		let sUidNext = oResult.UidNext.toString();
+		let sFolderHash = oResult.FolderHash;
+		let iMessagesCount = oResult.MessageCount;
+		let iMessageUnseenCount = oResult.MessageUnseenCount;
+
+		if (oResult.Filters === 'subfolders') {
+			sUidNext = sUidNext.split('.').find( item => item.indexOf(oParameters.Folder + ':') != -1 );
+			sFolderHash = sFolderHash.split('.').find( item => item.indexOf(oParameters.Folder + ':') != -1 );
+			iMessagesCount = oFolder.messageCount();
+			iMessageUnseenCount = oFolder.unseenMessageCount();
+		}
+
 		// perform before getUidList, because in case of a mismatch the uid list will be pre-cleaned
-		oFolder.setRelevantInformation(oResult.UidNext.toString(), oResult.FolderHash, 
-			oResult.MessageCount, oResult.MessageUnseenCount, bCurrentFolder && !bCurrentList);
+		oFolder.setRelevantInformation(sUidNext, sFolderHash, iMessagesCount, iMessageUnseenCount, bCurrentFolder && !bCurrentList);
 		bHasFolderChanges = oFolder.hasChanges();
 		oFolder.removeAllMessageListsFromCacheIfHasChanges();
 		oUidList = oFolder.getUidList(oResult.Search, oResult.Filters, oParameters.SortBy, oParameters.SortOrder, true);
@@ -2121,7 +2133,7 @@ CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 		
 		if (bHasFolderChanges && bCurrentFolder && (!bCurrentList || !bCurrentPage) && this.uidList().filters() !== Enums.FolderFilter.Unseen)
 		{
-			this.requestCurrentMessageList(this.getCurrentFolderFullname(), this.page(), this.uidList().search(), this.uidList().filters(), this.uidList().sortBy(), this.uidList().sortOrder(), false);
+			//this.requestCurrentMessageList(this.getCurrentFolderFullname(), this.page(), this.uidList().search(), this.uidList().filters(), this.uidList().sortBy(), this.uidList().sortOrder(), false);
 		}
 		
 		if (this.folderList().oStarredFolder &&
