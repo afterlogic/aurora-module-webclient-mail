@@ -27,14 +27,28 @@
 <!-- /ko -->
 
 <div class="middle_bar" data-bind="css: {'quota_visible': -1 < quotaProc(), 'quota_has_text_below': !bShowQuotaBarTextAsTooltip}">
-	<div class="panel_center" data-bind="customScrollbar: {x: false}">
-		<div class="scroll-inner">
-			<div class="items_list collapsible">
-				<div class="folders" style="margin-bottom: 10px;" data-bind="visible: unifiedInboxAllowed">
-					<!-- ko template: {name: '%ModuleName%_FolderView', data: oUnifiedInbox} --><!-- /ko -->
-				</div>
-				<div class="folders">
-					<!-- ko template: {name: '%ModuleName%_FolderView', foreach: folderList().collection} --><!-- /ko -->
+	<div class="panel_center" style="overflow: hidden;">
+		<div class="items_list collapsible"
+		style="
+	display: flex;
+	flex-direction: column;
+    height: 100%;
+    max-height: none;
+    overflow: hidden;
+    position: relative;">
+			<div class="folders" style="margin-bottom: 10px;" data-bind="visible: unifiedInboxAllowed">
+				<!-- ko template: {name: '%ModuleName%_FolderView', data: oUnifiedInbox} --><!-- /ko -->
+			</div>
+			<div class="folders" data-bind="foreach: { data: folderList().collection, as: 'folder' }"
+			style="padding-bottom: 5px; box-shadow: 0 2px 2px rgb(0 0 0 / 15%);">
+				<!-- ko template: {	name: '%ModuleName%_FolderView', data: folder, if: folder.type() !== Enums.FolderTypes.User } --><!-- /ko -->
+			</div>
+			<div data-bind="customScrollbar: {x: false}">
+				<div class="scroll-inner">
+					<div class="folders" data-bind="foreach: { data: folderList().collection, as: 'folder' }"
+					style="background: rgb(0 0 0 / 3%);">
+						<!-- ko template: {name: '%ModuleName%_FolderView', data: folder, if: folder.type() === Enums.FolderTypes.User} --><!-- /ko -->
+					</div>
 				</div>
 			</div>
 		</div>
