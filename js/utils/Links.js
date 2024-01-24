@@ -163,16 +163,12 @@ LinksUtils.parseMailbox = function (aParamsToParse)
 		if (aParams.length > iIndex)
 		{
 			sTemp = Types.pString(aParams[iIndex]);
-			if (sTemp === 'filter:' + Enums.FolderFilter.Flagged)
-			{
-				sFilters = Enums.FolderFilter.Flagged;
-				iIndex++;
-			}
-			if (sTemp === 'filter:' + Enums.FolderFilter.Unseen)
-			{
-				sFilters = Enums.FolderFilter.Unseen;
-				iIndex++;
-			}
+			Object.values(Enums.FolderFilter).forEach((filterValue) => {
+				if (sTemp === `filter:${filterValue}`) {
+					sFilters = filterValue
+					iIndex++;
+				}
+			})
 		}
 
 		if (aParams.length > iIndex)

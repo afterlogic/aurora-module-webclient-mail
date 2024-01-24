@@ -216,6 +216,17 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 		return this.isSearch() && this.folderFullName() === Settings.AllMailsFolder;
 	}, this);
 
+	this.isSubfoldersSearch = ko.computed(function () {
+		return this.isSearch() && this.filters() === Enums.FolderFilter.Subfolders;
+	}, this);
+	this.isSubfoldersSearch.subscribe(() => {
+		if (!this.isSubfoldersSearch()) {
+			const folder = MailCache.getCurrentFolder();
+			folder.removeFilteredMessageListsFromCache(Enums.FolderFilter.Subfolders);
+			this.useSubfoldersSearch(false);
+		}
+	})
+
 	this.isUnseenFilter = ko.computed(function () {
 		return this.filters() === Enums.FolderFilter.Unseen;
 	}, this);
@@ -261,6 +272,9 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 	this.visibleInfoUnseenFilterList = ko.computed(function () {
 		return this.isUnseenFilter() && (this.isLoading() || !this.isEmptyList());
 	}, this);
+	this.visibleSubfoldersSearchButton = ko.computed(function () {
+		return !this.isSubfoldersSearch() && !this.isEverywhereSearch() && MailCache.getCurrentFolder()?.subfolders().length;
+	}, this);
 	this.visibleInfoUnseenFilterEmpty = ko.computed(function () {
 		return this.isUnseenFilter() && this.isEmptyList() && !this.isError() && !this.isLoading();
 	}, this);
@@ -290,7 +304,7 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 			sText = TextUtils.i18n('%MODULENAME%/INFO_SEARCH_EVERYWHERE_RESULT', {
 				'SEARCH': sSearchText
 			})
-		} else if (this.useSubfoldersSearch()) {
+		} else if (this.isSubfoldersSearch()) {
 			sText = TextUtils.i18n('%MODULENAME%/INFO_SEARCH_SUBFOLDERS_RESULT', {
 				'SEARCH': sSearchText,
 				'FOLDER': sFolderName
@@ -695,10 +709,6 @@ CMessageListView.prototype.requestMessageList = function (iPage)
 		{
 			MailCache.waitForUnseenMessages(true);
 		}
-		if (this.useSubfoldersSearch()) {
-			sFilters = sFilters ? sFilters + ',' : '' 
-			sFilters += 'subfolders'
-		}
 		MailCache.changeCurrentMessageList(sFullName, iPage, this.search(), sFilters, this.sSortBy, this.iSortOrder);
 	}
 	else
@@ -720,7 +730,9 @@ CMessageListView.prototype.onSearchClick = function ()
 		sSearch = SearchUtils.calculateSearchStringFromAdvancedForm.call(this);
 	}
 
-	if (this.allowSearchEverywhere()) {
+	if (this.useSubfoldersSearch()) {
+		sFilters = Enums.FolderFilter.Subfolders;
+	} else if (this.allowSearchEverywhere()) {
 		const isAllMailsFolder = sFolder === Settings.AllMailsFolder;
 		if (this.useEverywhereSearch() && !isAllMailsFolder) {
 			this.folderBeforeSearchEverywhere(sFolder);
@@ -748,9 +760,7 @@ CMessageListView.prototype.onExtendSearchClick = function ()
 {
 	if (this.search()) {
 		this.useSubfoldersSearch(true);
-		
-		// this.onSearchClick();
-		this.requestMessageList();
+		this.onSearchClick();
 	}
 };
 
@@ -776,7 +786,10 @@ CMessageListView.prototype.onClearSearchClick = function ()
 		sUid = '';
 	}
 	this.clearAdvancedSearch();
-	this.useSubfoldersSearch(false);
+	if (this.isSubfoldersSearch()) {
+		this.useSubfoldersSearch(false);
+		sFilters = '';
+	}
 	this.changeRoutingForMessageList(sFolder, iPage, sUid, sSearch, sFilters, this.sSortBy, this.iSortOrder);
 };
 
@@ -961,8 +974,8 @@ CMessageListView.prototype.executeMarkAllRead = function ()
 CMessageListView.prototype.executeMoveToFolder = function (sToFolder)
 {
 	const toFolder = MailCache.getFolderByFullName(MailCache.currentAccountId(), sToFolder);
-	if (MailCache.getCurrentFolderFullname() === Settings.AllMailsFolder) {
-		MailUtils.moveMessagesFromAllmails(this.checkedOrSelectedUids(), toFolder);
+	if (MailCache.isListWithComplexUids()) {
+		MailUtils.moveMessagesWithComplexUids(this.checkedOrSelectedUids(), toFolder);
 	} else {
 		MailCache.moveMessagesToFolder(MailCache.getCurrentFolder(), toFolder, this.checkedOrSelectedUids());
 	}
@@ -1074,8 +1087,12 @@ CMessageListView.prototype.executeSpam = function ()
 
 		if (oSpamFolder && MailCache.getCurrentFolderFullname() !== oSpamFolder.fullName())
 		{
-			MailCache.moveMessagesToFolder(MailCache.getCurrentFolder(), oSpamFolder, aUids);
-		}
+			if (MailCache.isListWithComplexUids()) {
+				MailUtils.moveMessagesWithComplexUids(aUids, oSpamFolder);
+			} else {
+				MailCache.moveMessagesToFolder(MailCache.getCurrentFolder(), oSpamFolder, aUids);
+			}
+	}
 	}
 };
 

@@ -633,6 +633,11 @@ CMailCache.prototype.getMessagesWithThreads = function (sFolderFullName, oUidLis
 	return aOrigMessages;
 };
 
+CMailCache.prototype.isListWithComplexUids = function ()
+{
+	return this.getCurrentFolderFullname() === Settings.AllMailsFolder || this.uidList().filters() === Enums.FolderFilter.Subfolders;
+};
+
 /**
  * @param {Object} oUidList
  * @param {number} iOffset
@@ -651,7 +656,7 @@ CMailCache.prototype.setMessagesFromUidList = function (oUidList, iOffset, bFill
 		}, this)),
 		iMessagesCount = aMessages.length
 	;
-	
+
 	if (bFillMessages)
 	{
 		if (!bStopLoading && (iOffset + iMessagesCount < oUidList.resultCount()) &&
@@ -681,7 +686,7 @@ CMailCache.prototype.setMessagesFromUidList = function (oUidList, iOffset, bFill
 		if (this.currentMessage() && (this.currentMessage().deleted() ||
 			this.currentMessage().folder() !== this.getCurrentFolderFullname() &&
 			!this.oUnifiedInbox.selected() &&
-			this.getCurrentFolderFullname() !== Settings.AllMailsFolder))
+			!this.isListWithComplexUids()))
 		{
 			this.currentMessage().selected(false);
 			this.currentMessage(null);
@@ -1432,8 +1437,7 @@ CMailCache.prototype.getMessageUid = function (oMessage)
 	if (this.oUnifiedInbox.selected()) {
 		return oMessage.unifiedUid();
 	} else {
-		const currFolder = this.getCurrentFolder();
-		if (currFolder && currFolder.fullName() === Settings.AllMailsFolder) {
+		if (this.isListWithComplexUids()) {
 			return oMessage.unifiedUid();
 		} else {
 			return oMessage.uid();
@@ -1592,10 +1596,10 @@ CMailCache.prototype.executeGroupOperation = function (sMethod, aUids, sField, b
 				this.executeGroupOperationForFolder(sMethod, oInbox, aUids, sField, bSetAction);
 			}
 		}, this);
-	} else if (this.getCurrentFolderFullname() === Settings.AllMailsFolder) {
+	} else if (this.isListWithComplexUids()) {
 		// Should be required exactly here
 		const MailUtils = require('modules/%ModuleName%/js/utils/Mail.js');
-		MailUtils.executeGroupOperationForAllmails(aUids, sMethod, sField, bSetAction);
+		MailUtils.executeGroupOperationForComplexUids(aUids, sMethod, sField, bSetAction);
 	} else {
 		var oCurrFolder = this.getCurrentFolder();
 		if (oCurrFolder)
@@ -1628,7 +1632,7 @@ CMailCache.prototype.executeGroupOperationForFolder = function (sMethod, oFolder
 		fCallback = (sMethod === 'SetMessagesSeen') ? this.onSetMessagesSeenResponse : function () {}
 	;
 
-	if (sMethod === 'SetMessagesSeen')
+	if (sMethod === 'SetMessagesSeen' && oFolder.fullName() === this.getCurrentFolderFullname())
 	{
 		this.iSetMessagesSeenCount++;
 	}
@@ -1669,7 +1673,7 @@ CMailCache.prototype.executeGroupOperationForFolder = function (sMethod, oFolder
 
 	if (sField === 'seen')
 	{
-		oFolder.removeUnseenMessageListsFromCache();
+		oFolder.removeFilteredMessageListsFromCache(Enums.FolderFilter.Unseen);
 	}
 
 	if (this.uidList().filters() !== Enums.FolderFilter.Unseen || this.waitForUnseenMessages())
@@ -2039,7 +2043,7 @@ CMailCache.prototype.parseAndCacheMessages = function (aMessagesCollection, oFol
 				aNewFolderMessages.push(oFolderMessage);
 			}
 		}, this);
-	} else if (oFolder.fullName() === Settings.AllMailsFolder) {
+	} else if (oFolder.fullName() === Settings.AllMailsFolder || this.uidList().filters() === Enums.FolderFilter.Subfolders) {
 		aMessagesCollection.forEach((rawMessage)=> {
 			const [accountId, folderFullName] = ComplexUidUtils.parse(this.currentAccountId(), rawMessage.Folder, rawMessage.UnifiedUid)
 			const folder = this.folderList().getFolderByFullName(folderFullName);
@@ -2062,7 +2066,6 @@ CMailCache.prototype.parseAndCacheMessages = function (aMessagesCollection, oFol
  */
 CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 {
-	// debugger
 	if (oRequest.Parameters && !Types.isNonEmptyString(oRequest.Parameters.Folder))
 	{
 		oRequest.Parameters.Folder = this.oUnifiedInbox.fullName();
@@ -2095,20 +2098,13 @@ CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 	{
 		oFolder = this.getFolderByFullName(iAccountId, oParameters.Folder);
 		
-		let sUidNext = oResult.UidNext.toString();
-		let sFolderHash = oResult.FolderHash;
-		let iMessagesCount = oResult.MessageCount;
-		let iMessageUnseenCount = oResult.MessageUnseenCount;
-
-		if (oResult.Filters === 'subfolders') {
-			sUidNext = sUidNext.split('.').find( item => item.indexOf(oParameters.Folder + ':') != -1 );
-			sFolderHash = sFolderHash.split('.').find( item => item.indexOf(oParameters.Folder + ':') != -1 );
-			iMessagesCount = oFolder.messageCount();
-			iMessageUnseenCount = oFolder.unseenMessageCount();
+		if (oResult.Filters !== Enums.FolderFilter.Subfolders) {
+			let sUidNext = oResult.UidNext.toString();
+			let sFolderHash = oResult.FolderHash;
+			let iMessagesCount = oResult.MessageCount;
+			let iMessageUnseenCount = oResult.MessageUnseenCount;
+			oFolder.setRelevantInformation(sUidNext, sFolderHash, iMessagesCount, iMessageUnseenCount, bCurrentFolder && !bCurrentList);
 		}
-
-		// perform before getUidList, because in case of a mismatch the uid list will be pre-cleaned
-		oFolder.setRelevantInformation(sUidNext, sFolderHash, iMessagesCount, iMessageUnseenCount, bCurrentFolder && !bCurrentList);
 		bHasFolderChanges = oFolder.hasChanges();
 		oFolder.removeAllMessageListsFromCacheIfHasChanges();
 		oUidList = oFolder.getUidList(oResult.Search, oResult.Filters, oParameters.SortBy, oParameters.SortOrder, true);
@@ -2133,7 +2129,7 @@ CMailCache.prototype.parseMessageList = function (oResponse, oRequest)
 		
 		if (bHasFolderChanges && bCurrentFolder && (!bCurrentList || !bCurrentPage) && this.uidList().filters() !== Enums.FolderFilter.Unseen)
 		{
-			//this.requestCurrentMessageList(this.getCurrentFolderFullname(), this.page(), this.uidList().search(), this.uidList().filters(), this.uidList().sortBy(), this.uidList().sortOrder(), false);
+			this.requestCurrentMessageList(this.getCurrentFolderFullname(), this.page(), this.uidList().search(), this.uidList().filters(), this.uidList().sortBy(), this.uidList().sortOrder(), false);
 		}
 		
 		if (this.folderList().oStarredFolder &&
@@ -2249,7 +2245,7 @@ CMailCache.prototype.onMoveMessagesResponse = function (oResponse, oRequest)
 
 	if (oFolder && sCurrFolderFullName === oFolder.fullName() || oToFolder && sCurrFolderFullName === oToFolder.fullName() ||
 		oCurrFolder.bIsUnifiedInbox && (oFolder && oFolder.type() === Enums.FolderTypes.Inbox || oToFolder && oToFolder.type() === Enums.FolderTypes.Inbox) ||
-		MailCache.getCurrentFolderFullname() === Settings.AllMailsFolder)
+		this.isListWithComplexUids())
 	{
 		oCurrFolder.markHasChanges();
 		switch (this.uidList().filters())

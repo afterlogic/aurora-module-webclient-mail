@@ -10,7 +10,8 @@ var
  */
 Enums.FolderFilter = {
 	'Flagged': 'flagged',
-	'Unseen': 'unseen'
+	'Unseen': 'unseen',
+	'Subfolders': 'subfolders'
 };
 
 /**
