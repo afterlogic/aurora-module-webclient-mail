@@ -65,8 +65,8 @@ MailUtils.deleteMessages = function (aUids, fAfterDelete)
 		} else {
 			if (oTrash)
 			{
-				if (sCurrFolder === Settings.AllMailsFolder) {
-					MailUtils.moveMessagesFromAllmails(aUids, oTrash, fAfterDelete);
+				if (MailCache.isListWithComplexUids()) {
+					MailUtils.moveMessagesWithComplexUids(aUids, oTrash, fAfterDelete);
 				} else {
 					MailCache.moveMessagesToFolder(oFolderList.currentFolder(), oTrash, aUids);
 					fAfterDelete();
@@ -145,7 +145,7 @@ MailUtils.getUidsSeparatedByFolders = function (uids)
 	return uidsByFolders;
 };
 
-MailUtils.moveMessagesFromAllmails = function (uids, trashFolder, afterDeleteCallback)
+MailUtils.moveMessagesWithComplexUids = function (uids, trashFolder, afterDeleteCallback)
 {
 	const uidsByFolders = this.getUidsSeparatedByFolders(uids);
 	let isMoved = false;
@@ -163,7 +163,7 @@ MailUtils.moveMessagesFromAllmails = function (uids, trashFolder, afterDeleteCal
 	}
 };
 
-MailUtils.executeGroupOperationForAllmails = function (uids, method, field, isSetAction)
+MailUtils.executeGroupOperationForComplexUids = function (uids, method, field, isSetAction)
 {
 	const uidsByFolders = this.getUidsSeparatedByFolders(uids);
 	_.each(uidsByFolders, (data) => {

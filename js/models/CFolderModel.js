@@ -642,10 +642,10 @@ CFolderModel.prototype.removeFlaggedMessageListsFromCache = function ()
 	this.requestedLists = this.requestedLists.filter(params => params.filters !== Enums.FolderFilter.Flagged);
 };
 
-CFolderModel.prototype.removeUnseenMessageListsFromCache = function ()
+CFolderModel.prototype.removeFilteredMessageListsFromCache = function (filterValue)
 {
 	_.each(this.oUids, function (oUidList) {
-		if (oUidList.filters() === Enums.FolderFilter.Unseen)
+		if (oUidList.filters() === filterValue)
 		{
 			// clear the UID list because it is outdated
 			// Do not remove it from the cache to prevent the creation of a new oUidList object
