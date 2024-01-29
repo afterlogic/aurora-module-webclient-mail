@@ -752,6 +752,15 @@ CMessageListView.prototype.toggleGlobalSearch = function ()
 {
 	this.useEverywhereSearch(!this.useEverywhereSearch());
 	if (this.search()) {
+		this.useSubfoldersSearch(false);
+		this.onSearchClick();
+	}
+};
+
+CMessageListView.prototype.onExtendSearchClick = function ()
+{
+	if (this.search()) {
+		this.useSubfoldersSearch(true);
 		this.onSearchClick();
 	}
 };
