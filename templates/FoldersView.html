@@ -36,12 +36,15 @@
     max-height: none;
     overflow: hidden;
     position: relative;">
-			<div class="folders" style="margin-bottom: 10px;" data-bind="visible: unifiedInboxAllowed">
-				<!-- ko template: {name: '%ModuleName%_FolderView', data: oUnifiedInbox} --><!-- /ko -->
-			</div>
-			<div class="folders" data-bind="foreach: { data: folderList().collection, as: 'folder' }"
-			style="padding-bottom: 5px; box-shadow: 0 2px 2px rgb(0 0 0 / 15%);">
-				<!-- ko template: {	name: '%ModuleName%_FolderView', data: folder, if: folder.type() !== Enums.FolderTypes.User } --><!-- /ko -->
+			<div data-bind="customScrollbar: {x: false}" style="max-height: 50%; height: auto; flex-shrink: 0; padding-bottom: 5px; box-shadow: 0 2px 2px rgb(0 0 0 / 15%);">
+				<div class="scroll-inner">
+					<div class="folders" style="margin-bottom: 10px;" data-bind="visible: unifiedInboxAllowed">
+						<!-- ko template: {name: '%ModuleName%_FolderView', data: oUnifiedInbox} --><!-- /ko -->
+					</div>
+					<div class="folders" data-bind="foreach: { data: folderList().collection, as: 'folder' }">
+						<!-- ko template: {	name: '%ModuleName%_FolderView', data: folder, if: folder.type() !== Enums.FolderTypes.User } --><!-- /ko -->
+					</div>
+				</div>
 			</div>
 			<div data-bind="customScrollbar: {x: false}">
 				<div class="scroll-inner">
