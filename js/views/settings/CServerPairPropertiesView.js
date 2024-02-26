@@ -403,7 +403,7 @@ CServerPairPropertiesView.prototype.getParametersForSave = function ()
  */
 CServerPairPropertiesView.prototype.validateBeforeSave = function ()
 {
-	return ValidationUtils.checkIfFieldsEmpty(this.aRequiredFields, TextUtils.i18n('%MODULENAME%/ERROR_REQUIRED_FIELDS_EMPTY'));
+	return ValidationUtils.checkIfFieldsEmpty(this.aRequiredFields, TextUtils.i18n('COREWEBCLIENT/ERROR_REQUIRED_FIELDS_EMPTY'));
 };
 
 CServerPairPropertiesView.prototype.onDomainsClick = function ()

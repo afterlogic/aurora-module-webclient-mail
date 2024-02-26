@@ -91,7 +91,7 @@ CCreateFetcherPopup.prototype.save = function ()
 {
 	if (this.isEmptyRequiredFields())
 	{
-		Screens.showError(TextUtils.i18n('%MODULENAME%/ERROR_REQUIRED_FIELDS_EMPTY'));
+		Screens.showError(TextUtils.i18n('COREWEBCLIENT/ERROR_REQUIRED_FIELDS_EMPTY'));
 	}
 	else
 	{

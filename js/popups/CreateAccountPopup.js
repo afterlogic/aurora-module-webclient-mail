@@ -101,7 +101,7 @@ CCreateAccountPopup.prototype.onClose = function ()
 
 CCreateAccountPopup.prototype.save = function ()
 {
-	if (ValidationUtils.checkIfFieldsEmpty(this.aRequiredFields, TextUtils.i18n('%MODULENAME%/ERROR_REQUIRED_FIELDS_EMPTY')))
+	if (ValidationUtils.checkIfFieldsEmpty(this.aRequiredFields, TextUtils.i18n('COREWEBCLIENT/ERROR_REQUIRED_FIELDS_EMPTY')))
 	{
 		var
 			oParameters = {
