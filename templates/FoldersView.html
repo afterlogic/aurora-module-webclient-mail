@@ -37,7 +37,7 @@
     overflow: hidden;
     position: relative;">
 			<div data-bind="customScrollbar: {x: false}" style="max-height: 50%; height: auto; flex-shrink: 0; padding-bottom: 5px; box-shadow: 0 2px 2px rgb(0 0 0 / 15%);">
-				<div class="scroll-inner">
+				<div class="scroll-inner" style="max-height: none;">
 					<div class="folders" style="margin-bottom: 10px;" data-bind="visible: unifiedInboxAllowed">
 						<!-- ko template: {name: '%ModuleName%_FolderView', data: oUnifiedInbox} --><!-- /ko -->
 					</div>
