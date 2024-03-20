@@ -14,8 +14,6 @@ var
 	Popups = require('%PathToCoreWebclientModule%/js/Popups.js'),
 	CreateFolderPopup = require('modules/%ModuleName%/js/popups/CreateFolderPopup.js'),
 
-	LinksUtils = require('modules/%ModuleName%/js/utils/Links.js'),
-
 	AccountList = require('modules/%ModuleName%/js/AccountList.js'),
 	MailCache = require('modules/%ModuleName%/js/Cache.js'),
 	Settings = require('modules/%ModuleName%/js/Settings.js')
@@ -43,6 +41,8 @@ function CFolderListView()
 		}
 		return [];
 	}, this);
+
+	this.allowStickyFolders = ko.observable(Settings.AllowStickyFolders);
 
 	this.folderList = MailCache.folderList;
 

@@ -27,15 +27,24 @@
 <!-- /ko -->
 
 <div class="middle_bar" data-bind="css: {'quota_visible': -1 < quotaProc(), 'quota_has_text_below': !bShowQuotaBarTextAsTooltip}">
+	<!-- ko if: !allowStickyFolders() -->
+	<div class="panel_center" data-bind="customScrollbar: {x: false}">
+		<div class="scroll-inner">
+			<div class="items_list collapsible">
+				<div class="folders" style="margin-bottom: 10px;" data-bind="visible: unifiedInboxAllowed">
+					<!-- ko template: {name: '%ModuleName%_FolderView', data: oUnifiedInbox} --><!-- /ko -->
+				</div>
+				<div class="folders" data-bind="foreach: { data: folderList().collection }">
+					<!-- ko template: {	name: '%ModuleName%_FolderView' } --><!-- /ko -->
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /ko -->
+	<!-- ko if: allowStickyFolders() -->
 	<div class="panel_center" style="overflow: hidden;">
 		<div class="items_list collapsible"
-		style="
-	display: flex;
-	flex-direction: column;
-    height: 100%;
-    max-height: none;
-    overflow: hidden;
-    position: relative;">
+			style="display: flex; flex-direction: column; height: 100%; max-height: none; overflow: hidden; position: relative;">
 			<div data-bind="customScrollbar: {x: false}" style="max-height: 50%; height: auto; flex-shrink: 0; padding-bottom: 5px; box-shadow: 0 2px 2px rgb(0 0 0 / 15%);">
 				<div class="scroll-inner" style="max-height: none;">
 					<div class="folders" style="margin-bottom: 10px;" data-bind="visible: unifiedInboxAllowed">
@@ -56,6 +65,7 @@
 			</div>
 		</div>
 	</div>
+	<!-- /ko -->
 	<div class="panel_bottom">
 		<div class="manage_folders" data-bind="visible: manageFoldersHash() !== '#'">
 			<a href="javascript: void(0)" data-bind="i18n: {'key': '%MODULENAME%/ACTION_MANAGE_FOLDERS'}, attr: {href: manageFoldersHash}"></a>

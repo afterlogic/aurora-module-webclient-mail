@@ -86,6 +86,7 @@ module.exports = {
 
 	AllowPrivateMessages: false,
 	PrivateMessagesEmail: '',
+	AllowStickyFolders: false,
 
 	OfficeEditorExtensionsToView: [],
 
@@ -197,6 +198,7 @@ module.exports = {
 
 		this.AllowPrivateMessages = Types.pBool(informatikAppDataSection && informatikAppDataSection.AllowPrivateMessages, this.AllowPrivateMessages);
 		this.PrivateMessagesEmail = Types.pString(informatikAppDataSection && informatikAppDataSection.PrivateMessagesEmail, this.PrivateMessagesEmail);
+		this.AllowStickyFolders = Types.pBool(informatikAppDataSection && informatikAppDataSection.AllowStickyFolders, this.AllowStickyFolders);
 
 		if (officeEditorAppDataSection && Array.isArray(officeEditorAppDataSection['ExtensionsToView'])) {
 			this.OfficeEditorExtensionsToView = officeEditorAppDataSection['ExtensionsToView'];
