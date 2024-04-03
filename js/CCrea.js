@@ -1491,9 +1491,10 @@ CCrea.prototype.getSelectedText = function () {
  * Stores selection position.
  */
 CCrea.prototype.storeSelectionPosition = function () {
-  var aNewRanges = ContenteditableUtils.getSelectionRanges()
-  if (_.isArray(aNewRanges) && aNewRanges.length > 0) {
-    this.aRanges = aNewRanges
+  const aNewRanges = ContenteditableUtils.getSelectionRanges()
+  // check is selection is inside editable area
+  if (_.isArray(aNewRanges) && aNewRanges.length > 0 && this.$editableArea[0].contains(aNewRanges[0].commonAncestorContainer)) {
+    this.aRanges = [aNewRanges[0]]
   }
 }
 
