@@ -911,8 +911,7 @@ export default {
         methodName: 'DeleteServer',
         parameters: {
           ServerId: id,
-          TenantId: tenantId,
-          DeletionConfirmedByAdmin: true
+          TenantId: tenantId
         },
       }).then(result => {
         this.loadingServers = false
