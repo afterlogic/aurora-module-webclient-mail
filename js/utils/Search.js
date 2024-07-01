@@ -43,13 +43,6 @@ module.exports = {
 	/**
 	 * Should be called with MessageListView as context
 	 */
-	getSearchStringForDescription() {
-		return '<span class="part">' + TextUtils.encodeHtml(this.search()) + '</span>';
-	},
-
-	/**
-	 * Should be called with MessageListView as context
-	 */
 	calculateSearchStringFromAdvancedForm() {
 		const
 			from = this.searchInputFrom().trim(),
@@ -105,5 +98,7 @@ module.exports = {
 			}
 			this.isAdvancedSearch(true);
 		}
-	}
+	},
+
+	getAdvancedSearchParts: getAdvancedSearchParts
 };

@@ -295,9 +295,15 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 	}, this);
 	this.folderBeforeSearchEverywhere = ko.observable('');
 	this.filtersBeforeSearchEverywhere = ko.observable('');
+	this.searchPhraseIsCorrected = ko.observable(false);
+	this.isAdvancedSearch = ko.observable(false);
 	this.searchText = ko.computed(function () {
+		const searchPhraseOriginal = this.search()
+		const searchPhraseCorrected = this.getCorrectedSearchPhrase(searchPhraseOriginal);
+		this.searchPhraseIsCorrected(searchPhraseOriginal !== searchPhraseCorrected);
+
 		let sText = ''
-		const sSearchText = SearchUtils.getSearchStringForDescription.call(this)
+		const sSearchText = TextUtils.encodeHtml(searchPhraseCorrected)
 		const sFolderName = MailCache.getCurrentFolder() ? TextUtils.encodeHtml(MailCache.getCurrentFolder().displayName()) : ''
 
 		if (this.isEverywhereSearch()) {
@@ -330,7 +336,7 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 		else
 		{
 			return TextUtils.i18n('%MODULENAME%/INFO_UNREAD_MESSAGES_SEARCH_RESULT', {
-				'SEARCH': SearchUtils.getSearchStringForDescription.call(this),
+				'SEARCH': TextUtils.encodeHtml(this.search()),
 				'FOLDER': MailCache.getCurrentFolder() ? TextUtils.encodeHtml(MailCache.getCurrentFolder().displayName()) : ''
 			});
 		}
@@ -452,7 +458,6 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 		this.listChangedThrottle(!this.listChangedThrottle());
 	}, this);
 
-	this.isAdvancedSearch = ko.observable(false);
 	this.searchAttachmentsCheckbox = ko.observable(false);
 	this.advancedSearchButtonText = ko.computed(() => {
 		return this.isAdvancedSearch()
@@ -1219,6 +1224,42 @@ CMessageListView.prototype.onFileUploadComplete = function (sFileUid, bResponseR
 	{
 		Api.showErrorByCode(oResponse || {}, TextUtils.i18n('COREWEBCLIENT/ERROR_UPLOAD_FILE'));
 	}
+};
+
+CMessageListView.prototype.getCorrectedSearchPhrase = function (sSearchPhrase)
+{
+	const regex = new RegExp(Settings.SearchWordFilterPattern, "gmi")
+	const iMinWordLength = Settings.SearchWordMinLength
+	const iMaxWordLength = Settings.SearchWordMaxLength
+	let result = ''
+	
+	if (this.isAdvancedSearch()) {
+		const sSearchParts = SearchUtils.getAdvancedSearchParts(sSearchPhrase);
+		const aFilteredParts = []
+		_.each(sSearchParts, (value, key) => {
+			if (key === 'subject' || key === 'text') {
+				let aWords = value.split(' ')
+				aWords = aWords.map( word => word.replace(regex, '') )
+				aWords = aWords.filter(word => word.length >= iMinWordLength && word.length <= iMaxWordLength )
+
+				value = aWords.join(' ')
+			}
+
+			if (value) {
+				aFilteredParts.push(`${key}:${value}`)
+			}
+		})
+
+		result = aFilteredParts.join(' ') 
+	} else {
+		let aWords = sSearchPhrase.split(' ')
+		aWords = aWords.map( word => word.replace(regex, '') )
+		aWords = aWords.filter(word => word.length >= iMinWordLength && word.length <= iMaxWordLength )
+
+		result = aWords.join(' ')
+	}
+
+	return result
 };
 
 module.exports = CMessageListView;
