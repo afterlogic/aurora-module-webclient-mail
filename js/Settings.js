@@ -41,6 +41,10 @@ module.exports = {
 	AllowUnifiedInbox: true,
 	AllowScheduledAutoresponder: false,
 
+	SearchWordMinLength: 3,
+	SearchWordMaxLength: 50,
+	SearchWordFilterPattern: '',
+
 	// from MailWebclient module
 	AllowAppRegisterMailto: false,
 	AllowChangeInputDirection: true,
@@ -138,6 +142,10 @@ module.exports = {
 			this.MessagesSortBy.DefaultSortBy = Types.pString(this.MessagesSortBy.DefaultSortBy, 'arrival');
 			var sOrder = Types.pString(this.MessagesSortBy.DefaultSortOrder, 'desc');
 			this.MessagesSortBy.DefaultSortOrder = sOrder === 'desc' ? Enums.SortOrder.Desc : Enums.SortOrder.Asc;
+
+			this.SearchWordMinLength = Types.pPositiveInt(oAppDataMailSection.SearchWordMinLength, this.SearchWordMinLength);
+			this.SearchWordMaxLength = Types.pPositiveInt(oAppDataMailSection.SearchWordMaxLength, this.SearchWordMaxLength);
+			this.SearchWordFilterPattern = Types.pString(oAppDataMailSection.SearchWordFilterPattern, this.SearchWordFilterPattern);
 		}
 			
 		if (!_.isEmpty(oAppDataMailWebclientSection))

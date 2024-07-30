@@ -238,10 +238,15 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 	}, this);
 
 	this.allowClearSearch = ko.observable(true);
+	this.searchPhraseIsCorrected = ko.observable(false);
 	this.searchText = ko.computed(function () {
+		const searchPhraseOriginal = this.calculateSearchStringForDescription();
+		const searchPhraseCorrected = this.getCorrectedSearchPhrase(searchPhraseOriginal);
+		this.searchPhraseIsCorrected(searchPhraseOriginal !== searchPhraseCorrected);
+
 		const
 			textOptions = {
-				'SEARCH': this.calculateSearchStringForDescription(),
+				'SEARCH': searchPhraseCorrected,
 				'FOLDER': MailCache.getCurrentFolder() ? TextUtils.encodeHtml(MailCache.getCurrentFolder().displayName()) : ''
 			}
 		;
@@ -1249,6 +1254,30 @@ CMessageListView.prototype.onFileUploadComplete = function (sFileUid, bResponseR
 CMessageListView.prototype.selectFolderSearch = function (sSearchFoldersMode)
 {
 	this.selectedSearchFoldersMode(sSearchFoldersMode);
+};
+
+CMessageListView.prototype.getCorrectedSearchPhrase = function (sSearchPhrase)
+{
+	const regex = new RegExp(Settings.SearchWordFilterPattern, "gmi")
+	const iMinWordLength = Settings.SearchWordMinLength
+	const iMaxWordLength = Settings.SearchWordMaxLength
+
+	let aWords = sSearchPhrase.split(' ')
+	aWords = aWords.map( word => this.encodeHTMLEntities(this.decodeHTMLEntities(word).replace(regex, '')) )
+	aWords = aWords.filter(word => word.length >= iMinWordLength && word.length <= iMaxWordLength	)
+
+	return aWords.join(' ')
+};
+
+CMessageListView.prototype.decodeHTMLEntities = function(text) {
+	const textArea = document.createElement('textarea')
+	textArea.innerHTML = text
+	return textArea.value
+};
+CMessageListView.prototype.encodeHTMLEntities = function(text) {
+	const textArea = document.createElement('textarea')
+	textArea.innerHTML = text
+	return textArea.value
 };
 
 module.exports = CMessageListView;
