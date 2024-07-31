@@ -71,10 +71,17 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 	this.messagesContainer = ko.observable(null);
 
 	this.searchInput = ko.observable('');
+	// this.searchInputRaw = ko.observable('');	
 	this.searchInputFrom = ko.observable('');
 	this.searchInputTo = ko.observable('');
 	this.searchInputSubject = ko.observable('');
 	this.searchInputText = ko.observable('');
+
+	this.searchInput.subscribe(function(v) {
+		if (v === '') {
+			this.onClearSearchClick();
+		}
+	}, this);
 
 	this.currentMessage = MailCache.currentMessage;
 	this.currentMessage.subscribe(function () {
