@@ -305,9 +305,14 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 	this.searchPhraseIsCorrected = ko.observable(false);
 	this.isAdvancedSearch = ko.observable(false);
 	this.searchText = ko.computed(function () {
-		const searchPhraseOriginal = this.search()
-		const searchPhraseCorrected = this.getCorrectedSearchPhrase(searchPhraseOriginal);
-		this.searchPhraseIsCorrected(searchPhraseOriginal !== searchPhraseCorrected);
+		let searchPhraseOriginal = this.search()
+		// check for searchAttachmentsCheckbox is needed to be sure the necessary ko variables are initialized
+		if (this.isAdvancedSearch() && this.searchAttachmentsCheckbox) {
+			searchPhraseOriginal = SearchUtils.calculateSearchStringFromAdvancedForm.call(this)
+		}
+
+		const searchPhraseCorrected = this.getCorrectedSearchPhrase(searchPhraseOriginal)
+		this.searchPhraseIsCorrected(searchPhraseOriginal !== searchPhraseCorrected)
 
 		let sText = ''
 		const sSearchText = TextUtils.encodeHtml(searchPhraseCorrected)
@@ -1173,7 +1178,14 @@ CMessageListView.prototype.clearAdvancedSearch = function ()
 
 CMessageListView.prototype.toggleAdvancedSearch = function ()
 {
-	this.isAdvancedSearch(!this.isAdvancedSearch());
+	const bAdvancedSearch = this.isAdvancedSearch()
+	this.onClearSearchClick()
+
+	// delayed switching of advanced mode is required because clearAdvancedSearch is called after this functon
+	// and sets isAdvancedSearch to false
+	setTimeout(() => {
+		this.isAdvancedSearch(!bAdvancedSearch)
+	}, 0)
 };
 
 CMessageListView.prototype.initUploader = function ()
@@ -1239,11 +1251,11 @@ CMessageListView.prototype.getCorrectedSearchPhrase = function (sSearchPhrase)
 	const iMinWordLength = Settings.SearchWordMinLength
 	const iMaxWordLength = Settings.SearchWordMaxLength
 	let result = ''
-	
+
 	if (this.isAdvancedSearch()) {
-		const sSearchParts = SearchUtils.getAdvancedSearchParts(sSearchPhrase);
+		const aSearchParts = SearchUtils.getAdvancedSearchParts(sSearchPhrase);
 		const aFilteredParts = []
-		_.each(sSearchParts, (value, key) => {
+		_.each(aSearchParts, (value, key) => {
 			if (key === 'subject' || key === 'text') {
 				let aWords = value.split(' ')
 				aWords = aWords.map( word => word.replace(regex, '') )
@@ -1253,11 +1265,11 @@ CMessageListView.prototype.getCorrectedSearchPhrase = function (sSearchPhrase)
 			}
 
 			if (value) {
-				aFilteredParts.push(`${key}:${value}`)
+				aFilteredParts.push(`${key}:${value}`.trim())
 			}
 		})
 
-		result = aFilteredParts.join(' ') 
+		result = aFilteredParts.join(' ')
 	} else {
 		let aWords = sSearchPhrase.split(' ')
 		aWords = aWords.map( word => word.replace(regex, '') )
