@@ -71,17 +71,24 @@ function CMessageListView(fOpenMessaheInPopupOrTabBound)
 	this.messagesContainer = ko.observable(null);
 
 	this.searchInput = ko.observable('');
-	// this.searchInputRaw = ko.observable('');	
+	// searchInputHTML used for binding to HTML input
+	// custom computed is required to do extra actions when the value is changed from HTML
+	// in HTML we use searchInputHTML instead of searchInput
+	this.searchInputHTML = ko.computed({
+		'read': this.searchInput,
+		'write': function (v) {
+			if (v === '') {
+				this.onClearSearchClick();
+			} else {
+				this.searchInput(v);
+			}
+		},
+		'owner': this
+	});
 	this.searchInputFrom = ko.observable('');
 	this.searchInputTo = ko.observable('');
 	this.searchInputSubject = ko.observable('');
 	this.searchInputText = ko.observable('');
-
-	this.searchInput.subscribe(function(v) {
-		if (v === '') {
-			this.onClearSearchClick();
-		}
-	}, this);
 
 	this.currentMessage = MailCache.currentMessage;
 	this.currentMessage.subscribe(function () {
