@@ -141,17 +141,31 @@ CSignatureSettingsFormView.prototype.applySavedValues = function (oParameters)
 	{
 		AccountList.populateAliases();
 	}
-	else if (!oParameters.IdentityId)
+	else if (oParameters.IdentityId)
 	{
-		var oAccount = AccountList.getAccount(oParameters.AccountID);
-		if (oAccount)
-		{
-			oAccount.useSignature(!!oParameters.UseSignature);
-			oAccount.signature(oParameters.Signature);
-		}
+		AccountList.populateIdentities();
+	} 
+	else if (oParameters.AccountID) 
+	{
+		this.populateAccountSignature(oParameters.AccountID);
 	}
-	AccountList.populateIdentities();
 };
+
+/**
+ * @param {int} AccountId
+ */
+CSignatureSettingsFormView.prototype.populateAccountSignature = function (AccountId)
+{
+	Ajax.send('GetAccount', {'AccountId': AccountId}, function (oResponse) {
+		if (oResponse.Result) {
+			var oAccount = AccountList.getAccount(AccountId);
+			if (oAccount) {
+				oAccount.useSignature(!!oResponse.Result.UseSignature);
+				oAccount.signature(oResponse.Result.Signature);
+			}
+		}
+	});
+}
 
 CSignatureSettingsFormView.prototype.populate = function ()
 {
