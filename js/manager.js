@@ -185,6 +185,9 @@ module.exports = function (oAppData) {
 				getMailCache: function () {
 					return Cache;
 				},
+				getSettings: function () {
+					return Settings;
+				},
 				setCustomRouting: function (sFolder, iPage, sUid, sSearch, sFilters, sCustom) {
 					var
 						Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
