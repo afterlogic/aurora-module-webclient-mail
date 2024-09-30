@@ -104,6 +104,20 @@ function CAccountModel(oData)
 	this.unifiedMailboxLabelText = ko.observable(Types.pString(oData.UnifiedMailboxLabelText));
 	this.unifiedMailboxLabelColor = ko.observable(Types.pString(oData.UnifiedMailboxLabelColor));
 
+	// it's needed to update signature of bAccountPart identity, beacause this identity is loaded in edit form, not account object
+	ko.computed(function() {
+		const sSignature = this.signature()
+		const bUseSignature = this.useSignature()
+		const sFriendlyName = this.friendlyName()
+		const oIdentity = _.find(this.identities(), oIdentity => oIdentity.bAccountPart)
+		
+		if (oIdentity) {
+			oIdentity.signature(sSignature)
+			oIdentity.useSignature(bUseSignature)
+			oIdentity.friendlyName(sFriendlyName)
+		}
+	}, this)
+
 	App.broadcastEvent('%ModuleName%::ParseAccount::after', { account: this , data: oData });
 }
 
