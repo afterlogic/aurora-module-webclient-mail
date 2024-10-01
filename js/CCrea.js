@@ -1230,6 +1230,17 @@ CCrea.prototype.backgroundColor = function (sBackColor) {
 }
 
 /**
+ * Wraps selection with the background tag.
+ *
+ * @param {string} sBackColor
+ */
+CCrea.prototype.blockquote = function (sBackColor) {
+  var sCmd = 'formatBlock'
+  this.execCom(sCmd, '<blockquote>')
+  this.$editableArea.focus()
+}
+
+/**
  * Removes format.
  */
 CCrea.prototype.removeFormat = function () {

@@ -1064,6 +1064,13 @@ CHtmlEditorView.prototype.insertHorizontalLine = function () {
   return false
 }
 
+CHtmlEditorView.prototype.blockquote = function () {
+  if (!this.inactive()) {
+    this.oCrea.blockquote()
+  }
+  return false
+}
+
 CHtmlEditorView.prototype.removeFormat = function () {
   if (!this.inactive()) {
     this.oCrea.removeFormat()

@@ -68,6 +68,12 @@
 			</a>
 
 			<span class="separator"></span>
+
+			<a href="javascript:void(0);" class="item blockquote" data-bind="click: blockquote, customTooltip: '%MODULENAME%/ACTION_SET_BLOCKQUOTE'">
+				<span class="icon"></span>
+			</a>
+
+			<span class="separator"></span>
 			
 			<a href="javascript:void(0);" class="item hline" data-bind="click: insertHorizontalLine,
 					visible: bAllowHorizontalLineButton,
@@ -125,6 +131,7 @@
 			<a href="javascript:void(0);" class="item rtl" data-bind="visible: bAllowChangeInputDirection, click: setRtlDirection, customTooltip: '%MODULENAME%/ACTION_SET_RTL_DIRECTION'">
 				<span class="icon">rtl</span>
 			</a>
+			
 			<a href="javascript:void(0);" class="item ltr" data-bind="visible: bAllowChangeInputDirection, click: setLtrDirection, customTooltip: '%MODULENAME%/ACTION_SET_LTR_DIRECTION'">
 				<span class="icon">ltr</span>
 			</a>
