@@ -18,6 +18,16 @@ module.exports = function (oAppData) {
 		HeaderItemView = null
 	;
 
+	let mailViewInstance = null;
+
+	const getMailViewInstance = () => {
+		if(!mailViewInstance) {
+			const CMailView = require('modules/%ModuleName%/js/views/CMailView.js');
+			mailViewInstance = new CMailView();
+		}
+		return mailViewInstance;
+	}
+
 	Settings.init(oAppData);
 
 	if (!ModulesManager.isModuleAvailable(Settings.ServerModuleName))
@@ -247,14 +257,21 @@ module.exports = function (oAppData) {
 							Settings.userMailAccountsCount(aAuthAcconts.length);
 							Settings.mailAccountsEmails(aAuthAccountsEmails);
 						}, this);
+
+						App.broadcastEvent('RegisterNewItemElement', {
+							'title': TextUtils.i18n('%MODULENAME%/ACTION_NEW_MESSAGE'),
+							'handler': () => {
+								window.location.hash = Settings.HashModuleName;
+								const mailViewInstance = getMailViewInstance();
+								mailViewInstance.executeCompose();
+							},
+							'className': 'item_mail',
+							'order': 1,
+							'column': 1
+						});
 					},
 					getScreens: function () {
-						var oScreens = {};
-						oScreens[Settings.HashModuleName] = function () {
-							var CMailView = require('modules/%ModuleName%/js/views/CMailView.js');
-							return new CMailView();
-						};
-						return oScreens;
+						return { [Settings.HashModuleName]: getMailViewInstance }
 					},
 					getHeaderItem: function () {
 						if (HeaderItemView === null && Settings.AllowOtherModulesToReplaceTabsbarHeader) {
