@@ -18,14 +18,14 @@ module.exports = function (oAppData) {
 		HeaderItemView = null
 	;
 
-	let mailViewInstanse = null;
+	let mailViewInstance = null;
 
-	const getMailViewInstanse = () => {
-		if(!mailViewInstanse) {
+	const getMailViewInstance = () => {
+		if(!mailViewInstance) {
 			const CMailView = require('modules/%ModuleName%/js/views/CMailView.js');
-			mailViewInstanse = new CMailView();
+			mailViewInstance = new CMailView();
 		}
-		return mailViewInstanse;
+		return mailViewInstance;
 	}
 
 	Settings.init(oAppData);
@@ -259,24 +259,19 @@ module.exports = function (oAppData) {
 						}, this);
 
 						App.broadcastEvent('RegisterNewItemElement', {
-							'item': {
-								'title': TextUtils.i18n('%MODULENAME%/ACTION_NEW_MESSAGE'),
-								'handler': () => {
-									const mailViewInstance = getMailViewInstanse();
-									const command = mailViewInstance.bigButtonCommand;
-									if (command.enabled()) {
-										command();
-									}
-								},
-								'hash': Settings.HashModuleName
+							'title': TextUtils.i18n('%MODULENAME%/ACTION_NEW_MESSAGE'),
+							'handler': () => {
+								window.location.hash = Settings.HashModuleName;
+								const mailViewInstance = getMailViewInstance();
+								mailViewInstance.executeCompose();
 							},
-							'name': '%ModuleName%_ComposeE-mail',
+							'className': 'item_mail',
 							'order': 1,
 							'column': 1
 						});
 					},
 					getScreens: function () {
-						return { [Settings.HashModuleName]: getMailViewInstanse }
+						return { [Settings.HashModuleName]: getMailViewInstance }
 					},
 					getHeaderItem: function () {
 						if (HeaderItemView === null && Settings.AllowOtherModulesToReplaceTabsbarHeader) {
