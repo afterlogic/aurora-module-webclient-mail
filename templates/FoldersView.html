@@ -31,7 +31,7 @@
 			<a href="javascript: void(0)" data-bind="i18n: {'key': '%MODULENAME%/ACTION_MANAGE_FOLDERS'}, attr: {href: manageFoldersHash}"></a>
 		</div>
 		<span class="volumer" data-bind="visible: -1 < quotaProc()">
-			<span class="volumer_conteiner" data-bind="customTooltip: bShowQuotaBarTextAsTooltip ? quotaDesc() : false">
+			<span class="volumer_container" data-bind="customTooltip: bShowQuotaBarTextAsTooltip ? quotaDesc() : false">
 				<span class="used" data-bind="style: {'width': '' + (-1 < quotaProc() ? quotaProc() : 0) + '%' }"></span>
 			</span>
 			<span data-bind="visible: !bShowQuotaBarTextAsTooltip, text: quotaDesc"></span>
