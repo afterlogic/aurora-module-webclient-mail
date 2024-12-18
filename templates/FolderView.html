@@ -9,7 +9,12 @@
 			css: {'recivedAnim': recivedAnim()},
 			attr: {href: routingHash},
 			visible: canBeSelected(),
-			droppable: {valueFunc: disableMoveTo() ? false : function (oEvent, oUi) { $root.messagesDrop($data, oEvent, oUi); }, switchObserv: selected}
+			droppable: {
+				valueFunc: disableMoveTo() ? false : function (oEvent, oUi) { $root.messagesDrop($data, oEvent, oUi); },
+				overCallback: function (oEvent, oUi) { $root.bockDroppingToSystemFolders($data, true); },
+				outCallback: function (oEvent, oUi) { $root.bockDroppingToSystemFolders($data, false) },
+				switchObserv: selected
+			}
 		">
 			<!-- ko if: showMessagesCount -->
 				<!-- .count:first-child css selector is used here so this span should not always be rendered -->

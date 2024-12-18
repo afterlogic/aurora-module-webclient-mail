@@ -598,27 +598,33 @@ CMailView.prototype.dragAndDropHelper = function (oMessage, bCtrl)
  */
 CMailView.prototype.messagesDrop = function (oToFolder, oEvent, oUi)
 {
-	if (oToFolder)
-	{
-		var
-			oHelper = oUi && oUi.helper ? oUi.helper : null,
-			sFolder = oHelper ? oHelper.data('p7-message-list-folder') : '',
-			aUids = oHelper ? oHelper.data('p7-message-list-uids') : null
-		;
+	if (oToFolder) {
+		if (oToFolder.type() === Enums.FolderTypes.User || !$('html').hasClass('custom-folder-dragover')) {
+			var
+				oHelper = oUi && oUi.helper ? oUi.helper : null,
+				sFolder = oHelper ? oHelper.data('p7-message-list-folder') : '',
+				aUids = oHelper ? oHelper.data('p7-message-list-uids') : null
+			;
 
-		if ('' !== sFolder && null !== aUids)
-		{
-			Utils.uiDropHelperAnim(oEvent, oUi);
-			if(oEvent.ctrlKey)
-			{
-				this.oMessageList.executeCopyToFolder(oToFolder.fullName());
-				this.uncheckMessages();
-			}
-			else
-			{
-				this.oMessageList.executeMoveToFolder(oToFolder.fullName());
+			console.log('drop', oToFolder.name())
+	
+			if ('' !== sFolder && null !== aUids) {
+				Utils.uiDropHelperAnim(oEvent, oUi);
+				if(oEvent.ctrlKey) {
+					this.oMessageList.executeCopyToFolder(oToFolder.fullName());
+					this.uncheckMessages();
+				} else {
+					this.oMessageList.executeMoveToFolder(oToFolder.fullName());
+				}
 			}
 		}
+	}
+};
+
+CMailView.prototype.bockDroppingToSystemFolders = function (oToFolder, bBlock)
+{
+	if (oToFolder && oToFolder.type() === Enums.FolderTypes.User) {
+		$('html').toggleClass('custom-folder-dragover', bBlock);
 	}
 };
 
