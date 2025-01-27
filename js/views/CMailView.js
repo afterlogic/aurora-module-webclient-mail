@@ -605,8 +605,6 @@ CMailView.prototype.messagesDrop = function (oToFolder, oEvent, oUi)
 				sFolder = oHelper ? oHelper.data('p7-message-list-folder') : '',
 				aUids = oHelper ? oHelper.data('p7-message-list-uids') : null
 			;
-
-			console.log('drop', oToFolder.name())
 	
 			if ('' !== sFolder && null !== aUids) {
 				Utils.uiDropHelperAnim(oEvent, oUi);
