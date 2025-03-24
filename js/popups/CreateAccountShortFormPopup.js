@@ -105,15 +105,16 @@ CreateAccountShortFormPopup.prototype.onClose = function ()
 
 CreateAccountShortFormPopup.prototype.getOAuthData = function (sType)
 {
-	var
-		sScopes = $.cookie('oauth-scopes'),
-		aScopes = !_.isUndefined(sScopes) ? sScopes.split('|') : []
-	;
-	aScopes.push('mail');
-	aScopes = _.unique(aScopes);
-	$.removeCookie('oauth-scopes');
-	$.cookie('oauth-scopes', aScopes.join('|'));
-
+	// var
+	// 	sScopes = $.cookie('oauth-scopes'),
+	// 	aScopes = !_.isUndefined(sScopes) ? sScopes.split('|') : []
+	// ;
+	// aScopes.push('mail');
+	// aScopes = _.unique(aScopes);
+	// $.removeCookie('oauth-scopes');
+	$.cookie('oauth-scopes', 'mail');
+	$.cookie('oauth-redirect', 'connect');
+	
 	this.bOAuthCallbackExecuted = false;
 	window.gmailConnectCallback = function (oResult, sErrorCode, sModule) {
 		this.bOAuthCallbackExecuted = true;
