@@ -14,6 +14,9 @@
 			<span class="flag" data-bind="css: {'flagged': flagged(), 'partial': partialFlagged()}"></span>
 		</span>
 		<span class="data">
+			<!-- ko if: Custom.Avatar -->
+			<span class="avatar" style="display:none;" data-bind="style: {'background': Custom.Avatar.Color}, text: Custom.Avatar.DisplayName"></span>
+			<!-- /ko -->
 			<span class="size" data-bind="text: friendlySize()"></span>
 			<span class="date" data-bind="text: date"></span>
 			<span class="search_folder_marker" data-bind="text: folderObject() ? folderObject().displayName : '',
