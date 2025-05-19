@@ -103,7 +103,7 @@ module.exports = {
           fResponseHandler.apply(oContext, [oResponse, oRequest])
         }
       }
-    if (oParameters && !oParameters.AccountID && sMethod !== 'GetUnifiedMailboxMessages') {
+    if (oParameters && !oParameters.AccountID && !['GetUnifiedMailboxMessages', 'CreateAccount'].includes(sMethod)) {
       oParameters.AccountID = MailCache.currentAccountId()
     }
     Ajax.send(Settings.ServerModuleName, sMethod, oParameters, fBaseResponseHandler, null)
