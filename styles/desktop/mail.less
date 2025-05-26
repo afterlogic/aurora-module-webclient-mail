@@ -119,7 +119,14 @@
 
 		&.nosubject .subject {
 			color: #888888;
-			.opacity(0.3);
+
+			&::before {
+				opacity: 1 !important;
+			}
+
+			[data-bind="text: subjectForDisplay()"] {
+				opacity: 0.3;
+			}
 		}
 
 		&.selected.nosubject .subject {
