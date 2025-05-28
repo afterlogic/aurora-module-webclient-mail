@@ -30,6 +30,9 @@
 
 			<div class="message_info" data-bind="visible: !detailsVisible()">
 				<div class="message_info_line">
+					<!-- ko if: currentMessage() && currentMessage().Custom.Avatar -->
+					<span class="avatar" data-bind="style: {'background': currentMessage().Custom.Avatar.Color}, text: currentMessage().Custom.Avatar.DisplayName"></span> <!--   -->
+					<!-- /ko -->
 					<span class="from contact address_capsule">
 						<span class="control address" data-bind="text: sMeSender && currentAccountEmail() === fromEmail() ? sMeSender : from,
 								attr: {'data-email': fromEmail, 'data-name': oFromAddr() ? oFromAddr().sName : ''}"></span>
