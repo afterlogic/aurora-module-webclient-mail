@@ -291,8 +291,8 @@ CMessageModel.prototype.viewMessage = function (oWin)
 		sHtml = ''
 	;
 
-	this.textBodyForNewWindow(this.getHtmlPart(oDomText));
-	sHtml = this.getHtmlPart($(this.domMessageForPrint()));
+	this.textBodyForNewWindow(oDomText.html());
+	sHtml = $(this.domMessageForPrint()).html();
 
 	if (oWin)
 	{
@@ -625,7 +625,7 @@ CMessageModel.prototype.getDomText = function (sAppPath, bForcedShowPictures)
 CMessageModel.prototype.getConvertedHtml = function (sAppPath, bForcedShowPictures)
 {
 	var oDomText = this.getDomText(sAppPath, bForcedShowPictures);
-	return (oDomText.length > 0) ? this.getHtmlPart(oDomText.wrap('<p>').parent()) : '';
+	return (oDomText.length > 0) ? oDomText.wrap('<p>').parent().html() : '';
 };
 
 /**
@@ -813,23 +813,5 @@ CMessageModel.prototype.getHeaderValue = function (sHeaderName) {
 	;
 	return $.trim(Types.pString(aResult && aResult[1]));
 };
-
-CMessageModel.prototype.getHtmlPart = function (oDom) {
-	var sHtml = '';
-	if (oDom.length == 1) {
-        sHtml = oDom.html();
-    } else if (oDom.length > 1) {
-        oDom.each(function() {
-          var htmlItem = this.outerHTML;
-          if (htmlItem != undefined) {
-            sHtml = sHtml + htmlItem;
-          } else {
-            sHtml = sHtml + $(this).text();
-          }
-        });
-    }
-
-	return sHtml;
-}
 
 module.exports = CMessageModel;

@@ -600,8 +600,7 @@ CMessagePaneView.prototype.setMessageBody = function () {
       this.visiblePicturesControl(false)
     } else {
       oDom = oMessage.getDomText()
-
-      sHtml = oMessage.getHtmlPart(oDom);
+      sHtml = oDom.length > 0 ? oDom.html() : ''
 
       $body.append(sHtml)
 
@@ -809,7 +808,7 @@ CMessagePaneView.prototype.executePrint = function () {
     sHtml = ''
   if (oMessage && oWin) {
     this.textBodyForNewWindow(oMessage.getConvertedHtml(UrlUtils.getAppPath(), true))
-    sHtml = oMessage.getHtmlPart($(this.domMessageForPrint()))
+    sHtml = $(this.domMessageForPrint()).html()
 
     oWin.document.title = this.subject()
     $(oWin.document.body).html(sHtml)
