@@ -146,6 +146,8 @@ function CMailView()
 		return MailCache.getCurrentFolderType() === Enums.FolderTypes.Spam;
 	}, this);
 
+	this.isHorizontalLayout = ko.observable(false);
+
 	this.customModulesDisabledSpam = ko.observableArray([]);
 	this.allowedSpamAction = ko.computed(function () {
 		return Settings.AllowSpamFolder && this.folderList().spamFolder() &&
@@ -160,6 +162,8 @@ function CMailView()
 	this.isTrashFolder = ko.computed(function () {
 		return MailCache.getCurrentFolderType() === Enums.FolderTypes.Trash;
 	}, this);
+	
+	this.layoutNameByOrientation = ko.observable(Settings.HorizontalLayout ? '%ModuleName%_MailHorizontalLayoutView' : '%ModuleName%_MailVerticalLayoutView');
 
 	if (Settings.HorizontalLayout)
 	{
@@ -175,7 +179,7 @@ function CMailView()
 
 _.extendOwn(CMailView.prototype, CAbstractScreenView.prototype);
 
-CMailView.prototype.ViewTemplate = Settings.HorizontalLayout ? '%ModuleName%_MailHorizontalLayoutView' : '%ModuleName%_MailView';
+CMailView.prototype.ViewTemplate = '%ModuleName%_MailView';
 CMailView.prototype.ViewConstructorName = 'CMailView';
 
 /**
