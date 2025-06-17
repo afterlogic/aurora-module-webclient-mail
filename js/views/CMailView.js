@@ -163,12 +163,14 @@ function CMailView()
 		return MailCache.getCurrentFolderType() === Enums.FolderTypes.Trash;
 	}, this);
 	
-	this.layoutNameByOrientation = ko.observable(Settings.HorizontalLayout ? '%ModuleName%_MailHorizontalLayoutView' : '%ModuleName%_MailVerticalLayoutView');
+	this.layoutNameByOrientation = ko.observable('%ModuleName%_MailVerticalLayoutView');
+	
+	Settings.horizontalLayout.subscribe(function (v) {
 
-	if (Settings.HorizontalLayout)
-	{
-		$('html').addClass('layout-horiz-split');
-	}
+		$('html').toggleClass('layout-horiz-split', v);
+		this.layoutNameByOrientation(v ? '%ModuleName%_MailHorizontalLayoutView' : '%ModuleName%_MailVerticalLayoutView')
+	}, this);
+	Settings.horizontalLayout.valueHasMutated();
 
 	App.subscribeEvent('CoreWebclient::GetDebugInfo', _.bind(function (oParams) {
 		oParams.Info.push('checkMailStarted: ' + MailCache.checkMailStarted() + ', messagesLoading: ' + MailCache.messagesLoading());

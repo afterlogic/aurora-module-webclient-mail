@@ -68,7 +68,7 @@ module.exports = {
 	AllowSearchMessagesBySubject: false,
 	PrefixesToRemoveBeforeSearchMessagesBySubject: [],
 	AllowHorizontalLayout: false,
-	HorizontalLayout: false,
+	horizontalLayout: ko.observable(false),
 	HorizontalLayoutByDefault: false,
 	DisableRtlRendering: false,
 	AllowQuickReply: false,
@@ -171,7 +171,7 @@ module.exports = {
 			this.PrefixesToRemoveBeforeSearchMessagesBySubject = Types.pArray(oAppDataMailWebclientSection.PrefixesToRemoveBeforeSearchMessagesBySubject, this.PrefixesToRemoveBeforeSearchMessagesBySubject);
 			this.AllowHorizontalLayout = Types.pBool(oAppDataMailWebclientSection.AllowHorizontalLayout, this.AllowHorizontalLayout);
 			this.HorizontalLayoutByDefault = this.AllowHorizontalLayout && Types.pBool(oAppDataMailWebclientSection.HorizontalLayoutByDefault, this.HorizontalLayoutByDefault);
-			this.HorizontalLayout = this.AllowHorizontalLayout && Types.pBool(oAppDataMailWebclientSection.HorizontalLayout, this.HorizontalLayoutByDefault);
+			this.horizontalLayout(this.AllowHorizontalLayout && Types.pBool(oAppDataMailWebclientSection.HorizontalLayout, this.HorizontalLayoutByDefault));
 			this.DisableRtlRendering = Types.pBool(oAppDataMailWebclientSection.DisableRtlRendering, this.DisableRtlRendering);
 			this.AllowQuickReply = Types.pBool(oAppDataMailWebclientSection.AllowQuickReply, this.AllowQuickReply);
 			this.AllowQuickSendOnCompose = Types.pBool(oAppDataMailWebclientSection.AllowQuickSendOnCompose, this.AllowQuickSendOnCompose);
@@ -208,6 +208,7 @@ module.exports = {
 		this.MailsPerPage = Types.pPositiveInt(parameters.MailsPerPage, this.MailsPerPage);
 		this.showMessagesCountInFolderList(Types.pBool(parameters.ShowMessagesCountInFolderList, this.showMessagesCountInFolderList()));
 		this.StarredMessagesSource = Types.pEnum(parameters.StarredMessagesSource, Enums.StarredMessagesSource, Enums.StarredMessagesSource.InboxOnly);
+		this.horizontalLayout(Types.pBool(parameters.HorizontalLayout, this.horizontalLayout()));
 	},
 	
 	/**

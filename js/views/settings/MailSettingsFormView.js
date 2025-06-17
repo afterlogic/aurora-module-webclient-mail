@@ -50,7 +50,7 @@ function CMailSettingsFormView()
 	this.allowAutosaveInDrafts = ko.observable(Settings.AllowAutosaveInDrafts);
 	this.allowChangeInputDirection = ko.observable(Settings.AllowChangeInputDirection);
 	this.showMessagesCountInFolderList = ko.observable(Settings.showMessagesCountInFolderList());
-	this.horizontalLayout = ko.observable(Settings.HorizontalLayout);
+	this.horizontalLayout = ko.observable(Settings.horizontalLayout());
 }
 
 _.extendOwn(CMailSettingsFormView.prototype, CAbstractSettingsFormView.prototype);
@@ -80,7 +80,7 @@ CMailSettingsFormView.prototype.revertGlobalValues = function ()
 	this.allowAutosaveInDrafts(Settings.AllowAutosaveInDrafts);
 	this.allowChangeInputDirection(Settings.AllowChangeInputDirection);
 	this.showMessagesCountInFolderList(Settings.showMessagesCountInFolderList());
-	this.horizontalLayout(Settings.HorizontalLayout);
+	this.horizontalLayout(Settings.horizontalLayout());
 };
 
 CMailSettingsFormView.prototype.getParametersForSave = function ()
@@ -97,9 +97,6 @@ CMailSettingsFormView.prototype.getParametersForSave = function ()
 
 CMailSettingsFormView.prototype.applySavedValues = function (parameters)
 {
-	if (parameters.HorizontalLayout !== Settings.HorizontalLayout) {
-		window.location.reload();
-	}
 	Settings.update(parameters);
 };
 
