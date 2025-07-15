@@ -5,13 +5,13 @@
 			<span class="icon"></span>
 			<span class="text" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_DELETE'}"></span>
 		</span>
-		<span class="item prev" data-bind="command: nextMessageCommand, visible: bNewTab">
-			<span class="icon" data-bind="customTooltip: '%MODULENAME%/ACTION_OPEN_NEXT_MESSAGE'"></span>
-			<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_OPEN_NEXT_MESSAGE'}"></span>
-		</span>
-		<span class="item next" data-bind="command: prevMessageCommand, visible: bNewTab">
+		<span class="item prev" data-bind="command: prevMessageCommand, visible: bNewTab">
 			<span class="icon" data-bind="customTooltip: '%MODULENAME%/ACTION_OPEN_PREV_MESSAGE'"></span>
 			<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_OPEN_PREV_MESSAGE'}"></span>
+		</span>
+		<span class="item next" data-bind="command: nextMessageCommand, visible: bNewTab">
+			<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_OPEN_NEXT_MESSAGE'}"></span>
+			<span class="icon" data-bind="customTooltip: '%MODULENAME%/ACTION_OPEN_NEXT_MESSAGE'"></span>
 		</span>
 
 		<!-- ko template: {name: '%ModuleName%_Message_ReplyButtonsView'} --><!-- /ko -->
