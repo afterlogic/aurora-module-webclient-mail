@@ -918,6 +918,14 @@ CMessageListView.prototype.initSelector = function ($viewDom)
 	);
 }
 
+CMessageListView.prototype.initDatePickers = function ()
+{
+	_.delay(_.bind(function(){
+		this.createDatePickerObject(this.searchDateStartDom(), this.searchDateStart);
+		this.createDatePickerObject(this.searchDateEndDom(), this.searchDateEnd);
+	}, this), 1000);
+}
+
 /**
  * @param {Object} $viewDom
  */
@@ -961,17 +969,14 @@ CMessageListView.prototype.onBind = function ($viewDom)
 			);
 			if (added) {
 				this.initSelector($viewDom);
+				this.initDatePickers();
 			}
 		}
 	});
 
 	observer.observe($viewDom[0], { childList: true, subtree: false });
 
-	_.delay(_.bind(function(){
-		this.createDatePickerObject(this.searchDateStartDom(), this.searchDateStart);
-		this.createDatePickerObject(this.searchDateEndDom(), this.searchDateEnd);
-	}, this), 1000);
-
+	this.initDatePickers();
 	this.initUploader();
 };
 
