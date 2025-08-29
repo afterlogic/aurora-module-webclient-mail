@@ -1,6 +1,11 @@
 <div class="toolbar">
 	<span class="content">
-
+		<!-- ko if: Settings.layoutMode() === Enums.LayoutMode.Separated -->
+			<span class="item back" data-bind="command: backCommand, customTooltip: 'COREWEBCLIENT/ACTION_BACK'">
+				<span class="icon"></span>
+				<span class="text" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_BACK'}"></span>
+			</span>
+		<!-- /ko -->
 		<span class="item delete" data-bind="command: deleteCommand, visible: bNewTab, customTooltip: 'COREWEBCLIENT/ACTION_DELETE'">
 			<span class="icon"></span>
 			<span class="text" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_DELETE'}"></span>

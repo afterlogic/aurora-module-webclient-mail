@@ -80,6 +80,7 @@ function CMessagePaneView() {
     return App.isNewTab() && Types.isNonEmptyString(this.nextMessageUid())
   }, this)
 
+  this.isEnableBack = this.isCurrentMessage
   this.isEnableDelete = this.isCurrentMessage
   this.isEnableReply = this.isCurrentMessageLoaded
   this.isEnableReplyAll = this.isCurrentMessageLoaded
@@ -91,6 +92,7 @@ function CMessagePaneView() {
   }
 
   this.deleteCommand = Utils.createCommand(this, this.executeDeleteMessage, this.isEnableDelete)
+  this.backCommand = Utils.createCommand(this, this.executeBack, this.isEnableBack)
   this.prevMessageCommand = Utils.createCommand(this, this.executePrevMessage, this.isEnablePrevMessage)
   this.nextMessageCommand = Utils.createCommand(this, this.executeNextMessage, this.isEnableNextMessage)
   this.replyCommand = Utils.createCommand(this, this.executeReply, this.isEnableReply)
@@ -397,6 +399,9 @@ function CMessagePaneView() {
   }
 
   this.sDefaultFontName = Settings.DefaultFontName
+
+  this.Settings = Settings
+  this.Enums = Enums
 
   Pulse.registerDayOfMonthFunction(_.bind(this.updateMomentDate, this))
 
@@ -833,6 +838,11 @@ CMessagePaneView.prototype.executeForwardAsAttachment = function () {
   if (this.currentMessage()) {
     ComposeUtils.composeMessageWithEml(this.currentMessage())
   }
+}
+
+CMessagePaneView.prototype.executeBack = function () {
+  var CMailView = require('modules/%ModuleName%/js/views/CMailView.js');
+  CMailView.resetOpenedSeparatedMessage();
 }
 
 CMessagePaneView.prototype.changeAddMenuVisibility = function () {

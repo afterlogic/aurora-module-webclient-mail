@@ -9,6 +9,7 @@
 			css: {'recivedAnim': recivedAnim()},
 			attr: {href: routingHash},
 			visible: canBeSelected(),
+			click: onFolderClick,
 			droppable: {valueFunc: disableMoveTo() ? false : function (oEvent, oUi) { $root.messagesDrop($data, oEvent, oUi); }, switchObserv: selected}
 		">
 			<!-- ko if: showMessagesCount -->

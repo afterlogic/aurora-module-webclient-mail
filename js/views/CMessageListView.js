@@ -41,9 +41,9 @@ require("jquery-ui/ui/widgets/datepicker");
 /**
  * @constructor
  * 
- * @param {Function} fOpenMessageInNewWindowBound
+ * @param {Function} fOpenMessage
  */
-function CMessageListView(fOpenMessageInNewWindowBound)
+function CMessageListView(fOpenMessage)
 {
 	this.disableMoveMessages = ko.computed(function () {
 		var oFolder = MailCache.getCurrentFolder();
@@ -68,7 +68,7 @@ function CMessageListView(fOpenMessageInNewWindowBound)
 		return this.bDragActive();
 	}, this);
 
-	this.openMessageInNewWindowBound = fOpenMessageInNewWindowBound;
+	this.openMessage = fOpenMessage;
 	
 	this.isFocused = ko.observable(false);
 
@@ -550,7 +550,7 @@ CMessageListView.prototype.onMessageDblClick = function (oMessage)
 			}
 			else
 			{
-				this.openMessageInNewWindowBound(oMessage);
+				this.openMessage(oMessage);
 			}
 		}
 	}
@@ -802,6 +802,9 @@ CMessageListView.prototype.manualChangeSearchString = function (searchInput) {
 
 CMessageListView.prototype.onSearchClick = function ()
 {
+	var CMailView = require('modules/%ModuleName%/js/views/CMailView.js');
+	CMailView.resetOpenedSeparatedMessage();
+	
 	var
 		sFolder = MailCache.getCurrentFolderFullname(),
 		iPage = 1,

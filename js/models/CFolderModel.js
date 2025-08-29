@@ -1598,4 +1598,16 @@ CFolderModel.prototype.onSetAlwaysRefreshFolder = function (oResponse)
 	}
 };
 
+CFolderModel.prototype.onFolderClick = function (data, event)
+{
+	// reset opened message
+	var CMailView = require('modules/%ModuleName%/js/views/CMailView.js');
+	CMailView.resetOpenedSeparatedMessage();
+	
+	// Navigate to folder
+	if (this.routingHash()) {
+		window.location.hash = this.routingHash();
+	}
+};
+
 module.exports = CFolderModel;

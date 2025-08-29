@@ -42,12 +42,20 @@ function CMailView()
 
 	this.folderList = MailCache.folderList;
 	this.domFoldersMoveTo = ko.observable(null);
+	this.openedSeparatedMesage = ko.observable(null);
 
 	this.openMessageInNewWindowBound = _.bind(this.openMessageInNewWindow, this);
+	this.openMessage = _.bind(function(oMessage) {
+		if (Settings.layoutMode() === Enums.LayoutMode.Separated) {
+			this.openedSeparatedMesage(oMessage)
+		} else {
+			this.openMessageInNewWindowBound(oMessage)
+		}
+	}, this);
 
 	this.oFolderList = new CFolderListView();
 	this.isUnifiedFolderCurrent = MailCache.oUnifiedInbox.selected;
-	this.oBaseMessageList = new CMessageListView(this.openMessageInNewWindowBound);
+	this.oBaseMessageList = new CMessageListView(this.openMessage);
 	this.messageList = ko.observable(this.oBaseMessageList);
 	this.isSearchMultiFolders = ko.computed(function () {
 		return this.messageList().searchFoldersMode() === Enums.SearchFoldersMode.Sub || this.messageList().searchFoldersMode() === Enums.SearchFoldersMode.All;
@@ -164,13 +172,30 @@ function CMailView()
 	}, this);
 	
 	this.layoutNameByOrientation = ko.observable('%ModuleName%_MailVerticalLayoutView');
-	
-	Settings.horizontalLayout.subscribe(function (v) {
 
-		$('html').toggleClass('layout-horiz-split', v);
-		this.layoutNameByOrientation(v ? '%ModuleName%_MailHorizontalLayoutView' : '%ModuleName%_MailVerticalLayoutView')
+	Settings.layoutMode.subscribe(function (layoutMode) {
+		var $html = $('html');
+		if ($html.length > 0) {
+			$html.removeClass('layout-vertical layout-horizontal layout-separated');
+			
+			switch (layoutMode) {
+				case Enums.LayoutMode.Vertical:
+					$html.addClass('layout-vertical');
+					this.layoutNameByOrientation('%ModuleName%_MailVerticalLayoutView');
+					break;
+				case Enums.LayoutMode.Horizontal:
+					$html.addClass('layout-horizontal');
+					this.layoutNameByOrientation('%ModuleName%_MailHorizontalLayoutView');
+					break;
+				case Enums.LayoutMode.Separated:
+					$html.addClass('layout-separated');
+					this.layoutNameByOrientation('%ModuleName%_MailSeparatedLayoutView');
+					break;
+			}
+		}
 	}, this);
-	Settings.horizontalLayout.valueHasMutated();
+	
+	Settings.layoutMode.valueHasMutated();
 
 	App.subscribeEvent('CoreWebclient::GetDebugInfo', _.bind(function (oParams) {
 		oParams.Info.push('checkMailStarted: ' + MailCache.checkMailStarted() + ', messagesLoading: ' + MailCache.messagesLoading());
@@ -328,6 +353,7 @@ CMailView.prototype.executeCompose = function ()
 
 CMailView.prototype.executeCheckMail = function ()
 {
+	CMailView.resetOpenedSeparatedMessage();
 	MailCache.checkMessageFlags();
 	MailCache.executeCheckMail(true);
 };
@@ -598,6 +624,29 @@ CMailView.prototype.uncheckMessages = function ()
 	_.each(MailCache.messages(), function(oMessage) {
 		oMessage.checked(false);
 	});
+};
+
+/**
+ * Resets the openedSeparatedMesage variable to null
+ */
+CMailView.prototype.resetOpenedSeparatedMessage = function ()
+{
+	this.openedSeparatedMesage(null);
+};
+
+/**
+ * Static method to reset openedSeparatedMesage from anywhere in the application
+ */
+CMailView.resetOpenedSeparatedMessage = function ()
+{
+	var Screens = require('%PathToCoreWebclientModule%/js/Screens.js');
+	var currentScreen = Screens.currentScreen();
+	var screens = Screens.screens();
+	var oMailView = screens[currentScreen];
+	
+	if (oMailView && oMailView.resetOpenedSeparatedMessage) {
+		oMailView.resetOpenedSeparatedMessage();
+	}
 };
 
 module.exports = CMailView;

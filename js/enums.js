@@ -101,6 +101,15 @@ Enums.StarredMessagesSource = {
 	AllFolders: 'all_folders'
 };
 
+/**
+ * @enum {string}
+ */
+Enums.LayoutMode = {
+	Vertical: 'vertical',
+	Horizontal: 'horizontal',
+	Separated: 'separated'
+};
+
 if (typeof window.Enums === 'undefined')
 {
 	window.Enums = {};
