@@ -63,6 +63,7 @@ function CMailSettingsFormView()
 	
 	// new layout modes
 	this.layoutMode = ko.observable(Settings.layoutMode());
+	this.layoutModeByDefault = ko.observable(Settings.LayoutByDefault);
 	
 	// old layout modes
 	this.horizontalLayout = ko.observable(Settings.horizontalLayout());
@@ -85,6 +86,7 @@ CMailSettingsFormView.prototype.getCurrentValues = function ()
 		this.allowChangeInputDirection(),
 		this.showMessagesCountInFolderList(),
 		this.layoutMode(),
+		this.layoutModeByDefault(),
 		this.horizontalLayout()
 	];
 };
@@ -97,6 +99,7 @@ CMailSettingsFormView.prototype.revertGlobalValues = function ()
 	this.allowChangeInputDirection(Settings.AllowChangeInputDirection);
 	this.showMessagesCountInFolderList(Settings.showMessagesCountInFolderList());
 	this.layoutMode(Settings.layoutMode());
+	this.layoutModeByDefault(Settings.LayoutByDefault);
 	this.horizontalLayout(Settings.horizontalLayout());
 };
 
@@ -109,6 +112,7 @@ CMailSettingsFormView.prototype.getParametersForSave = function ()
 		'AllowChangeInputDirection': this.allowChangeInputDirection(),
 		'ShowMessagesCountInFolderList': this.showMessagesCountInFolderList(),
 		'LayoutMode': this.layoutMode(),
+		'LayoutByDefault': this.layoutModeByDefault(),
 		'HorizontalLayout': this.horizontalLayout()
 	};
 };

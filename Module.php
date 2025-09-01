@@ -80,7 +80,9 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
             'AllowSearchMessagesBySubject' => $this->oModuleSettings->AllowSearchMessagesBySubject,
             'PrefixesToRemoveBeforeSearchMessagesBySubject' => $this->oModuleSettings->PrefixesToRemoveBeforeSearchMessagesBySubject,
             'AllowHorizontalLayout' => $this->oModuleSettings->AllowHorizontalLayout,
+            'AllowChangeLayout' => $this->oModuleSettings->AllowChangeLayout,
             'HorizontalLayoutByDefault' => $this->oModuleSettings->HorizontalLayoutByDefault,
+            'LayoutByDefault' => $this->oModuleSettings->LayoutByDefault,
             'DisableRtlRendering' => $this->oModuleSettings->DisableRtlRendering,
             'AllowQuickReply' => $this->oModuleSettings->AllowQuickReply,
             'AllowQuickSendOnCompose' => $this->oModuleSettings->AllowQuickSendOnCompose,
@@ -111,6 +113,9 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
             if ($this->oModuleSettings->AllowHorizontalLayout && null !== $oUser->getExtendedProp(self::GetName() . '::HorizontalLayout')) {
                 $aSettings['HorizontalLayout'] = $oUser->getExtendedProp(self::GetName() . '::HorizontalLayout');
             }
+            if ($this->oModuleSettings->AllowChangeLayout && null !== $oUser->getExtendedProp(self::GetName() . '::LayoutMode')) {
+                $aSettings['LayoutMode'] = $oUser->getExtendedProp(self::GetName() . '::LayoutMode');
+            }
         }
 
         return $aSettings;
@@ -139,6 +144,9 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
                 if ($this->oModuleSettings->AllowHorizontalLayout && isset($Args['HorizontalLayout'])) {
                     $oUser->setExtendedProp(self::GetName() . '::HorizontalLayout', $Args['HorizontalLayout']);
                 }
+                if ($this->oModuleSettings->AllowChangeLayout && isset($Args['LayoutMode'])) {
+                    $oUser->setExtendedProp(self::GetName() . '::LayoutMode', $Args['LayoutMode']);
+                }
                 return $oCoreDecorator->UpdateUserObject($oUser);
             }
             if ($oUser->Role === \Aurora\System\Enums\UserRole::SuperAdmin) {
@@ -150,6 +158,9 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
                 }
                 if ($this->oModuleSettings->AllowHorizontalLayout && isset($Args['HorizontalLayoutByDefault'])) {
                     $this->setConfig('HorizontalLayoutByDefault', $Args['HorizontalLayoutByDefault']);
+                }
+                if ($this->oModuleSettings->AllowChangeLayout && isset($Args['LayoutByDefault'])) {
+                    $this->setConfig('LayoutByDefault', $Args['LayoutByDefault']);
                 }
                 return $this->saveModuleConfig();
             }
