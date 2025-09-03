@@ -23,14 +23,14 @@ class MailSettings {
     this.smtpAuthTypeEnum = typesUtils.pObject(mailData.SmtpAuthType)
 
     const mailWebclientData = typesUtils.pObject(appData.MailWebclient)
-    this.allowHorizontalLayout = typesUtils.pBool(mailWebclientData.AllowHorizontalLayout)
-    this.horizontalLayoutByDefault = this.allowHorizontalLayout && typesUtils.pBool(mailWebclientData.HorizontalLayoutByDefault)
+    this.allowChangeLayout = typesUtils.pBool(mailWebclientData.AllowChangeLayout)
+    this.layoutByDefault = this.allowChangeLayout && typesUtils.pBool(mailWebclientData.LayoutByDefault)
   }
 
-  saveEditableByAdmin ({ autocreateMailAccountOnNewUserFirstLogin, allowAddAccounts, horizontalLayoutByDefault }) {
+  saveEditableByAdmin ({ autocreateMailAccountOnNewUserFirstLogin, allowAddAccounts, layoutByDefault }) {
     this.autocreateMailAccountOnNewUserFirstLogin = autocreateMailAccountOnNewUserFirstLogin
     this.allowAddAccounts = allowAddAccounts
-    this.horizontalLayoutByDefault = horizontalLayoutByDefault
+    this.layoutByDefault = layoutByDefault
   }
 }
 
@@ -50,8 +50,8 @@ export default {
       allowMultiAccounts: settings.allowMultiAccounts,
       allowAddAccounts: settings.allowAddAccounts,
       autocreateMailAccountOnNewUserFirstLogin: settings.autocreateMailAccountOnNewUserFirstLogin,
-      allowHorizontalLayout: settings.allowHorizontalLayout,
-      horizontalLayoutByDefault: settings.horizontalLayoutByDefault,
+      allowChangeLayout: settings.allowChangeLayout,
+      layoutByDefault: settings.layoutByDefault,
     }
   },
 

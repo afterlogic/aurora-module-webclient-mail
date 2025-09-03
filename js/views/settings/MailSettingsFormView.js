@@ -27,7 +27,6 @@ function CMailSettingsFormView()
 	this.bAllowChangeStarredMessagesSource = Settings.AllowChangeStarredMessagesSource;
 	this.bAllowMailto = Settings.AllowAppRegisterMailto && MailUtils.isAvailableRegisterMailto();
 	this.bAllowShowMessagesCountInFolderList = Settings.AllowShowMessagesCountInFolderList;
-	this.bAllowHorizontalLayout = Settings.AllowHorizontalLayout;
 	this.bAllowChangeLayout = Settings.AllowChangeLayout;
 	
 	this.mailsPerPageValues = ko.observableArray(Types.getAdaptedPerPageList(Settings.MailsPerPage));
@@ -42,18 +41,12 @@ function CMailSettingsFormView()
 		}
 	];
 	
-	// new layout modes
 	this.layoutModeValues = [
 		{ text: TextUtils.i18n('%MODULENAME%/LABEL_VERT_SPLIT_LAYOUT'), value: Enums.LayoutMode.Vertical },
 		{ text: TextUtils.i18n('%MODULENAME%/LABEL_HORIZ_SPLIT_LAYOUT'), value: Enums.LayoutMode.Horizontal },
 		{ text: TextUtils.i18n('%MODULENAME%/LABEL_SEPARATED_LAYOUT'), value: Enums.LayoutMode.Separated }
 	];
 	
-	// old layout modes
-	this.aLayoutValues = [
-		{ text: TextUtils.i18n('%MODULENAME%/LABEL_VERT_SPLIT_LAYOUT'), value: false },
-		{ text: TextUtils.i18n('%MODULENAME%/LABEL_HORIZ_SPLIT_LAYOUT'), value: true }
-	];
 	
 	this.mailsPerPage = ko.observable(Settings.MailsPerPage);
 	this.starredMessagesSource = ko.observable(Settings.StarredMessagesSource);
@@ -61,12 +54,8 @@ function CMailSettingsFormView()
 	this.allowChangeInputDirection = ko.observable(Settings.AllowChangeInputDirection);
 	this.showMessagesCountInFolderList = ko.observable(Settings.showMessagesCountInFolderList());
 	
-	// new layout modes
 	this.layoutMode = ko.observable(Settings.layoutMode());
 	this.layoutModeByDefault = ko.observable(Settings.LayoutByDefault);
-	
-	// old layout modes
-	this.horizontalLayout = ko.observable(Settings.horizontalLayout());
 }
 
 _.extendOwn(CMailSettingsFormView.prototype, CAbstractSettingsFormView.prototype);
@@ -86,8 +75,7 @@ CMailSettingsFormView.prototype.getCurrentValues = function ()
 		this.allowChangeInputDirection(),
 		this.showMessagesCountInFolderList(),
 		this.layoutMode(),
-		this.layoutModeByDefault(),
-		this.horizontalLayout()
+		this.layoutModeByDefault()
 	];
 };
 
@@ -100,7 +88,6 @@ CMailSettingsFormView.prototype.revertGlobalValues = function ()
 	this.showMessagesCountInFolderList(Settings.showMessagesCountInFolderList());
 	this.layoutMode(Settings.layoutMode());
 	this.layoutModeByDefault(Settings.LayoutByDefault);
-	this.horizontalLayout(Settings.horizontalLayout());
 };
 
 CMailSettingsFormView.prototype.getParametersForSave = function ()
@@ -112,8 +99,7 @@ CMailSettingsFormView.prototype.getParametersForSave = function ()
 		'AllowChangeInputDirection': this.allowChangeInputDirection(),
 		'ShowMessagesCountInFolderList': this.showMessagesCountInFolderList(),
 		'LayoutMode': this.layoutMode(),
-		'LayoutByDefault': this.layoutModeByDefault(),
-		'HorizontalLayout': this.horizontalLayout()
+		'LayoutByDefault': this.layoutModeByDefault()
 	};
 };
 

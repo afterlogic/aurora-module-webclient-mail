@@ -21,10 +21,10 @@
               <q-checkbox dense v-model="allowAddAccounts" :label="$t('MAILWEBCLIENT.LABEL_ALLOW_USERS_ADD_MAILBOXES')" />
             </div>
           </div>
-          <div class="row q-mt-md" v-show="allowHorizontalLayout">
+          <div class="row q-mt-md" v-show="allowChangeLayout">
             <div class="col-2 q-mt-sm" v-t="'MAILWEBCLIENT.LABEL_DEFAULT_LAYOUT'"></div>
             <div class="col-5">
-              <q-select outlined dense bg-color="white" v-model="horizontalLayoutByDefault"
+              <q-select outlined dense bg-color="white" v-model="layoutByDefault"
                         emit-value map-options :options="layoutOptions" />
             </div>
           </div>
@@ -57,11 +57,12 @@ export default {
       autocreateMailAccountOnNewUserFirstLogin: true,
       allowMultiAccounts: false,
       allowAddAccounts: false,
-      allowHorizontalLayout: false,
-      horizontalLayoutByDefault: false,
+      allowChangeLayout: false,
+      layoutByDefault: 'vertical',
       layoutOptions: [
-        { label: this.$t('MAILWEBCLIENT.LABEL_VERT_SPLIT_LAYOUT'), value: false },
-        { label: this.$t('MAILWEBCLIENT.LABEL_HORIZ_SPLIT_LAYOUT'), value: true }
+        { label: this.$t('MAILWEBCLIENT.LABEL_VERT_SPLIT_LAYOUT'), value: 'vertical' },
+        { label: this.$t('MAILWEBCLIENT.LABEL_HORIZ_SPLIT_LAYOUT'), value: 'horizontal' },
+        { label: this.$t('MAILWEBCLIENT.LABEL_SEPARATED_LAYOUT'), value: 'separated' }
       ],
       saving: false,
     }
@@ -82,8 +83,8 @@ export default {
       this.autocreateMailAccountOnNewUserFirstLogin = data.autocreateMailAccountOnNewUserFirstLogin
       this.allowMultiAccounts = data.allowMultiAccounts
       this.allowAddAccounts = data.allowAddAccounts
-      this.allowHorizontalLayout = data.allowHorizontalLayout
-      this.horizontalLayoutByDefault = data.horizontalLayoutByDefault
+      this.allowChangeLayout = data.allowChangeLayout
+      this.layoutByDefault = data.layoutByDefault
     },
 
     /**
@@ -93,8 +94,8 @@ export default {
       const data = settings.getEditableByAdmin()
       return this.autocreateMailAccountOnNewUserFirstLogin !== data.autocreateMailAccountOnNewUserFirstLogin ||
           this.allowAddAccounts !== data.allowAddAccounts ||
-          this.allowHorizontalLayout !== data.allowHorizontalLayout ||
-          this.horizontalLayoutByDefault !== data.horizontalLayoutByDefault
+          this.allowChangeLayout !== data.allowChangeLayout ||
+          this.layoutByDefault !== data.layoutByDefault
     },
 
     /**
@@ -112,7 +113,7 @@ export default {
         const parameters = {
           AutocreateMailAccountOnNewUserFirstLogin: this.autocreateMailAccountOnNewUserFirstLogin,
           AllowAddAccounts: this.allowAddAccounts,
-          HorizontalLayoutByDefault: this.horizontalLayoutByDefault,
+          LayoutByDefault: this.layoutByDefault,
         }
         webApi.sendRequest({
           moduleName: 'Mail',
@@ -124,7 +125,7 @@ export default {
             settings.saveEditableByAdmin({
               autocreateMailAccountOnNewUserFirstLogin: parameters.AutocreateMailAccountOnNewUserFirstLogin,
               allowAddAccounts: parameters.AllowAddAccounts,
-              horizontalLayoutByDefault: parameters.HorizontalLayoutByDefault,
+              layoutByDefault: parameters.LayoutByDefault,
             })
             this.populate()
             notification.showReport(this.$t('COREWEBCLIENT.REPORT_SETTINGS_UPDATE_SUCCESS'))

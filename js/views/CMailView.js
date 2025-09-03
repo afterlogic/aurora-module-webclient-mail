@@ -42,12 +42,12 @@ function CMailView()
 
 	this.folderList = MailCache.folderList;
 	this.domFoldersMoveTo = ko.observable(null);
-	this.openedSeparatedMesage = ko.observable(null);
+	this.openedSeparatedMessage = ko.observable(null);
 
 	this.openMessageInNewWindowBound = _.bind(this.openMessageInNewWindow, this);
 	this.openMessage = _.bind(function(oMessage) {
 		if (Settings.layoutMode() === Enums.LayoutMode.Separated) {
-			this.openedSeparatedMesage(oMessage)
+			this.openedSeparatedMessage(oMessage)
 		} else {
 			this.openMessageInNewWindowBound(oMessage)
 		}
@@ -153,8 +153,6 @@ function CMailView()
 	this.isSpamFolder = ko.computed(function () {
 		return MailCache.getCurrentFolderType() === Enums.FolderTypes.Spam;
 	}, this);
-
-	this.isHorizontalLayout = ko.observable(false);
 
 	this.customModulesDisabledSpam = ko.observableArray([]);
 	this.allowedSpamAction = ko.computed(function () {
@@ -353,7 +351,6 @@ CMailView.prototype.executeCompose = function ()
 
 CMailView.prototype.executeCheckMail = function ()
 {
-	CMailView.resetOpenedSeparatedMessage();
 	MailCache.checkMessageFlags();
 	MailCache.executeCheckMail(true);
 };
@@ -411,6 +408,8 @@ CMailView.prototype.resizeDblClick = function (oData, oEvent)
  */
 CMailView.prototype.onRoute = function (aParams)
 {
+	this.resetOpenedSeparatedMessage();
+	
 	if (!AccountList.hasAccount())
 	{
 		Routing.replaceHash(['settings', 'mail-accounts', 'account', 'create']);
@@ -420,14 +419,37 @@ CMailView.prototype.onRoute = function (aParams)
 	var oParams = LinksUtils.parseMailbox(aParams);
 
 	AccountList.changeCurrentAccountByHash(oParams.AccountHash);
-
+	
 	if (_.isFunction(this.oFolderList.onRoute)) {
 		this.oFolderList.onRoute(aParams);
 	}
 	this.messageList().onRoute(aParams);
-	if (_.isFunction(this.messagePane().onRoute))
-	{
+	if (_.isFunction(this.messagePane().onRoute)) {
 		this.messagePane().onRoute(aParams, oParams);
+	}
+
+	const messageId = window.location.hash.substring(1).split('/').filter(item => /^msg/.test(item))[0];
+	// Check if we have a message ID in the URL and set it to openedSeparatedMessage
+	if (messageId && messageId !== '') {
+		// Wait for messages to be loaded from backend before searching
+		var messageSubscription = MailCache.messages.subscribe(function(messages) {
+			
+			if (messages && messages.length > 0) {
+				// Find the current message by ID from the loaded messages
+				var oMessage = _.find(messages, function(msg) {
+					var decodedMessageId = decodeURIComponent(messageId.substring(3)); // Remove 'msg' prefix
+					return msg.longUid() === decodedMessageId;
+				});
+				if (oMessage) {
+					// Set current message in MailCache (similar to MessagePaneView)
+					MailCache.setCurrentMessage(oMessage.accountId(), oMessage.folder(), oMessage.uid());
+					// Set opened separated message for separated layout
+					this.openedSeparatedMessage(oMessage);
+				}
+				// Dispose subscription after finding the message
+				messageSubscription.dispose();
+			}
+		}, this);
 	}
 
 	if (oParams.MailtoCompose)
@@ -450,6 +472,8 @@ CMailView.prototype.onRoute = function (aParams)
 
 CMailView.prototype.onShow = function ()
 {
+	this.resetOpenedSeparatedMessage();
+	
 	if (_.isFunction(this.oFolderList.onShow)) {
 		this.oFolderList.onShow();
 	}
@@ -627,26 +651,13 @@ CMailView.prototype.uncheckMessages = function ()
 };
 
 /**
- * Resets the openedSeparatedMesage variable to null
+ * Resets the openedSeparatedMessage variable to null
  */
 CMailView.prototype.resetOpenedSeparatedMessage = function ()
 {
-	this.openedSeparatedMesage(null);
+	this.openedSeparatedMessage(null);
 };
 
-/**
- * Static method to reset openedSeparatedMesage from anywhere in the application
- */
-CMailView.resetOpenedSeparatedMessage = function ()
-{
-	var Screens = require('%PathToCoreWebclientModule%/js/Screens.js');
-	var currentScreen = Screens.currentScreen();
-	var screens = Screens.screens();
-	var oMailView = screens[currentScreen];
-	
-	if (oMailView && oMailView.resetOpenedSeparatedMessage) {
-		oMailView.resetOpenedSeparatedMessage();
-	}
-};
+
 
 module.exports = CMailView;

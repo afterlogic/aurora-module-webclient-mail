@@ -802,9 +802,6 @@ CMessageListView.prototype.manualChangeSearchString = function (searchInput) {
 
 CMessageListView.prototype.onSearchClick = function ()
 {
-	var CMailView = require('modules/%ModuleName%/js/views/CMailView.js');
-	CMailView.resetOpenedSeparatedMessage();
-	
 	var
 		sFolder = MailCache.getCurrentFolderFullname(),
 		iPage = 1,

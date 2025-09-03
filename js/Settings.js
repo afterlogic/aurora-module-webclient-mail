@@ -68,12 +68,6 @@ module.exports = {
 	AllowSearchMessagesBySubject: false,
 	PrefixesToRemoveBeforeSearchMessagesBySubject: [],
 	
-	// old mode params
-	AllowHorizontalLayout: false,
-	horizontalLayout: ko.observable(false),
-	HorizontalLayoutByDefault: false,
-	
-	// new mode params
 	AllowChangeLayout: false,
 	layoutMode: ko.observable(Enums.LayoutMode.Vertical),
 	LayoutByDefault: Enums.LayoutMode.Vertical,
@@ -178,12 +172,6 @@ module.exports = {
 			this.AllowSearchMessagesBySubject = Types.pBool(oAppDataMailWebclientSection.AllowSearchMessagesBySubject, this.AllowSearchMessagesBySubject);
 			this.PrefixesToRemoveBeforeSearchMessagesBySubject = Types.pArray(oAppDataMailWebclientSection.PrefixesToRemoveBeforeSearchMessagesBySubject, this.PrefixesToRemoveBeforeSearchMessagesBySubject);
 			
-			// old mode params
-			this.AllowHorizontalLayout = Types.pBool(oAppDataMailWebclientSection.AllowHorizontalLayout, this.AllowHorizontalLayout);
-			this.HorizontalLayoutByDefault = this.AllowHorizontalLayout && Types.pBool(oAppDataMailWebclientSection.HorizontalLayoutByDefault, this.HorizontalLayoutByDefault);
-			this.horizontalLayout(this.AllowHorizontalLayout && Types.pBool(oAppDataMailWebclientSection.HorizontalLayout, this.HorizontalLayoutByDefault));
-			
-			// new mode params
 			this.AllowChangeLayout = Types.pBool(oAppDataMailWebclientSection.AllowChangeLayout, this.AllowChangeLayout);
 			this.LayoutByDefault = Types.pEnum(oAppDataMailWebclientSection.LayoutByDefault, Enums.LayoutMode, this.LayoutByDefault);
 			this.layoutMode(Types.pEnum(oAppDataMailWebclientSection.LayoutMode, Enums.LayoutMode, this.LayoutByDefault));
@@ -224,9 +212,6 @@ module.exports = {
 		this.MailsPerPage = Types.pPositiveInt(parameters.MailsPerPage, this.MailsPerPage);
 		this.showMessagesCountInFolderList(Types.pBool(parameters.ShowMessagesCountInFolderList, this.showMessagesCountInFolderList()));
 		this.StarredMessagesSource = Types.pEnum(parameters.StarredMessagesSource, Enums.StarredMessagesSource, Enums.StarredMessagesSource.InboxOnly);
-		this.horizontalLayout(Types.pBool(parameters.HorizontalLayout, this.horizontalLayout()));
-		
-		// new mode param
 		this.layoutMode(Types.pEnum(parameters.LayoutMode, Enums.LayoutMode, this.layoutMode()));
 	},
 	
@@ -234,17 +219,14 @@ module.exports = {
 	 * Updates new admin settings values after saving on server.
 	 * @param {boolean} bAutocreateMailAccountOnNewUserFirstLogin
 	 * @param {boolean} bAllowAddAccounts
-	 * @param {boolean} bHorizontalLayoutByDefault
 	 * @param {boolean} bAllowChangeLayout
 	 * @param {string} sLayoutByDefault
 	 */
-	updateAdmin: function (bAutocreateMailAccountOnNewUserFirstLogin, bAllowAddAccounts, bHorizontalLayoutByDefault, bAllowChangeLayout, sLayoutByDefault)
+	updateAdmin: function (bAutocreateMailAccountOnNewUserFirstLogin, bAllowAddAccounts, bAllowChangeLayout, sLayoutByDefault)
 	{
 		this.AutocreateMailAccountOnNewUserFirstLogin = Types.pBool(bAutocreateMailAccountOnNewUserFirstLogin, this.AutocreateMailAccountOnNewUserFirstLogin);
 		this.AllowAddAccounts = Types.pBool(bAllowAddAccounts, this.AllowAddAccounts);
-		this.HorizontalLayoutByDefault = Types.pBool(bHorizontalLayoutByDefault, this.HorizontalLayoutByDefault);
 		
-		// new mode params
 		this.AllowChangeLayout = Types.pBool(bAllowChangeLayout, this.AllowChangeLayout);
 		this.LayoutByDefault = Types.pEnum(sLayoutByDefault, Enums.LayoutMode, this.LayoutByDefault);
 	},

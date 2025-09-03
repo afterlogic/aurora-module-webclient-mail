@@ -841,8 +841,9 @@ CMessagePaneView.prototype.executeForwardAsAttachment = function () {
 }
 
 CMessagePaneView.prototype.executeBack = function () {
-  var CMailView = require('modules/%ModuleName%/js/views/CMailView.js');
-  CMailView.resetOpenedSeparatedMessage();
+  if (this.currentMessage() && window.location.hash) {
+		Routing.setHash(window.location.hash.substring(1).split('/').filter(item => !/^msg/.test(item)));
+	}
 }
 
 CMessagePaneView.prototype.changeAddMenuVisibility = function () {
