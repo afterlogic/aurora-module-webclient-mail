@@ -24,12 +24,13 @@ class MailSettings {
 
     const mailWebclientData = typesUtils.pObject(appData.MailWebclient)
     this.allowChangeLayout = typesUtils.pBool(mailWebclientData.AllowChangeLayout)
-    this.layoutByDefault = this.allowChangeLayout && typesUtils.pBool(mailWebclientData.LayoutByDefault)
+    this.layoutByDefault = typesUtils.pString(mailWebclientData.LayoutByDefault)
   }
 
-  saveEditableByAdmin ({ autocreateMailAccountOnNewUserFirstLogin, allowAddAccounts, layoutByDefault }) {
+  saveEditableByAdmin ({ autocreateMailAccountOnNewUserFirstLogin, allowAddAccounts, allowChangeLayout, layoutByDefault }) {
     this.autocreateMailAccountOnNewUserFirstLogin = autocreateMailAccountOnNewUserFirstLogin
     this.allowAddAccounts = allowAddAccounts
+    this.allowChangeLayout = allowChangeLayout
     this.layoutByDefault = layoutByDefault
   }
 }

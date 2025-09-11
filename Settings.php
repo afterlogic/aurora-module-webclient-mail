@@ -36,6 +36,7 @@ use Aurora\System\SettingsProperty;
  * @property array $PrefixesToRemoveBeforeSearchMessagesBySubject,
  * @property bool $AllowHorizontalLayout
  * @property bool $HorizontalLayoutByDefault
+ * @property bool $AllowChangeLayout
  * @property string $LayoutByDefault
  * @property bool $DisableRtlRendering
  * @property bool $AllowQuickReply
@@ -219,7 +220,7 @@ class Settings extends \Aurora\System\Module\Settings
                 "If true, users are able to switch betwee vertical and horizontal layouts of mail screen",
             ),
             "AllowChangeLayout" => new SettingsProperty(
-                false,
+                true,
                 "bool",
                 null,
                 "If true, users are able to change layouts of mail screen",
@@ -231,7 +232,7 @@ class Settings extends \Aurora\System\Module\Settings
                 "If true, horizontal layout is used on mail screen by default",
             ),
             "LayoutByDefault" => new SettingsProperty(
-                "vertical",
+                "separated",
                 "string",
                 null,
                 "Default layout mode for mail screen (vertical, horizontal, separated)",

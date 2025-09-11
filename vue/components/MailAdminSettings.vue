@@ -21,7 +21,12 @@
               <q-checkbox dense v-model="allowAddAccounts" :label="$t('MAILWEBCLIENT.LABEL_ALLOW_USERS_ADD_MAILBOXES')" />
             </div>
           </div>
-          <div class="row q-mt-md" v-show="allowChangeLayout">
+          <div class="row q-mt-md">
+            <div class="col-5">
+              <q-checkbox dense v-model="allowChangeLayout" :label="$t('MAILWEBCLIENT.LABEL_ALLOW_CHANGE_LAYOUT')" />
+            </div>
+          </div>
+          <div class="row q-mt-md">
             <div class="col-2 q-mt-sm" v-t="'MAILWEBCLIENT.LABEL_DEFAULT_LAYOUT'"></div>
             <div class="col-5">
               <q-select outlined dense bg-color="white" v-model="layoutByDefault"
@@ -113,6 +118,7 @@ export default {
         const parameters = {
           AutocreateMailAccountOnNewUserFirstLogin: this.autocreateMailAccountOnNewUserFirstLogin,
           AllowAddAccounts: this.allowAddAccounts,
+          AllowChangeLayout: this.allowChangeLayout,
           LayoutByDefault: this.layoutByDefault,
         }
         webApi.sendRequest({
@@ -125,6 +131,7 @@ export default {
             settings.saveEditableByAdmin({
               autocreateMailAccountOnNewUserFirstLogin: parameters.AutocreateMailAccountOnNewUserFirstLogin,
               allowAddAccounts: parameters.AllowAddAccounts,
+              allowChangeLayout: parameters.AllowChangeLayout,
               layoutByDefault: parameters.LayoutByDefault,
             })
             this.populate()
