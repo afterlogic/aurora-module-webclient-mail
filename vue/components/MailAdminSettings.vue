@@ -63,11 +63,11 @@ export default {
       allowMultiAccounts: false,
       allowAddAccounts: false,
       allowChangeLayout: false,
-      layoutByDefault: 'vertical',
+      layoutByDefault: window.Enums.LayoutMode.Vertical,
       layoutOptions: [
-        { label: this.$t('MAILWEBCLIENT.LABEL_VERT_SPLIT_LAYOUT'), value: 'vertical' },
-        { label: this.$t('MAILWEBCLIENT.LABEL_HORIZ_SPLIT_LAYOUT'), value: 'horizontal' },
-        { label: this.$t('MAILWEBCLIENT.LABEL_SEPARATED_LAYOUT'), value: 'separated' }
+        { label: this.$t('MAILWEBCLIENT.LABEL_VERT_SPLIT_LAYOUT'), value: window.Enums.LayoutMode.Vertical },
+        { label: this.$t('MAILWEBCLIENT.LABEL_HORIZ_SPLIT_LAYOUT'), value: window.Enums.LayoutMode.Horizontal },
+        { label: this.$t('MAILWEBCLIENT.LABEL_SEPARATED_LAYOUT'), value: window.Enums.LayoutMode.Separated }
       ],
       saving: false,
     }
