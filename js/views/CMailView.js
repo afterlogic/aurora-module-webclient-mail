@@ -429,6 +429,13 @@ CMailView.prototype.onRoute = function (aParams)
 	}
 
 	const messageId = window.location.hash.substring(1).split('/').filter(item => /^msg/.test(item))[0];
+
+	// If custom action is create-note (Notes plugin), show editor in separated viewer
+	if (oParams.Custom === 'create-note') {
+		this.openedSeparatedMessage({ __createNote: true });
+		return;
+	}
+
 	// Check if we have a message ID in the URL and set it to openedSeparatedMessage
 	if (messageId && messageId !== '') {
 		// Wait for messages to be loaded from backend before searching
@@ -450,6 +457,9 @@ CMailView.prototype.onRoute = function (aParams)
 				messageSubscription.dispose();
 			}
 		}, this);
+	} else {
+		// No message in route and not a custom create note → hide separated viewer
+		this.openedSeparatedMessage(null);
 	}
 
 	if (oParams.MailtoCompose)
