@@ -92,3 +92,25 @@
 	   }
    }
 }
+
+.separate_layout_mode {
+	&:not(.separate_message_opened) {
+		.message_viewer {
+			display: none;
+		}
+	}
+
+	&.separate_message_opened {
+		.messages_panel {
+			// display: none;
+			height: 0;
+			overflow: hidden;
+
+			.middle_bar .panel_top {
+				.custom_checkbox {
+					display: none;
+				}
+			}
+		}
+	}
+}

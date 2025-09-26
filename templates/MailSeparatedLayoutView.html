@@ -1,17 +1,17 @@
-<div class="panels" data-bind="splitterFlex: { storagePrefix: 'aurora_mail_hr_folders_', sizes: [20, 80] }">
+<div class="panels separate_layout_mode" data-bind="splitterFlex: { storagePrefix: 'aurora_mail_hr_folders_', sizes: [20, 80] }, css: {'separate_message_opened': isOpenedSeparatedMessage()}">
 	<div class="panel left_panel folders_panel">
 		<div class="panel_content">
 			<!-- ko template: {name: oFolderList.ViewTemplate, data: oFolderList} --><!-- /ko -->
 		</div>
 	</div>
 	<div>
-		<div class="panel center_panel messages_panel" data-bind="visible: !openedSeparatedMessage(), css: {'unified_messages_panel': isUnifiedFolderCurrent, 'search_multi_folders': isSearchMultiFolders}">
+		<div class="panel center_panel messages_panel" data-bind="css: {'unified_messages_panel': isUnifiedFolderCurrent, 'search_multi_folders': isSearchMultiFolders}">
 			<div class="panel_content">
 				<!-- ko template: { name: '%ModuleName%_Messages_ToolbarView' } --><!-- /ko -->
 				<!-- ko template: { name: messageList().ViewTemplate, data: messageList() } --><!-- /ko -->
 			</div>
 		</div>
-		<div class="panel item_viewer message_viewer" data-bind="visible: openedSeparatedMessage">
+		<div class="panel item_viewer message_viewer">
 			<div class="panel_content">
 				<div class="middle_bar" data-bind="template: {name: messagePane().ViewTemplate, data: messagePane}"></div>
 			</div>

@@ -42,12 +42,12 @@ function CMailView()
 
 	this.folderList = MailCache.folderList;
 	this.domFoldersMoveTo = ko.observable(null);
-	this.openedSeparatedMessage = ko.observable(null);
+	this.isOpenedSeparatedMessage = ko.observable(null);
 
 	this.openMessageInNewWindowBound = _.bind(this.openMessageInNewWindow, this);
 	this.openMessage = _.bind(function(oMessage) {
 		if (Settings.layoutMode() === Enums.LayoutMode.Separated) {
-			this.openedSeparatedMessage(oMessage)
+			this.isOpenedSeparatedMessage(true)
 		} else {
 			this.openMessageInNewWindowBound(oMessage)
 		}
@@ -235,7 +235,6 @@ CMailView.prototype.setCustomPreviewPane = function (sModuleName, oPreviewPane)
 		{
 			this.messagePane().onHide();
 		}
-
 		oPreviewPane.__customModuleName = sModuleName;
 		this.messagePane(oPreviewPane);
 
@@ -408,7 +407,7 @@ CMailView.prototype.resizeDblClick = function (oData, oEvent)
  */
 CMailView.prototype.onRoute = function (aParams)
 {
-	this.resetOpenedSeparatedMessage();
+	this.isOpenedSeparatedMessage(false);
 	
 	if (!AccountList.hasAccount())
 	{
@@ -424,43 +423,20 @@ CMailView.prototype.onRoute = function (aParams)
 		this.oFolderList.onRoute(aParams);
 	}
 	this.messageList().onRoute(aParams);
+	
 	if (_.isFunction(this.messagePane().onRoute)) {
-		this.messagePane().onRoute(aParams, oParams);
+		this.messagePane().onRoute(aParams);
 	}
 
-	const messageId = window.location.hash.substring(1).split('/').filter(item => /^msg/.test(item))[0];
-
-	// If custom action is create-note (Notes plugin), show editor in separated viewer
-	if (oParams.Custom === 'create-note') {
-		this.openedSeparatedMessage({ __createNote: true });
-		return;
-	}
-
-	// Check if we have a message ID in the URL and set it to openedSeparatedMessage
-	if (messageId && messageId !== '') {
-		// Wait for messages to be loaded from backend before searching
-		var messageSubscription = MailCache.messages.subscribe(function(messages) {
-			
-			if (messages && messages.length > 0) {
-				// Find the current message by ID from the loaded messages
-				var oMessage = _.find(messages, function(msg) {
-					var decodedMessageId = decodeURIComponent(messageId.substring(3)); // Remove 'msg' prefix
-					return msg.longUid() === decodedMessageId;
-				});
-				if (oMessage) {
-					// Set current message in MailCache (similar to MessagePaneView)
-					MailCache.setCurrentMessage(oMessage.accountId(), oMessage.folder(), oMessage.uid());
-					// Set opened separated message for separated layout
-					this.openedSeparatedMessage(oMessage);
-				}
-				// Dispose subscription after finding the message
-				messageSubscription.dispose();
-			}
-		}, this);
-	} else {
-		// No message in route and not a custom create note → hide separated viewer
-		this.openedSeparatedMessage(null);
-	}
+	// we can't define if message is should be opened in the separated layout mode in onRoute method
+	// because this makes message opening on click, instead of double click
+	// if (Settings.layoutMode() === Enums.LayoutMode.Separated) {
+	// 	if (oParams.Uid || oParams.Custom !== '') {
+	// 		this.isOpenedSeparatedMessage(true);
+	// 	} else {
+	// 		this.isOpenedSeparatedMessage(false);
+	// 	}
+	// }
 
 	if (oParams.MailtoCompose)
 	{
@@ -482,7 +458,7 @@ CMailView.prototype.onRoute = function (aParams)
 
 CMailView.prototype.onShow = function ()
 {
-	this.resetOpenedSeparatedMessage();
+	this.isOpenedSeparatedMessage(false);
 	
 	if (_.isFunction(this.oFolderList.onShow)) {
 		this.oFolderList.onShow();
@@ -659,15 +635,5 @@ CMailView.prototype.uncheckMessages = function ()
 		oMessage.checked(false);
 	});
 };
-
-/**
- * Resets the openedSeparatedMessage variable to null
- */
-CMailView.prototype.resetOpenedSeparatedMessage = function ()
-{
-	this.openedSeparatedMessage(null);
-};
-
-
 
 module.exports = CMailView;
