@@ -235,7 +235,6 @@ CMailView.prototype.setCustomPreviewPane = function (sModuleName, oPreviewPane)
 		{
 			this.messagePane().onHide();
 		}
-
 		oPreviewPane.__customModuleName = sModuleName;
 		this.messagePane(oPreviewPane);
 
@@ -424,17 +423,8 @@ CMailView.prototype.onRoute = function (aParams)
 		this.oFolderList.onRoute(aParams);
 	}
 	this.messageList().onRoute(aParams);
-	if (_.isFunction(this.messagePane().onRoute)) {
-		this.messagePane().onRoute(aParams, oParams);
-	}
 
 	const messageId = window.location.hash.substring(1).split('/').filter(item => /^msg/.test(item))[0];
-
-	// If custom action is create-note (Notes plugin), show editor in separated viewer
-	if (oParams.Custom === 'create-note') {
-		this.openedSeparatedMessage({ __createNote: true });
-		return;
-	}
 
 	// Check if we have a message ID in the URL and set it to openedSeparatedMessage
 	if (messageId && messageId !== '') {
@@ -478,6 +468,11 @@ CMailView.prototype.onRoute = function (aParams)
 			Routing.replaceHash(LinksUtils.getMailbox());
 		}
 	}
+	setTimeout(_.bind(function () {
+		if (_.isFunction(this.messagePane().onRoute)) {
+			this.messagePane().onRoute(aParams, oParams, this);
+		}
+	}, this), 0);
 };
 
 CMailView.prototype.onShow = function ()
