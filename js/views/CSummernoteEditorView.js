@@ -371,7 +371,11 @@ CHtmlEditorView.prototype.insertTemplate = function (sHtml, oEvent) {
 };
 
 CHtmlEditorView.prototype.isInitialized = function () {
-	return !!this.oEditor;
+	if (this.oEditor && $.contains(document.body, this.oEditor[0])) {
+		return true;
+	}
+
+	return false;
 };
 
 CHtmlEditorView.prototype.setFocus = function () {
@@ -505,7 +509,9 @@ CHtmlEditorView.prototype.getText = function (bRemoveSignatureAnchor, isPrivate)
  * Returns JQuery instance of main editable element
  */
 CHtmlEditorView.prototype.getEditableArea = function () {
-	return this.oEditor.data("summernote").layoutInfo.editable;
+	if (this.isInitialized()) {
+		return this.oEditor.data("summernote").layoutInfo.editable;
+	}
 };
 
 /**
