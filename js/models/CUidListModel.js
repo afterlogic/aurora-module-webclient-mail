@@ -96,7 +96,7 @@ CUidListModel.prototype.getUidsForOffset = function (iOffset, iLimit)
 		if (iIndex >= iOffset && iExistsCount < iLimit)
 		{
 			const sUid = this.collection()[iIndex];
-			const keysForDict = ComplexUidUtils.parse(this.iAccountId, this.sFullName, sUid);
+			const keysForDict = sUid === undefined ? undefined : ComplexUidUtils.parse(this.iAccountId, this.sFullName, sUid);
 			const oMsg = (sUid === undefined) ? null : MessagesDictionary.get(keysForDict);
 
 			if (oMsg && !oMsg.deleted() || sUid === undefined)
