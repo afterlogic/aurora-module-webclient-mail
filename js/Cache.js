@@ -1437,6 +1437,7 @@ CMailCache.prototype.getMessageUid = function (oMessage)
 	if (this.oUnifiedInbox.selected()) {
 		return oMessage.unifiedUid();
 	} else {
+		// Works with multiple folders at once
 		if (this.isListWithComplexUids()) {
 			return oMessage.unifiedUid();
 		} else {

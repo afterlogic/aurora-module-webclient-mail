@@ -1026,9 +1026,11 @@ CMessageListView.prototype.executeCopyToFolder = function (sToFolder)
  */
 CMessageListView.prototype.onDeletePress = function (aMessages)
 {
-	var aUids = MailCache.oUnifiedInbox.selected() ?
-			_.map(aMessages, function (oMessage) { return oMessage.unifiedUid(); }) :
-			_.map(aMessages, function (oMessage) { return oMessage.uid(); });
+	var aUids = _.map(
+		aMessages,
+		function (oMessage) { return MailCache.getMessageUid(oMessage); }
+	);
+
 //	App.sendLogMessage(JSON.stringify({
 //		Message: 'Pressing delete key on keyboard',
 //		Uids: aUids
