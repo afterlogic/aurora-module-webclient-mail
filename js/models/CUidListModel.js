@@ -70,19 +70,16 @@ CUidListModel.prototype.getUidsForOffset = function (iOffset)
 	var
 		iIndex = 0,
 		iLen = this.collection().length,
-		sUid = '',
-		iAccountId = this.iAccountId,
-		sFullName = this.sFullName,
 		iExistsCount = 0,
-		aUids = [],
-		oMsg = null
+		aUids = []
 	;
 
 	for(; iIndex < iLen; iIndex++)
 	{
 		if (iIndex >= iOffset && iExistsCount < Settings.MailsPerPage)
 		{
-			sUid = this.collection()[iIndex];
+			var sUid = this.collection()[iIndex];
+			var oMsg = null;
 			if (sUid !== undefined)
 			{
 				var oIdentifiers = MailCache.getMessageActualIdentifiers(this.iAccountId, this.sFullName, sUid);
