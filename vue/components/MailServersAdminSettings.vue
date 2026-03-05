@@ -270,7 +270,6 @@
             <div class="row" v-if="useSpecifiedCredentials">
               <div class="col-2"></div>
               <div class="col-10 text-caption text-grey-7 q-mt-xs" v-t="'MAILWEBCLIENT.LABEL_ALTERNATIVE_SMTP_DISCLAIMER'"></div>
-              </div>
             </div>
           </q-card-section>
         </q-card>
