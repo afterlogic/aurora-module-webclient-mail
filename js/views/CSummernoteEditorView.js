@@ -427,11 +427,11 @@ CHtmlEditorView.prototype.changeSignatureContent = function (
 				const sClearOldSignature =
 					$NewSignature.length === 0 || $OldSignature.length === 0
 						? sOldSignatureContent
-						: $OldSignature.html();
+						: $OldSignature[0].outerHTML;
 				const sClearNewSignature =
 					$NewSignature.length === 0 || $OldSignature.length === 0
 						? sNewSignatureContent
-						: $NewSignature.html();
+						: $NewSignature[0].outerHTML;
 				/*** found a previous signature without wrapper -> replace it with a new ***/
 				if (sCurrentSignatureContent.indexOf(sClearOldSignature) !== -1) {
 					$SignatureContainer.html(
