@@ -428,6 +428,9 @@ export default {
         this.externalAccessSmtpAlterPort = val
       }
     },
+    useSpecifiedCredentials () {
+      return this.smtpAuthentication === this.smtpAuthTypeEnum.UseSpecifiedCredentials
+    },
   },
 
   watch: {
