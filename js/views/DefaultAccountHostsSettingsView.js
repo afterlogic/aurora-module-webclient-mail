@@ -23,7 +23,7 @@ function CDefaultAccountHostsSettingsView()
 	this.externalAccessPop3Server = ko.observable(this.visible() ? this.defaultAccount.oServer.sExternalAccessPop3Server : '');
 	this.externalAccessPop3Port = ko.observable(this.visible() ? this.defaultAccount.oServer.iExternalAccessPop3Port : 110);
 	this.externalAccessPop3AlterPort = ko.observable((this.visible() && this.defaultAccount.oServer.iExternalAccessPop3AlterPort > 0) ? this.defaultAccount.oServer.iExternalAccessPop3AlterPort : '');
-	this.externalAccessPop3UseSsl = ko.observable(this.visible() ? this.defaultAccount.oServer.bExternalAccessImapUseSsl : false);
+	this.externalAccessPop3UseSsl = ko.observable(this.visible() ? this.defaultAccount.oServer.bExternalAccessPop3UseSsl : false);
 	this.externalAccessSmtpServer = ko.observable(this.visible() ? this.defaultAccount.oServer.sExternalAccessSmtpServer : '');
 	this.externalAccessSmtpPort = ko.observable(this.visible() ? this.defaultAccount.oServer.iExternalAccessSmtpPort : 25);
 	this.externalAccessSmtpAlterPort = ko.observable((this.visible() && this.defaultAccount.oServer.iExternalAccessSmtpAlterPort > 0) ? this.defaultAccount.oServer.iExternalAccessSmtpAlterPort : '');
