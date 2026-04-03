@@ -107,7 +107,8 @@ CAccountForwardSettingsFormView.prototype.save = function ()
 	{
 		if (!AddressUtils.isCorrectEmail(sEmail))
 		{
-			Popups.showPopup(AlertPopup, [TextUtils.i18n('%MODULENAME%/ERROR_INPUT_CORRECT_EMAILS') + ' ' + sEmail]);
+			const sSantitizedEmail = TextUtils.htmlToPlain(sEmail);
+			Popups.showPopup(AlertPopup, [TextUtils.i18n('%MODULENAME%/ERROR_INPUT_CORRECT_EMAILS') + ' ' + sSantitizedEmail]);
 		}
 		else
 		{
