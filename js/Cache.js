@@ -2018,7 +2018,7 @@ CMailCache.prototype.onMoveMessagesResponse = function (oResponse, oRequest)
 			{
 				if (Types.isNonEmptyString(oResponse.ErrorMessage))
 				{
-					sConfirm += ' (' + oResponse.ErrorMessage + ')';
+					sConfirm += ' (' + TextUtils.encodeHtml(oResponse.ErrorMessage) + ')';
 				}
 				Popups.showPopup(ConfirmPopup, [sConfirm, fDeleteMessages]);
 			}
