@@ -93,7 +93,7 @@ module.exports = {
             oAccount.passwordMightBeIncorrect(true)
             var sResultError = TextUtils.i18n('%MODULENAME%/ERROR_CREDENTIALS_INCORRECT', { EMAIL: oAccount.email() })
             if (sErrorMessage) {
-              sResultError += ' (' + TextUtils.encodeHtml(sErrorMessage) + ')'
+              sResultError += ' (' + TextUtils.stripTags(sErrorMessage) + ')'
             }
             Screens.showError(sResultError, true)
             oResponse = { Result: false, ErrorCode: Enums.Errors.NotDisplayedError }
