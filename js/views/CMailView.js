@@ -174,7 +174,7 @@ function CMailView()
 	Settings.layoutMode.subscribe(function (layoutMode) {
 		var $html = $('html');
 		if ($html.length > 0) {
-			$html.removeClass('layout-vertical layout-horizontal layout-separated');
+			$html.removeClass('layout-vertical layout-horiz-split layout-separated');
 			
 			switch (layoutMode) {
 				case Enums.LayoutMode.Vertical:
@@ -182,7 +182,7 @@ function CMailView()
 					this.layoutNameByOrientation('%ModuleName%_MailVerticalLayoutView');
 					break;
 				case Enums.LayoutMode.Horizontal:
-					$html.addClass('layout-horizontal');
+					$html.addClass('layout-horiz-split');
 					this.layoutNameByOrientation('%ModuleName%_MailHorizontalLayoutView');
 					break;
 				case Enums.LayoutMode.Separated:
