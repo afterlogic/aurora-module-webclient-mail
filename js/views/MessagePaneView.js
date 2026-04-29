@@ -612,7 +612,7 @@ CMessagePaneView.prototype.setMessageBody = function () {
       this.visiblePicturesControl(false)
     } else {
       oDom = oMessage.getDomText()
-      sHtml = oDom.length > 0 ? oDom.html() : ''
+      sHtml = oDom.length > 0 ? oDom[0].outerHTML : ''
 
       $body.append(sHtml)
 
