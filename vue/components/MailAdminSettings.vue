@@ -52,6 +52,7 @@ import errors from 'src/utils/errors'
 import notification from 'src/utils/notification'
 import webApi from 'src/utils/web-api'
 
+import enums from '../enums'
 import settings from '../settings'
 
 export default {
@@ -63,11 +64,11 @@ export default {
       allowMultiAccounts: false,
       allowAddAccounts: false,
       allowChangeLayout: false,
-      layoutByDefault: window.Enums.LayoutMode.Vertical,
+      layoutByDefault: enums.LayoutMode.vertical,
       layoutOptions: [
-        { label: this.$t('MAILWEBCLIENT.LABEL_VERT_SPLIT_LAYOUT'), value: window.Enums.LayoutMode.Vertical },
-        { label: this.$t('MAILWEBCLIENT.LABEL_HORIZ_SPLIT_LAYOUT'), value: window.Enums.LayoutMode.Horizontal },
-        { label: this.$t('MAILWEBCLIENT.LABEL_SEPARATED_LAYOUT'), value: window.Enums.LayoutMode.Separated }
+        { label: this.$t('MAILWEBCLIENT.LABEL_VERT_SPLIT_LAYOUT'), value: enums.LayoutMode.vertical },
+        { label: this.$t('MAILWEBCLIENT.LABEL_HORIZ_SPLIT_LAYOUT'), value: enums.LayoutMode.horizontal },
+        { label: this.$t('MAILWEBCLIENT.LABEL_SEPARATED_LAYOUT'), value: enums.LayoutMode.separated }
       ],
       saving: false,
     }
