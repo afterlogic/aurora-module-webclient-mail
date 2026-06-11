@@ -116,7 +116,7 @@ CComposePopup.prototype.onOpen = function (aParams)
 							case Enums.AnotherMessageComposedAnswer.SaveAsDraft:
 								if (this.hasUnsavedChanges())
 								{
-									this.executeSave(true, false);
+									this.executeSave(true, false, false, 'another_message_save');
 								}
 								this.onRoute(aParams);
 								break;

@@ -413,7 +413,7 @@ function CComposeView()
 	{
 		this.iAutosaveInterval = -1;
 		ko.computed(function () {
-			var bAllowAutosave = this.draftFolderIsAvailable() && this.composeShown() && !this.sending() && !this.saving() && !this.disableAutosave() && !MailCache.disableComposeAutosave();
+			var bAllowAutosave = this.draftFolderIsAvailable() && this.composeShown() && !this.sending() && !this.saving() && !this.disableAutosave() && !MailCache.disableComposeAutosave();			
 			_.each(this.allControllers(), function (oController) {
 				bAllowAutosave = bAllowAutosave && !(!!oController.disableAutosave && oController.disableAutosave());
 			});
@@ -422,7 +422,7 @@ function CComposeView()
 
 			if (bAllowAutosave)
 			{
-				this.iAutosaveInterval = window.setInterval(_.bind(this.executeSave, this, true), Settings.AutoSaveIntervalSeconds * 1000);
+				this.iAutosaveInterval = window.setInterval(_.bind(this.executeSave, this, true, undefined, false, 'timer'), Settings.AutoSaveIntervalSeconds * 1000);
 			}
 		}, this);
 	}
@@ -559,7 +559,7 @@ CComposeView.prototype.changeHeadersCompressed = function ()
  */
 CComposeView.prototype.onBind = function ()
 {
-	ModulesManager.run('SessionTimeoutWeblient', 'registerFunction', [_.bind(this.executeSave, this, false)]);
+	ModulesManager.run('SessionTimeoutWeblient', 'registerFunction', [_.bind(this.executeSave, this, false, undefined, false, 'session_timeout')]);
 
 	if (!App.isMobile())
 	{
@@ -774,7 +774,7 @@ CComposeView.prototype.fillDefault = function (oParams)
 		this.setMessageDataInNewTab(oComposedMessage);
 		if (this.changedInPreviousWindow())
 		{
-			_.defer(_.bind(this.executeSave, this, true));
+			_.defer(_.bind(this.executeSave, this, true, undefined, false, 'previous_window_change'));
 		}
 	}
 	else if (sSignature !== '')
@@ -876,7 +876,7 @@ CComposeView.prototype.onHide = function ()
 {
 	if (!_.isFunction(this.closePopup) && this.hasUnsavedChanges())
 	{
-		this.executeSave(true);
+		this.executeSave(true, undefined, false, 'leave_screen');
 	}
 
 	this.oHtmlEditor.onClose();
@@ -1628,8 +1628,9 @@ CComposeView.prototype.initUploader = function ()
  * @param {boolean} removeSignatureAnchor
  * @param {boolean} saveTemplate
  * @param {string} method
+ * @param {string} autosaveInDrafts
  */
-CComposeView.prototype.getSendSaveParameters = function ({removeSignatureAnchor = false, saveTemplate = false, method = ''})
+CComposeView.prototype.getSendSaveParameters = function ({removeSignatureAnchor = false, saveTemplate = false, method = '', autosaveInDrafts = ''})
 {
 	var
 		oAttachments = SendingUtils.convertAttachmentsForSending(this.attachments()),
@@ -1668,6 +1669,11 @@ CComposeView.prototype.getSendSaveParameters = function ({removeSignatureAnchor 
 
 	if (this.isPrivate()) {
 		PrivateMessagingUtils.addPrivateMessageHeaderToParameters(oParameters);
+	}
+
+	if (autosaveInDrafts != null && autosaveInDrafts !== '')
+	{
+		oParameters.AutosaveInDrafts = autosaveInDrafts;
 	}
 
 	_.each(this.allControllers(), function (oController) {
@@ -1811,21 +1817,22 @@ CComposeView.prototype.executeSaveCommand = function ()
 {
 	if (this.draftFolderIsAvailable())
 	{
-		this.executeSave(false);
+		this.executeSave(false, undefined, false, 'user_save_button');
 	}
 };
 
 CComposeView.prototype.executeTemplateSaveCommand = function ()
 {
-    this.executeSave(false, true, true);
+    this.executeSave(false, true, true, 'user_save_template');
 };
 
 /**
  * @param {boolean=} bAutosave = false
  * @param {boolean=} bWaitResponse = true
  * @param {boolean=} saveTemplate = false
+ * @param {string=} sAutosaveInDrafts = ''
  */
-CComposeView.prototype.executeSave = function (bAutosave, bWaitResponse, saveTemplate = false)
+CComposeView.prototype.executeSave = function (bAutosave, bWaitResponse, saveTemplate = false, sAutosaveInDrafts = '')
 {
 	bAutosave = !!bAutosave;
 	bWaitResponse = (bWaitResponse === undefined) ? true : bWaitResponse;
@@ -1837,7 +1844,7 @@ CComposeView.prototype.executeSave = function (bAutosave, bWaitResponse, saveTem
 			if (bSave)
 			{
 				this.saving(bWaitResponse);
-				const saveParameters = this.getSendSaveParameters({saveTemplate, method: 'SaveMessage'});
+				const saveParameters = this.getSendSaveParameters({saveTemplate, method: 'SaveMessage', autosaveInDrafts: sAutosaveInDrafts});
 				SendingUtils.send('SaveMessage', saveParameters, !bAutosave, fOnSaveMessageResponse, oContext);
 			}
 		}, this),
@@ -2129,7 +2136,7 @@ CComposeView.prototype.getExtInterface = function ()
 			return this.recipientEmails();
 		}, this),
 		getSelectedSender: _.bind(this.selectedSender, this),
-		saveSilently: _.bind(this.executeSave, this, true),
+		saveSilently: _.bind(this.executeSave, this, true, undefined, false, 'external_module'),
 		setPlainTextMode: _.bind(this.plainText, this, true),
 		setPlainText: _.bind(function (sText) {
 			this.textBody(sText);
