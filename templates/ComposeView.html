@@ -1,4 +1,4 @@
-<div class="panels">
+<div class="panels" data-test-id="mail-compose">
 	<div class="panel compose" data-bind="css: {'compose-auto-encrypt': autoEncryptSignMessage}">
 		<div class="panel_content">
 			<div class="toolbar">
@@ -56,7 +56,7 @@
 											<td class="value">
 												<table>
 													<tr>
-														<td class="value" style="width: 100%;" id="selenium_compose_toaddr">
+														<td class="value" style="width: 100%;" id="selenium_compose_toaddr" data-test-id="mail-compose-to">
 															<div class="input inputosaurus">
 																<div class="disable_mask" data-bind="visible: disableHeadersEdit"></div>
 																<div data-bind="customScrollbar: {x: false}">
@@ -77,7 +77,7 @@
 											<td class="label">
 												<span data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_CC'}"></span>:
 											</td>
-											<td class="value">
+											<td class="value" data-test-id="mail-compose-cc">
 												<div class="input inputosaurus">
 													<div class="disable_mask" data-bind="visible: disableHeadersEdit"></div>
 													<div data-bind="customScrollbar: {x: false}">
@@ -92,7 +92,7 @@
 											<td class="label">
 												<span data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_BCC'}"></span>:
 											</td>
-											<td class="value">
+											<td class="value" data-test-id="mail-compose-bcc">
 												<div class="input inputosaurus">
 													<div class="disable_mask" data-bind="visible: disableHeadersEdit"></div>
 													<div data-bind="customScrollbar: {x: false}">
@@ -108,7 +108,7 @@
 												<span data-bind="i18n: {'key': '%MODULENAME%/LABEL_SUBJECT'}"></span>:
 											</td>
 											<td class="value">
-												<input type="text" class="input" maxlength="1000" tabindex="5" id="selenium_compose_subject"
+												<input type="text" class="input" maxlength="1000" tabindex="5" id="selenium_compose_subject" data-test-id="mail-compose-subject"
 													   data-bind="value: subject, hasfocus: subjectFocused, valueUpdate: 'afterkeydown'"/>
 											</td>
 										</tr>

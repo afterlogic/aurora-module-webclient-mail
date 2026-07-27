@@ -1,5 +1,5 @@
 <span data-bind="visible: visible() && !disableMoveTo(), attr: {'class': 'item folder-level' + (getDisplayedLevel() + 1)}, css: {'system': isSystem, 'user': !isSystem()}">
-	<span class="folder" data-bind="attr: {'data-folder': canBeSelected() ? fullName() : ''}, 
+	<span class="folder" data-test-id="mail-move-folder-item" data-bind="attr: {'data-folder': canBeSelected() ? fullName() : ''}, 
 		  css: {'disabled': !$root.isSearchMultiFolders() && selected(), 'unselectable': !canBeSelected()}">
 		<span class="title" data-bind="text: displayName"></span>
 	</span>

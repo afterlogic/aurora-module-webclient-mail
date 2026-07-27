@@ -7,7 +7,16 @@
 					(expanded() ? ' expanded' : ' collapsed') + (hasExtendedInfo() && messageCount() === 0 ? ' folder_no_messages' : '')">
 		<a class="title" href="javascript: void(0);" data-bind="
 			css: {'recivedAnim': recivedAnim()},
-			attr: {href: routingHash},
+			attr: {
+				href: routingHash,
+				'data-test-id': 'mail-folder',
+				'data-folder-type': (type() === Enums.FolderTypes.Inbox) ? 'inbox' :
+					((type() === Enums.FolderTypes.Sent) ? 'sent' :
+					((type() === Enums.FolderTypes.Drafts) ? 'drafts' :
+					((type() === Enums.FolderTypes.Spam) ? 'spam' :
+					((type() === Enums.FolderTypes.Trash) ? 'trash' :
+					((type() === Enums.FolderTypes.Starred) ? 'starred' : 'user')))))
+			},
 			visible: canBeSelected(),
 			droppable: {valueFunc: disableMoveTo() ? false : function (oEvent, oUi) { $root.messagesDrop($data, oEvent, oUi); }, switchObserv: selected}
 		">
@@ -15,7 +24,7 @@
 				<!-- .count:first-child css selector is used here so this span should not always be rendered -->
 				<span class="count total" data-bind="text: messageCount"></span>
 			<!-- /ko -->
-			<span class="count unseen" data-bind="visible: showUnseenMessagesCount, text: unseenMessagesCountToShow,
+			<span class="count unseen" data-test-id="mail-folder-unseen-count" data-bind="visible: showUnseenMessagesCount, text: unseenMessagesCountToShow,
 				  click: executeUnseenFilter, customTooltip: '%MODULENAME%/ACTION_SHOW_UNREAD_MESSAGES'"></span>
 			<span class="name">
 				<span class="icon" data-bind="css: 'type' + type() + ' ' + name()"></span>
@@ -27,7 +36,7 @@
 			<!-- ko if: showMessagesCount -->
 			<span class="count total" data-bind="text: messageCount"></span>
 			<!-- /ko -->
-			<span class="count unseen" data-bind="visible: showUnseenMessagesCount, text: unseenMessagesCountToShow"></span>
+			<span class="count unseen" data-test-id="mail-folder-unseen-count" data-bind="visible: showUnseenMessagesCount, text: unseenMessagesCountToShow"></span>
 			<span class="name">
 				<span class="icon" data-bind="css: 'type' + type()"></span>
 				<span class="text animGoal" data-bind="text: displayName, attr: {'id':	(type() === Enums.FolderTypes.Inbox) ? 'selenium_folder_inbox' :

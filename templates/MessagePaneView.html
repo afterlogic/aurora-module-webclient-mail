@@ -1,5 +1,5 @@
 <div class="panel_top message_header" data-bind="initDom: domMessageHeader, visible: isCurrentMessage, event: {'dblclick': resizeDblClick}, css: {'message_header_detailed': detailsVisible}">
-	<span data-bind="click: switchDetailsVisibility, css: { 'compressed': !detailsVisible() }" class="table-compressor">
+	<span data-bind="click: switchDetailsVisibility, css: { 'compressed': !detailsVisible() }" class="table-compressor" data-test-id="mail-message-toggle-details">
 		<span class="arrow" data-bind="customTooltip: detailsTooltip"></span>
 	</span>
 
@@ -33,7 +33,7 @@
 					<!-- ko if: currentMessage() && currentMessage().Custom.Avatar -->
 					<span class="avatar" data-bind="style: {'background': currentMessage().Custom.Avatar.Color}, text: currentMessage().Custom.Avatar.DisplayName"></span> <!--   -->
 					<!-- /ko -->
-					<span class="from contact address_capsule">
+					<span class="from contact address_capsule" data-test-id="mail-message-sender">
 						<span class="control address" data-bind="text: sMeSender && currentAccountEmail() === fromEmail() ? sMeSender : from,
 								attr: {'data-email': fromEmail, 'data-name': oFromAddr() ? oFromAddr().sName : ''}"></span>
 					</span>
@@ -48,7 +48,7 @@
 				</div>
 			</div>
 
-			<div class="message_info message_detail_info" data-bind="visible: detailsVisible()">
+			<div class="message_info message_detail_info" data-test-id="mail-message-details" data-bind="visible: detailsVisible()">
 				<div class="message_info_line">
 					<span class="title" data-bind="i18n: {'key': '%MODULENAME%/LABEL_FROM'}"></span>:
 					<span class="contact address_capsule">
@@ -92,8 +92,8 @@
 		<div class="header_row" data-bind="css: {'nosubject': emptySubject()}">
 			<span class="date" data-bind="text: midDate, visible: !detailsVisible()"></span>
 			<span class="icon importance" data-bind="visible: importance() === Enums.Importance.High"></span>
-			<h2 class="subject" data-bind="text: subjectForDisplay, visible: !bAllowSearchMessagesBySubject"></h2>
-			<h2 class="subject" style="cursor: pointer;" data-bind="text: subjectForDisplay,
+			<h2 class="subject" data-test-id="mail-message-subject" data-bind="text: subjectForDisplay, visible: !bAllowSearchMessagesBySubject"></h2>
+			<h2 class="subject" style="cursor: pointer;" data-test-id="mail-message-subject" data-bind="text: subjectForDisplay,
 				click: searchBySubject, visible: bAllowSearchMessagesBySubject, customTooltip: '%MODULENAME%/ACTION_SEARCH_MESSAGES_CONTAINING_SUBJECT'"></h2>
 		</div>
 	</div>

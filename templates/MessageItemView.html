@@ -1,4 +1,4 @@
-<div class="item dragHandle" data-bind="css: {
+<div class="item dragHandle" data-test-id="mail-message-item" data-bind="css: {
 		'unseen': !seen(), 'selected': selected(), 'checked': checked(),
 		'forwarded': forwarded(), 'answered': answered(), 'deleted': deleted() || threadHideAnimation(),
 		'nosubject': emptySubject(),
@@ -7,11 +7,11 @@
 	}">
 	<div class="item_content">
 		<span class="controls">
-			<span class="custom_checkbox" data-bind="click: function () { checked(!checked()); }, css: {'checked': checked()}">
+			<span class="custom_checkbox" data-test-id="mail-message-checkbox" data-bind="click: function () { checked(!checked()); }, css: {'checked': checked()}">
 				<span class="icon"></span>
 			</span>
 			<span class="separator"></span>
-			<span class="flag" data-bind="css: {'flagged': flagged(), 'partial': partialFlagged()}"></span>
+			<span class="flag" data-test-id="mail-message-star" data-bind="css: {'flagged': flagged(), 'partial': partialFlagged()}"></span>
 		</span>
 		<span class="data">
 			<!-- ko if: Custom.Avatar -->

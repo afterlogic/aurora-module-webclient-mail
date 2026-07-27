@@ -1,7 +1,7 @@
 <div class="compose_popup popup" style="display: none;">
 	<div class="mask" data-bind="click: minimize, visible: !minimized()"></div>
 	<div class="popup_panel" data-bind="visible: !minimized()">
-		<span class="close" data-bind="click: cancelPopup"></span>
+		<span class="close" data-test-id="mail-compose-close" data-bind="click: cancelPopup"></span>
 		<!-- ko template: {name: $data.ViewTemplate} --><!-- /ko -->
 	</div>
 	<span class="helper" data-bind="visible: !minimized()"></span>
@@ -15,7 +15,7 @@
 				<span data-bind="customTooltip: '%MODULENAME%/ACTION_MAXIMIZE'" class="item maximize">
 					<span class="icon"></span>
 				</span>
-				<span data-bind="click: saveAndClose, customTooltip: saveAndCloseTooltip" class="item save_and_close">
+				<span data-test-id="mail-compose-save-and-close" data-bind="click: saveAndClose, customTooltip: saveAndCloseTooltip" class="item save_and_close">
 					<span class="icon"></span>
 				</span>
 			</span>

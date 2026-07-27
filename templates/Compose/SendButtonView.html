@@ -1,6 +1,6 @@
 <span class="group buttons buttons_send_group" data-bind="dropdown: {}">
 	<span class="item" data-bind="attr: {'style': (toolbarControllers().length > 0 ? 'padding-left:0;': '')}" >
-		<span class="button" data-bind="command: sendCommand">
+		<span class="button" data-test-id="mail-compose-send" data-bind="command: sendCommand">
 			<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_SEND'}"></span>
 		</span>
 	</span>

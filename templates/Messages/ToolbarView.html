@@ -13,11 +13,11 @@
 
 		<!-- ko template: {name: '%ModuleName%_Messages_DeleteButtonView'} --><!-- /ko -->
 
-		<span class="item empty_trash" data-bind="command: emptyTrashCommand, visible: isTrashFolder(), customTooltip: '%MODULENAME%/ACTION_EMPTY_TRASH'">
+		<span class="item empty_trash" data-test-id="mail-empty-folder-button" data-bind="command: emptyTrashCommand, visible: isTrashFolder(), customTooltip: '%MODULENAME%/ACTION_EMPTY_TRASH'">
 			<span class="icon"></span>
 			<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_EMPTY_TRASH'}"></span>
 		</span>
-		<span class="item empty_spam" data-bind="command: emptySpamCommand, visible: isSpamFolder(), customTooltip: '%MODULENAME%/ACTION_EMPTY_SPAM'">
+		<span class="item empty_spam" data-test-id="mail-empty-spam-button" data-bind="command: emptySpamCommand, visible: isSpamFolder(), customTooltip: '%MODULENAME%/ACTION_EMPTY_SPAM'">
 			<span class="icon"></span>
 			<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_EMPTY_SPAM'}"></span>
 		</span>

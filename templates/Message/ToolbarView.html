@@ -1,12 +1,12 @@
 <div class="toolbar">
 	<span class="content">
 		<!-- ko if: Settings.layoutMode() === Enums.LayoutMode.Separated -->
-			<span class="item back" data-bind="command: backCommand, customTooltip: 'COREWEBCLIENT/ACTION_BACK'">
+			<span class="item back" data-test-id="mail-message-back" data-bind="command: backCommand, customTooltip: 'COREWEBCLIENT/ACTION_BACK'">
 				<span class="icon"></span>
 				<span class="text" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_BACK'}"></span>
 			</span>
 		<!-- /ko -->
-		<span class="item delete" data-bind="command: deleteCommand, visible: bNewTab, customTooltip: 'COREWEBCLIENT/ACTION_DELETE'">
+		<span class="item delete" data-test-id="mail-action-delete" data-bind="command: deleteCommand, visible: bNewTab, customTooltip: 'COREWEBCLIENT/ACTION_DELETE'">
 			<span class="icon"></span>
 			<span class="text" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_DELETE'}"></span>
 		</span>
@@ -21,7 +21,7 @@
 
 		<!-- ko template: {name: '%ModuleName%_Message_ReplyButtonsView'} --><!-- /ko -->
 
-		<span class="item resend" data-bind="command: resendCommand, visible: isVisibleResendTool">
+		<span class="item resend" data-test-id="mail-action-resend" data-bind="command: resendCommand, visible: isVisibleResendTool">
 			<span class="icon" data-bind="customTooltip: '%MODULENAME%/ACTION_RESEND'"></span>
 			<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_RESEND'}"></span>
 		</span>
@@ -38,7 +38,7 @@
 			<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_OPEN_IN_NEW_WINDOW'}"></span>
 		</a>
 
-		<span class="item more" data-bind="dropdown: {control: false, parent: '.message_viewer'}, command: moreCommand, customTooltip: '%MODULENAME%/ACTION_SHOW_MORE_ACTIONS'">
+		<span class="item more" data-test-id="mail-message-more" data-bind="dropdown: {control: false, parent: '.message_viewer'}, command: moreCommand, customTooltip: '%MODULENAME%/ACTION_SHOW_MORE_ACTIONS'">
 			<span class="icon"></span>
 			<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_SHOW_MORE_ACTIONS'}"></span>
 			<span class="dropdown">
@@ -57,12 +57,12 @@
 							<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_DOWNLOAD_EML'}"></span>
 						</span>
 
-						<span class="item forward" data-bind="command: forwardAsAttachment, visible: isVisibleForwardTool">
+						<span class="item forward" data-test-id="mail-menu-forwardAsAttachment" data-bind="command: forwardAsAttachment, visible: isVisibleForwardTool">
 							<span class="icon"></span>
 							<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_FORWARD_AS_ATTACHMENT'}"></span>
 						</span>
 
-						<span class="item headers" data-bind="visible: currentMessage() && currentMessage().completelyFilled(), click: showSourceHeaders">
+						<span class="item headers" data-test-id="mail-menu-viewHeaders" data-bind="visible: currentMessage() && currentMessage().completelyFilled(), click: showSourceHeaders">
 							<span class="icon"></span>
 							<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_OPEN_MESSAGE_HEADERS'}"></span>
 						</span>
