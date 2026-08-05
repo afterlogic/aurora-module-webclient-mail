@@ -62,6 +62,8 @@ function CAccountFiltersSettingsFormView()
 	];
 	
 	this.phaseArray = [''];
+	this.phaseArrayIfPart = this.phaseArray;
+	this.phaseArrayThenPart = [];
 	
 	_.each(TextUtils.i18n('%MODULENAME%/INFO_FILTER').split(/,{0,1}\s/), function (sItem) {
 		var iIndex = this.phaseArray.length - 1;
@@ -74,6 +76,22 @@ function CAccountFiltersSettingsFormView()
 			this.phaseArray[iIndex] += ' ' + sItem;
 		}
 	}, this);
+	
+	var iActionIndex = _.indexOf(this.phaseArray, '%ACTION%');
+	if (iActionIndex > 0)
+	{
+		var iThenIndex = iActionIndex - 1;
+		if (iThenIndex > 0 && this.phaseArray[iThenIndex].substr(0,1) !== '%')
+		{
+			this.phaseArrayIfPart = this.phaseArray.slice(0, iThenIndex);
+			this.phaseArrayThenPart = this.phaseArray.slice(iThenIndex);
+		}
+		else
+		{
+			this.phaseArrayIfPart = this.phaseArray.slice(0, iActionIndex);
+			this.phaseArrayThenPart = this.phaseArray.slice(iActionIndex);
+		}
+	}
 	this.firstState = null;
 }
 

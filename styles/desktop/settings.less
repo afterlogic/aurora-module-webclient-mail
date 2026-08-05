@@ -32,3 +32,149 @@
 		content: "\e62d";
 	}
 }
+
+.fields .row.filter {
+	font-size: 9pt;
+	line-height: 1.4;
+
+	.value {
+		display: flex;
+		align-items: flex-start;
+		justify-content: flex-start;
+		width: 100%;
+
+		.filter_content {
+			flex: 1 1 auto;
+			min-width: 0;
+		}
+
+		.filter_remove {
+			flex: 0 0 auto;
+			margin: 0 0 0 16px;
+			padding: 0;
+			text-align: right;
+			margin-top: 0 !important;
+
+			.button {
+				margin: 0;
+			}
+
+			html.rtl & {
+				margin: 0 16px 0 0;
+				text-align: left;
+			}
+		}
+
+		.filter_content_inner {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			row-gap: 4px;
+			column-gap: 0;
+			width: auto;
+
+			html:not(.rtl) & {
+				padding-left: 17px;
+			}
+
+			html.rtl & {
+				padding-right: 17px;
+			}
+		}
+
+		.custom_checkbox {
+			flex-shrink: 0;
+			align-self: center;
+
+			html:not(.rtl) & {
+				margin-left: -17px;
+			}
+
+			html.rtl & {
+				margin-right: -17px;
+			}
+		}
+
+		.filter_group {
+			display: inline-flex;
+			flex-wrap: nowrap;
+			align-items: center;
+			white-space: nowrap;
+			align-self: center;
+
+			.part,
+			.field,
+			.input,
+			.link {
+				vertical-align: middle;
+				align-self: center;
+				line-height: 1;
+			}
+
+			input.part.input {
+				display: inline-flex;
+				align-items: center;
+				line-height: 1;
+				padding-top: 6px;
+				padding-bottom: 6px;
+				margin: 0;
+			}
+		}
+
+		.filter_if_group {
+			flex: 0 1 auto;
+			min-width: 0;
+		}
+
+		.filter_then_group {
+			flex: 0 1 auto;
+			min-width: 0;
+		}
+
+		.part {
+			display: inline-block;
+			vertical-align: middle;
+			white-space: nowrap;
+			font-size: 9pt;
+
+			html:not(.rtl) & {
+				margin-right: 4px;
+			}
+
+			html.rtl & {
+				margin-left: 4px;
+			}
+
+			&:last-child {
+				html:not(.rtl) & {
+					margin-right: 0;
+				}
+
+				html.rtl & {
+					margin-left: 0;
+				}
+			}
+
+			&.input {
+				white-space: normal;
+				width: auto;
+				min-width: 120px;
+
+				html:not(.rtl) & {
+					margin-right: 4px;
+				}
+
+				html.rtl & {
+					margin-left: 4px;
+				}
+			}
+
+			&.field {
+				.field,
+				.link {
+					display: inline-block;
+				}
+			}
+		}
+	}
+}

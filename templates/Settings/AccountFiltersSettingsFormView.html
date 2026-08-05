@@ -8,16 +8,29 @@
 			<!-- ko foreach: collection -->
 			<div class="row filter">
 				<div class="value">
-					<span class="buttons"><span class="button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_REMOVE'}, click: function (oFilter) { $parent.deleteFilter(oFilter); }"></span></span>
-					<div>
-						<label class="custom_checkbox" data-bind="css: {'checked': enable}">
-							<span class="icon"></span>
-							<input type="checkbox" data-bind="checked: enable" />
-						</label>
-						<!-- ko foreach: $parent.phaseArray -->
-							<!-- ko template: {name: function () { return $parents[1].displayFilterPart($data, '%ModuleName%_Settings_AccountFilterPart'); } } --><!-- /ko -->
-						<!-- /ko -->
+					<div class="filter_content">
+						<div class="filter_content_inner">
+							<label class="custom_checkbox" data-bind="css: {'checked': enable}">
+								<span class="icon"></span>
+								<input type="checkbox" data-bind="checked: enable" />
+							</label>
+							<!-- ko if: $parent.phaseArrayIfPart.length > 0 -->
+							<div class="filter_group filter_if_group">
+								<!-- ko foreach: $parent.phaseArrayIfPart -->
+									<!-- ko template: {name: function () { return $parents[1].displayFilterPart($data, '%ModuleName%_Settings_AccountFilterPart'); } } --><!-- /ko -->
+								<!-- /ko -->
+							</div>
+							<!-- /ko -->
+							<!-- ko if: $parent.phaseArrayThenPart.length > 0 -->
+							<div class="filter_group filter_then_group">
+								<!-- ko foreach: $parent.phaseArrayThenPart -->
+									<!-- ko template: {name: function () { return $parents[1].displayFilterPart($data, '%ModuleName%_Settings_AccountFilterPart'); } } --><!-- /ko -->
+								<!-- /ko -->
+							</div>
+							<!-- /ko -->
+						</div>
 					</div>
+					<span class="buttons filter_remove"><span class="button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_REMOVE'}, click: function (oFilter) { $parent.deleteFilter(oFilter); }"></span></span>
 				</div>
 			</div>
 			<!-- /ko -->
