@@ -693,19 +693,19 @@ SendingUtils.getAccountFetchersIdentitiesList = function (oAccount)
  */
 SendingUtils.getForwardMessageBody = function (oMessage, iAccountId, oFetcherOrIdentity)
 {
-	var
-		sCcAddr = TextUtils.encodeHtml(oMessage.oCc.getFull()),
-		sCcPart = (sCcAddr !== '') ? TextUtils.i18n('%MODULENAME%/TEXT_FORWARD_MESSAGE_CCPART', {'CCADDR': sCcAddr}) : '',
-		sForwardTitle = TextUtils.i18n('%MODULENAME%/TEXT_FORWARD_MESSAGE', {
-			'FROMADDR': TextUtils.encodeHtml(oMessage.oFrom.getFull()),
-			'TOADDR': TextUtils.encodeHtml(oMessage.oTo.getFull()),
-			'CCPART': sCcPart,
-			'FULLDATE': oMessage.oDateModel.getFullDate(),
-			'SUBJECT': TextUtils.encodeHtml(oMessage.subject())
-		}),
-		sForwardBody = '<br /><br />' + this.getSignatureText(iAccountId, oFetcherOrIdentity, true) + '<br /><br />' + 
-			'<div data-anchor="reply-title">' + sForwardTitle + '</div><br /><br />' + oMessage.getConvertedHtml()
-	;
+    var
+        sCcAddr = TextUtils.encodeHtml(oMessage.oCc.getFull()),
+        sCcPart = (sCcAddr !== '') ? TextUtils.i18n('%MODULENAME%/TEXT_FORWARD_MESSAGE_CCPART', {'CCADDR': sCcAddr}) : '',
+        sForwardTitle = TextUtils.i18n('%MODULENAME%/TEXT_FORWARD_MESSAGE', {
+            'FROMADDR': TextUtils.encodeHtml(oMessage.oFrom.getFull()),
+            'TOADDR': TextUtils.encodeHtml(oMessage.oTo.getFull()),
+            'FULLDATE': oMessage.oDateModel.getFullDate(),
+            'SUBJECT': TextUtils.encodeHtml(oMessage.subject())
+        }).replace(/%CCPART%/g, sCcPart),
+        
+        sForwardBody = '<br /><br />' + this.getSignatureText(iAccountId, oFetcherOrIdentity, true) + '<br /><br />' + 
+            '<div data-anchor="reply-title">' + sForwardTitle + '</div><br /><br />' + oMessage.getConvertedHtml()
+    ;
 
 	return sForwardBody;
 };
