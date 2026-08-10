@@ -4,6 +4,7 @@ const { sharedHelper, moduleHelper, fixturePath } = require(path.join(
   'helpers/paths'
 ))
 const { test, expect } = require('@playwright/test')
+const { T } = sharedHelper('timeouts')
 const { loginAsTestUser, step, attachScreenshot, hasCredentials, getComposeTo } = sharedHelper('login')
 const composeTo = getComposeTo()
 const {
@@ -27,7 +28,7 @@ test.describe('Desktop mail mutations', () => {
   test.skip(!hasCredentials(), 'Set E2E_LOGIN_0/E2E_PASSWORD_0 (or E2E_LOGIN/E2E_PASSWORD) in .env.e2e')
 
   test('views message headers from overflow menu', async ({ page }) => {
-    test.setTimeout(120000)
+    test.setTimeout(T(120000))
     await loginAsTestUser(page)
     const opened = await openFirstInboxMessage(page)
     test.skip(!opened, 'Inbox is empty')
@@ -43,7 +44,7 @@ test.describe('Desktop mail mutations', () => {
 
       const popupPromise = page
         .context()
-        .waitForEvent('page', { timeout: 15000 })
+        .waitForEvent('page', { timeout: T(15000) })
         .catch(() => null)
       await clickReady(headers)
       const popup = await popupPromise
@@ -58,7 +59,7 @@ test.describe('Desktop mail mutations', () => {
   })
 
   test('moves message via Move dropdown to Trash', async ({ page }) => {
-    test.setTimeout(180000)
+    test.setTimeout(T(180000))
     await loginAsTestUser(page)
     const opened = await openFirstInboxMessage(page)
     test.skip(!opened, 'Inbox is empty')
@@ -76,7 +77,7 @@ test.describe('Desktop mail mutations', () => {
           )
           .first()
       )
-        .toBeVisible({ timeout: 10000 })
+        .toBeVisible({ timeout: T(10000) })
         .catch(() => undefined)
       const trash = page
         .locator(
@@ -92,7 +93,7 @@ test.describe('Desktop mail mutations', () => {
       console.log(`  → Moving "${subject}" → Trash`)
       await trash.click({ force: true })
       await expect(page.getByTestId('mail-message-list')).toBeVisible({
-        timeout: 30000,
+        timeout: T(30000),
       })
       await attachScreenshot(page, 'mail-move-01-after')
     })
@@ -104,7 +105,7 @@ test.describe('Desktop mail mutations', () => {
   })
 
   test('marks message as spam and opens Spam folder', async ({ page }) => {
-    test.setTimeout(180000)
+    test.setTimeout(T(180000))
     await loginAsTestUser(page)
     const opened = await openFirstInboxMessage(page)
     test.skip(!opened, 'Inbox is empty')
@@ -117,7 +118,7 @@ test.describe('Desktop mail mutations', () => {
       )
       await clickReady(spam)
       await expect(page.getByTestId('mail-message-list')).toBeVisible({
-        timeout: 45000,
+        timeout: T(45000),
       })
       await attachScreenshot(page, 'mail-spam-01-after')
     })
@@ -129,7 +130,7 @@ test.describe('Desktop mail mutations', () => {
   })
 
   test('marks spam as not spam and restores to Inbox', async ({ page }) => {
-    test.setTimeout(240000)
+    test.setTimeout(T(240000))
     await loginAsTestUser(page)
     const opened = await openFirstInboxMessage(page)
     test.skip(!opened, 'Inbox is empty')
@@ -145,7 +146,7 @@ test.describe('Desktop mail mutations', () => {
       )
       await clickReady(spam)
       await expect(page.getByTestId('mail-message-list')).toBeVisible({
-        timeout: 45000,
+        timeout: T(45000),
       })
       console.log(`  → Marked as spam: ${subject}`)
     })
@@ -156,21 +157,21 @@ test.describe('Desktop mail mutations', () => {
         .getByTestId('mail-message-item')
         .filter({ hasText: subject })
         .first()
-      await expect(item).toBeVisible({ timeout: 60000 })
+      await expect(item).toBeVisible({ timeout: T(60000) })
       await clickReady(item)
       await expect(page.getByTestId('mail-message-view')).toBeVisible({
-        timeout: 30000,
+        timeout: T(30000),
       })
-      await expect(visibleSubject(page)).toBeVisible({ timeout: 60000 })
+      await expect(visibleSubject(page)).toBeVisible({ timeout: T(60000) })
       await attachScreenshot(page, 'mail-not-spam-01-in-spam')
     })
 
     await step('Toolbar → Not spam', async () => {
       const notSpam = page.getByTestId('mail-action-notSpam')
-      await expect(notSpam).toBeVisible({ timeout: 10000 })
+      await expect(notSpam).toBeVisible({ timeout: T(10000) })
       await clickReady(notSpam)
       await expect(page.getByTestId('mail-message-list')).toBeVisible({
-        timeout: 45000,
+        timeout: T(45000),
       })
       console.log(`  → Marked as not spam: ${subject}`)
       await attachScreenshot(page, 'mail-not-spam-02-after')
@@ -182,14 +183,14 @@ test.describe('Desktop mail mutations', () => {
         .getByTestId('mail-message-item')
         .filter({ hasText: subject })
         .first()
-      await expect(item).toBeVisible({ timeout: 60000 })
+      await expect(item).toBeVisible({ timeout: T(60000) })
       console.log(`  → Restored in Inbox: ${subject}`)
       await attachScreenshot(page, 'mail-not-spam-03-inbox')
     })
   })
 
   test('deletes message to Trash via toolbar', async ({ page }) => {
-    test.setTimeout(180000)
+    test.setTimeout(T(180000))
     await loginAsTestUser(page)
     const opened = await openFirstInboxMessage(page)
     test.skip(!opened, 'Inbox is empty')
@@ -198,7 +199,7 @@ test.describe('Desktop mail mutations', () => {
       await clickMailToolbarAction(page, 'mail-action-delete')
       await confirmOkIfVisible(page)
       await expect(page.getByTestId('mail-message-list')).toBeVisible({
-        timeout: 30000,
+        timeout: T(30000),
       })
       console.log('  → Delete confirmed')
       await attachScreenshot(page, 'mail-delete-01-after')
@@ -206,7 +207,7 @@ test.describe('Desktop mail mutations', () => {
   })
 
   test('sends reply and forward to self', async ({ page }) => {
-    test.setTimeout(240000)
+    test.setTimeout(T(240000))
     await loginAsTestUser(page)
     const opened = await openFirstInboxMessage(page)
     test.skip(!opened, 'Inbox is empty')
@@ -214,13 +215,17 @@ test.describe('Desktop mail mutations', () => {
     await step('Reply → send', async () => {
       await clickMailAction(page, 'mail-action-reply')
       const subject = await readComposeSubject(page)
-      expect(subject.toLowerCase()).toMatch(/^re:/)
+      expect(subject.toLowerCase()).toMatch(/^re(\[\d+\])?:/)
       await sendCompose(page)
+      // Both panes can be visible together (list + open reading pane) —
+      // .or() alone violates strict mode once more than one side matches.
+      // .first() just asks "is either of these here", not "exactly one".
       await expect(
         page
           .getByTestId('mail-message-view')
           .or(page.getByTestId('mail-message-list'))
-      ).toBeVisible({ timeout: 45000 })
+          .first()
+      ).toBeVisible({ timeout: T(45000) })
       console.log(`  → Reply sent: ${subject}`)
       await attachScreenshot(page, 'mail-send-01-reply')
     })
@@ -237,7 +242,7 @@ test.describe('Desktop mail mutations', () => {
       test.skip((await forward.count()) === 0, 'Forward not available')
       await clickMailAction(page, 'mail-action-forward')
       const subject = await readComposeSubject(page)
-      expect(subject.toLowerCase()).toMatch(/^fwd:/)
+      expect(subject.toLowerCase()).toMatch(/^fwd(\[\d+\])?:/)
       await fillComposeRecipient(page, composeTo)
       await fillComposeBody(page, `E2E forward body ${Date.now()}`)
       await sendCompose(page)
@@ -245,14 +250,15 @@ test.describe('Desktop mail mutations', () => {
         page
           .getByTestId('mail-message-view')
           .or(page.getByTestId('mail-message-list'))
-      ).toBeVisible({ timeout: 45000 })
+          .first()
+      ).toBeVisible({ timeout: T(45000) })
       console.log(`  → Forward sent: ${subject}`)
       await attachScreenshot(page, 'mail-send-02-forward')
     })
   })
 
   test('advanced search by subject runs', async ({ page }) => {
-    test.setTimeout(120000)
+    test.setTimeout(T(120000))
     await loginAsTestUser(page)
     await waitForInboxList(page)
 
@@ -275,12 +281,12 @@ test.describe('Desktop mail mutations', () => {
     await step('Open advanced search and submit subject', async () => {
       await clickReady(page.getByTestId('mail-search-advanced'))
       await expect(page.getByTestId('mail-advanced-search')).toBeVisible({
-        timeout: 15000,
+        timeout: T(15000),
       })
       await page.getByTestId('mail-adv-subject').fill(token)
       await clickReady(page.getByTestId('mail-adv-search-submit'))
       await expect(page.getByTestId('mail-message-list')).toBeVisible({
-        timeout: 30000,
+        timeout: T(30000),
       })
       await waitForInboxList(page)
       console.log(`  → Advanced search subject token: ${token}`)

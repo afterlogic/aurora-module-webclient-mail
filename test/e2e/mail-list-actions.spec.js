@@ -4,6 +4,7 @@ const { sharedHelper, moduleHelper, fixturePath } = require(path.join(
   'helpers/paths'
 ))
 const { test, expect } = require('@playwright/test')
+const { T } = sharedHelper('timeouts')
 const { loginAsTestUser, step, attachScreenshot, hasCredentials } = sharedHelper('login')
 const {
   FOLDER_TYPES,
@@ -25,14 +26,14 @@ test.describe('Desktop mail list filters and bulk actions', () => {
   test('opens Unseen filter from folder badge and clears it', async ({
     page,
   }) => {
-    test.setTimeout(180000)
+    test.setTimeout(T(180000))
     await loginAsTestUser(page)
     await waitForInboxList(page)
 
     await step('Find folder with unseen badge and click it', async () => {
       const badge = page.getByTestId('mail-folder-unseen-count').first()
       try {
-        await expect(badge).toBeVisible({ timeout: 30000 })
+        await expect(badge).toBeVisible({ timeout: T(30000) })
       } catch {
         test.skip(true, 'No unseen badge after waiting for folder counts')
       }
@@ -48,10 +49,10 @@ test.describe('Desktop mail list filters and bulk actions', () => {
 
     await step('Expect unseen filter banner', async () => {
       await expect(page.getByTestId('mail-message-list')).toBeVisible({
-        timeout: 30000,
+        timeout: T(30000),
       })
       await expect(page.getByTestId('mail-filter-banner')).toBeVisible({
-        timeout: 15000,
+        timeout: T(15000),
       })
       await waitForListReady(page, listReadyOptions)
       await attachScreenshot(page, 'mail-filter-unseen-01')
@@ -60,17 +61,17 @@ test.describe('Desktop mail list filters and bulk actions', () => {
     await step('Clear filter → full folder list', async () => {
       await clickReady(page.getByTestId('mail-filter-clear'))
       await expect(page.getByTestId('mail-filter-banner')).toBeHidden({
-        timeout: 30000,
+        timeout: T(30000),
       })
       await expect(page.getByTestId('mail-message-list')).toBeVisible({
-        timeout: 30000,
+        timeout: T(30000),
       })
       await attachScreenshot(page, 'mail-filter-unseen-02-cleared')
     })
   })
 
   test('opens Starred (flagged) virtual folder', async ({ page }) => {
-    test.setTimeout(180000)
+    test.setTimeout(T(180000))
     await loginAsTestUser(page)
     await waitForInboxList(page)
 
@@ -85,7 +86,7 @@ test.describe('Desktop mail list filters and bulk actions', () => {
         await openFolderByName(page, 'Starred', { soft: true })
       }
       await expect(page.getByTestId('mail-message-list')).toBeVisible({
-        timeout: 15000,
+        timeout: T(15000),
       })
       await attachScreenshot(page, 'mail-filter-starred-01')
     })
@@ -94,7 +95,7 @@ test.describe('Desktop mail list filters and bulk actions', () => {
   test('multi-select and bulk delete moves messages to Trash', async ({
     page,
   }) => {
-    test.setTimeout(180000)
+    test.setTimeout(T(180000))
     await loginAsTestUser(page)
     await waitForInboxList(page)
 
@@ -135,14 +136,14 @@ test.describe('Desktop mail list filters and bulk actions', () => {
           .getByTestId('mail-message-item')
           .filter({ hasText: deletedSubject })
           .first()
-      ).toBeVisible({ timeout: 30000 })
+      ).toBeVisible({ timeout: T(30000) })
       console.log(`  → Found in Trash: ${deletedSubject}`)
       await attachScreenshot(page, 'mail-select-03-trash')
     })
   })
 
   test('empties Trash folder', async ({ page }) => {
-    test.setTimeout(180000)
+    test.setTimeout(T(180000))
     await loginAsTestUser(page)
     await waitForInboxList(page)
 
@@ -160,7 +161,7 @@ test.describe('Desktop mail list filters and bulk actions', () => {
       await clickReady(emptyBtn)
       await confirmOkIfVisible(page)
       await expect(page.getByTestId('mail-empty-folder')).toBeVisible({
-        timeout: 60000,
+        timeout: T(60000),
       })
       console.log('  → Trash emptied')
       await attachScreenshot(page, 'mail-empty-trash-01')

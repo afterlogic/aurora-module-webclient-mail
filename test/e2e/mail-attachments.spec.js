@@ -4,6 +4,7 @@ const { sharedHelper, moduleHelper, fixturePath } = require(path.join(
   'helpers/paths'
 ))
 const { test, expect } = require('@playwright/test')
+const { T } = sharedHelper('timeouts')
 const { loginAsTestUser, step, attachScreenshot, fieldControl, hasCredentials, getComposeTo } = sharedHelper('login')
 const composeTo = getComposeTo()
 const { clickReady } = sharedHelper('ready')
@@ -24,7 +25,7 @@ test.describe('Desktop mail attachments', () => {
   test.skip(!hasCredentials(), 'Set E2E_LOGIN_0/E2E_PASSWORD_0 (or E2E_LOGIN/E2E_PASSWORD) in .env.e2e')
 
   test('composes with attachment, opens it in Sent', async ({ page }) => {
-    test.setTimeout(240000)
+    test.setTimeout(T(240000))
 
     const subject = `E2E attach ${Date.now()}`
     const bodyText = `E2E attach body ${Date.now()}`
@@ -35,7 +36,7 @@ test.describe('Desktop mail attachments', () => {
     await step('Open compose via FAB', async () => {
       await clickReady(page.getByTestId('mail-compose-fab'))
       await expect(page.getByTestId('mail-compose')).toBeVisible({
-        timeout: 15000,
+        timeout: T(15000),
       })
     })
 
@@ -70,7 +71,7 @@ test.describe('Desktop mail attachments', () => {
         page.locator('.attachments_panel, .attachments_container').filter({
           hasText: fixtureName,
         }).first()
-      ).toBeVisible({ timeout: 60000 })
+      ).toBeVisible({ timeout: T(60000) })
       console.log(`  → Attachment uploaded: ${fixtureName}`)
       await attachScreenshot(page, 'mail-attach-01-compose')
     })
@@ -79,7 +80,7 @@ test.describe('Desktop mail attachments', () => {
       await fillComposeBody(page, bodyText)
       await sendCompose(page)
       await expect(page.getByTestId('mail-message-list')).toBeVisible({
-        timeout: 45000,
+        timeout: T(45000),
       })
       await attachScreenshot(page, 'mail-attach-02-sent')
     })
@@ -91,13 +92,13 @@ test.describe('Desktop mail attachments', () => {
         .getByTestId('mail-message-item')
         .filter({ hasText: subject })
         .first()
-      await expect(item).toBeVisible({ timeout: 60000 })
+      await expect(item).toBeVisible({ timeout: T(60000) })
       await clickReady(item)
 
       await expect(page.getByTestId('mail-message-view')).toBeVisible({
-        timeout: 30000,
+        timeout: T(30000),
       })
-      await expect(visibleSubject(page)).toBeVisible({ timeout: 60000 })
+      await expect(visibleSubject(page)).toBeVisible({ timeout: T(60000) })
       const openedSubject = (await visibleSubject(page).innerText()).trim()
       expect(openedSubject).toContain(subject)
       console.log(`  → Opened Sent message: ${openedSubject}`)
@@ -107,12 +108,12 @@ test.describe('Desktop mail attachments', () => {
       const attachmentsPanel = page.locator(
         '.message_viewer .attachments_panel, .message_viewer .attachments'
       )
-      await expect(attachmentsPanel.first()).toBeVisible({ timeout: 30000 })
+      await expect(attachmentsPanel.first()).toBeVisible({ timeout: T(30000) })
       await expect(
         page.locator('.message_viewer .attachments, .message_viewer .item.file').filter({
           hasText: fixtureName,
         }).first()
-      ).toBeVisible({ timeout: 15000 })
+      ).toBeVisible({ timeout: T(15000) })
       console.log(`  → Attachment visible in message: ${fixtureName}`)
       await attachScreenshot(page, 'mail-attach-03-view')
     })

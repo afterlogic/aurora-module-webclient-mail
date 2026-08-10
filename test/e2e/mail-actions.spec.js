@@ -4,6 +4,7 @@ const { sharedHelper, moduleHelper, fixturePath } = require(path.join(
   'helpers/paths'
 ))
 const { test, expect } = require('@playwright/test')
+const { T } = sharedHelper('timeouts')
 const { loginAsTestUser, step, attachScreenshot, hasCredentials } = sharedHelper('login')
 const { clickReady } = sharedHelper('ready')
 const {
@@ -20,7 +21,7 @@ test.describe('Desktop mail message actions', () => {
   test.skip(!hasCredentials(), 'Set E2E_LOGIN_0/E2E_PASSWORD_0 (or E2E_LOGIN/E2E_PASSWORD) in .env.e2e')
 
   test('toggles details and star on opened message', async ({ page }) => {
-    test.setTimeout(120000)
+    test.setTimeout(T(120000))
     await loginAsTestUser(page)
 
     const opened = await openFirstInboxMessage(page)
@@ -38,16 +39,16 @@ test.describe('Desktop mail message actions', () => {
       const wasVisible = await details.isVisible().catch(() => false)
       await clickReady(page.getByTestId('mail-message-toggle-details'))
       if (wasVisible) {
-        await expect(details).toBeHidden({ timeout: 10000 })
+        await expect(details).toBeHidden({ timeout: T(10000) })
         console.log('  → Details collapsed')
         await clickReady(page.getByTestId('mail-message-toggle-details'))
-        await expect(details).toBeVisible({ timeout: 10000 })
+        await expect(details).toBeVisible({ timeout: T(10000) })
         console.log('  → Details expanded')
       } else {
-        await expect(details).toBeVisible({ timeout: 10000 })
+        await expect(details).toBeVisible({ timeout: T(10000) })
         console.log('  → Details expanded')
         await clickReady(page.getByTestId('mail-message-toggle-details'))
-        await expect(details).toBeHidden({ timeout: 10000 })
+        await expect(details).toBeHidden({ timeout: T(10000) })
         console.log('  → Details collapsed')
       }
     })
@@ -63,7 +64,7 @@ test.describe('Desktop mail message actions', () => {
           ? starredItem
           : page.getByTestId('mail-message-item').first()
       const star = item.getByTestId('mail-message-star')
-      await expect(star).toBeVisible({ timeout: 10000 })
+      await expect(star).toBeVisible({ timeout: T(10000) })
       const wasFlagged = await star.evaluate((el) =>
         el.classList.contains('flagged')
       )
@@ -86,7 +87,7 @@ test.describe('Desktop mail message actions', () => {
   })
 
   test('reply opens compose with Re: subject', async ({ page }) => {
-    test.setTimeout(120000)
+    test.setTimeout(T(120000))
     await loginAsTestUser(page)
 
     const opened = await openFirstInboxMessage(page)
@@ -100,9 +101,9 @@ test.describe('Desktop mail message actions', () => {
     await step('Expect Re: subject', async () => {
       await expect
         .poll(async () => (await readComposeSubject(page)).toLowerCase(), {
-          timeout: 30000,
+          timeout: T(30000),
         })
-        .toMatch(/^re:/)
+        .toMatch(/^re(\[\d+\])?:/)
       console.log(`  → Reply subject: ${await readComposeSubject(page)}`)
     })
 
@@ -110,7 +111,7 @@ test.describe('Desktop mail message actions', () => {
   })
 
   test('reply-all opens compose', async ({ page }) => {
-    test.setTimeout(120000)
+    test.setTimeout(T(120000))
     await loginAsTestUser(page)
 
     const opened = await openFirstInboxMessage(page)
@@ -128,9 +129,9 @@ test.describe('Desktop mail message actions', () => {
     await step('Expect Re: subject', async () => {
       await expect
         .poll(async () => (await readComposeSubject(page)).toLowerCase(), {
-          timeout: 30000,
+          timeout: T(30000),
         })
-        .toMatch(/^re:/)
+        .toMatch(/^re(\[\d+\])?:/)
       console.log(`  → Reply-all subject: ${await readComposeSubject(page)}`)
     })
 
@@ -138,7 +139,7 @@ test.describe('Desktop mail message actions', () => {
   })
 
   test('forward opens compose with Fwd:', async ({ page }) => {
-    test.setTimeout(120000)
+    test.setTimeout(T(120000))
     await loginAsTestUser(page)
 
     const opened = await openFirstInboxMessage(page)
@@ -156,9 +157,9 @@ test.describe('Desktop mail message actions', () => {
     await step('Expect Fwd: subject', async () => {
       await expect
         .poll(async () => (await readComposeSubject(page)).toLowerCase(), {
-          timeout: 30000,
+          timeout: T(30000),
         })
-        .toMatch(/^fwd:/)
+        .toMatch(/^fwd(\[\d+\])?:/)
       console.log(`  → Forward subject: ${await readComposeSubject(page)}`)
     })
 
@@ -166,16 +167,16 @@ test.describe('Desktop mail message actions', () => {
   })
 
   test('search header opens and runs a query', async ({ page }) => {
-    test.setTimeout(90000)
+    test.setTimeout(T(90000))
     await loginAsTestUser(page)
     await waitForInboxList(page)
 
     await step('Focus search and type a query', async () => {
       await expect(page.getByTestId('mail-search')).toBeVisible({
-        timeout: 30000,
+        timeout: T(30000),
       })
       const input = page.getByTestId('mail-search-input')
-      await expect(input).toBeVisible({ timeout: 15000 })
+      await expect(input).toBeVisible({ timeout: T(15000) })
       await input.click()
       await page.keyboard.type('e2e')
       await page.keyboard.press('Enter')

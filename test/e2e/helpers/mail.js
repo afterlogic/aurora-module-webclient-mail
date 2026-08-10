@@ -6,6 +6,7 @@ const { sharedHelper, fixturePath } = require(path.join(
 const { expect } = require('@playwright/test')
 const { step, attachScreenshot, fieldControl } = sharedHelper('login')
 const { waitForListReady, waitForListReadySoft, clickReady, confirmOkIfVisible } = sharedHelper('ready')
+const { T } = sharedHelper('timeouts')
 
 const FOLDER_TYPES = {
   INBOX: 'inbox',
@@ -33,7 +34,7 @@ function visibleSubject(page) {
 
 async function waitForInboxList(page) {
   await expect(page.getByTestId('mail-message-list')).toBeVisible({
-    timeout: 60000,
+    timeout: T(60000),
   })
   await waitForListReady(page, listReadyOptions)
 }
@@ -44,7 +45,7 @@ async function openFolder(page, folderType, { soft = false } = {}) {
     .first()
   await clickReady(folder)
   await expect(page.getByTestId('mail-message-list')).toBeVisible({
-    timeout: 30000,
+    timeout: T(30000),
   })
   if (soft) {
     await waitForListReadySoft(page, listReadyOptions, {
@@ -65,10 +66,10 @@ async function openFolderByName(page, folderName, { soft = false } = {}) {
     .locator(`[data-test-id="mail-folder"]`)
     .filter({ hasText: new RegExp(folderName, 'i') })
     .first()
-  await expect(folder).toBeVisible({ timeout: 15000 })
+  await expect(folder).toBeVisible({ timeout: T(15000) })
   await clickReady(folder)
   await expect(page.getByTestId('mail-message-list')).toBeVisible({
-    timeout: 30000,
+    timeout: T(30000),
   })
   if (soft) {
     await waitForListReadySoft(page, listReadyOptions, {
@@ -108,9 +109,9 @@ async function openFirstInboxMessage(page) {
   await step('Open first inbox message', async () => {
     await clickReady(items.first())
     await expect(page.getByTestId('mail-message-view')).toBeVisible({
-      timeout: 30000,
+      timeout: T(30000),
     })
-    await expect(visibleSubject(page)).toBeVisible({ timeout: 60000 })
+    await expect(visibleSubject(page)).toBeVisible({ timeout: T(60000) })
   })
 
   const viewSubject = (await visibleSubject(page).innerText()).trim()
@@ -132,19 +133,19 @@ async function expectComposeOpen(page) {
       .or(page.getByTestId('mail-compose-subject'))
       .or(page.getByTestId('mail-compose'))
       .first()
-  ).toBeVisible({ timeout: 30000 })
+  ).toBeVisible({ timeout: T(30000) })
   if (await minimized.isVisible().catch(() => false)) {
     await clickReady(minimized.locator('.item.maximize, .toolbar').first())
   }
   await expect(page.getByTestId('mail-compose')).toBeVisible({
-    timeout: 30000,
+    timeout: T(30000),
   })
   await expect(
     page
       .getByTestId('mail-compose-send')
       .or(page.getByTestId('mail-compose-subject'))
       .first()
-  ).toBeVisible({ timeout: 15000 })
+  ).toBeVisible({ timeout: T(15000) })
 }
 
 /**
@@ -165,7 +166,7 @@ async function clickMailToolbarAction(page, testId) {
       `[data-test-id="${testId}"]:visible:not(.disabled):not(.command-disabled):not(.unavailable)`
     )
     .first()
-  await expect(enabled).toBeVisible({ timeout: 30000 })
+  await expect(enabled).toBeVisible({ timeout: T(30000) })
   await clickReady(enabled)
 }
 
@@ -194,14 +195,21 @@ async function closeComposeWithoutSending(page) {
     ) {
       // Escape → minimize when dirty; closePopup when clean.
       await page.keyboard.press('Escape')
-      if (await minimized.isVisible({ timeout: 3000 }).catch(() => false)) {
+      // isVisible() does not actually wait/poll (Playwright ignores its
+      // timeout option) — use waitFor so a minimize that renders a beat
+      // late isn't missed.
+      const didMinimize = await minimized
+        .waitFor({ state: 'visible', timeout: T(3000) })
+        .then(() => true)
+        .catch(() => false)
+      if (didMinimize) {
         await saveAndClose.first().click({ force: true })
       }
     }
 
-    await expect(minimized).toBeHidden({ timeout: 30000 })
+    await expect(minimized).toBeHidden({ timeout: T(30000) })
     await expect(page.getByTestId('mail-compose')).toBeHidden({
-      timeout: 15000,
+      timeout: T(15000),
     })
   })
 }
@@ -214,7 +222,7 @@ async function waitForDraftSavedReport(page) {
         /message has been saved|successfully saved|сообщение сохранено|сохранено\.|Ваше сообщение сохранено/i
       )
       .first()
-  ).toBeVisible({ timeout: 30000 })
+  ).toBeVisible({ timeout: T(30000) })
 }
 
 /**
@@ -226,7 +234,7 @@ async function fillComposeRecipient(
   fieldTestId = 'mail-compose-to'
 ) {
   const input = page.getByTestId(fieldTestId).locator('input').first()
-  await expect(input).toBeVisible({ timeout: 15000 })
+  await expect(input).toBeVisible({ timeout: T(15000) })
   await input.fill(email)
   await input.press('Enter')
 }
@@ -265,13 +273,27 @@ async function sendCompose(page) {
   const sendBtn = page
     .locator('[data-test-id="mail-compose-send"]:visible')
     .first()
+
+  // Send is a non-native <span> (no `disabled` attribute, click always reaches
+  // the DOM handler). Both apps guard the actual send behind a canSend/
+  // isEnableSending check that stays false until GetFolders resolves — the
+  // handler silently no-ops while that class is present, so clicking on
+  // visibility alone can fire before folders are loaded (especially under a
+  // slow backend) and leave compose open with no error. Wait for the
+  // disabled marker to clear on top of visibility: legacy toggles
+  // `command-disabled disable disabled`, next toggles `compose_shell_disabled`.
+  await expect(sendBtn).toBeVisible({ timeout: T(30000) })
+  await expect(sendBtn).not.toHaveClass(
+    /(?:^|\s)(?:compose_shell_disabled|command-disabled|disable|disabled)(?:\s|$)/,
+    { timeout: T(30000) }
+  )
   await clickReady(sendBtn)
 
   let closed = false
   try {
     await expect
       .poll(async () => composeFullyClosed(page), {
-        timeout: 60000,
+        timeout: T(60000),
         intervals: [400, 800, 1200],
       })
       .toBeTruthy()
@@ -292,10 +314,10 @@ async function sendCompose(page) {
   }
 
   await expect(page.getByTestId('mail-compose')).toBeHidden({
-    timeout: 15000,
+    timeout: T(15000),
   })
   await expect(page.locator('.minimized_compose')).toBeHidden({
-    timeout: 15000,
+    timeout: T(15000),
   })
 }
 
@@ -306,7 +328,7 @@ async function selectMessageCheckbox(page, item) {
 
 async function fillComposeBody(page, text) {
   const body = page.getByTestId('mail-compose-body')
-  await expect(body).toBeVisible({ timeout: 15000 })
+  await expect(body).toBeVisible({ timeout: T(15000) })
 
   const iframe = body.locator('iframe').first()
   if ((await iframe.count()) > 0) {
@@ -314,7 +336,7 @@ async function fillComposeBody(page, text) {
       .frameLocator('[data-test-id="mail-compose-body"] iframe')
       .first()
     const editable = frame.locator('body')
-    await editable.click({ timeout: 15000 })
+    await editable.click({ timeout: T(15000) })
     await editable.fill(text)
     return
   }

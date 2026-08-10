@@ -4,6 +4,7 @@ const { sharedHelper, moduleHelper, fixturePath } = require(path.join(
   'helpers/paths'
 ))
 const { test, expect } = require('@playwright/test')
+const { T } = sharedHelper('timeouts')
 const { loginAsTestUser, step, attachScreenshot, hasCredentials } = sharedHelper('login')
 const {
   openFirstInboxMessage,
@@ -18,7 +19,7 @@ test.describe('Desktop mail forward as attachment', () => {
   test.skip(!hasCredentials(), 'Set E2E_LOGIN_0/E2E_PASSWORD_0 (or E2E_LOGIN/E2E_PASSWORD) in .env.e2e')
 
   test('opens compose via Forward as Attachment', async ({ page }) => {
-    test.setTimeout(180000)
+    test.setTimeout(T(180000))
     await loginAsTestUser(page)
 
     const opened = await openFirstInboxMessage(page)
@@ -43,7 +44,7 @@ test.describe('Desktop mail forward as attachment', () => {
   })
 
   test('opens compose via Resend when available', async ({ page }) => {
-    test.setTimeout(180000)
+    test.setTimeout(T(180000))
     await loginAsTestUser(page)
 
     const opened = await openFirstInboxMessage(page)

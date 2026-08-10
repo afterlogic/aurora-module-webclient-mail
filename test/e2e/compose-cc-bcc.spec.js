@@ -4,6 +4,7 @@ const { sharedHelper, moduleHelper, fixturePath } = require(path.join(
   'helpers/paths'
 ))
 const { test, expect } = require('@playwright/test')
+const { T } = sharedHelper('timeouts')
 const { loginAsTestUser, step, attachScreenshot, fieldControl, hasCredentials, getComposeTo } = sharedHelper('login')
 const composeTo = getComposeTo()
 const composeCc = process.env.E2E_COMPOSE_CC || composeTo
@@ -22,19 +23,19 @@ test.describe('Desktop mail compose CC/BCC', () => {
   test('shows CC/BCC fields, fills them, discards without sending', async ({
     page,
   }) => {
-    test.setTimeout(180000)
+    test.setTimeout(T(180000))
     const subject = `E2E cc-bcc ${Date.now()}`
 
     await loginAsTestUser(page)
 
     await step('Open compose', async () => {
       await expect(page.getByTestId('mail-message-list')).toBeVisible({
-        timeout: 60000,
+        timeout: T(60000),
       })
       await waitForListReady(page, listReadyOptions)
       await clickReady(page.getByTestId('mail-compose-fab'))
       await expect(page.getByTestId('mail-compose')).toBeVisible({
-        timeout: 15000,
+        timeout: T(15000),
       })
     })
 
@@ -44,14 +45,14 @@ test.describe('Desktop mail compose CC/BCC', () => {
       await expect(page.getByTestId('mail-compose-show-cc')).toBeVisible()
       await clickReady(page.getByTestId('mail-compose-show-cc'))
       await expect(page.getByTestId('mail-compose-cc')).toBeVisible({
-        timeout: 10000,
+        timeout: T(10000),
       })
       await fillComposeRecipient(page, composeCc, 'mail-compose-cc')
 
       await expect(page.getByTestId('mail-compose-show-bcc')).toBeVisible()
       await clickReady(page.getByTestId('mail-compose-show-bcc'))
       await expect(page.getByTestId('mail-compose-bcc')).toBeVisible({
-        timeout: 10000,
+        timeout: T(10000),
       })
       await fillComposeRecipient(page, composeBcc, 'mail-compose-bcc')
 

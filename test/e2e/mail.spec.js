@@ -4,6 +4,7 @@ const { sharedHelper, moduleHelper, fixturePath } = require(path.join(
   'helpers/paths'
 ))
 const { test, expect } = require('@playwright/test')
+const { T } = sharedHelper('timeouts')
 const { loginAsTestUser, step, attachScreenshot, hasCredentials } = sharedHelper('login')
 const { waitForListReady, clickReady } = sharedHelper('ready')
 const { listReadyOptions, waitForInboxList } = require('./helpers/mail')
@@ -13,7 +14,7 @@ test.describe('Desktop mail', () => {
   test.skip(!hasCredentials(), 'Set E2E_LOGIN_0/E2E_PASSWORD_0 (or E2E_LOGIN/E2E_PASSWORD) in .env.e2e')
 
   test('opens first message from inbox', async ({ page }) => {
-    test.setTimeout(120000)
+    test.setTimeout(T(120000))
 
     await loginAsTestUser(page)
 
@@ -44,13 +45,13 @@ test.describe('Desktop mail', () => {
 
     await step('Wait for message view / subject', async () => {
       await expect(page.getByTestId('mail-message-view')).toBeVisible({
-        timeout: 30000,
+        timeout: T(30000),
       })
       const subjectEl = page.locator(
         '[data-test-id="mail-message-subject"]:visible'
       )
       await expect(subjectEl).toBeVisible({
-        timeout: 60000,
+        timeout: T(60000),
       })
       const subject = (await subjectEl.innerText()).trim()
       console.log(`  → Opened message subject: ${subject || '(empty subject)'}`)
@@ -64,7 +65,7 @@ test.describe('Desktop mail', () => {
   })
 
   test('opens first message and shows sender chrome', async ({ page }) => {
-    test.setTimeout(120000)
+    test.setTimeout(T(120000))
     await loginAsTestUser(page)
     await waitForInboxList(page)
 
@@ -74,13 +75,13 @@ test.describe('Desktop mail', () => {
     await step('Open first message and expect sender', async () => {
       await clickReady(items.first())
       await expect(page.getByTestId('mail-message-view')).toBeVisible({
-        timeout: 30000,
+        timeout: T(30000),
       })
       await expect(
         page.locator('[data-test-id="mail-message-subject"]:visible').first()
-      ).toBeVisible({ timeout: 60000 })
+      ).toBeVisible({ timeout: T(60000) })
       await expect(page.getByTestId('mail-message-sender')).toBeVisible({
-        timeout: 15000,
+        timeout: T(15000),
       })
       await expect(page.getByTestId('mail-action-reply')).toBeVisible()
       await attachScreenshot(page, 'mail-message-chrome')

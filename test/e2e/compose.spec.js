@@ -4,6 +4,7 @@ const { sharedHelper, moduleHelper, fixturePath } = require(path.join(
   'helpers/paths'
 ))
 const { test, expect } = require('@playwright/test')
+const { T } = sharedHelper('timeouts')
 const {
   loginAsTestUser,
   step,
@@ -27,7 +28,7 @@ test.describe('Desktop mail compose', () => {
   test.skip(!hasCredentials(), 'Set E2E_LOGIN_0/E2E_PASSWORD_0 (or E2E_LOGIN/E2E_PASSWORD) in .env.e2e')
 
   test('composes and sends a message', async ({ page }) => {
-    test.setTimeout(180000)
+    test.setTimeout(T(180000))
 
     const subject = `E2E desktop compose ${Date.now()}`
 
@@ -36,7 +37,7 @@ test.describe('Desktop mail compose', () => {
     await step('Wait for inbox list', async () => {
       await waitForInboxList(page)
       await expect(page.getByTestId('mail-compose-fab')).toBeVisible({
-        timeout: 15000,
+        timeout: T(15000),
       })
       await attachScreenshot(page, 'compose-01-inbox')
     })
@@ -44,7 +45,7 @@ test.describe('Desktop mail compose', () => {
     await step('Open compose', async () => {
       await clickReady(page.getByTestId('mail-compose-fab'))
       await expect(page.getByTestId('mail-compose')).toBeVisible({
-        timeout: 15000,
+        timeout: T(15000),
       })
       await attachScreenshot(page, 'compose-02-form-open')
     })
@@ -62,7 +63,7 @@ test.describe('Desktop mail compose', () => {
       await sendCompose(page)
       console.log('  → Send clicked')
       await expect(page.getByTestId('mail-message-list')).toBeVisible({
-        timeout: 30000,
+        timeout: T(30000),
       })
       await attachScreenshot(page, 'compose-04-after-send')
     })
@@ -73,7 +74,7 @@ test.describe('Desktop mail compose', () => {
         .getByTestId('mail-message-item')
         .filter({ hasText: subject })
         .first()
-      await expect(sentItem).toBeVisible({ timeout: 60000 })
+      await expect(sentItem).toBeVisible({ timeout: T(60000) })
       console.log('  → Sent message found in Sent folder')
       await attachScreenshot(page, 'compose-05-in-sent')
     })

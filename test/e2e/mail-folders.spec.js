@@ -4,6 +4,7 @@ const { sharedHelper, moduleHelper, fixturePath } = require(path.join(
   'helpers/paths'
 ))
 const { test, expect } = require('@playwright/test')
+const { T } = sharedHelper('timeouts')
 const { loginAsTestUser, step, attachScreenshot, hasCredentials } = sharedHelper('login')
 const {
   FOLDER_TYPES,
@@ -16,7 +17,7 @@ test.describe('Desktop mail folders', () => {
   test.skip(!hasCredentials(), 'Set E2E_LOGIN_0/E2E_PASSWORD_0 (or E2E_LOGIN/E2E_PASSWORD) in .env.e2e')
 
   test('switches Inbox / Sent / Trash / Spam / Inbox', async ({ page }) => {
-    test.setTimeout(180000)
+    test.setTimeout(T(180000))
 
     await loginAsTestUser(page)
     await waitForInboxList(page)
@@ -30,7 +31,7 @@ test.describe('Desktop mail folders', () => {
       await step(`Open folder ${folderType}`, async () => {
         await openFolder(page, folderType)
         await expect(page.getByTestId('mail-message-list')).toBeVisible({
-          timeout: 30000,
+          timeout: T(30000),
         })
         console.log(`  → Folder ${folderType} ready`)
       })
