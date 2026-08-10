@@ -5,7 +5,7 @@ const { sharedHelper, moduleHelper, fixturePath } = require(path.join(
 ))
 const { test, expect } = require('@playwright/test')
 const { T } = sharedHelper('timeouts')
-const { loginAsTestUser, step, attachScreenshot, hasCredentials } = sharedHelper('login')
+const { gotoLoggedIn, step, attachScreenshot, hasCredentials } = sharedHelper('login')
 const {
   FOLDER_TYPES,
   waitForInboxList,
@@ -27,7 +27,7 @@ test.describe('Desktop mail list filters and bulk actions', () => {
     page,
   }) => {
     test.setTimeout(T(180000))
-    await loginAsTestUser(page)
+    await gotoLoggedIn(page)
     await waitForInboxList(page)
 
     await step('Find folder with unseen badge and click it', async () => {
@@ -72,7 +72,7 @@ test.describe('Desktop mail list filters and bulk actions', () => {
 
   test('opens Starred (flagged) virtual folder', async ({ page }) => {
     test.setTimeout(T(180000))
-    await loginAsTestUser(page)
+    await gotoLoggedIn(page)
     await waitForInboxList(page)
 
     await step('Open Starred folder', async () => {
@@ -96,7 +96,7 @@ test.describe('Desktop mail list filters and bulk actions', () => {
     page,
   }) => {
     test.setTimeout(T(180000))
-    await loginAsTestUser(page)
+    await gotoLoggedIn(page)
     await waitForInboxList(page)
 
     const items = page.getByTestId('mail-message-item')
@@ -144,7 +144,7 @@ test.describe('Desktop mail list filters and bulk actions', () => {
 
   test('empties Trash folder', async ({ page }) => {
     test.setTimeout(T(180000))
-    await loginAsTestUser(page)
+    await gotoLoggedIn(page)
     await waitForInboxList(page)
 
     await step('Open Trash', async () => {

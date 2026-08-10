@@ -5,7 +5,7 @@ const { sharedHelper, moduleHelper, fixturePath } = require(path.join(
 ))
 const { test, expect } = require('@playwright/test')
 const { T } = sharedHelper('timeouts')
-const { loginAsTestUser, step, attachScreenshot, fieldControl, hasCredentials, getComposeTo } = sharedHelper('login')
+const { gotoLoggedIn, step, attachScreenshot, fieldControl, hasCredentials, getComposeTo } = sharedHelper('login')
 const composeTo = getComposeTo()
 const composeCc = process.env.E2E_COMPOSE_CC || composeTo
 const composeBcc = process.env.E2E_COMPOSE_BCC || composeTo
@@ -26,7 +26,7 @@ test.describe('Desktop mail compose CC/BCC', () => {
     test.setTimeout(T(180000))
     const subject = `E2E cc-bcc ${Date.now()}`
 
-    await loginAsTestUser(page)
+    await gotoLoggedIn(page)
 
     await step('Open compose', async () => {
       await expect(page.getByTestId('mail-message-list')).toBeVisible({

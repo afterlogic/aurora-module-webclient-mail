@@ -6,7 +6,7 @@ const { sharedHelper, moduleHelper, fixturePath } = require(path.join(
 const { test, expect } = require('@playwright/test')
 const { T } = sharedHelper('timeouts')
 const {
-  loginAsTestUser,
+  gotoLoggedIn,
   step,
   attachScreenshot,
   fieldControl,
@@ -32,7 +32,7 @@ test.describe('Desktop mail compose', () => {
 
     const subject = `E2E desktop compose ${Date.now()}`
 
-    await loginAsTestUser(page)
+    await gotoLoggedIn(page)
 
     await step('Wait for inbox list', async () => {
       await waitForInboxList(page)

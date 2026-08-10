@@ -5,7 +5,7 @@ const { sharedHelper, moduleHelper, fixturePath } = require(path.join(
 ))
 const { test, expect } = require('@playwright/test')
 const { T } = sharedHelper('timeouts')
-const { loginAsTestUser, step, attachScreenshot, fieldControl, hasCredentials, getComposeTo } = sharedHelper('login')
+const { gotoLoggedIn, step, attachScreenshot, fieldControl, hasCredentials, getComposeTo } = sharedHelper('login')
 const composeTo = getComposeTo()
 const { clickReady } = sharedHelper('ready')
 const {
@@ -79,7 +79,7 @@ test.describe('Desktop mail compose draft', () => {
     const subject = `E2E draft ${Date.now()}`
     const bodyText = `E2E draft body ${Date.now()}`
 
-    await loginAsTestUser(page)
+    await gotoLoggedIn(page)
     await openCompose(page)
 
     await step('Fill draft To / Subject / Body', async () => {
@@ -120,7 +120,7 @@ test.describe('Desktop mail compose draft', () => {
     const subject = `E2E draft send ${Date.now()}`
     const bodyText = `E2E draft send body ${Date.now()}`
 
-    await loginAsTestUser(page)
+    await gotoLoggedIn(page)
     await openCompose(page)
 
     await step('Fill and save draft', async () => {
@@ -166,7 +166,7 @@ test.describe('Desktop mail compose draft', () => {
   }) => {
     test.setTimeout(T(120000))
 
-    await loginAsTestUser(page)
+    await gotoLoggedIn(page)
     await openCompose(page)
 
     await step('Type subject without saving', async () => {

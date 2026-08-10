@@ -5,7 +5,7 @@ const { sharedHelper, moduleHelper, fixturePath } = require(path.join(
 ))
 const { test, expect } = require('@playwright/test')
 const { T } = sharedHelper('timeouts')
-const { loginAsTestUser, step, attachScreenshot, hasCredentials } = sharedHelper('login')
+const { gotoLoggedIn, step, attachScreenshot, hasCredentials } = sharedHelper('login')
 const { clickReady } = sharedHelper('ready')
 const {
   openFirstInboxMessage,
@@ -22,7 +22,7 @@ test.describe('Desktop mail message actions', () => {
 
   test('toggles details and star on opened message', async ({ page }) => {
     test.setTimeout(T(120000))
-    await loginAsTestUser(page)
+    await gotoLoggedIn(page)
 
     const opened = await openFirstInboxMessage(page)
     test.skip(!opened, 'Inbox is empty — need at least one message')
@@ -88,7 +88,7 @@ test.describe('Desktop mail message actions', () => {
 
   test('reply opens compose with Re: subject', async ({ page }) => {
     test.setTimeout(T(120000))
-    await loginAsTestUser(page)
+    await gotoLoggedIn(page)
 
     const opened = await openFirstInboxMessage(page)
     test.skip(!opened, 'Inbox is empty — need at least one message')
@@ -112,7 +112,7 @@ test.describe('Desktop mail message actions', () => {
 
   test('reply-all opens compose', async ({ page }) => {
     test.setTimeout(T(120000))
-    await loginAsTestUser(page)
+    await gotoLoggedIn(page)
 
     const opened = await openFirstInboxMessage(page)
     test.skip(!opened, 'Inbox is empty — need at least one message')
@@ -140,7 +140,7 @@ test.describe('Desktop mail message actions', () => {
 
   test('forward opens compose with Fwd:', async ({ page }) => {
     test.setTimeout(T(120000))
-    await loginAsTestUser(page)
+    await gotoLoggedIn(page)
 
     const opened = await openFirstInboxMessage(page)
     test.skip(!opened, 'Inbox is empty — need at least one message')
@@ -168,7 +168,7 @@ test.describe('Desktop mail message actions', () => {
 
   test('search header opens and runs a query', async ({ page }) => {
     test.setTimeout(T(90000))
-    await loginAsTestUser(page)
+    await gotoLoggedIn(page)
     await waitForInboxList(page)
 
     await step('Focus search and type a query', async () => {

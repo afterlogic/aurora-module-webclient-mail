@@ -5,7 +5,7 @@ const { sharedHelper, moduleHelper, fixturePath } = require(path.join(
 ))
 const { test, expect } = require('@playwright/test')
 const { T } = sharedHelper('timeouts')
-const { loginAsTestUser, step, attachScreenshot, hasCredentials } = sharedHelper('login')
+const { gotoLoggedIn, step, attachScreenshot, hasCredentials } = sharedHelper('login')
 const {
   openFirstInboxMessage,
   expectComposeOpen,
@@ -20,7 +20,7 @@ test.describe('Desktop mail forward as attachment', () => {
 
   test('opens compose via Forward as Attachment', async ({ page }) => {
     test.setTimeout(T(180000))
-    await loginAsTestUser(page)
+    await gotoLoggedIn(page)
 
     const opened = await openFirstInboxMessage(page)
     test.skip(!opened, 'Inbox is empty')
@@ -45,7 +45,7 @@ test.describe('Desktop mail forward as attachment', () => {
 
   test('opens compose via Resend when available', async ({ page }) => {
     test.setTimeout(T(180000))
-    await loginAsTestUser(page)
+    await gotoLoggedIn(page)
 
     const opened = await openFirstInboxMessage(page)
     test.skip(!opened, 'Inbox is empty')

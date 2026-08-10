@@ -5,7 +5,7 @@ const { sharedHelper, moduleHelper, fixturePath } = require(path.join(
 ))
 const { test, expect } = require('@playwright/test')
 const { T } = sharedHelper('timeouts')
-const { loginAsTestUser, step, attachScreenshot, fieldControl, hasCredentials, getComposeTo } = sharedHelper('login')
+const { gotoLoggedIn, step, attachScreenshot, fieldControl, hasCredentials, getComposeTo } = sharedHelper('login')
 const composeTo = getComposeTo()
 const { clickReady } = sharedHelper('ready')
 const {
@@ -30,7 +30,7 @@ test.describe('Desktop mail attachments', () => {
     const subject = `E2E attach ${Date.now()}`
     const bodyText = `E2E attach body ${Date.now()}`
 
-    await loginAsTestUser(page)
+    await gotoLoggedIn(page)
     await waitForInboxList(page)
 
     await step('Open compose via FAB', async () => {

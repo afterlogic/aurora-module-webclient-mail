@@ -5,7 +5,7 @@ const { sharedHelper, moduleHelper, fixturePath } = require(path.join(
 ))
 const { test, expect } = require('@playwright/test')
 const { T } = sharedHelper('timeouts')
-const { loginAsTestUser, step, attachScreenshot, hasCredentials, getComposeTo } = sharedHelper('login')
+const { gotoLoggedIn, step, attachScreenshot, hasCredentials, getComposeTo } = sharedHelper('login')
 const composeTo = getComposeTo()
 const {
   FOLDER_TYPES,
@@ -29,7 +29,7 @@ test.describe('Desktop mail mutations', () => {
 
   test('views message headers from overflow menu', async ({ page }) => {
     test.setTimeout(T(120000))
-    await loginAsTestUser(page)
+    await gotoLoggedIn(page)
     const opened = await openFirstInboxMessage(page)
     test.skip(!opened, 'Inbox is empty')
 
@@ -60,7 +60,7 @@ test.describe('Desktop mail mutations', () => {
 
   test('moves message via Move dropdown to Trash', async ({ page }) => {
     test.setTimeout(T(180000))
-    await loginAsTestUser(page)
+    await gotoLoggedIn(page)
     const opened = await openFirstInboxMessage(page)
     test.skip(!opened, 'Inbox is empty')
 
@@ -69,7 +69,13 @@ test.describe('Desktop mail mutations', () => {
     await step('Move via toolbar dropdown to Trash', async () => {
       const moveBtn = page.getByTestId('mail-action-moveToFolder')
       test.skip((await moveBtn.count()) === 0, 'Move to folder not available')
-      await clickReady(moveBtn)
+      // moveToFolderCommand.canExecute is CMailView.isEnableGroupOperations, sourced from
+      // an observable throttled 250ms (CMessageListView.js). Opening the message (above)
+      // updates it asynchronously, so a plain visible-click can land while the button
+      // still carries the 'disabled' class — the dropdown-open handler silently no-ops
+      // on disabled elements (koBindings.js fControlClick). Wait for "enabled", not just
+      // "visible", same as clickMailToolbarAction does for delete/spam/etc.
+      await clickMailToolbarAction(page, 'mail-action-moveToFolder')
       await expect(
         page
           .locator(
@@ -106,7 +112,7 @@ test.describe('Desktop mail mutations', () => {
 
   test('marks message as spam and opens Spam folder', async ({ page }) => {
     test.setTimeout(T(180000))
-    await loginAsTestUser(page)
+    await gotoLoggedIn(page)
     const opened = await openFirstInboxMessage(page)
     test.skip(!opened, 'Inbox is empty')
 
@@ -116,7 +122,11 @@ test.describe('Desktop mail mutations', () => {
         (await spam.count()) === 0 || !(await spam.isVisible().catch(() => false)),
         'Spam action not available'
       )
-      await clickReady(spam)
+      // spamCommand.canExecute is CMailView.isEnableGroupOperations, sourced from an
+      // observable throttled 250ms after opening the message — wait for "enabled",
+      // not just "visible" (see moveToFolder above), or the click silently no-ops
+      // (Utils.createCommand returns false without executing when canExecute() is false).
+      await clickMailToolbarAction(page, 'mail-action-toSpam')
       await expect(page.getByTestId('mail-message-list')).toBeVisible({
         timeout: T(45000),
       })
@@ -131,7 +141,7 @@ test.describe('Desktop mail mutations', () => {
 
   test('marks spam as not spam and restores to Inbox', async ({ page }) => {
     test.setTimeout(T(240000))
-    await loginAsTestUser(page)
+    await gotoLoggedIn(page)
     const opened = await openFirstInboxMessage(page)
     test.skip(!opened, 'Inbox is empty')
 
@@ -144,7 +154,7 @@ test.describe('Desktop mail mutations', () => {
         (await spam.count()) === 0 || !(await spam.isVisible().catch(() => false)),
         'Spam action not available'
       )
-      await clickReady(spam)
+      await clickMailToolbarAction(page, 'mail-action-toSpam')
       await expect(page.getByTestId('mail-message-list')).toBeVisible({
         timeout: T(45000),
       })
@@ -169,7 +179,7 @@ test.describe('Desktop mail mutations', () => {
     await step('Toolbar → Not spam', async () => {
       const notSpam = page.getByTestId('mail-action-notSpam')
       await expect(notSpam).toBeVisible({ timeout: T(10000) })
-      await clickReady(notSpam)
+      await clickMailToolbarAction(page, 'mail-action-notSpam')
       await expect(page.getByTestId('mail-message-list')).toBeVisible({
         timeout: T(45000),
       })
@@ -191,7 +201,7 @@ test.describe('Desktop mail mutations', () => {
 
   test('deletes message to Trash via toolbar', async ({ page }) => {
     test.setTimeout(T(180000))
-    await loginAsTestUser(page)
+    await gotoLoggedIn(page)
     const opened = await openFirstInboxMessage(page)
     test.skip(!opened, 'Inbox is empty')
 
@@ -208,7 +218,7 @@ test.describe('Desktop mail mutations', () => {
 
   test('sends reply and forward to self', async ({ page }) => {
     test.setTimeout(T(240000))
-    await loginAsTestUser(page)
+    await gotoLoggedIn(page)
     const opened = await openFirstInboxMessage(page)
     test.skip(!opened, 'Inbox is empty')
 
@@ -259,7 +269,7 @@ test.describe('Desktop mail mutations', () => {
 
   test('advanced search by subject runs', async ({ page }) => {
     test.setTimeout(T(120000))
-    await loginAsTestUser(page)
+    await gotoLoggedIn(page)
     await waitForInboxList(page)
 
     const firstSubject = (

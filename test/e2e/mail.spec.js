@@ -5,7 +5,7 @@ const { sharedHelper, moduleHelper, fixturePath } = require(path.join(
 ))
 const { test, expect } = require('@playwright/test')
 const { T } = sharedHelper('timeouts')
-const { loginAsTestUser, step, attachScreenshot, hasCredentials } = sharedHelper('login')
+const { gotoLoggedIn, step, attachScreenshot, hasCredentials } = sharedHelper('login')
 const { waitForListReady, clickReady } = sharedHelper('ready')
 const { listReadyOptions, waitForInboxList } = require('./helpers/mail')
 
@@ -16,7 +16,7 @@ test.describe('Desktop mail', () => {
   test('opens first message from inbox', async ({ page }) => {
     test.setTimeout(T(120000))
 
-    await loginAsTestUser(page)
+    await gotoLoggedIn(page)
 
     await step('Wait for mail message list', async () => {
       await waitForInboxList(page)
@@ -66,7 +66,7 @@ test.describe('Desktop mail', () => {
 
   test('opens first message and shows sender chrome', async ({ page }) => {
     test.setTimeout(T(120000))
-    await loginAsTestUser(page)
+    await gotoLoggedIn(page)
     await waitForInboxList(page)
 
     const items = page.getByTestId('mail-message-item')

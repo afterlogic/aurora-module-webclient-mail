@@ -5,7 +5,7 @@ const { sharedHelper, moduleHelper, fixturePath } = require(path.join(
 ))
 const { test, expect } = require('@playwright/test')
 const { T } = sharedHelper('timeouts')
-const { loginAsTestUser, step, attachScreenshot, hasCredentials } = sharedHelper('login')
+const { gotoLoggedIn, step, attachScreenshot, hasCredentials } = sharedHelper('login')
 const {
   FOLDER_TYPES,
   openFolder,
@@ -19,7 +19,7 @@ test.describe('Desktop mail folders', () => {
   test('switches Inbox / Sent / Trash / Spam / Inbox', async ({ page }) => {
     test.setTimeout(T(180000))
 
-    await loginAsTestUser(page)
+    await gotoLoggedIn(page)
     await waitForInboxList(page)
 
     for (const folderType of [
