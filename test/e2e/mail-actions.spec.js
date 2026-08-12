@@ -65,10 +65,20 @@ test.describe('Desktop mail message actions', () => {
           : page.getByTestId('mail-message-item').first()
       const star = item.getByTestId('mail-message-star')
       await expect(star).toBeVisible({ timeout: T(10000) })
+      // First row can sit under sticky header / reading pane — center in list.
+      await item.evaluate((el) =>
+        el.scrollIntoView({ block: 'center', inline: 'nearest' })
+      )
       const wasFlagged = await star.evaluate((el) =>
         el.classList.contains('flagged')
       )
-      await clickReady(star)
+      await star.evaluate((el) => {
+        if (window.jQuery) {
+          window.jQuery(el).trigger('click')
+        } else {
+          el.click()
+        }
+      })
       await expect
         .poll(async () =>
           star.evaluate((el) => el.classList.contains('flagged'))
@@ -76,7 +86,13 @@ test.describe('Desktop mail message actions', () => {
         .not.toBe(wasFlagged)
       console.log(`  → Star toggled from ${wasFlagged}`)
       // Restore
-      await clickReady(star)
+      await star.evaluate((el) => {
+        if (window.jQuery) {
+          window.jQuery(el).trigger('click')
+        } else {
+          el.click()
+        }
+      })
       await expect
         .poll(async () =>
           star.evaluate((el) => el.classList.contains('flagged'))

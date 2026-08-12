@@ -32,6 +32,154 @@ function visibleSubject(page) {
   return page.locator('[data-test-id="mail-message-subject"]:visible').first()
 }
 
+async function isSeparatedMailLayout(page) {
+  return (
+    (await page.locator('html.layout-separated').count()) > 0 ||
+    (await page.locator('.separate_layout_mode').count()) > 0
+  )
+}
+
+async function isSeparatedMessageOpened(page) {
+  return (await page.locator('.separate_layout_mode.separate_message_opened').count()) > 0
+}
+
+/** Knockout longUid from a list row (desktop CMessageModel). */
+async function getMessageUidFromItem(item) {
+  return item.evaluate((el) => {
+    const ko = window.ko
+    if (!ko) return null
+    const msg = ko.dataFor(el)
+    if (!msg || typeof msg.longUid !== 'function') return null
+    const uid = msg.longUid()
+    return uid ? String(uid) : null
+  })
+}
+
+/** jQuery delegated dblclick — Playwright dblclick() often misses CSelector handlers. */
+async function triggerMailItemDblClick(item) {
+  await item.evaluate((el) => {
+    if (window.jQuery) {
+      window.jQuery(el).trigger('dblclick')
+      return
+    }
+    el.dispatchEvent(
+      new MouseEvent('dblclick', { bubbles: true, cancelable: true, view: window })
+    )
+  })
+}
+
+/**
+ * Force hash routing to msg{uid} even when routeForMessage skips (same uid).
+ * CMailView.onRoute always resets isOpenedSeparatedMessage(false) on hash change.
+ */
+async function forceMessageHashRoute(page, uid) {
+  await page.evaluate((uid) => {
+    const parts = window.location.hash
+      .replace(/^#/, '')
+      .split('/')
+      .filter(Boolean)
+      .filter((p) => !p.startsWith('msg'))
+    const target = [...parts, 'msg' + uid].join('/')
+    if (window.location.hash.replace(/^#/, '') === target) {
+      window.location.hash = parts.join('/')
+      window.location.hash = target
+    } else {
+      window.location.hash = target
+    }
+  }, uid)
+  await page
+    .waitForFunction((u) => window.location.hash.includes('msg' + u), uid, {
+      timeout: T(15000),
+    })
+    .catch(() => undefined)
+}
+
+/** Reading pane is mounted early but may stay hidden until load / layout opens it. */
+async function waitForOpenedMessageView(page, timeout = T(60000)) {
+  await expect(
+    page
+      .locator(
+        [
+          '[data-test-id="mail-message-subject"]:visible',
+          '[data-test-id="mail-message-sender"]:visible',
+          '[data-test-id="mail-action-reply"]:visible',
+        ].join(', ')
+      )
+      .first()
+  ).toBeVisible({ timeout })
+}
+
+/** jQuery delegated click on .subject/.from — Playwright click blocked by reading-pane overlap. */
+async function clickListItemSubject(item) {
+  const clickTarget = item.locator('.subject, .from').first()
+  await expect(clickTarget).toBeVisible({ timeout: T(30000) })
+  await clickTarget.evaluate((el) => {
+    if (window.jQuery) {
+      window.jQuery(el).trigger('click')
+      return
+    }
+    el.click()
+  })
+}
+
+async function clickMessageListItem(page, item) {
+  const uid = await getMessageUidFromItem(item)
+  const separated = await isSeparatedMailLayout(page)
+
+  const tryOpen = async () => {
+    if (separated) {
+      // Separated: .message_viewer { display: none } until dblclick →
+      // isOpenedSeparatedMessage(true). Single click only routes uid.
+      await clickListItemSubject(item)
+      if (uid) {
+        await page
+          .waitForFunction((u) => window.location.hash.includes('msg' + u), uid, {
+            timeout: T(8000),
+          })
+          .catch(() => undefined)
+      }
+      await triggerMailItemDblClick(item)
+      return visibleSubject(page)
+        .waitFor({ state: 'visible', timeout: T(8000) })
+        .then(() => true)
+        .catch(() => false)
+    }
+
+    await clickListItemSubject(item)
+    return visibleSubject(page)
+      .waitFor({ state: 'visible', timeout: T(8000) })
+      .then(() => true)
+      .catch(() => false)
+  }
+
+  if (await tryOpen()) {
+    return
+  }
+
+  // Vertical/horizontal: re-click on currentMessage is a no-op (routeForMessage
+  // skips when uid unchanged). Select another row, then the target again.
+  const items = page.getByTestId('mail-message-item')
+  if ((await items.count()) > 1) {
+    await clickListItemSubject(items.nth(1))
+    if (separated) {
+      await triggerMailItemDblClick(items.nth(1))
+    }
+  }
+
+  if (!(await tryOpen()) && uid) {
+    await forceMessageHashRoute(page, uid)
+    if (separated && !(await isSeparatedMessageOpened(page))) {
+      await triggerMailItemDblClick(item)
+    }
+  }
+
+  if (!(await visibleSubject(page).isVisible().catch(() => false))) {
+    await page.keyboard.press('Enter').catch(() => undefined)
+  }
+
+  await waitForOpenedMessageView(page)
+}
+
 async function waitForInboxList(page) {
   await expect(page.getByTestId('mail-message-list')).toBeVisible({
     timeout: T(60000),
@@ -87,6 +235,10 @@ async function openFolderByName(page, folderName, { soft = false } = {}) {
  * @returns {{ listSubject: string, viewSubject: string, count: number } | null}
  */
 async function openFirstInboxMessage(page) {
+  await step('Open INBOX folder', async () => {
+    await openFolder(page, FOLDER_TYPES.INBOX)
+  })
+
   await step('Wait for inbox list', async () => {
     await waitForInboxList(page)
   })
@@ -107,11 +259,8 @@ async function openFirstInboxMessage(page) {
   ).trim()
 
   await step('Open first inbox message', async () => {
-    await clickReady(items.first())
-    await expect(page.getByTestId('mail-message-view')).toBeVisible({
-      timeout: T(30000),
-    })
-    await expect(visibleSubject(page)).toBeVisible({ timeout: T(60000) })
+    await clickMessageListItem(page, items.first())
+    await waitForOpenedMessageView(page)
   })
 
   const viewSubject = (await visibleSubject(page).innerText()).trim()
@@ -161,13 +310,58 @@ async function clickMailAction(page, testId) {
  * List toolbar + message toolbar may share the same data-test-id.
  */
 async function clickMailToolbarAction(page, testId) {
-  const enabled = page
-    .locator(
-      `[data-test-id="${testId}"]:visible:not(.disabled):not(.command-disabled):not(.unavailable)`
-    )
-    .first()
+  const enabledSelector = `[data-test-id="${testId}"]:visible:not(.disabled):not(.command-disabled):not(.unavailable)`
+  const enabled = page.locator(enabledSelector).first()
   await expect(enabled).toBeVisible({ timeout: T(30000) })
+
+  const inMessagesPanel = await enabled.evaluate((el) =>
+    Boolean(el.closest('.messages_panel'))
+  )
+
+  if (inMessagesPanel) {
+    await page.locator('.messages_panel .toolbar').scrollIntoViewIfNeeded()
+    // Split layout overlap + Knockout delegated handlers: jQuery trigger is
+    // reliable for toolbar commands/dropdowns; Playwright click may be blocked
+    // or miss koBindings fControlClick.
+    await enabled.evaluate((el) => {
+      if (window.jQuery) {
+        window.jQuery(el).trigger('click')
+        return
+      }
+      el.click()
+    })
+    return
+  }
+
   await clickReady(enabled)
+}
+
+/**
+ * Open Move dropdown and pick a folder (jQuery delegated click on span.folder).
+ * @param {string|string[]} folderFullNames — e.g. 'Trash' or ['Trash', 'INBOX.Trash']
+ */
+async function clickMoveToFolder(page, folderFullNames) {
+  const names = Array.isArray(folderFullNames) ? folderFullNames : [folderFullNames]
+  await clickMailToolbarAction(page, 'mail-action-moveToFolder')
+  await expect(page.locator('.messages_panel .item.move.expand')).toBeVisible({
+    timeout: T(10000),
+  })
+
+  const selector = names
+    .map(
+      (name) =>
+        `.item.move.expand [data-test-id="mail-move-folder-item"][data-folder="${name}"]`
+    )
+    .join(', ')
+  const folderItem = page.locator(selector).first()
+  await expect(folderItem).toBeVisible({ timeout: T(15000) })
+  await folderItem.evaluate((el) => {
+    if (window.jQuery) {
+      window.jQuery(el).trigger('click')
+      return
+    }
+    el.click()
+  })
 }
 
 async function readComposeSubject(page) {
@@ -354,6 +548,75 @@ async function fillComposeBody(page, text) {
   }
 }
 
+/** List row whose .subject contains the given text (more precise than hasText on row). */
+function messageItemBySubject(page, subject) {
+  return page
+    .getByTestId('mail-message-item')
+    .filter({
+      has: page.locator('.subject').filter({ hasText: subject }),
+    })
+    .first()
+}
+
+/** Desktop toolbar "Check mail" — refreshes folder list from server. */
+async function triggerCheckMail(page) {
+  const checkBtn = page
+    .locator('#selenium_mail_check_button, .toolbar .item.checkstate')
+    .first()
+  if (!(await checkBtn.isVisible().catch(() => false))) {
+    return
+  }
+  await clickReady(checkBtn)
+  await page
+    .locator('.toolbar .item.checkstate.process')
+    .waitFor({ state: 'hidden', timeout: T(60000) })
+    .catch(() => undefined)
+}
+
+/** Wait until compose attachment finished uploading (Send stays disabled until then). */
+async function waitForComposeAttachmentReady(page, fileName) {
+  const attachment = page
+    .locator('.attachments_panel .item.file, .attachments_container .item.file')
+    .filter({ hasText: fileName })
+    .first()
+  await expect(attachment).toBeVisible({ timeout: T(60000) })
+  await expect(attachment.locator('.progress:visible')).toHaveCount(0, {
+    timeout: T(120000),
+  })
+  await expect(attachment.locator('.status_text.error:visible')).toHaveCount(0)
+  const sendBtn = page.locator('[data-test-id="mail-compose-send"]:visible').first()
+  await expect(sendBtn).not.toHaveClass(
+    /(?:^|\s)(?:compose_shell_disabled|command-disabled|disable|disabled)(?:\s|$)/,
+    { timeout: T(120000) }
+  )
+}
+
+/**
+ * Poll folder list until a message subject appears (IMAP sync can lag after send).
+ * Re-opens folder and triggers Check mail between attempts.
+ */
+async function waitForMessageInFolder(
+  page,
+  folderType,
+  subject,
+  { timeout = 120000 } = {}
+) {
+  await expect
+    .poll(
+      async () => {
+        await openFolder(page, folderType)
+        await triggerCheckMail(page)
+        await waitForListReady(page, listReadyOptions).catch(() => undefined)
+        return messageItemBySubject(page, subject)
+          .isVisible()
+          .catch(() => false)
+      },
+      { timeout: T(timeout), intervals: [2000, 3000, 5000, 8000] }
+    )
+    .toBe(true)
+  return messageItemBySubject(page, subject)
+}
+
 module.exports = {
   FOLDER_TYPES,
   waitForInboxList,
@@ -372,6 +635,7 @@ module.exports = {
   waitForDraftSavedReport,
   clickMailAction,
   clickMailToolbarAction,
+  clickMoveToFolder,
   visibleSubject,
   waitForListReady,
   waitForListReadySoft,
@@ -379,4 +643,10 @@ module.exports = {
   clickReady,
   step,
   attachScreenshot,
+  messageItemBySubject,
+  triggerCheckMail,
+  waitForComposeAttachmentReady,
+  waitForMessageInFolder,
+  clickMessageListItem,
+  waitForOpenedMessageView,
 }

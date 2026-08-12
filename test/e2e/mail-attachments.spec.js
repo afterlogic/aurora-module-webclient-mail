@@ -11,11 +11,14 @@ const { clickReady } = sharedHelper('ready')
 const {
   FOLDER_TYPES,
   waitForInboxList,
-  openFolderByType,
   fillComposeRecipient,
   sendCompose,
   fillComposeBody,
   visibleSubject,
+  waitForComposeAttachmentReady,
+  waitForMessageInFolder,
+  clickMessageListItem,
+  waitForOpenedMessageView,
 } = require('./helpers/mail')
 
 const attachFixturePath = fixturePath('e2e-attach.txt')
@@ -72,6 +75,7 @@ test.describe('Desktop mail attachments', () => {
           hasText: fixtureName,
         }).first()
       ).toBeVisible({ timeout: T(60000) })
+      await waitForComposeAttachmentReady(page, fixtureName)
       console.log(`  → Attachment uploaded: ${fixtureName}`)
       await attachScreenshot(page, 'mail-attach-01-compose')
     })
@@ -86,19 +90,15 @@ test.describe('Desktop mail attachments', () => {
     })
 
     await step('Open Sent and find message with attachment', async () => {
-      await openFolderByType(page, FOLDER_TYPES.SENT)
-
-      const item = page
-        .getByTestId('mail-message-item')
-        .filter({ hasText: subject })
-        .first()
-      await expect(item).toBeVisible({ timeout: T(60000) })
-      await clickReady(item)
+      const item = await waitForMessageInFolder(page, FOLDER_TYPES.SENT, subject, {
+        timeout: 180000,
+      })
+      await clickMessageListItem(page, item)
 
       await expect(page.getByTestId('mail-message-view')).toBeVisible({
         timeout: T(30000),
       })
-      await expect(visibleSubject(page)).toBeVisible({ timeout: T(60000) })
+      await waitForOpenedMessageView(page)
       const openedSubject = (await visibleSubject(page).innerText()).trim()
       expect(openedSubject).toContain(subject)
       console.log(`  → Opened Sent message: ${openedSubject}`)

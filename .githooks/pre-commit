@@ -57,4 +57,26 @@ if [ -f "$CSFIXER" ]; then
     fi
 fi
 
-exit $?
+
+# --- unit tests (vitest) ---
+UNIT_DIR="$PROJECT/vue-mobile/test/unit"
+if [ -d "$UNIT_DIR" ]; then
+    STAGED_VUE=`git diff --name-only --diff-filter=ACMR HEAD | grep -E '^vue-mobile/' || true`
+    if [ -n "$STAGED_VUE" ]; then
+        echo ""
+        echo "Running unit tests (vue-mobile)..."
+        if [ ! -d "$PROJECT/vue-mobile/node_modules" ]; then
+            echo "vue-mobile/node_modules missing. Run: cd vue-mobile && yarn"
+            exit 1
+        fi
+        (cd "$PROJECT/vue-mobile" && yarn test:unit)
+        if [ $? != 0 ]; then
+            echo "Fix unit test failures before commit."
+            echo "Run: 'cd vue-mobile && yarn test:unit'"
+            exit 1
+        fi
+    fi
+fi
+# --- end unit tests (vitest) ---
+
+exit 0

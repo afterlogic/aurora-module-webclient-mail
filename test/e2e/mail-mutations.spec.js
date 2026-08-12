@@ -20,7 +20,10 @@ const {
   visibleSubject,
   clickMailAction,
   clickMailToolbarAction,
+  clickMoveToFolder,
   clickReady,
+  clickMessageListItem,
+  waitForOpenedMessageView,
 } = require('./helpers/mail')
 
 
@@ -33,22 +36,31 @@ test.describe('Desktop mail mutations', () => {
     const opened = await openFirstInboxMessage(page)
     test.skip(!opened, 'Inbox is empty')
 
+    await step('Wait for message fully loaded (More menu disabled until then)', async () => {
+      // moreCommand.canExecute === isCurrentMessageLoaded; viewHeaders additionally
+      // requires completelyFilled() — wait for Reply enabled, then for the menu item.
+      await waitForOpenedMessageView(page)
+      await expect(
+        page.locator(
+          '[data-test-id="mail-action-reply"]:visible:not(.disabled):not(.command-disabled)'
+        )
+      ).toBeVisible({ timeout: T(60000) })
+    })
+
     await step('Open headers (desktop opens a popup window)', async () => {
       await clickReady(page.getByTestId('mail-message-more'))
-      const headers = page.getByTestId('mail-menu-viewHeaders')
-      test.skip(
-        (await headers.count()) === 0 ||
-          !(await headers.isVisible().catch(() => false)),
-        'View headers not available'
-      )
+      await expect(page.locator('.item.more.expand')).toBeVisible({
+        timeout: T(10000),
+      })
+
+      const headers = page.locator('[data-test-id="mail-menu-viewHeaders"]:visible')
+      await expect(headers).toBeVisible({ timeout: T(60000) })
 
       const popupPromise = page
         .context()
         .waitForEvent('page', { timeout: T(15000) })
-        .catch(() => null)
       await clickReady(headers)
       const popup = await popupPromise
-      test.skip(!popup, 'Headers popup window did not open')
       await popup.waitForLoadState('domcontentloaded').catch(() => undefined)
       const text = (await popup.locator('body').innerText().catch(() => '')).trim()
       console.log(`  → Headers length: ${text.length}`)
@@ -69,35 +81,8 @@ test.describe('Desktop mail mutations', () => {
     await step('Move via toolbar dropdown to Trash', async () => {
       const moveBtn = page.getByTestId('mail-action-moveToFolder')
       test.skip((await moveBtn.count()) === 0, 'Move to folder not available')
-      // moveToFolderCommand.canExecute is CMailView.isEnableGroupOperations, sourced from
-      // an observable throttled 250ms (CMessageListView.js). Opening the message (above)
-      // updates it asynchronously, so a plain visible-click can land while the button
-      // still carries the 'disabled' class — the dropdown-open handler silently no-ops
-      // on disabled elements (koBindings.js fControlClick). Wait for "enabled", not just
-      // "visible", same as clickMailToolbarAction does for delete/spam/etc.
-      await clickMailToolbarAction(page, 'mail-action-moveToFolder')
-      await expect(
-        page
-          .locator(
-            '.item.move .dropdown_content, [data-test-id="mail-action-moveToFolder"] .dropdown_content'
-          )
-          .first()
-      )
-        .toBeVisible({ timeout: T(10000) })
-        .catch(() => undefined)
-      const trash = page
-        .locator(
-          '[data-test-id="mail-move-folder-item"][data-folder="Trash"], [data-test-id="mail-move-folder-item"][data-folder="INBOX.Trash"]'
-        )
-        .first()
-        .or(
-          page
-            .getByTestId('mail-move-folder-item')
-            .filter({ hasText: /trash|корзина/i })
-            .first()
-        )
       console.log(`  → Moving "${subject}" → Trash`)
-      await trash.click({ force: true })
+      await clickMoveToFolder(page, ['Trash', 'INBOX.Trash'])
       await expect(page.getByTestId('mail-message-list')).toBeVisible({
         timeout: T(30000),
       })
@@ -168,7 +153,7 @@ test.describe('Desktop mail mutations', () => {
         .filter({ hasText: subject })
         .first()
       await expect(item).toBeVisible({ timeout: T(60000) })
-      await clickReady(item)
+      await clickMessageListItem(page, item)
       await expect(page.getByTestId('mail-message-view')).toBeVisible({
         timeout: T(30000),
       })
@@ -227,15 +212,12 @@ test.describe('Desktop mail mutations', () => {
       const subject = await readComposeSubject(page)
       expect(subject.toLowerCase()).toMatch(/^re(\[\d+\])?:/)
       await sendCompose(page)
-      // Both panes can be visible together (list + open reading pane) —
-      // .or() alone violates strict mode once more than one side matches.
-      // .first() just asks "is either of these here", not "exactly one".
-      await expect(
-        page
-          .getByTestId('mail-message-view')
-          .or(page.getByTestId('mail-message-list'))
-          .first()
-      ).toBeVisible({ timeout: T(45000) })
+      // Desktop split pane keeps list + view both mounted; do not .or() them
+      // (strict mode fails when both are visible). sendCompose already waited
+      // for the compose popup to close.
+      await expect(page.getByTestId('mail-message-list')).toBeVisible({
+        timeout: T(15000),
+      })
       console.log(`  → Reply sent: ${subject}`)
       await attachScreenshot(page, 'mail-send-01-reply')
     })
@@ -256,12 +238,9 @@ test.describe('Desktop mail mutations', () => {
       await fillComposeRecipient(page, composeTo)
       await fillComposeBody(page, `E2E forward body ${Date.now()}`)
       await sendCompose(page)
-      await expect(
-        page
-          .getByTestId('mail-message-view')
-          .or(page.getByTestId('mail-message-list'))
-          .first()
-      ).toBeVisible({ timeout: T(45000) })
+      await expect(page.getByTestId('mail-message-list')).toBeVisible({
+        timeout: T(15000),
+      })
       console.log(`  → Forward sent: ${subject}`)
       await attachScreenshot(page, 'mail-send-02-forward')
     })

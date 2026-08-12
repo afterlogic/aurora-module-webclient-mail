@@ -6,8 +6,13 @@ const { sharedHelper, moduleHelper, fixturePath } = require(path.join(
 const { test, expect } = require('@playwright/test')
 const { T } = sharedHelper('timeouts')
 const { gotoLoggedIn, step, attachScreenshot, hasCredentials } = sharedHelper('login')
-const { waitForListReady, clickReady } = sharedHelper('ready')
-const { listReadyOptions, waitForInboxList } = require('./helpers/mail')
+const { waitForListReady } = sharedHelper('ready')
+const {
+  listReadyOptions,
+  openFirstInboxMessage,
+  visibleSubject,
+  waitForOpenedMessageView,
+} = require('./helpers/mail')
 
 
 test.describe('Desktop mail', () => {
@@ -18,42 +23,23 @@ test.describe('Desktop mail', () => {
 
     await gotoLoggedIn(page)
 
-    await step('Wait for mail message list', async () => {
-      await waitForInboxList(page)
-    })
+    const opened = await openFirstInboxMessage(page)
 
-    const messageItems = page.getByTestId('mail-message-item')
-    const count = await messageItems.count()
-
-    await step(`Inspect inbox (found ${count} message(s))`, async () => {
-      if (count === 0) {
+    if (!opened) {
+      await step('Inspect inbox (empty)', async () => {
         console.log('  → Inbox is empty (mail-empty-folder)')
         await attachScreenshot(page, 'mail-inbox-empty')
-        return
-      }
+      })
+      test.skip(true, 'Inbox is empty — put at least one message in the test mailbox')
+    }
+
+    await step(`Inspect inbox (found ${opened.count} message(s))`, async () => {
       await attachScreenshot(page, 'mail-inbox-list')
     })
 
-    test.skip(
-      count === 0,
-      'Inbox is empty — put at least one message in the test mailbox'
-    )
-
-    await step('Open first message in the list', async () => {
-      await clickReady(messageItems.first())
-    })
-
     await step('Wait for message view / subject', async () => {
-      await expect(page.getByTestId('mail-message-view')).toBeVisible({
-        timeout: T(30000),
-      })
-      const subjectEl = page.locator(
-        '[data-test-id="mail-message-subject"]:visible'
-      )
-      await expect(subjectEl).toBeVisible({
-        timeout: T(60000),
-      })
-      const subject = (await subjectEl.innerText()).trim()
+      await waitForOpenedMessageView(page)
+      const subject = opened.viewSubject
       console.log(`  → Opened message subject: ${subject || '(empty subject)'}`)
       await attachScreenshot(page, 'mail-message-opened')
     })
@@ -67,19 +53,13 @@ test.describe('Desktop mail', () => {
   test('opens first message and shows sender chrome', async ({ page }) => {
     test.setTimeout(T(120000))
     await gotoLoggedIn(page)
-    await waitForInboxList(page)
 
-    const items = page.getByTestId('mail-message-item')
-    test.skip((await items.count()) === 0, 'Inbox is empty')
+    const opened = await openFirstInboxMessage(page)
+    test.skip(!opened, 'Inbox is empty')
 
     await step('Open first message and expect sender', async () => {
-      await clickReady(items.first())
-      await expect(page.getByTestId('mail-message-view')).toBeVisible({
-        timeout: T(30000),
-      })
-      await expect(
-        page.locator('[data-test-id="mail-message-subject"]:visible').first()
-      ).toBeVisible({ timeout: T(60000) })
+      await waitForOpenedMessageView(page)
+      await expect(visibleSubject(page)).toBeVisible({ timeout: T(60000) })
       await expect(page.getByTestId('mail-message-sender')).toBeVisible({
         timeout: T(15000),
       })

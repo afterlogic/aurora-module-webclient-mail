@@ -51,18 +51,33 @@ test.describe('Desktop mail list filters and bulk actions', () => {
       await expect(page.getByTestId('mail-message-list')).toBeVisible({
         timeout: T(30000),
       })
-      await expect(page.getByTestId('mail-filter-banner')).toBeVisible({
-        timeout: T(15000),
-      })
+      // Two banners share data-test-id in DOM; only one is :visible.
+      // Prefer distinct ids when templates are deployed; keep legacy id for staging.
+      const banner = page.locator(
+        [
+          '[data-test-id="mail-filter-banner"]:visible',
+          '[data-test-id="mail-filter-banner-unseen-list"]:visible',
+          '[data-test-id="mail-filter-banner-unseen-empty"]:visible',
+        ].join(', ')
+      )
+      await expect(banner).toBeVisible({ timeout: T(15000) })
       await waitForListReady(page, listReadyOptions)
       await attachScreenshot(page, 'mail-filter-unseen-01')
     })
 
     await step('Clear filter → full folder list', async () => {
-      await clickReady(page.getByTestId('mail-filter-clear'))
-      await expect(page.getByTestId('mail-filter-banner')).toBeHidden({
-        timeout: T(30000),
-      })
+      await clickReady(
+        page.locator('[data-test-id="mail-filter-clear"]:visible').first()
+      )
+      await expect(
+        page.locator(
+          [
+            '[data-test-id="mail-filter-banner"]:visible',
+            '[data-test-id="mail-filter-banner-unseen-list"]:visible',
+            '[data-test-id="mail-filter-banner-unseen-empty"]:visible',
+          ].join(', ')
+        )
+      ).toHaveCount(0, { timeout: T(30000) })
       await expect(page.getByTestId('mail-message-list')).toBeVisible({
         timeout: T(30000),
       })
