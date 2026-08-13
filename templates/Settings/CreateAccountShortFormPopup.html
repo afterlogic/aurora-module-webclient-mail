@@ -1,4 +1,4 @@
-<div class="popup add_account" style="display: none;">
+<div class="popup add_account" style="display: none;" data-test-id="settings-add-account-dialog">
 	<div class="mask" data-bind="click: cancelPopup"></div>
 	<div class="popup_panel step_last" id="selenium_settings_create_account_form">
 
@@ -10,7 +10,7 @@
 			<div class="fieldset">
 				<div class="items_list simple_list" style="margin: 0">
 					<div data-bind="foreach: oauthOptions">
-						<div class="item account" data-bind="click: function () { $parent.selectAuthOption(Type); }">
+						<div class="item account" data-test-id="settings-add-account-auth-option" data-bind="click: function () { $parent.selectAuthOption(Type); }">
 							<img class="icon_oauth" data-bind="attr: { 'src': IconUrl }" />
 							<span class="title title_oauth" data-bind="text: Name"></span>
 						</div>
@@ -31,18 +31,18 @@
 					<span class="label required" data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_EMAIL'}"></span>
 					<input class="value input" spellcheck="false"  type="text" maxlength="65" 
 						   data-bind="value: email, hasfocus: email.focused, valueUpdate: 'afterkeydown', onEnter: function () { email.focused(false); save(); }"
-						   id="selenium_settings_create_account_email" />
+						   id="selenium_settings_create_account_email" data-test-id="settings-add-account-email" />
 				</div>
 				<div class="row password">
 					<span class="label required" data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_PASSWORD'}"></span>
 					<input class="value input" spellcheck="false"  autocomplete="new-password" type="password" maxlength="255" 
 						   data-bind="value: password, hasfocus: password.focused, valueUpdate: 'afterkeydown', onEnter: save"
-						   id="selenium_settings_create_account_password" />
+						   id="selenium_settings_create_account_password" data-test-id="settings-add-account-password" />
 				</div>
 			</div>
 
 			<div class="buttons">
-				<span class="button" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ADD'}, click: save, visible: !loading()"></span>
+				<span class="button" data-test-id="settings-add-account-submit" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ADD'}, click: save, visible: !loading()"></span>
 				<span class="button" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ADD_IN_PROGRESS'}, visible: loading()"></span>
 				<span class="button secondary_button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_CANCEL'}, click: cancelPopup"></span>
 			</div>

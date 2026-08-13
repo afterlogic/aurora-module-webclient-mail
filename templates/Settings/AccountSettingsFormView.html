@@ -59,7 +59,7 @@
 		
 		<div data-bind="visible: !isDefaultAccount()">
             <div class="row remove_account">
-				<span class="link" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_REMOVE_ACCOUNT'}, click: remove, attr: {'id': 'selenium_settings_delete_account_' + email()}, css: {'disabled': isDisableAuthorize()}"></span>
+				<span class="link" data-test-id="settings-remove-account" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_REMOVE_ACCOUNT'}, click: remove, attr: {'id': 'selenium_settings_delete_account_' + email()}, css: {'disabled': isDisableAuthorize()}"></span>
             </div>
             <div class="hint">
                 <span data-bind="i18n: {'key': '%MODULENAME%/INFO_REMOVE_ACCOUNT'}"></span>
