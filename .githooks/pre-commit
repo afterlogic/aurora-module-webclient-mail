@@ -66,13 +66,13 @@ if [ -d "$UNIT_DIR" ]; then
         echo ""
         echo "Running unit tests (vue-mobile)..."
         if [ ! -d "$PROJECT/vue-mobile/node_modules" ]; then
-            echo "vue-mobile/node_modules missing. Run: cd vue-mobile && yarn"
+            echo "vue-mobile/node_modules missing. Run: cd vue-mobile && npm install"
             exit 1
         fi
-        (cd "$PROJECT/vue-mobile" && yarn test:unit)
+        (cd "$PROJECT/vue-mobile" && npm run test:unit)
         if [ $? != 0 ]; then
             echo "Fix unit test failures before commit."
-            echo "Run: 'cd vue-mobile && yarn test:unit'"
+            echo "Run: 'cd vue-mobile && npm run test:unit'"
             exit 1
         fi
     fi
