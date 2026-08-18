@@ -1,11 +1,11 @@
-<div class="fields">
+<div class="fields" data-test-id="settings-mail-autoresponder">
 	<div class="fieldset">
 		<div>
 			<div class="row enable">
 				<div>
 					<label class="custom_checkbox" data-bind="css: {'checked': enable}">
 						<span class="icon"></span>
-						<input type="checkbox" id="enable_ar" data-bind="checked: enable" />
+						<input type="checkbox" id="enable_ar" data-test-id="settings-mail-autoresponder-enable" data-bind="checked: enable" />
 					</label>
 					<label for="enable_ar" data-bind="i18n: {'key': '%MODULENAME%/LABEL_ENABLE_AUTORESPONDER'}"></label>
 				</div>
@@ -50,16 +50,16 @@
 			</div>
 			<div class="row subject" data-bind="css: {'disabled': !enable()}">
 				<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_SUBJECT'}"></span>
-				<input class="value input" spellcheck="false" type="text" data-bind="value: subject, disable: !enable()" />
+				<input class="value input" data-test-id="settings-mail-autoresponder-subject" spellcheck="false" type="text" data-bind="value: subject, disable: !enable()" />
 			</div>
 			<div class="row message" data-bind="css: {'disabled': !enable()}">
 				<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_MESSAGE'}"></span>
-				<textarea class="input" data-bind="value: message, disable: !enable()"></textarea>
+				<textarea class="input" data-test-id="settings-mail-autoresponder-message" data-bind="value: message, disable: !enable()"></textarea>
 			</div>
 		</div>
 	</div>
 	<div class="buttons">
-		<span class="button" data-bind="click: save, i18n: {'key': 'COREWEBCLIENT/ACTION_SAVE'}, visible: !isSaving()"></span>
+		<span class="button" data-test-id="settings-mail-autoresponder-save" data-bind="click: save, i18n: {'key': 'COREWEBCLIENT/ACTION_SAVE'}, visible: !isSaving()"></span>
 		<span class="button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_SAVE_IN_PROGRESS'}, visible: isSaving()"></span>
 	</div>
 </div>

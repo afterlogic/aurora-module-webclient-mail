@@ -42,7 +42,7 @@
 											<td class="value">
 												<div style="position: relative">
 													<div class="disable_mask" data-bind="visible: senderList().length > 1 && disableFromEdit()"></div>
-													<select class="input" tabindex="1" data-bind="visible: senderList().length > 1, foreach: senderList, value: selectedSender, disable: disableFromEdit">
+													<select class="input" tabindex="1" data-test-id="mail-compose-from" data-bind="visible: senderList().length > 1, foreach: senderList, value: selectedSender, disable: disableFromEdit">
 														<option data-bind="text: fullEmail, value: id"></option>
 													</select>
 													<span class="not_editable" data-bind="visible: senderList().length === 1, text: senderList()[0] ? senderList()[0].fullEmail : ''"></span>

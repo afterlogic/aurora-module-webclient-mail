@@ -11,7 +11,7 @@
 		</div>
 		<div class="row">
 			<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_YOUR_NAME'}"></span>
-			<input class="value input" spellcheck="false" type="text" data-bind="value: friendlyName, valueUpdate: 'afterkeydown', onEnter: save, hasFocus: friendlyNameHasFocus"/>
+			<input class="value input" spellcheck="false" type="text" data-test-id="settings-identity-name" data-bind="value: friendlyName, valueUpdate: 'afterkeydown', onEnter: save, hasFocus: friendlyNameHasFocus"/>
 		</div>
 		<div class="row">
 			<span class="label" data-bind="i18n: {'key': 'COREWEBCLIENT/LABEL_EMAIL'}"></span>
@@ -25,7 +25,7 @@
 	</div>
 
 	<div class="buttons">
-		<span class="button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_SAVE'}, click: save, visible: !isSaving()"></span>
+		<span class="button" data-test-id="settings-identity-save" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_SAVE'}, click: save, visible: !isSaving()"></span>
 		<span class="button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_SAVE_IN_PROGRESS'}, visible: isSaving()"></span>
 		<span class="button secondary_button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_CANCEL'}, click: cancel, visible: bCreate"></span>
 	</div>

@@ -1,4 +1,4 @@
-<div class="popup add_folder" style="display: none;">
+<div class="popup add_folder" data-test-id="mail-edit-folder-dialog" style="display: none;">
 	<div class="mask" data-bind="click: cancelPopup"></div>
 	<div class="popup_panel">
 		<span class="close" data-bind="click: cancelPopup"></span>
@@ -14,10 +14,10 @@
 			</div>
 			<div class="row">
 				<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_FOLDER_NAME'}"></span>
-				<input type="text" class="value input" spellcheck="false" maxlength="30" data-bind="value: folderName, valueUpdate: 'afterkeydown', hasfocus: folderNameFocus, onEnter: save" />
+				<input type="text" class="value input" data-test-id="mail-edit-folder-name" spellcheck="false" maxlength="30" data-bind="value: folderName, valueUpdate: 'afterkeydown', hasfocus: folderNameFocus, onEnter: save" />
 			</div>
 			<div class="buttons">
-				<span class="button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_SAVE'}, click: save, visible: !isSaving()"></span>
+				<span class="button" data-test-id="mail-edit-folder-save" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_SAVE'}, click: save, visible: !isSaving()"></span>
 				<span class="button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_SAVE_IN_PROGRESS'}, visible: isSaving()"></span>
 				<span class="button secondary_button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_CANCEL'}, click: cancelPopup, visible: !isSaving()"></span>
 			</div>

@@ -617,6 +617,107 @@ async function waitForMessageInFolder(
   return messageItemBySubject(page, subject)
 }
 
+/**
+ * Knockout `command:` buttons ignore clicks while canExecute() is false
+ * (class command-disabled). Wait until enabled, then fire a jQuery click
+ * so the KO handler runs.
+ */
+async function clickKoCommand(page, testId) {
+  const btn = page.getByTestId(testId)
+  await expect(btn).toBeVisible({ timeout: T(20000) })
+  await expect(btn).not.toHaveClass(/command-disabled|unavailable/, {
+    timeout: T(30000),
+  })
+  await btn.evaluate((el) => {
+    const $ = window.jQuery || window.$
+    if ($) {
+      $(el).trigger('click')
+      return
+    }
+    el.click()
+  })
+}
+
+async function jqueryClick(locator) {
+  await locator.evaluate((el) => {
+    const $ = window.jQuery || window.$
+    if ($) {
+      $(el).trigger('click')
+      return
+    }
+    el.click()
+  })
+}
+
+function settingsFolderRow(page, folderName) {
+  return page
+    .getByTestId('settings-mail-folder-item')
+    .filter({ hasText: folderName })
+    .first()
+}
+
+async function createFolderInSettings(page, folderName) {
+  await expect(page.getByTestId('settings-mail-folder-item').first()).toBeVisible({
+    timeout: T(30000),
+  })
+  await clickKoCommand(page, 'settings-mail-add-folder')
+  const dialog = page.getByTestId('mail-create-folder-dialog')
+  await expect(dialog).toBeVisible({ timeout: T(15000) })
+  const nameInput = page.getByTestId('mail-create-folder-name')
+  await nameInput.click()
+  await nameInput.fill('')
+  await nameInput.pressSequentially(folderName, { delay: 25 })
+  await nameInput.press('Enter')
+  await expect(dialog).toBeHidden({ timeout: T(30000) })
+  await expect(settingsFolderRow(page, folderName)).toBeVisible({ timeout: T(30000) })
+}
+
+/**
+ * Inline rename (AccountFolderItem) or Edit folder popup (MovedWithMouse).
+ */
+async function renameFolderInSettings(page, folderName, renamed) {
+  const row = settingsFolderRow(page, folderName)
+  await expect(row).toBeVisible({ timeout: T(15000) })
+
+  const nameEl = row.getByTestId('settings-mail-folder-name')
+  if (await nameEl.isVisible().catch(() => false)) {
+    await jqueryClick(nameEl)
+  }
+  const inline = row.getByTestId('settings-mail-folder-rename')
+  if (await inline.isVisible().catch(() => false)) {
+    await inline.fill(renamed)
+    await inline.press('Enter')
+  } else {
+    const editBtn = row.getByTestId('settings-mail-folder-edit')
+    await expect(editBtn).toBeVisible({ timeout: T(10000) })
+    await jqueryClick(editBtn)
+    const dialog = page.getByTestId('mail-edit-folder-dialog')
+    await expect(dialog).toBeVisible({ timeout: T(15000) })
+    const nameInput = page.getByTestId('mail-edit-folder-name')
+    await nameInput.click()
+    await nameInput.fill('')
+    await nameInput.pressSequentially(renamed, { delay: 25 })
+    await jqueryClick(page.getByTestId('mail-edit-folder-save'))
+    await expect(dialog).toBeHidden({ timeout: T(30000) })
+  }
+  await expect(settingsFolderRow(page, renamed)).toBeVisible({ timeout: T(30000) })
+}
+
+async function deleteFolderInSettings(page, folderName) {
+  const row = settingsFolderRow(page, folderName)
+  await expect(row).toBeVisible({ timeout: T(15000) })
+  const del = row.getByTestId('settings-mail-folder-delete')
+  await expect(del).toBeVisible({ timeout: T(10000) })
+  await expect(del).not.toHaveClass(/(?:^|\s)disabled(?:\s|$)/, { timeout: T(15000) })
+  await jqueryClick(del)
+  const confirmOk = page.getByTestId('confirm-ok')
+  await expect(confirmOk).toBeVisible({ timeout: T(15000) })
+  await jqueryClick(confirmOk)
+  await expect(
+    page.getByTestId('settings-mail-folder-item').filter({ hasText: folderName })
+  ).toHaveCount(0, { timeout: T(45000) })
+}
+
 module.exports = {
   FOLDER_TYPES,
   waitForInboxList,
@@ -649,4 +750,9 @@ module.exports = {
   waitForMessageInFolder,
   clickMessageListItem,
   waitForOpenedMessageView,
+  clickKoCommand,
+  createFolderInSettings,
+  renameFolderInSettings,
+  deleteFolderInSettings,
+  settingsFolderRow,
 }

@@ -1,4 +1,4 @@
-<div class="item canSelect" data-bind="css: {'canSubscribe': canSubscribe, 'canRename': canRename, 'canDelete': canDelete},
+<div class="item canSelect" data-test-id="settings-mail-folder-item" data-bind="css: {'canSubscribe': canSubscribe, 'canRename': canRename, 'canDelete': canDelete},
 	 visible: !bVirtual">
 	<span class="title">
 		<span class="controls">
@@ -10,7 +10,7 @@
 				click: triggerTemplateState, visible: bAllowTemplateFolders"></span>
 			<span class="button subscribe" data-bind="customTooltip: subscribeButtonHint(), visible: !bIgnoreImapSubscription,
 				css: {'subscribed': subscribed(), 'disabled': !canSubscribe()}, click: onSubscribeClick"></span>
-			<span class="button disabled" data-bind="customTooltip: deleteButtonHint(), 
+			<span class="button disabled" data-test-id="settings-mail-folder-delete" data-bind="customTooltip: deleteButtonHint(), 
 				css: {'delete': !isSystem() && bSelectable, 'disabled': !canDelete()}, click: onDeleteClick"></span>
 			<span class="button up" data-bind="visible: $root.allowFolderListOrder(),
 				css: {'disabled': !$root.canMoveFolderUp($data, $index(), $parent)}, 
@@ -22,9 +22,9 @@
 		<span class="count" data-bind="text: messageCount"></span>
 		<span class="name">
 			<span class="icon" data-bind="css: 'type' + type()"></span>
-			<span class="text" data-bind="css: {'link': canRename}, text: name, visible: !edited(), 
+			<span class="text" data-test-id="settings-mail-folder-name" data-bind="css: {'link': canRename}, text: name, visible: !edited(), 
 				click: function(){if (canRename()) edited(true);}"></span>
-			<input type="text" spellcheck="false" class="input" maxlength="30" data-bind="value: nameForEdit, 
+			<input type="text" spellcheck="false" class="input" data-test-id="settings-mail-folder-rename" maxlength="30" data-bind="value: nameForEdit, 
 					visible: edited, hasfocus: edited, onEnter: applyNameEdit, onEsc: cancelNameEdit, valueUpdate: 'afterkeydown'">
 			<span class="text" data-bind="text: usedAs()"></span>
 		</span>

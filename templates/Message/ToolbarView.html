@@ -10,11 +10,11 @@
 			<span class="icon"></span>
 			<span class="text" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_DELETE'}"></span>
 		</span>
-		<span class="item prev" data-bind="command: prevMessageCommand, visible: bNewTab">
+		<span class="item prev" data-test-id="mail-message-prev" data-bind="command: prevMessageCommand, visible: bNewTab">
 			<span class="icon" data-bind="customTooltip: '%MODULENAME%/ACTION_OPEN_PREV_MESSAGE'"></span>
 			<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_OPEN_PREV_MESSAGE'}"></span>
 		</span>
-		<span class="item next" data-bind="command: nextMessageCommand, visible: bNewTab">
+		<span class="item next" data-test-id="mail-message-next" data-bind="command: nextMessageCommand, visible: bNewTab">
 			<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_OPEN_NEXT_MESSAGE'}"></span>
 			<span class="icon" data-bind="customTooltip: '%MODULENAME%/ACTION_OPEN_NEXT_MESSAGE'"></span>
 		</span>
@@ -32,7 +32,7 @@
 			<!-- ko template: { name: $data.ViewTemplate, data: $data} --><!-- /ko -->
 		<!-- /ko -->
 
-		<a class="item new_window" href="javascript: void(0);"
+		<a class="item new_window" href="javascript: void(0);" data-test-id="mail-open-new-window"
 			data-bind="click: openInNewWindow, visible: !bNewTab">
 			<span class="icon" data-bind="customTooltip: '%MODULENAME%/ACTION_OPEN_IN_NEW_WINDOW'"></span>
 			<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_OPEN_IN_NEW_WINDOW'}"></span>
@@ -52,7 +52,7 @@
 							<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_PRINT'}"></span>
 						</span>
 
-						<span class="item save" data-bind="command: saveCommand">
+						<span class="item save" data-test-id="mail-menu-download-eml" data-bind="command: saveCommand">
 							<span class="icon"></span>
 							<span class="text" data-bind="i18n: {'key': '%MODULENAME%/ACTION_DOWNLOAD_EML'}"></span>
 						</span>

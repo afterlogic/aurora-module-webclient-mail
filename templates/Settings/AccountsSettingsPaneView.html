@@ -26,7 +26,7 @@
 				</div>
 
 				<!-- ko foreach: identities -->
-				<div class="item fetcher" data-bind="css: {'selected': hash() === $parents[1].editedIdentityHash()}, click: function () {$parents[1].editIdentity($data.hash());}">
+				<div class="item fetcher" data-test-id="settings-identity-item" data-bind="css: {'selected': hash() === $parents[1].editedIdentityHash()}, click: function () {$parents[1].editIdentity($data.hash());}">
 					<span class="icon fetcher"></span>
 					<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_IDENTITY'}"></span>
 					<span class="title" data-bind="text: fullEmail"></span>
@@ -54,7 +54,7 @@
 		<div class="tabs" data-bind="visible: editedAccountId() !== 0">
 			<div class="shortcuts">
 				<div data-bind="foreach: tabs">
-					<span class="item" data-bind="attr: {'class': 'item ' + name + ((name === $parent.currentTab().name) ? ' selected' : '')}, visible: visible">
+					<span class="item" data-test-id="settings-account-tab" data-bind="attr: {'class': 'item ' + name + ((name === $parent.currentTab().name) ? ' selected' : ''), 'data-tab-name': name}, visible: visible">
 						<a href="javascript: void(0);" data-bind="text: title, click: function () { $parent.changeRoute(name); }, 
 								attr: {'id': 'selenium_settings_account_' + name + '_button'}"></a>
 					</span>

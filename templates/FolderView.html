@@ -15,7 +15,9 @@
 					((type() === Enums.FolderTypes.Drafts) ? 'drafts' :
 					((type() === Enums.FolderTypes.Spam) ? 'spam' :
 					((type() === Enums.FolderTypes.Trash) ? 'trash' :
-					((type() === Enums.FolderTypes.Starred) ? 'starred' : 'user')))))
+					((type() === Enums.FolderTypes.Starred) ? 'starred' : 'user'))))),
+				'data-folder-name': name(),
+				'data-folder-fullname': fullName()
 			},
 			visible: canBeSelected(),
 			droppable: {valueFunc: disableMoveTo() ? false : function (oEvent, oUi) { $root.messagesDrop($data, oEvent, oUi); }, switchObserv: selected}

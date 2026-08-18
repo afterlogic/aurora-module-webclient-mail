@@ -1,8 +1,9 @@
-<div class="fields">
+<div class="fields" data-test-id="settings-mail-signature">
 	<div class="fieldset">
 		<div class="row">
 			<div>
 				<label class="custom_radio"
+					   data-test-id="settings-mail-signature-off"
 					   data-bind="css: {'checked': useSignatureRadio() === Enums.UseSignature.Off, 'disabled': !allowEditSignature()}"
 				>
 					<span class="icon"></span>
@@ -16,8 +17,9 @@
 		</div>
 			
 		<div class="row editor_row">
-			<label class="custom_radio" 
-				   data-bind="css: {'checked': useSignatureRadio() === Enums.UseSignature.On, 'disabled': !allowEditSignature()}"
+				<label class="custom_radio"
+					   data-test-id="settings-mail-signature-on"
+					   data-bind="css: {'checked': useSignatureRadio() === Enums.UseSignature.On, 'disabled': !allowEditSignature()}"
 			>
 				<span class="icon"></span>
 				<input type="radio" value="1" data-bind="checked: useSignatureRadio, enable: allowEditSignature" />
@@ -28,7 +30,7 @@
 		<div class="hint" data-bind="visible: enableImageDragNDrop() && allowEditSignature(), i18n: {'key': '%MODULENAME%/INFO_IMAGE_DRAGNDROP'}"></div>
 	</div>
 	<div class="buttons">
-		<span class="button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_SAVE'}, command: saveCommand, visible: !isSaving()"></span>
+		<span class="button" data-test-id="settings-mail-signature-save" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_SAVE'}, command: saveCommand, visible: !isSaving()"></span>
 		<span class="button" data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_SAVE_IN_PROGRESS'}, visible: isSaving()"></span>
 	</div>
 </div>

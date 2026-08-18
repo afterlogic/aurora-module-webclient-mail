@@ -1,4 +1,4 @@
-<div class="fields">
+<div class="fields" data-test-id="settings-mail-filters">
 	<div class="fieldset">
 		<div>
 
@@ -6,7 +6,7 @@
 			<div class="hint" data-bind="i18n: {'key': '%MODULENAME%/INFO_LOADING_FILTERS'}, visible: (0 === collection().length && loading())"></div>
 			
 			<!-- ko foreach: collection -->
-			<div class="row filter">
+			<div class="row filter" data-test-id="settings-mail-filter-row">
 				<div class="value">
 					<div class="filter_content">
 						<div class="filter_content_inner">
@@ -37,8 +37,8 @@
 		</div>
 	</div>
 	<div class="buttons" data-bind="visible: !loading()">
-		<span class="button addlink" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ADD_FILTER'}, click: addFilter"></span>
-		<span class="button" data-bind="click: save, visible: !isSaving()">
+		<span class="button addlink" data-test-id="settings-mail-filter-add" data-bind="i18n: {'key': '%MODULENAME%/ACTION_ADD_FILTER'}, click: addFilter"></span>
+		<span class="button" data-test-id="settings-mail-filter-save" data-bind="click: save, visible: !isSaving()">
 			<span data-bind="i18n: {'key': 'COREWEBCLIENT/ACTION_SAVE'}"></span>
 		</span>
 		<span class="button" data-bind="visible: isSaving()">
