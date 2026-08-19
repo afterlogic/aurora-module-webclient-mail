@@ -14,16 +14,31 @@ npm run test:e2e-desktop -- --setup "MailWebclient Chrome"
 Shared helpers: `modules/CoreWebclient/test/e2e/helpers/` (`AURORA_E2E_ROOT`).
 Domain helpers: `./helpers/` in this folder.
 
-## Known product bugs
+Filter Playwright UI / CLI by **file name** (topic) or nested `test.describe` (section inside the file).
 
-- After renaming a custom folder in Settings → Manage Folders, the delete control stays `disabled` (`canDelete` is false) and the UI reports `Mailbox doesn't exist` for the previous IMAP name. `mail-custom-folders.spec.js` fails on delete. File: `js/popups/EditFolderPopup.js` (`RenameFolder`).
+| File | What it covers |
+|------|----------------|
+| `mail.spec.js` | Open first Inbox message, sender chrome |
+| `mail-folders.spec.js` | Inbox / Sent / Trash / Spam |
+| `mail-list-actions.spec.js` | Unseen, Starred, bulk delete, empty Trash / Spam, mark read/unread |
+| `mail-actions.spec.js` | Details, star, Reply / Reply all / Forward, header search |
+| `mail-mutations.spec.js` | Headers, Move, Spam, delete, reply+forward, advanced search |
+| `mail-forward-resend.spec.js` | Forward as attachment, Resend |
+| `compose.spec.js` | Write and send |
+| `compose-cc-bcc.spec.js` | CC/BCC and discard |
+| `compose-draft.spec.js` | Save draft, send draft, minimize compose |
+| `compose-from.spec.js` | Switch compose From when a second sender exists |
+| `mail-attachments.spec.js` | Attach in compose, download `.eml`, save to Files |
+| `mail-custom-folders.spec.js` | Create / move / rename / delete custom folder |
+| `mail-signature.spec.js` | Signature in Settings → compose |
+| `mail-filters.spec.js` | Filter by subject into a folder |
+| `mail-forward-autoresponder.spec.js` | Forwarding and autoresponder on/off |
+| `mail-message-window.spec.js` | Open message in a new window, Prev / Next |
+| `mail-notes.spec.js` | Create a note in Notes |
+| `header-nav.spec.js` | Mail → Contacts → Calendar → Files → Settings |
 
-## P1 specs (`mail-p1.spec.js`)
+## Stand / environment
 
-- mark list message unread / read
-- open message in new window; prev/next when enabled
-- download `.eml` from More menu
-- empty Spam folder
-- save attachments to Files *(plugin; skip if unavailable)*
-- create note in Notes folder *(skip if folder missing)*
-- switch compose From when multiple senders exist
+- Send can fail with `MailSo-Net-Exceptions-SocketReadTimeoutException` (SMTP/IMAP socket timeout). The scenario must fail on that toast — do not dismiss compose and poll Sent.
+- After Send, do not Escape / save-and-close: that stores a **draft** and Sent stays empty. Wait for `.report_panel.report` (`REPORT_MESSAGE_SENT`).
+- `saves attachments to Files` opens an existing Inbox/Sent row with `.has_attachments` — it does not send (SMTP timeout on this stand).

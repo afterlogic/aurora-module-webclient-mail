@@ -4,7 +4,7 @@ const { sharedHelper, fixturePath } = require(path.join(
   'helpers/paths'
 ))
 const { expect } = require('@playwright/test')
-const { step, attachScreenshot, fieldControl } = sharedHelper('login')
+const { step, attachScreenshot, fieldControl, getComposeTo } = sharedHelper('login')
 const { waitForListReady, waitForListReadySoft, clickReady, confirmOkIfVisible } = sharedHelper('ready')
 const { T } = sharedHelper('timeouts')
 
@@ -24,6 +24,8 @@ const listReadyOptions = {
     '.panel.messages .list_loading',
     '.panel.messages .list_notification.loading',
     '.message_list .list_loading',
+    '[data-test-id="mail-list-loading"]:visible',
+    '[data-test-id="mail-list-search-loading"]:visible',
   ],
   timeout: 60000,
 }
@@ -107,6 +109,29 @@ async function waitForOpenedMessageView(page, timeout = T(60000)) {
       )
       .first()
   ).toBeVisible({ timeout })
+  // moreCommand.canExecute === isCurrentMessageLoaded; dropdown ignores clicks
+  // while .command-disabled (fControlClick in koBindings.js).
+  const more = page.locator('[data-test-id="mail-message-more"]:visible').first()
+  await expect(more).toBeVisible({ timeout })
+  await expect(more).not.toHaveClass(/command-disabled|unavailable/, {
+    timeout,
+  })
+}
+
+/**
+ * Open the message-pane More dropdown (Knockout dropdown:{control:false}).
+ * Click the .icon — the locator box includes .dropdown and a center click
+ * can miss the toggle. Do not jQuery-trigger (originalTarget).
+ */
+async function openMailMoreMenu(page) {
+  const more = page.locator('[data-test-id="mail-message-more"]:visible').first()
+  await expect(more).toBeVisible({ timeout: T(30000) })
+  await expect(more).not.toHaveClass(/command-disabled|unavailable/, {
+    timeout: T(60000),
+  })
+  await more.locator(':scope > .icon').click()
+  await expect(more).toHaveClass(/expand/, { timeout: T(10000) })
+  return more
 }
 
 /** jQuery delegated click on .subject/.from — Playwright click blocked by reading-pane overlap. */
@@ -210,10 +235,16 @@ async function openFolder(page, folderType, { soft = false } = {}) {
 const openFolderByType = openFolder
 
 async function openFolderByName(page, folderName, { soft = false } = {}) {
+  const escaped = folderName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
   const folder = page
-    .locator(`[data-test-id="mail-folder"]`)
-    .filter({ hasText: new RegExp(folderName, 'i') })
+    .locator(
+      `[data-test-id="mail-folder"][data-folder-fullname="${folderName}"], [data-test-id="mail-folder"][data-folder-name="${folderName}"]`
+    )
+    .or(
+      page.getByTestId('mail-folder').filter({ hasText: new RegExp(escaped, 'i') })
+    )
     .first()
+  await folder.scrollIntoViewIfNeeded()
   await expect(folder).toBeVisible({ timeout: T(15000) })
   await clickReady(folder)
   await expect(page.getByTestId('mail-message-list')).toBeVisible({
@@ -320,9 +351,22 @@ async function clickMailToolbarAction(page, testId) {
 
   if (inMessagesPanel) {
     await page.locator('.messages_panel .toolbar').scrollIntoViewIfNeeded()
-    // Split layout overlap + Knockout delegated handlers: jQuery trigger is
-    // reliable for toolbar commands/dropdowns; Playwright click may be blocked
-    // or miss koBindings fControlClick.
+    const isDropdownControl = await enabled.evaluate((el) => {
+      const id = el.getAttribute('data-test-id') || ''
+      return (
+        el.classList.contains('control') ||
+        id.includes('dropdown') ||
+        Boolean(el.querySelector(':scope > .dropdown, :scope > .icon.arrow'))
+      )
+    })
+    // dropdown customBinding reads event.originalTarget — jQuery .trigger('click')
+    // has no originalEvent and throws. Real Playwright click is required.
+    if (isDropdownControl) {
+      await enabled.click()
+      return
+    }
+    // Knockout command: on toolbar spans: jQuery trigger reaches the handler
+    // when Playwright click is blocked by split-layout overlap.
     await enabled.evaluate((el) => {
       if (window.jQuery) {
         window.jQuery(el).trigger('click')
@@ -334,6 +378,23 @@ async function clickMailToolbarAction(page, testId) {
   }
 
   await clickReady(enabled)
+}
+
+/**
+ * Click a Knockout `command:` item inside an open mail toolbar dropdown.
+ * jQuery .trigger('click') bubbles to dropdown:{} which reads
+ * event.originalEvent.originalTarget and throws. Real click is required.
+ * Wait for canExecute() — isEnableGroupOperations is throttled 250ms.
+ */
+async function clickMailDropdownCommand(page, testId) {
+  const item = page
+    .locator(`.messages_panel .expand [data-test-id="${testId}"]:visible`)
+    .first()
+  await expect(item).toBeVisible({ timeout: T(10000) })
+  await expect(item).not.toHaveClass(/command-disabled|unavailable/, {
+    timeout: T(30000),
+  })
+  await item.click()
 }
 
 /**
@@ -463,6 +524,32 @@ async function tryDismissComposeOnce(page) {
   }
 }
 
+const SEND_ERROR_RE =
+  /error occurred during sending|ошибка при отправке|SocketReadTimeoutException/i
+
+function mailErrorReport(page) {
+  return page.locator('.report_panel.error:not(.hide)').first()
+}
+
+async function mailErrorReportText(page) {
+  const panel = mailErrorReport(page)
+  const panelText = (await panel.innerText().catch(() => '')).trim()
+  if (panelText) {
+    return panelText
+  }
+  // Compose popup can cover the banner so Playwright :visible is false;
+  // the a11y tree still has the copy.
+  const byText = page.getByText(SEND_ERROR_RE).first()
+  return (await byText.innerText().catch(() => '')).trim()
+}
+
+async function throwIfMailSendFailed(page) {
+  const text = await mailErrorReportText(page)
+  if (text) {
+    throw new Error(`Send failed: ${text}`)
+  }
+}
+
 async function sendCompose(page) {
   const sendBtn = page
     .locator('[data-test-id="mail-compose-send"]:visible')
@@ -483,29 +570,40 @@ async function sendCompose(page) {
   )
   await clickReady(sendBtn)
 
-  let closed = false
-  try {
-    await expect
-      .poll(async () => composeFullyClosed(page), {
-        timeout: T(60000),
-        intervals: [400, 800, 1200],
-      })
-      .toBeTruthy()
-    closed = true
-  } catch {
-    closed = false
-  }
+  // REPORT_MESSAGE_SENT — do not Escape / save-and-close: that stores a draft
+  // and the test then polls Sent for a message that was never sent.
+  // expect.poll retries on thrown errors, so return a status string instead.
+  const sentReport = page.locator('.report_panel.report:not(.hide)').filter({
+    hasText: /has been sent|сообщение отправлено/i,
+  })
 
-  if (!closed) {
-    // Send may leave compose minimized; dismiss once then re-assert.
-    await tryDismissComposeOnce(page)
-    if (!(await composeFullyClosed(page))) {
-      await attachScreenshot(page, 'mail-compose-send-still-open')
-      throw new Error(
-        'Compose stayed open after send (compose or minimized still visible)'
-      )
-    }
+  let sendError = ''
+  await expect
+    .poll(
+      async () => {
+        sendError = await mailErrorReportText(page)
+        if (sendError) {
+          return 'error'
+        }
+        if (await sentReport.isVisible().catch(() => false)) {
+          return 'sent'
+        }
+        if (await composeFullyClosed(page)) {
+          return 'closed'
+        }
+        return 'pending'
+      },
+      {
+        timeout: T(120000),
+        intervals: [400, 800, 1200, 2000],
+      }
+    )
+    .not.toBe('pending')
+
+  if (sendError) {
+    throw new Error(`Send failed: ${sendError}`)
   }
+  await throwIfMailSendFailed(page)
 
   await expect(page.getByTestId('mail-compose')).toBeHidden({
     timeout: T(15000),
@@ -516,8 +614,12 @@ async function sendCompose(page) {
 }
 
 async function selectMessageCheckbox(page, item) {
+  if (await item.evaluate((el) => el.classList.contains('checked'))) {
+    return
+  }
   const checkbox = item.getByTestId('mail-message-checkbox')
   await clickReady(checkbox)
+  await expect(item).toHaveClass(/checked/, { timeout: T(10000) })
 }
 
 async function fillComposeBody(page, text) {
@@ -551,10 +653,10 @@ async function fillComposeBody(page, text) {
 /** List row whose .subject contains the given text (more precise than hasText on row). */
 function messageItemBySubject(page, subject) {
   return page
-    .getByTestId('mail-message-item')
-    .filter({
-      has: page.locator('.subject').filter({ hasText: subject }),
-    })
+    .locator(
+      '[data-test-id="mail-message-item"], .panel.messages .items_list .item'
+    )
+    .filter({ hasText: subject })
     .first()
 }
 
@@ -604,6 +706,7 @@ async function waitForMessageInFolder(
   await expect
     .poll(
       async () => {
+        await throwIfMailSendFailed(page)
         await openFolder(page, folderType)
         await triggerCheckMail(page)
         await waitForListReady(page, listReadyOptions).catch(() => undefined)
@@ -718,6 +821,38 @@ async function deleteFolderInSettings(page, folderName) {
   ).toHaveCount(0, { timeout: T(45000) })
 }
 
+/**
+ * Inbox list after login can still be empty while IMAP fills. Seed one message
+ * only if no row appears.
+ */
+async function ensureInboxHasMessage(page) {
+  await openFolderByType(page, FOLDER_TYPES.INBOX)
+  await waitForInboxList(page)
+  const first = page.getByTestId('mail-message-item').first()
+  const hasRow = await first
+    .waitFor({ state: 'visible', timeout: T(30000) })
+    .then(() => true)
+    .catch(() => false)
+  if (hasRow) {
+    return
+  }
+  const composeTo = getComposeTo()
+  const subject = `E2E seed ${Date.now()}`
+  await step('Seed inbox with a message', async () => {
+    await clickReady(page.getByTestId('mail-compose-fab'))
+    await expect(page.getByTestId('mail-compose')).toBeVisible({
+      timeout: T(15000),
+    })
+    await fillComposeRecipient(page, composeTo)
+    await fieldControl(page, 'mail-compose-subject').fill(subject)
+    await fillComposeBody(page, subject)
+    await sendCompose(page)
+    await waitForMessageInFolder(page, FOLDER_TYPES.INBOX, subject, {
+      timeout: 120000,
+    })
+  })
+}
+
 module.exports = {
   FOLDER_TYPES,
   waitForInboxList,
@@ -736,6 +871,7 @@ module.exports = {
   waitForDraftSavedReport,
   clickMailAction,
   clickMailToolbarAction,
+  clickMailDropdownCommand,
   clickMoveToFolder,
   visibleSubject,
   waitForListReady,
@@ -750,9 +886,11 @@ module.exports = {
   waitForMessageInFolder,
   clickMessageListItem,
   waitForOpenedMessageView,
+  openMailMoreMenu,
   clickKoCommand,
   createFolderInSettings,
   renameFolderInSettings,
   deleteFolderInSettings,
   settingsFolderRow,
+  ensureInboxHasMessage,
 }

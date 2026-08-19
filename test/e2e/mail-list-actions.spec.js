@@ -17,15 +17,18 @@ const {
   clickReady,
   confirmOkIfVisible,
   clickMailToolbarAction,
+  clickMailDropdownCommand,
+  ensureInboxHasMessage,
 } = require('./helpers/mail')
 
 
 test.describe('Desktop mail list filters and bulk actions', () => {
   test.skip(!hasCredentials(), 'Set E2E_LOGIN_0/E2E_PASSWORD_0 (or E2E_LOGIN/E2E_PASSWORD) in .env.e2e')
 
-  test('opens Unseen filter from folder badge and clears it', async ({
-    page,
-  }) => {
+  test.describe('Unseen filter', () => {
+    test('opens Unseen filter from folder badge and clears it', async ({
+      page,
+    }) => {
     test.setTimeout(T(180000))
     await gotoLoggedIn(page)
     await waitForInboxList(page)
@@ -82,6 +85,7 @@ test.describe('Desktop mail list filters and bulk actions', () => {
         timeout: T(30000),
       })
       await attachScreenshot(page, 'mail-filter-unseen-02-cleared')
+    })
     })
   })
 
@@ -180,6 +184,86 @@ test.describe('Desktop mail list filters and bulk actions', () => {
       })
       console.log('  → Trash emptied')
       await attachScreenshot(page, 'mail-empty-trash-01')
+    })
+  })
+
+  test.describe('Mark read / unread', () => {
+    test('marks a list message unread then read', async ({ page }) => {
+      test.setTimeout(T(240000))
+      await gotoLoggedIn(page)
+      await ensureInboxHasMessage(page)
+
+      const items = page.getByTestId('mail-message-item')
+      const first = items.first()
+
+      await step('Select first message checkbox', async () => {
+        await selectMessageCheckbox(page, first)
+        await attachScreenshot(page, 'mail-mark-01-selected')
+      })
+
+      await step('Mark as unread', async () => {
+        await expect(first).toHaveClass(/checked/, { timeout: T(10000) })
+        await expect(
+          page.locator('.messages_panel [data-test-id="mail-mark-read"]').first()
+        ).not.toHaveClass(/command-disabled|unavailable/, { timeout: T(30000) })
+        await clickMailToolbarAction(page, 'mail-mark-dropdown')
+        await clickMailDropdownCommand(page, 'mail-mark-unread')
+        await expect(first).toHaveClass(/unseen/, { timeout: T(30000) })
+        console.log('  → Marked unread')
+        await attachScreenshot(page, 'mail-mark-02-unread')
+      })
+
+      await step('Mark as read', async () => {
+        if (
+          !(await first
+            .getByTestId('mail-message-checkbox')
+            .locator('.checked, .icon')
+            .count())
+        ) {
+          await selectMessageCheckbox(page, first)
+        }
+        await clickMailToolbarAction(page, 'mail-mark-read')
+        await expect(first).not.toHaveClass(/unseen/, { timeout: T(30000) })
+        console.log('  → Marked read')
+        await attachScreenshot(page, 'mail-mark-03-read')
+      })
+    })
+  })
+
+  test.describe('Empty Spam', () => {
+    test('empties Spam folder', async ({ page }) => {
+      test.setTimeout(T(240000))
+      await gotoLoggedIn(page)
+      await ensureInboxHasMessage(page)
+
+      await step('Ensure Spam has a message', async () => {
+        await openFolderByType(page, FOLDER_TYPES.SPAM)
+        const spamRow = page
+          .locator('[data-test-id="mail-message-item"]:visible')
+          .first()
+        if (await spamRow.isVisible().catch(() => false)) {
+          return
+        }
+        await openFolderByType(page, FOLDER_TYPES.INBOX)
+        const first = page
+          .locator('[data-test-id="mail-message-item"]:visible')
+          .first()
+        await expect(first).toBeVisible({ timeout: T(30000) })
+        await selectMessageCheckbox(page, first)
+        await clickMailToolbarAction(page, 'mail-action-toSpam')
+        await openFolderByType(page, FOLDER_TYPES.SPAM)
+        await expect(spamRow).toBeVisible({ timeout: T(60000) })
+      })
+
+      await step('Empty Spam → confirm', async () => {
+        await clickMailToolbarAction(page, 'mail-empty-spam-button')
+        await confirmOkIfVisible(page)
+        await expect(page.getByTestId('mail-empty-folder')).toBeVisible({
+          timeout: T(60000),
+        })
+        console.log('  → Spam emptied')
+        await attachScreenshot(page, 'mail-empty-spam-01')
+      })
     })
   })
 })
