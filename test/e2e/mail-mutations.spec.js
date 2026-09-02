@@ -5,7 +5,7 @@ const { sharedHelper, moduleHelper, fixturePath } = require(path.join(
 ))
 const { test, expect } = require('@playwright/test')
 const { T } = sharedHelper('timeouts')
-const { gotoLoggedIn, step, attachScreenshot, hasCredentials, getComposeTo } = sharedHelper('login')
+const { gotoLoggedIn, step, attachScreenshot, hasCredentials, getComposeTo, fieldControl } = sharedHelper('login')
 const composeTo = getComposeTo()
 const {
   FOLDER_TYPES,
@@ -24,8 +24,37 @@ const {
   clickReady,
   clickMessageListItem,
   waitForOpenedMessageView,
+  ensureInboxHasMessage,
 } = require('./helpers/mail')
 
+async function dismissStaleCompose(page) {
+  const minimized = page.locator('.minimized_compose')
+  if (await minimized.isVisible().catch(() => false)) {
+    const discard = minimized.locator('.item.close, .item.discard').first()
+    if (await discard.isVisible().catch(() => false)) {
+      await discard.click({ force: true })
+    } else {
+      await minimized.locator('.item.save_and_close').first().click({ force: true })
+    }
+    await expect(minimized).toBeHidden({ timeout: T(30000) })
+  }
+  if (await page.getByTestId('mail-compose').isVisible().catch(() => false)) {
+    await page.keyboard.press('Escape')
+    await dismissStaleCompose(page)
+  }
+}
+
+async function openInboxMessageBySubject(page, subject) {
+  await openFolderByType(page, FOLDER_TYPES.INBOX)
+  await waitForInboxList(page)
+  const item = page
+    .getByTestId('mail-message-item')
+    .filter({ hasText: subject })
+    .first()
+  await expect(item).toBeVisible({ timeout: T(120000) })
+  await clickMessageListItem(page, item)
+  await waitForOpenedMessageView(page)
+}
 
 test.describe('Desktop mail mutations', () => {
   test.skip(!hasCredentials(), 'Set E2E_LOGIN_0/E2E_PASSWORD_0 (or E2E_LOGIN/E2E_PASSWORD) in .env.e2e')
@@ -202,19 +231,33 @@ test.describe('Desktop mail mutations', () => {
   })
 
   test('sends reply and forward to self', async ({ page }) => {
-    test.setTimeout(T(240000))
+    test.setTimeout(T(480000))
+    const marker = `E2E reply-fwd ${Date.now()}`
+
     await gotoLoggedIn(page)
-    const opened = await openFirstInboxMessage(page)
-    test.skip(!opened, 'Inbox is empty')
+    await ensureInboxHasMessage(page)
+
+    await step('Send a message to self for reply/forward', async () => {
+      await clickReady(page.getByTestId('mail-compose-fab'))
+      await expect(page.getByTestId('mail-compose')).toBeVisible({
+        timeout: T(15000),
+      })
+      await fillComposeRecipient(page, composeTo)
+      await fieldControl(page, 'mail-compose-subject').fill(marker)
+      await fillComposeBody(page, marker)
+      await sendCompose(page)
+      console.log(`  → Seed sent: ${marker}`)
+    })
+
+    await step('Open seed message in Inbox', async () => {
+      await openInboxMessageBySubject(page, marker)
+    })
 
     await step('Reply → send', async () => {
       await clickMailAction(page, 'mail-action-reply')
       const subject = await readComposeSubject(page)
       expect(subject.toLowerCase()).toMatch(/^re(\[\d+\])?:/)
       await sendCompose(page)
-      // Desktop split pane keeps list + view both mounted; do not .or() them
-      // (strict mode fails when both are visible). sendCompose already waited
-      // for the compose popup to close.
       await expect(page.getByTestId('mail-message-list')).toBeVisible({
         timeout: T(15000),
       })
@@ -222,14 +265,9 @@ test.describe('Desktop mail mutations', () => {
       await attachScreenshot(page, 'mail-send-01-reply')
     })
 
-    await step('Open inbox message for forward', async () => {
-      await waitForInboxList(page)
-    })
-
-    const again = await openFirstInboxMessage(page)
-    test.skip(!again, 'Inbox empty after reply')
-
     await step('Forward → fill To → send', async () => {
+      await dismissStaleCompose(page)
+      await openInboxMessageBySubject(page, marker)
       const forward = page.getByTestId('mail-action-forward')
       test.skip((await forward.count()) === 0, 'Forward not available')
       await clickMailAction(page, 'mail-action-forward')

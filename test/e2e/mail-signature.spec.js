@@ -18,9 +18,23 @@ const { waitForInboxList, fillComposeBody } = require('./helpers/mail')
 async function openSignatureSettings(page) {
   await openSettings(page)
   await openMailAccountsSettings(page)
+
+  let opened = await openAccountTab(page, 'signature')
+  if (!opened) {
+    const identity = page.getByTestId('settings-identity-item').first()
+    const hasIdentity = await identity
+      .waitFor({ state: 'visible', timeout: T(10000) })
+      .then(() => true)
+      .catch(() => false)
+    if (hasIdentity) {
+      await clickReady(identity)
+      opened = await openAccountTab(page, 'signature')
+    }
+  }
+
   test.skip(
-    !(await openAccountTab(page, 'signature')),
-    'Signature tab is not available on this stand'
+    !opened,
+    'Signature tab is not available on this stand (account or identity)'
   )
   await expect(page.getByTestId('settings-mail-signature')).toBeVisible({
     timeout: T(20000),
@@ -60,10 +74,11 @@ test.describe('Desktop mail signature', () => {
       await clickNav(page, 'nav-mail')
       await waitForInboxList(page)
       await clickReady(page.getByTestId('mail-compose-fab'))
-      await expect(page.getByTestId('mail-compose')).toBeVisible({
+      const composePanel = page.getByTestId('mail-compose')
+      await expect(composePanel).toBeVisible({
         timeout: T(15000),
       })
-      const compose = page.getByTestId('mail-compose-body')
+      const compose = composePanel.getByTestId('mail-compose-body')
       const iframe = compose.locator('iframe').first()
       if ((await iframe.count()) > 0) {
         await expect(

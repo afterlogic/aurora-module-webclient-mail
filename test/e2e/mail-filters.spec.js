@@ -29,6 +29,62 @@ const {
 
 const composeTo = getComposeTo()
 
+async function jqueryClick(locator) {
+  await locator.evaluate((el) => {
+    const $ = window.jQuery || window.$
+    if ($) {
+      $(el).trigger('click')
+      return
+    }
+    el.click()
+  })
+}
+
+async function pickCustomSelect(part, optionPattern) {
+  await part.locator('.link').click()
+  const menu = part.locator('.dropdown_content')
+  await expect(menu).toBeVisible({ timeout: T(10000) })
+  await menu.locator('.item').filter({ hasText: optionPattern }).first().click()
+}
+
+async function addAndConfigureSubjectFilter(page, { needle, folderFullName }) {
+  const filtersPanel = page.getByTestId('settings-mail-filters')
+  const add = filtersPanel.getByTestId('settings-mail-filter-add')
+  await expect(add).toBeVisible({ timeout: T(20000) })
+  await jqueryClick(add)
+
+  await expect(filtersPanel.getByText(/no filters specified/i)).toBeHidden({
+    timeout: T(15000),
+  })
+
+  const row = filtersPanel.getByTestId('settings-mail-filter-row').last()
+  await expect(row).toBeVisible({ timeout: T(15000) })
+
+  const ifGroup = row.locator('.filter_if_group')
+  const thenGroup = row.locator('.filter_then_group')
+
+  await pickCustomSelect(ifGroup.locator('.part.field').nth(0), /subject|тема/i)
+  await pickCustomSelect(ifGroup.locator('.part.field').nth(1), /containing|содерж/i)
+
+  const value = row.getByTestId('settings-mail-filter-value')
+  await expect(value).toBeVisible({ timeout: T(15000) })
+  await value.fill(needle)
+
+  await pickCustomSelect(thenGroup.locator('.part.field').nth(0), /move|перемест/i)
+
+  const folderPart = thenGroup.locator('.part.field').nth(1)
+  await folderPart.locator('.link').click()
+  const folderMenu = folderPart.locator('.dropdown_content .scroll-inner')
+  await expect(folderMenu).toBeVisible({ timeout: T(10000) })
+  const folderLabel =
+    folderFullName.split('/').pop() || folderFullName
+  await folderMenu
+    .locator('.item')
+    .filter({ hasText: new RegExp(folderLabel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') })
+    .first()
+    .click()
+}
+
 async function openFiltersSettings(page) {
   await openSettings(page)
   await openMailAccountsSettings(page)
@@ -90,31 +146,7 @@ test.describe('Desktop mail filters', () => {
         .then(() => true)
         .catch(() => false)
       test.skip(!addVisible, 'Filters tab is not available on this stand')
-      await clickReady(add)
-      const row = page.getByTestId('settings-mail-filter-row').last()
-      await expect(row).toBeVisible({ timeout: T(10000) })
-
-      await row.evaluate(
-        (el, opts) => {
-          const ko = window.ko
-          const model = ko && ko.dataFor(el)
-          if (!model) {
-            throw new Error('No Knockout filter model on row')
-          }
-          model.field(2)
-          model.condition(0)
-          model.filter(opts.needle)
-          model.action(3)
-          model.folder(opts.folderFullName)
-          model.enable(true)
-        },
-        { needle, folderFullName }
-      )
-
-      const value = row.getByTestId('settings-mail-filter-value')
-      if (await value.isVisible().catch(() => false)) {
-        await value.fill(needle)
-      }
+      await addAndConfigureSubjectFilter(page, { needle, folderFullName })
       await clickReady(page.getByTestId('settings-mail-filter-save'))
     })
 
