@@ -8,6 +8,7 @@ const { T } = sharedHelper('timeouts')
 const { gotoLoggedIn, step, attachScreenshot, fieldControl, hasCredentials, getComposeTo } = sharedHelper('login')
 const composeTo = getComposeTo()
 const { clickReady } = sharedHelper('ready')
+const { confirmUploadWithoutEncryption } = moduleHelper('FilesWebclient', 'files')
 const {
   FOLDER_TYPES,
   waitForInboxList,
@@ -212,8 +213,10 @@ test.describe('Desktop mail attachments', () => {
           timeout: T(20000),
         })
         await clickKoCommand(page, 'mail-save-to-files-ok')
+        // Personal storage + Paranoid Encryption → encrypt confirm before Ajax Save.
+        await confirmUploadWithoutEncryption(page)
         await expect(page.getByTestId('mail-save-to-files-dialog')).toBeHidden({
-          timeout: T(45000),
+          timeout: T(90000),
         })
         console.log('  → Saved attachments to Files')
         await attachScreenshot(page, 'mail-save-files-01')

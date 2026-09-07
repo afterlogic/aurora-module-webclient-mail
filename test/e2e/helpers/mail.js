@@ -30,8 +30,31 @@ const listReadyOptions = {
   timeout: 60000,
 }
 
+function openedMessageView(page) {
+  return page
+    .locator('.separate_layout_mode.separate_message_opened .message_viewer')
+    .or(page.locator('[data-test-id="mail-message-view"]'))
+    .or(page.locator('.message_viewer'))
+    .first()
+}
+
+/**
+ * Subject/sender in the reading pane. Two subject nodes exist in DOM when
+ * AllowSearchMessagesBySubject is on (KO visible: toggles); use :visible only.
+ */
+function messageHeaderField(page) {
+  const view = openedMessageView(page)
+  return view
+    .locator(
+      '[data-test-id="mail-message-subject"]:visible, [data-test-id="mail-message-sender"]:visible'
+    )
+    .first()
+}
+
 function visibleSubject(page) {
-  return page.locator('[data-test-id="mail-message-subject"]:visible').first()
+  return openedMessageView(page)
+    .locator('[data-test-id="mail-message-subject"]:visible')
+    .first()
 }
 
 async function isSeparatedMailLayout(page) {
@@ -98,24 +121,22 @@ async function forceMessageHashRoute(page, uid) {
 
 /** Reading pane is mounted early but may stay hidden until load / layout opens it. */
 async function waitForOpenedMessageView(page, timeout = T(60000)) {
-  await expect(
-    page
-      .locator(
-        [
-          '[data-test-id="mail-message-subject"]:visible',
-          '[data-test-id="mail-message-sender"]:visible',
-          '[data-test-id="mail-action-reply"]:visible',
-        ].join(', ')
-      )
-      .first()
-  ).toBeVisible({ timeout })
+  if (await isSeparatedMailLayout(page)) {
+    await expect(page.locator('.separate_layout_mode.separate_message_opened')).toBeVisible({
+      timeout,
+    })
+  }
+  const view = openedMessageView(page)
+  await expect(view).toBeVisible({ timeout })
+  await expect(messageHeaderField(page)).toBeVisible({ timeout })
   // moreCommand.canExecute === isCurrentMessageLoaded; dropdown ignores clicks
   // while .command-disabled (fControlClick in koBindings.js).
-  const more = page.locator('[data-test-id="mail-message-more"]:visible').first()
-  await expect(more).toBeVisible({ timeout })
-  await expect(more).not.toHaveClass(/command-disabled|unavailable/, {
-    timeout,
-  })
+  const more = view.locator('[data-test-id="mail-message-more"]').first()
+  if (await more.isVisible().catch(() => false)) {
+    await expect(more).not.toHaveClass(/command-disabled|unavailable/, {
+      timeout,
+    })
+  }
 }
 
 /**
@@ -124,7 +145,9 @@ async function waitForOpenedMessageView(page, timeout = T(60000)) {
  * can miss the toggle. Do not jQuery-trigger (originalTarget).
  */
 async function openMailMoreMenu(page) {
-  const more = page.locator('[data-test-id="mail-message-more"]:visible').first()
+  const view = openedMessageView(page)
+  await expect(view).toBeVisible({ timeout: T(30000) })
+  const more = view.locator('[data-test-id="mail-message-more"]').first()
   await expect(more).toBeVisible({ timeout: T(30000) })
   await expect(more).not.toHaveClass(/command-disabled|unavailable/, {
     timeout: T(60000),
@@ -147,13 +170,20 @@ async function clickListItemSubject(item) {
   })
 }
 
-async function clickMessageListItem(page, item) {
+async function clickMessageListItem(page, item, { waitForView = true } = {}) {
   const uid = await getMessageUidFromItem(item)
   const separated = await isSeparatedMailLayout(page)
 
+  const waitSeparatedOpened = async (timeout = T(8000)) =>
+    page
+      .locator('.separate_layout_mode.separate_message_opened')
+      .waitFor({ state: 'visible', timeout })
+      .then(() => true)
+      .catch(() => false)
+
   const tryOpen = async () => {
     if (separated) {
-      // Separated: .message_viewer { display: none } until dblclick →
+      // Separated: preview pane stays on "No message selected" until dblclick →
       // isOpenedSeparatedMessage(true). Single click only routes uid.
       await clickListItemSubject(item)
       if (uid) {
@@ -164,10 +194,10 @@ async function clickMessageListItem(page, item) {
           .catch(() => undefined)
       }
       await triggerMailItemDblClick(item)
-      return visibleSubject(page)
-        .waitFor({ state: 'visible', timeout: T(8000) })
-        .then(() => true)
-        .catch(() => false)
+      if (!(await waitSeparatedOpened())) {
+        await item.dblclick().catch(() => undefined)
+      }
+      return waitSeparatedOpened(T(8000))
     }
 
     await clickListItemSubject(item)
@@ -178,6 +208,9 @@ async function clickMessageListItem(page, item) {
   }
 
   if (await tryOpen()) {
+    if (waitForView) {
+      await waitForOpenedMessageView(page)
+    }
     return
   }
 
@@ -195,6 +228,9 @@ async function clickMessageListItem(page, item) {
     await forceMessageHashRoute(page, uid)
     if (separated && !(await isSeparatedMessageOpened(page))) {
       await triggerMailItemDblClick(item)
+      if (!(await waitSeparatedOpened())) {
+        await item.dblclick().catch(() => undefined)
+      }
     }
   }
 
@@ -202,7 +238,9 @@ async function clickMessageListItem(page, item) {
     await page.keyboard.press('Enter').catch(() => undefined)
   }
 
-  await waitForOpenedMessageView(page)
+  if (waitForView) {
+    await waitForOpenedMessageView(page)
+  }
 }
 
 async function waitForInboxList(page) {

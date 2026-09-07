@@ -31,18 +31,38 @@ test.describe('Desktop mail list filters and bulk actions', () => {
     }) => {
     test.setTimeout(T(180000))
     await gotoLoggedIn(page)
-    await waitForInboxList(page)
+    await ensureInboxHasMessage(page)
+
+    // Every folder keeps mail-folder-unseen-count in the DOM (KO visible:false →
+    // display:none), and Unified Inbox may render first with count 0. Always target
+    // a :visible badge — never getByTestId(...).first().
+    const visibleUnseenBadge = () =>
+      page.locator('[data-test-id="mail-folder-unseen-count"]:visible').first()
+
+    await step('Ensure at least one unread message for folder badge', async () => {
+      if (await visibleUnseenBadge().isVisible().catch(() => false)) {
+        return
+      }
+      const first = page.getByTestId('mail-message-item').first()
+      await expect(first).toBeVisible({ timeout: T(30000) })
+      await selectMessageCheckbox(page, first)
+      await expect(first).toHaveClass(/checked/, { timeout: T(10000) })
+      await expect(
+        page.locator('.messages_panel [data-test-id="mail-mark-read"]').first()
+      ).not.toHaveClass(/command-disabled|unavailable/, { timeout: T(30000) })
+      await clickMailToolbarAction(page, 'mail-mark-dropdown')
+      await clickMailDropdownCommand(page, 'mail-mark-unread')
+      await expect(first).toHaveClass(/unseen/, { timeout: T(30000) })
+      await expect(visibleUnseenBadge()).toBeVisible({ timeout: T(60000) })
+      console.log('  → Seeded unread message for unseen badge')
+    })
 
     await step('Find folder with unseen badge and click it', async () => {
-      const badge = page.getByTestId('mail-folder-unseen-count').first()
-      try {
-        await expect(badge).toBeVisible({ timeout: T(30000) })
-      } catch {
-        test.skip(true, 'No unseen badge after waiting for folder counts')
-      }
+      const badge = visibleUnseenBadge()
+      await expect(badge).toBeVisible({ timeout: T(30000) })
       const folder = page
         .locator('[data-test-id="mail-folder"]')
-        .filter({ has: page.getByTestId('mail-folder-unseen-count') })
+        .filter({ has: page.locator('[data-test-id="mail-folder-unseen-count"]:visible') })
         .first()
       console.log(
         `  → Unseen badge on: ${(await folder.innerText().catch(() => '')).trim().split('\n')[0]}`
