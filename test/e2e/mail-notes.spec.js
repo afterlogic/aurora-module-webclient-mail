@@ -38,7 +38,12 @@ test.describe('Desktop mail notes', () => {
 
       await step('Open Notes and create a note', async () => {
         await openFolderByName(page, 'Notes')
-        await clickReady(page.getByTestId('mail-compose-fab'))
+        // MailNotesPlugin swaps FAB to create-note only when Notes is current.
+        const fab = page.getByTestId('mail-compose-fab')
+        await expect(fab).toHaveText(/new note|новая заметка/i, {
+          timeout: T(15000),
+        })
+        await clickReady(fab)
         const body = page.getByTestId('mail-note-body')
         await expect(body).toBeVisible({ timeout: T(20000) })
         await body.click()

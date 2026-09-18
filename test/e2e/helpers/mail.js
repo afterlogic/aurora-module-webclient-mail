@@ -274,14 +274,17 @@ const openFolderByType = openFolder
 
 async function openFolderByName(page, folderName, { soft = false } = {}) {
   const escaped = folderName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const folder = page
-    .locator(
-      `[data-test-id="mail-folder"][data-folder-fullname="${folderName}"], [data-test-id="mail-folder"][data-folder-name="${folderName}"]`
-    )
-    .or(
-      page.getByTestId('mail-folder').filter({ hasText: new RegExp(escaped, 'i') })
-    )
-    .first()
+  // Prefer exact data-folder-* attrs. Do not union with substring hasText:
+  // Playwright .or().first() is DOM order, so /Notes/i clicks MailNotes before Notes.
+  const byAttr = page.locator(
+    `[data-test-id="mail-folder"][data-folder-fullname="${folderName}"], [data-test-id="mail-folder"][data-folder-name="${folderName}"]`
+  )
+  // Fallback: token boundary only (still rejects MailNotes).
+  const byExactLabel = page.getByTestId('mail-folder').filter({
+    hasText: new RegExp(`(?:^|\\s)${escaped}(?:\\s|$)`, 'i'),
+  })
+  const folder =
+    (await byAttr.count()) > 0 ? byAttr.first() : byExactLabel.first()
   await folder.scrollIntoViewIfNeeded()
   await expect(folder).toBeVisible({ timeout: T(15000) })
   await clickReady(folder)
@@ -468,42 +471,62 @@ async function readComposeSubject(page) {
 }
 
 /**
- * Desktop ComposePopup: cancel with unsaved changes minimizes the popup
- * (does not show ConfirmPopup). Fully leave via save_and_close on the
- * minimized bar, or close when already clean.
+ * Desktop ComposePopup: cancelPopup closes if clean, minimizes if dirty.
+ * Fully leave via save_and_close on the minimized bar.
  *
- * Note: `.close` is often not "visible" to Playwright while painted — prefer Escape.
+ * Do not rely on Escape (HTML-editor iframe swallows it) or Playwright click on
+ * `.close` (painted but often not PW-visible even with force). Invoke KO via
+ * jQuery/DOM click; mask click minimizes as fallback.
  */
 async function closeComposeWithoutSending(page) {
   await step('Close compose without sending', async () => {
+    const compose = page.getByTestId('mail-compose')
     const minimized = page.locator('.minimized_compose')
     const saveAndClose = page
       .getByTestId('mail-compose-save-and-close')
       .or(page.locator('.minimized_compose .item.save_and_close'))
+    const closeBtn = page
+      .locator(
+        '.compose_popup:not(.minimized) [data-test-id="mail-compose-close"], .popup_panel:visible [data-test-id="mail-compose-close"]'
+      )
+      .or(page.getByTestId('mail-compose-close'))
+      .first()
+
+    async function invokeCancelPopup() {
+      await closeBtn.evaluate((el) => {
+        if (window.jQuery) {
+          window.jQuery(el).trigger('click')
+          return
+        }
+        el.click()
+      })
+    }
 
     if (await minimized.isVisible().catch(() => false)) {
       await saveAndClose.first().click({ force: true })
-    } else if (
-      await page.getByTestId('mail-compose').isVisible().catch(() => false)
-    ) {
-      // Escape → minimize when dirty; closePopup when clean.
-      await page.keyboard.press('Escape')
-      // isVisible() does not actually wait/poll (Playwright ignores its
-      // timeout option) — use waitFor so a minimize that renders a beat
-      // late isn't missed.
+    } else if (await compose.isVisible().catch(() => false)) {
+      await invokeCancelPopup()
       const didMinimize = await minimized
-        .waitFor({ state: 'visible', timeout: T(3000) })
+        .waitFor({ state: 'visible', timeout: T(5000) })
         .then(() => true)
         .catch(() => false)
       if (didMinimize) {
+        await saveAndClose.first().click({ force: true })
+      } else if (await compose.isVisible().catch(() => false)) {
+        await page.locator('.compose_popup .mask').evaluate((el) => {
+          if (window.jQuery) {
+            window.jQuery(el).trigger('click')
+            return
+          }
+          el.click()
+        })
+        await expect(minimized).toBeVisible({ timeout: T(5000) })
         await saveAndClose.first().click({ force: true })
       }
     }
 
     await expect(minimized).toBeHidden({ timeout: T(30000) })
-    await expect(page.getByTestId('mail-compose')).toBeHidden({
-      timeout: T(15000),
-    })
+    await expect(compose).toBeHidden({ timeout: T(15000) })
   })
 }
 
@@ -545,18 +568,38 @@ async function composeFullyClosed(page) {
 }
 
 async function tryDismissComposeOnce(page) {
+  const compose = page.getByTestId('mail-compose')
   const minimized = page.locator('.minimized_compose')
   const saveAndClose = page
     .getByTestId('mail-compose-save-and-close')
     .or(page.locator('.minimized_compose .item.save_and_close'))
+  const closeBtn = page
+    .locator(
+      '.compose_popup:not(.minimized) [data-test-id="mail-compose-close"], .popup_panel:visible [data-test-id="mail-compose-close"]'
+    )
+    .or(page.getByTestId('mail-compose-close'))
+    .first()
 
   if (await minimized.isVisible().catch(() => false)) {
     await saveAndClose.first().click({ force: true }).catch(() => undefined)
     return
   }
-  if (await page.getByTestId('mail-compose').isVisible().catch(() => false)) {
-    await page.keyboard.press('Escape')
-    if (await minimized.isVisible({ timeout: 3000 }).catch(() => false)) {
+  if (await compose.isVisible().catch(() => false)) {
+    await closeBtn
+      .evaluate((el) => {
+        if (window.jQuery) {
+          window.jQuery(el).trigger('click')
+          return
+        }
+        el.click()
+      })
+      .catch(() => undefined)
+    if (
+      await minimized
+        .waitFor({ state: 'visible', timeout: T(3000) })
+        .then(() => true)
+        .catch(() => false)
+    ) {
       await saveAndClose.first().click({ force: true }).catch(() => undefined)
     }
   }
@@ -569,16 +612,24 @@ function mailErrorReport(page) {
   return page.locator('.report_panel.error:not(.hide)').first()
 }
 
+/**
+ * Only treat mail-send error banners as failures.
+ * Settings / other modules leave sticky `.report_panel.error` text (e.g.
+ * "Saving settings has failed") that must not abort sendCompose.
+ */
 async function mailErrorReportText(page) {
   const panel = mailErrorReport(page)
   const panelText = (await panel.innerText().catch(() => '')).trim()
-  if (panelText) {
+  if (panelText && SEND_ERROR_RE.test(panelText)) {
     return panelText
   }
   // Compose popup can cover the banner so Playwright :visible is false;
   // the a11y tree still has the copy.
   const byText = page.getByText(SEND_ERROR_RE).first()
-  return (await byText.innerText().catch(() => '')).trim()
+  if (await byText.isVisible().catch(() => false)) {
+    return (await byText.innerText().catch(() => '')).trim()
+  }
+  return ''
 }
 
 async function throwIfMailSendFailed(page) {

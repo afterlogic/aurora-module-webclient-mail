@@ -19,10 +19,8 @@ test.describe('Desktop mail print', () => {
 
   test('opens print preview window and calls print', async ({
     page,
-    browserName,
   }) => {
     test.setTimeout(T(180000))
-    test.skip(browserName !== 'chromium', 'Chrome-only new P3 spec')
 
     await page.context().addInitScript(() => {
       window.__auroraPrintCalls = 0
