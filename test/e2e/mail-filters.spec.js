@@ -31,6 +31,32 @@ const {
 
 const composeTo = getComposeTo()
 
+async function waitForMailApi(page, method, timeout = T(60000)) {
+  const res = await page.waitForResponse(
+    (r) => {
+      if (r.request().method() !== 'POST') {
+        return false
+      }
+      const url = String(r.url())
+      const looksLikeApi =
+        url.includes('?/Api') || /\/Api\/?(\?|$)/i.test(url) || url.includes('Api/')
+      if (!looksLikeApi) {
+        return false
+      }
+      const post = r.request().postData() || ''
+      return post.includes(`Method=${method}`) || post.includes(method)
+    },
+    { timeout }
+  )
+  let body = null
+  try {
+    body = await res.json()
+  } catch {
+    body = { _raw: (await res.text().catch(() => '')).slice(0, 800) }
+  }
+  return { res, body, post: res.request().postData() || '' }
+}
+
 async function jqueryClick(locator) {
   await locator.evaluate((el) => {
     const $ = window.jQuery || window.$
@@ -92,11 +118,17 @@ async function addAndConfigureSubjectFilter(page, { needle, folderFullName }) {
   const filtersPanel = page.getByTestId('settings-mail-filters')
   const add = filtersPanel.getByTestId('settings-mail-filter-add')
   await expect(add).toBeVisible({ timeout: T(20000) })
-  await jqueryClick(add)
 
-  await expect(filtersPanel.getByText(/no filters specified/i)).toBeHidden({
-    timeout: T(15000),
-  })
+  // Avoid racing MailCache.editedFolderList → populate() which wipes unsaved rows.
+  await waitForMailApi(page, 'GetFilters', T(15000)).catch(() => null)
+  await expect(add).toBeVisible({ timeout: T(10000) })
+
+  const rowsBefore = await filtersPanel.getByTestId('settings-mail-filter-row').count()
+  await clickReady(add)
+  await expect(filtersPanel.getByTestId('settings-mail-filter-row')).toHaveCount(
+    rowsBefore + 1,
+    { timeout: T(15000) }
+  )
 
   const row = filtersPanel.getByTestId('settings-mail-filter-row').last()
   await expect(row).toBeVisible({ timeout: T(15000) })
@@ -104,13 +136,22 @@ async function addAndConfigureSubjectFilter(page, { needle, folderFullName }) {
   const ifGroup = row.locator('.filter_if_group')
   const thenGroup = row.locator('.filter_then_group')
 
+  // window.ko is not exposed by Aurora — drive customSelect / value via UI + events.
   await pickCustomSelect(ifGroup.locator('.part.field').nth(0), /subject|тема/i)
   await pickCustomSelect(ifGroup.locator('.part.field').nth(1), /containing|содерж/i)
 
   const value = row.getByTestId('settings-mail-filter-value')
   await expect(value).toBeVisible({ timeout: T(15000) })
-  await value.fill(needle)
+  await value.click({ force: true })
+  await value.fill('')
+  await value.pressSequentially(String(needle), { delay: 15 })
+  await value.evaluate((el, v) => {
+    el.value = v
+    el.dispatchEvent(new Event('input', { bubbles: true }))
+    el.dispatchEvent(new Event('change', { bubbles: true }))
+  }, String(needle))
   await value.press('Tab')
+  await expect(value).toHaveValue(needle, { timeout: T(10000) })
 
   await pickCustomSelect(thenGroup.locator('.part.field').nth(0), /move|перемест/i)
 
@@ -118,7 +159,7 @@ async function addAndConfigureSubjectFilter(page, { needle, folderFullName }) {
   await pickFilterFolder(thenGroup.locator('.part.field').nth(1), folderLabel)
 
   await expect(value).toHaveValue(needle)
-  await expect(thenGroup).toContainText(folderLabel)
+  await expect(thenGroup).toContainText(folderLabel, { timeout: T(10000) })
 }
 
 async function dismissDiscardChanges(page) {
@@ -166,7 +207,8 @@ async function saveMailFilters(page) {
   await dismissDiscardChanges(page)
   const save = page.getByTestId('settings-mail-filter-save')
   await expect(save).toBeVisible({ timeout: T(15000) })
-  await jqueryClick(save)
+  // Real pointer click — jQuery .trigger('click') often skips KO click: save.
+  await clickReady(save)
   const saving = page
     .locator('[data-test-id="settings-mail-filters"] .button')
     .filter({ hasText: /saving|сохран/i })
@@ -257,7 +299,24 @@ test.describe('Desktop mail filters', () => {
         .catch(() => false)
       test.skip(!addVisible, 'Filters tab is not available on this stand')
       await addAndConfigureSubjectFilter(page, { needle, folderFullName })
+      await expect(
+        page
+          .getByTestId('settings-mail-filter-row')
+          .last()
+          .getByTestId('settings-mail-filter-value')
+      ).toHaveValue(needle, { timeout: T(5000) })
+
+      const updateWait = waitForMailApi(page, 'UpdateFilters', T(45000))
       await saveMailFilters(page)
+      const update = await updateWait
+      expect(
+        update.body?.Result,
+        `UpdateFilters failed: ${JSON.stringify(update.body)}`
+      ).toBeTruthy()
+      expect(
+        update.post.includes(needle),
+        `UpdateFilters request missing needle="${needle}"`
+      ).toBe(true)
     })
 
     await step('Send a message whose subject matches the filter', async () => {
