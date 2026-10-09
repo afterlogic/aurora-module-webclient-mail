@@ -182,25 +182,40 @@ test.describe('Desktop mail list filters and bulk actions', () => {
   })
 
   test('empties Trash folder', async ({ page }) => {
-    test.setTimeout(T(180000))
+    test.setTimeout(T(300000))
     await gotoLoggedIn(page)
     await waitForInboxList(page)
+
+    const emptyBtn = page.getByTestId('mail-empty-folder-button')
 
     await step('Open Trash', async () => {
       await openFolderByType(page, FOLDER_TYPES.TRASH)
     })
 
-    const emptyBtn = page.getByTestId('mail-empty-folder-button')
-    test.skip(
-      !(await emptyBtn.isVisible().catch(() => false)),
-      'Trash is empty — Empty Trash button is hidden'
-    )
+    // An empty Trash hides the button; fill it instead of skipping the scenario.
+    if (!(await emptyBtn.isVisible().catch(() => false))) {
+      await step('Trash is empty: delete an Inbox message into it', async () => {
+        await ensureInboxHasMessage(page)
+        await openFolderByType(page, FOLDER_TYPES.INBOX)
+        await waitForInboxList(page)
+        await selectMessageCheckbox(
+          page,
+          page.getByTestId('mail-message-item').first()
+        )
+        await clickMailToolbarAction(page, 'mail-action-delete')
+        await confirmOkIfVisible(page)
+        await waitForListReady(page, listReadyOptions)
+        await openFolderByType(page, FOLDER_TYPES.TRASH)
+      })
+    }
+    await expect(emptyBtn).toBeVisible({ timeout: T(30000) })
 
     await step('Empty Trash → confirm', async () => {
+      // A big Trash on a slow IMAP server needs longer than the default minute.
       await clickReady(emptyBtn)
       await confirmOkIfVisible(page)
       await expect(page.getByTestId('mail-empty-folder')).toBeVisible({
-        timeout: T(60000),
+        timeout: T(120000),
       })
       console.log('  → Trash emptied')
       await attachScreenshot(page, 'mail-empty-trash-01')

@@ -29,8 +29,18 @@ async function openCompose(page) {
 }
 
 async function saveDraft(page) {
+  // The "saved" notice is a short-lived toast that polling can miss; the
+  // SaveMessage answer is the reliable signal, the toast is only a soft extra.
+  const saveResponse = page.waitForResponse(
+    (res) =>
+      res.request().method() === 'POST' &&
+      (res.request().postData() || '').includes('SaveMessage'),
+    { timeout: T(60000) }
+  )
   await clickReady(page.getByTestId('mail-compose-save'))
-  await waitForDraftSavedReport(page)
+  const body = await (await saveResponse).json().catch(() => null)
+  expect(body?.Result, 'SaveMessage API result').toBeTruthy()
+  await waitForDraftSavedReport(page).catch(() => undefined)
 }
 
 async function openDraftsAndFind(page, subject) {
