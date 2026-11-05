@@ -500,10 +500,13 @@ CMailCache.prototype.useThreadingInCurrentList = function (oUidList)
 		oAccount = AccountList.getCurrent(),
 		oCurrFolder = this.getCurrentFolder(),
 		bFolderWithoutThreads = oCurrFolder && oCurrFolder.withoutThreads(),
-		bNotSearchOrFilters = oUidList.search() === '' && oUidList.filters() === ''
+		bNotSearchOrFilters = oUidList.search() === '' && oUidList.filters() === '',
+		bThreadingAvailable = oCurrFolder && oCurrFolder.bIsUnifiedInbox
+			? AccountList.isUnifiedInboxThreadingAvailable()
+			: !!(oAccount && oAccount.threadingIsAvailable())
 	;
 	
-	return oAccount && oAccount.threadingIsAvailable() && !bFolderWithoutThreads && bNotSearchOrFilters;
+	return bThreadingAvailable && !bFolderWithoutThreads && bNotSearchOrFilters;
 };
 
 /**
@@ -869,7 +872,10 @@ CMailCache.prototype.requestMessageList = function (sFolder, iPage, sSearch, sFi
 	var
 		bFolderWithoutThreads = oFolder && oFolder.withoutThreads(),
 		oAccount = AccountList.getCurrent(),
-		bUseThreading = oAccount && oAccount.threadingIsAvailable() && !bFolderWithoutThreads && sSearch === '' && sFilters === '',
+		bThreadingAvailable = oFolder.bIsUnifiedInbox
+			? AccountList.isUnifiedInboxThreadingAvailable()
+			: !!(oAccount && oAccount.threadingIsAvailable()),
+		bUseThreading = bThreadingAvailable && !bFolderWithoutThreads && sSearch === '' && sFilters === '',
 		oUidList = (oFolder) ? oFolder.getUidList(sSearch, sFilters, sSortBy, iSortOrder) : null,
 		bCacheIsEmpty = oUidList && oUidList.resultCount() === -1,
 		iOffset = (iPage - 1) * Settings.MailsPerPage,

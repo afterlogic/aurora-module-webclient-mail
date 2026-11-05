@@ -166,10 +166,13 @@ function CMessageListView(fOpenMessage)
 			oAccount = AccountList.getCurrent(),
 			oFolder = MailCache.getCurrentFolder(),
 			bFolderWithoutThreads = oFolder && oFolder.withoutThreads(),
-			bNotSearchOrFilters = this.uidList().search() === '' && this.uidList().filters() === ''
+			bNotSearchOrFilters = this.uidList().search() === '' && this.uidList().filters() === '',
+			bThreadingAvailable = oFolder && oFolder.bIsUnifiedInbox
+				? AccountList.isUnifiedInboxThreadingAvailable()
+				: !!(oAccount && oAccount.threadingIsAvailable())
 		;
 		
-		return oAccount && oAccount.threadingIsAvailable() && !bFolderWithoutThreads && bNotSearchOrFilters;
+		return bThreadingAvailable && !bFolderWithoutThreads && bNotSearchOrFilters;
 	}, this);
 
 	this.collection = MailCache.messages;

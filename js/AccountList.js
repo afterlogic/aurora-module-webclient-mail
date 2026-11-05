@@ -40,6 +40,11 @@ function CAccountListModel()
 	this.unifiedInboxAllowed = ko.computed(function () {
 		return this.unifiedMailboxAccounts().length > 1;
 	}, this);
+	this.isUnifiedInboxThreadingAvailable = ko.computed(function () {
+		return _.some(this.unifiedMailboxAccounts(), function (oAccount) {
+			return oAccount.threadingIsAvailable();
+		});
+	}, this);
 	this.unifiedInboxReady = ko.observable(false);
 }
 
